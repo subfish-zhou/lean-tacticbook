@@ -1,5 +1,6 @@
 import VersoManual
 import SubVerso.Highlighting
+import SubVerso.Highlighting.String
 
 open Verso Doc Elab Genre.Manual ArgParse Code Highlighted
 open Verso Code External
@@ -259,6 +260,69 @@ def highlightInline (code : String) (type? : Option String := none) : DocElabM H
     catch e2 =>
       throwError "Failed to highlight code. Errors:{indentD e1.toMessageData}\nand:{indentD e2.toMessageData}"
 
+/-! ## Recent highlights ring buffer for leanRef support -/
+
+-- A fixed-size ring buffer that keeps the most recent `n` values.
+universe u
+
+structure Kept (α : Type u) where
+  values : Array α
+  next : Nat
+  in_bounds : next < values.size
+deriving Repr
+
+instance {α : Type u} [Inhabited α] : Inhabited (Kept α) where
+  default := ⟨#[default], 0, by simp⟩
+
+def Kept.add {α : Type u} (kept : Kept α) (val : α) : Kept α where
+  values := kept.values.set kept.next val (h := kept.in_bounds)
+  next := if kept.next = 0 then kept.values.size - 1 else kept.next - 1
+  in_bounds := by
+    have := kept.in_bounds
+    rw [Array.size_set]
+    split <;> omega
+
+def Kept.toArray {α : Type u} [Inhabited α] (kept : Kept α) : Array α := Id.run do
+  let mut out : Array α := #[]
+  for i in [kept.next:kept.values.size] do
+    out := out.push kept.values[i]!
+  for i in [0:kept.next] do
+    out := out.push kept.values[i]!
+  return out
+
+initialize recentHighlightsExt : EnvExtension (Kept Highlighted) ←
+  registerEnvExtension (pure ⟨.replicate 12 .empty, 0, by simp⟩)
+
+/-- Extracts all proof-state highlights from code for backreference indexing. -/
+def allProofInfo (hl : Highlighted) : Array Highlighted :=
+  go #[] hl
+where
+  go (acc : Array Highlighted) : Highlighted → Array Highlighted
+    | .seq xs => xs.foldl (init := acc) go
+    | .span _ x => go acc x
+    | .tactics gs _ _ x => gs.foldl (init := (go acc x)) (fromGoal · ·)
+    | .point .. | .text .. | .token .. | .unparsed .. => acc
+  fromGoal (acc : Array Highlighted) (g : Highlighted.Goal Highlighted) :=
+    g.hypotheses.foldl (init := acc.push g.conclusion) fun acc hyp =>
+      let names : Highlighted := hyp.names.foldl (init := .empty) fun hl tok =>
+        if hl.isEmpty then .token tok
+        else hl ++ .text " " ++ .token tok
+      acc.push (names ++ .text " " ++ .token ⟨.unknown, ":"⟩ ++ .text " " ++ hyp.typeAndVal)
+
+/-- Saves a highlighted expression into the recent-highlights ring buffer. -/
+def saveBackref (hl : Highlighted) : DocElabM Unit := do
+  let hl := allProofInfo hl |>.foldl (init := hl) (· ++ .text "\n" ++ ·)
+  modifyEnv (recentHighlightsExt.modifyState · (·.add hl))
+
+/-- Extracts all messages from highlighted code. -/
+def allInfo (hl : Highlighted) : Array (Highlighted.Message × Option Highlighted) :=
+  match hl with
+  | .seq xs => xs.flatMap allInfo
+  | .point k str => #[(⟨k, str⟩, none)]
+  | .tactics _ _ _ x => allInfo x
+  | .span infos x => (infos.map fun (k, str) => (⟨k, str⟩, some x)) ++ allInfo x
+  | .text .. | .token .. | .unparsed .. => #[]
+
 /-- The `{lean}` inline role elaborates Lean code in the examples project environment
 and renders it with real syntax highlighting and type information. -/
 @[role_expander «lean»]
@@ -270,7 +334,154 @@ def «lean» : RoleExpander
 
     try
       let hl ← highlightInline codeStr type?
+      saveBackref hl
       return #[← ``(Inline.other (Inline.lean $(quote hl) {}) #[Inline.code $(quote hl.toString)])]
+    catch
+      | .error refStx e =>
+        logErrorAt refStx e
+        return #[← ``(sorry)]
+      | e => throw e
+
+/-! ## Feature 1: signature code block -/
+
+def highlightSignature (code : String) : DocElabM Highlighted := do
+  let helper ← currentHelper
+  helper.signature code
+
+def highlightCommand (code : String) : DocElabM Highlighted := do
+  let helper ← currentHelper
+  helper.command code
+
+def highlightName (code : String) : DocElabM Highlighted := do
+  let helper ← currentHelper
+  helper.name code
+
+/-- The `signature` code block displays a Lean declaration's type signature
+with syntax highlighting. -/
+@[code_block_expander signature]
+def signatureBlock : CodeBlockExpander
+  | args, code => do
+    ArgParse.done.run args
+    let codeStr := code.getString
+
+    try
+      let hl ← highlightSignature codeStr
+
+      saveBackref hl
+      for (msg, _) in _root_.allInfo hl do
+        let k := match msg.severity with | .info => "info" | .error => "error" | .warning => "warning"
+        Verso.Log.logSilentInfo m!"{k}: {msg.toString}"
+
+      return #[← ``(Block.other (Block.lean $(quote hl) {}) #[Block.code $(quote codeStr)])]
+    catch
+      | .error refStx e =>
+        logErrorAt refStx e
+        return #[← ``(sorry)]
+      | e => throw e
+
+/-! ## Feature 4: leanRef role -/
+
+/-- The `{leanRef}` role finds a previously highlighted expression by name and
+reuses its highlighting. Use `{leanRef in="context"}`\`expr\`` to search within
+a specific context. -/
+@[role_expander leanRef]
+def leanRef : RoleExpander
+  | args, inls => do
+    let in? ← ArgParse.run (.named `in .string true) args
+    let code ← oneCodeStr inls
+    let codeStr := code.getString
+
+    for prev in (recentHighlightsExt.getState (← getEnv)).toArray do
+      if let some «in» := in? then
+        if let some hl := prev.matchingExpr? «in» then
+          if let some hl := hl.matchingExpr? codeStr then
+            return #[← ``(Inline.other (Inline.lean $(quote hl) {}) #[Inline.code $(quote hl.toString)])]
+          else continue
+      else if let some hl := prev.matchingExpr? codeStr then
+        return #[← ``(Inline.other (Inline.lean $(quote hl) {}) #[Inline.code $(quote hl.toString)])]
+
+    throwError "Not found: '{codeStr}'"
+
+/-! ## leanName role (shows a resolved Lean name with hover info) -/
+
+@[role_expander leanName]
+def leanName : RoleExpander
+  | args, inls => do
+    let show? ← ArgParse.run (.named `show .string true) args
+    let code ← oneCodeStr inls
+    let codeStr := code.getString
+
+    try
+      let hl ← highlightName codeStr
+      let hl :=
+        if let some s := show? then
+          if let .token ⟨k, _⟩ := hl then
+            .token ⟨k, s⟩
+          else hl
+        else hl
+
+      saveBackref hl
+      match hl with
+      | .token ⟨k, _⟩ =>
+        match k with
+        | .const _ sig doc? _ _ =>
+          Verso.Hover.addCustomHover code <|
+            s!"```\n{sig}\n```\n" ++
+            (doc?.map ("\n\n***\n\n" ++ ·) |>.getD "")
+        | .var _ sig _ =>
+          Verso.Hover.addCustomHover code <|
+            s!"```\n{sig}\n```\n"
+        | _ => pure ()
+      | _ => pure ()
+
+      return #[← ``(Inline.other (Inline.lean $(quote hl) {}) #[Inline.code $(quote hl.toString)])]
+    catch
+      | .error refStx e =>
+        logErrorAt refStx e
+        return #[← ``(sorry)]
+      | e => throw e
+
+/-! ## Enhanced lean role with backref saving -/
+
+/-- The `{leanCmd}` inline role elaborates a Lean command and renders it. -/
+@[role_expander leanCmd]
+def leanCmd : RoleExpander
+  | args, inls => do
+    let _type? ← ArgParse.done.run args
+    let code ← oneCodeStr inls
+    let codeStr := code.getString
+
+    try
+      let hl ← highlightCommand codeStr
+
+      saveBackref hl
+      for (msg, _) in _root_.allInfo hl do
+        let k := match msg.severity with | .info => "info" | .error => "error" | .warning => "warning"
+        Verso.Log.logSilentInfo m!"{k}: {msg.toString}"
+
+      return #[← ``(Inline.other (Inline.lean $(quote hl) {}) #[Inline.code $(quote hl.toString)])]
+    catch
+      | .error refStx e =>
+        logErrorAt refStx e
+        return #[← ``(sorry)]
+      | e => throw e
+
+/-- The `leanCmd` code block elaborates a Lean command. -/
+@[code_block_expander leanCmd]
+def leanCmdBlock : CodeBlockExpander
+  | args, code => do
+    let _type? ← ArgParse.done.run args
+    let codeStr := code.getString
+
+    try
+      let hl ← highlightCommand codeStr
+
+      saveBackref hl
+      for (msg, _) in _root_.allInfo hl do
+        let k := match msg.severity with | .info => "info" | .error => "error" | .warning => "warning"
+        Verso.Log.logSilentInfo m!"{k}: {msg.toString}"
+
+      return #[← ``(Block.other (Block.lean $(quote hl) {}) #[Block.code $(quote codeStr)])]
     catch
       | .error refStx e =>
         logErrorAt refStx e
