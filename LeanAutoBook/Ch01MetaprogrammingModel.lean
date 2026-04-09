@@ -377,7 +377,7 @@ tag := "ch01-exercises"
 tag := "exercise-1-1"
 %%%
 
-在你的 Mathlib 项目里新建 `Ch01.lean`，复制 1.5 节的 `trace_goal` 实现，然后验证它能输出当前目标：
+在你的 Mathlib 项目里新建 {lit}`Ch01.lean`，复制 1.5 节的 `trace_goal` 实现，然后验证它能输出当前目标：
 
 ```
 import Lean
@@ -445,7 +445,7 @@ example : (42 : Nat) = 42 := by close_rfl
 
 提示：
 - *错误 1* 是 proof term 构造错误——`Eq.refl` 需要显式传入类型和值两个参数（用 `mkApp2`）
-- *错误 2* 是命名空间可见性错误——`getMainGoal` 在 `Tactic` 命名空间里，`open Lean Elab Meta` 少了 `Tactic`
+- *错误 2* 是命名空间可见性错误——`getMainGoal` 在 `Tactic` 命名空间里，{lit}`open Lean Elab Meta` 少了 `Tactic`
 
 这两类错误性质不同：一个是 API 调用不完整，一个是符号找不到。以后遇到类似报错时，先判断是哪一类再对症下药。
 

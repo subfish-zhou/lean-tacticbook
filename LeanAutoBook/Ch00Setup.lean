@@ -1,6 +1,7 @@
 import VersoManual
 
 open Verso.Genre Manual
+open Verso Code External
 
 #doc (Manual) "第零章 环境与运行约定" =>
 %%%
@@ -63,27 +64,27 @@ export PATH="$HOME/.elan/bin:$PATH"
 
 *问题 2：`lean --version` 报错 `no default toolchain configured`*
 
-这说明 elan 装好了，但还没指定默认工具链。不用担心——创建项目时 `lean-toolchain` 文件会自动指定版本。
+这说明 elan 装好了，但还没指定默认工具链。不用担心——创建项目时 {lit}`lean-toolchain` 文件会自动指定版本。
 
 *问题 3：VS Code 插件安装后没反应*
 
 检查：
 - 是否打开的是*文件夹*（不是单个 `.lean` 文件）
-- 文件夹根目录是否有 `lakefile.lean` 或 `lakefile.toml`
+- 文件夹根目录是否有 {lit}`lakefile.lean` 或 `lakefile.toml`
 - 右下角状态栏是否显示 Lean 版本号（如果显示 "Loading..." 等一会儿）
 
-*问题 4：VS Code 里能 `import Mathlib`，终端里不行*
+*问题 4：VS Code 里能 {lit}`import Mathlib`，终端里不行*
 
-大概率是你没有在项目根目录下运行，或者没用 `lake env lean`。确保：
-- 终端 `cd` 到了有 `lakefile.lean` 的目录
-- 用 `lake env lean YourFile.lean` 而不是裸 `lean YourFile.lean`
+大概率是你没有在项目根目录下运行，或者没用 {lit}`lake env lean`。确保：
+- 终端 `cd` 到了有 {lit}`lakefile.lean` 的目录
+- 用 {lit}`lake env lean YourFile.lean` 而不是裸 `lean YourFile.lean`
 
 # 创建本书的配套项目
 %%%
 tag := "create-project"
 %%%
 
-*这一步非常重要*——本书大部分示例依赖 Mathlib 库。如果你直接新建一个 `.lean` 文件写 `import Mathlib`，会报错。
+*这一步非常重要*——本书大部分示例依赖 Mathlib 库。如果你直接新建一个 `.lean` 文件写 {lit}`import Mathlib`，会报错。
 
 ## 方式一：用 lake 创建 Mathlib 项目（推荐）
 %%%
@@ -111,14 +112,14 @@ lake env lean Test.lean
 
 如果看到 `Nat.add_comm : ∀ (n m : ℕ), n + m = m + n`（或类似输出），说明环境搭建成功。
 
-成功后，你就有了一个能 `import Mathlib` 的项目。在 `LeanAutoBook/` 目录下新建 `.lean` 文件即可开始跟着本书做实验。
+成功后，你就有了一个能 {lit}`import Mathlib` 的项目。在 `LeanAutoBook/` 目录下新建 `.lean` 文件即可开始跟着本书做实验。
 
 ## 常见项目创建问题
 %%%
 tag := "project-troubleshooting"
 %%%
 
-*问题 1：`lake exe cache get` 失败，报网络错误*
+*问题 1：{lit}`lake exe cache get` 失败，报网络错误*
 
 ```
 # Mathlib 缓存托管在 GitHub Releases，如果网络不通可以设代理：
@@ -132,9 +133,9 @@ lake exe cache get
 lake build
 ```
 
-*问题 2：`lake new LeanAutoBook math` 报错 `unknown template 'math'`*
+*问题 2：{lit}`lake new LeanAutoBook math` 报错 `unknown template 'math'`*
 
-你的 `lake` 版本可能太旧。运行 `elan update` 更新，或者手动创建项目后在 `lakefile.lean` 中添加 Mathlib 依赖：
+你的 `lake` 版本可能太旧。运行 `elan update` 更新，或者手动创建项目后在 {lit}`lakefile.lean` 中添加 Mathlib 依赖：
 
 ```
 -- lakefile.lean
@@ -142,7 +143,7 @@ require mathlib from git
   "https://github.com/leanprover-community/mathlib4"
 ```
 
-然后运行 `lake update && lake exe cache get`。
+然后运行 {lit}`lake update && lake exe cache get`。
 
 *问题 3：编译/类型检查极慢（每个文件几十秒）*
 
@@ -174,24 +175,24 @@ lake exe cache get
 tag := "tactic-origins"
 %%%
 
-一个初学者常见的困惑：为什么有的 tactic 不需要 import 就能用，有的需要 `import Mathlib`？
+一个初学者常见的困惑：为什么有的 tactic 不需要 import 就能用，有的需要 {lit}`import Mathlib`？
 
 - `simp`：Lean core，不需要 import（但 `@[simp]` 引理大部分来自 Mathlib）
-- `ring`：Mathlib，`import Mathlib.Tactic.Ring`
+- `ring`：Mathlib，{lit}`import Mathlib.Tactic.Ring`
 - `omega`：Lean core（v4.8+），不需要 import
-- `linarith`：Mathlib，`import Mathlib.Tactic.Linarith`
-- `nlinarith`：Mathlib，`import Mathlib.Tactic.Linarith`
-- `polyrith`：Mathlib，`import Mathlib.Tactic.Polyrith`
-- `norm_num`：Mathlib，`import Mathlib.Tactic.NormNum`
-- `aesop`：Lean core + Mathlib 规则，`import Aesop`（core）或 Mathlib
+- `linarith`：Mathlib，{lit}`import Mathlib.Tactic.Linarith`
+- `nlinarith`：Mathlib，{lit}`import Mathlib.Tactic.Linarith`
+- `polyrith`：Mathlib，{lit}`import Mathlib.Tactic.Polyrith`
+- `norm_num`：Mathlib，{lit}`import Mathlib.Tactic.NormNum`
+- `aesop`：Lean core + Mathlib 规则，{lit}`import Aesop`（core）或 Mathlib
 - `grind`：Lean core（v4.14+），不需要 import
 - `decide`：Lean core，不需要 import
-- `positivity`：Mathlib，`import Mathlib.Tactic.Positivity`
-- `field_simp`：Mathlib，`import Mathlib.Tactic.FieldSimp`
-- `gcongr`：Mathlib，`import Mathlib.Tactic.GCongr`
-- `fun_prop`：Mathlib，`import Mathlib.Tactic.FunProp`
+- `positivity`：Mathlib，{lit}`import Mathlib.Tactic.Positivity`
+- `field_simp`：Mathlib，{lit}`import Mathlib.Tactic.FieldSimp`
+- `gcongr`：Mathlib，{lit}`import Mathlib.Tactic.GCongr`
+- `fun_prop`：Mathlib，{lit}`import Mathlib.Tactic.FunProp`
 
-*简单规则*：如果 `import Mathlib` 能跑通，以上全部可用。本书示例默认在 Mathlib 项目环境中运行。
+*简单规则*：如果 {lit}`import Mathlib` 能跑通，以上全部可用。本书示例默认在 Mathlib 项目环境中运行。
 
 # 本书的代码约定
 %%%
@@ -278,7 +279,7 @@ tag := "setup-exercises"
 tag := "exercise-0-1"
 %%%
 
-在你的项目中新建 `Hello.lean`，写入以下内容：
+在你的项目中新建 {lit}`Hello.lean`，写入以下内容：
 
 ```
 -- [可运行]
