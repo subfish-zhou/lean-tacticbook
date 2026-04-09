@@ -1,1 +1,1 @@
-window.docContents[23].resolve({"/Ch03FirstTactic/#ch03-first-tactic":{"contents":"本章目标：从零实现几个有实际用途的 tactic，掌握  的核心模式。\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n","context":"Lean 4 自动化内幕","header":"4. 第三章 编写你的第一个 Tactic","id":"/Ch03FirstTactic/#ch03-first-tactic"}});
+window.docContents[23].resolve({"/Ch03FirstTactic/#ch03-first-tactic":{"contents":"本章目标：从零实现几个有实际用途的 tactic，掌握 TacticM\n 的核心模式。\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n","context":"Lean 4 自动化内幕","header":"4. 第三章 编写你的第一个 Tactic","id":"/Ch03FirstTactic/#ch03-first-tactic"}});
