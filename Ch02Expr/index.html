@@ -949,7 +949,7 @@ window.onload = () => {
             <div class="split-toc">
               <div class="title">
                 <label for="--verso-manual-toc-ch02-expr" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch02-expr" checked="checked"></label><span class="number">3.</span> <span class="current"><a href="Ch02Expr/#ch02-expr">第二章 Expr：Lean 4 的内部表示</a></span></div>
-              <table><tr class="numbered"><td class="num">3.1.</td><td><a href="Ch02Expr/#what-is-expr">2.1 Expr 是什么</a></td></tr><tr class="numbered"><td class="num">3.2.</td><td><a href="Ch02Expr/#expr-constructors">2.2 Expr 的构造子</a></td></tr><tr class="numbered"><td class="num">3.3.</td><td><a href="Ch02Expr/#expr-encoding-examples">2.3 表达式如何编码：几个例子</a></td></tr><tr class="numbered"><td class="num">3.4.</td><td><a href="Ch02Expr/#pattern-matching-expr">2.4 模式匹配 Expr：<code>match_expr</code> 和 <code>let_expr</code></a></td></tr><tr class="numbered"><td class="num">3.5.</td><td><a href="Ch02Expr/#constructing-expr">2.5 构造 Expr</a></td></tr><tr class="numbered"><td class="num">3.6.</td><td><a href="Ch02Expr/#debruijn-vs-fvar">2.6 de Bruijn 索引 vs 自由变量</a></td></tr><tr class="numbered"><td class="num">3.7.</td><td><a href="Ch02Expr/#expr-utility-functions">2.7 实用工具函数</a></td></tr><tr class="numbered"><td class="num">3.8.</td><td><a href="Ch02Expr/#ch02-summary">2.8 小结</a></td></tr><tr class="numbered"><td class="num">3.9.</td><td><a href="Ch02Expr/#ch02-common-failures">2.9 常见失败模式与 debug</a></td></tr><tr class="numbered"><td class="num">3.10.</td><td><a href="Ch02Expr/#ch02-exercises">2.10 练习</a></td></tr></table></div>
+              <table><tr class="numbered"><td class="num">3.1.</td><td><a href="Ch02Expr/#what-is-expr">Expr 是什么</a></td></tr><tr class="numbered"><td class="num">3.2.</td><td><a href="Ch02Expr/#expr-constructors">Expr 的构造子</a></td></tr><tr class="numbered"><td class="num">3.3.</td><td><a href="Ch02Expr/#expr-encoding-examples">表达式如何编码：几个例子</a></td></tr><tr class="numbered"><td class="num">3.4.</td><td><a href="Ch02Expr/#pattern-matching-expr">模式匹配 Expr：<code>match_expr</code> 和 <code>let_expr</code></a></td></tr><tr class="numbered"><td class="num">3.5.</td><td><a href="Ch02Expr/#constructing-expr">构造 Expr</a></td></tr><tr class="numbered"><td class="num">3.6.</td><td><a href="Ch02Expr/#debruijn-vs-fvar">de Bruijn 索引 vs 自由变量</a></td></tr><tr class="numbered"><td class="num">3.7.</td><td><a href="Ch02Expr/#expr-utility-functions">实用工具函数</a></td></tr><tr class="numbered"><td class="num">3.8.</td><td><a href="Ch02Expr/#ch02-summary">小结</a></td></tr><tr class="numbered"><td class="num">3.9.</td><td><a href="Ch02Expr/#ch02-common-failures">常见失败模式与 debug</a></td></tr><tr class="numbered"><td class="num">3.10.</td><td><a href="Ch02Expr/#ch02-exercises">练习</a></td></tr></table></div>
             </div>
           </div>
         <div class="last">
@@ -971,7 +971,7 @@ window.onload = () => {
               <strong>本章目标</strong>：理解 <code>Expr</code> 的构造方式、模式匹配惯用法，以及在元程序中操作表达式的基本技巧。</p>
             <section>
               <h2 id="what-is-expr">
-                3.1. 2.1 Expr 是什么<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=what-is-expr" title="Permalink">🔗</a></span></h2>
+                3.1. Expr 是什么<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=what-is-expr" title="Permalink">🔗</a></span></h2>
               <p>
                 Lean 4 中的每个项——数值、函数、命题、证明——在内核里都表示为 <code>Expr</code> 类型的值。当你写 <code>fun n =&gt; n + 1</code>，Lean 解析并精化后，内部存储的就是一棵 <code>Expr</code> 树。</p>
               <p>
@@ -979,7 +979,7 @@ window.onload = () => {
               </section>
             <section>
               <h2 id="expr-constructors">
-                3.2. 2.2 Expr 的构造子<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=expr-constructors" title="Permalink">🔗</a></span></h2>
+                3.2. Expr 的构造子<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=expr-constructors" title="Permalink">🔗</a></span></h2>
               <p>
                 <code>Expr</code> 定义在 <code>Lean/Expr.lean</code> 中，有以下核心构造子：</p>
               <pre>inductive Expr where
@@ -1000,7 +1000,7 @@ window.onload = () => {
               </section>
             <section>
               <h2 id="expr-encoding-examples">
-                3.3. 2.3 表达式如何编码：几个例子<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=expr-encoding-examples" title="Permalink">🔗</a></span></h2>
+                3.3. 表达式如何编码：几个例子<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=expr-encoding-examples" title="Permalink">🔗</a></span></h2>
               <blockquote><p>
                   以下树形结构是<strong>示意图</strong>，用于说明 <code>app</code> 的嵌套方式，而不是逐字符精确的 elaborated form。</p>
                 </blockquote><section>
@@ -1035,7 +1035,7 @@ window.onload = () => {
               </section>
             <section>
               <h2 id="pattern-matching-expr">
-                3.4. 2.4 模式匹配 Expr：<code>match_expr</code> 和 <code>let_expr</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=pattern-matching-expr" title="Permalink">🔗</a></span></h2>
+                3.4. 模式匹配 Expr：<code>match_expr</code> 和 <code>let_expr</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=pattern-matching-expr" title="Permalink">🔗</a></span></h2>
               <p>
                 手动 match <code>Expr</code> 构造子非常繁琐（要处理 <code>app (app (const ...) ...) ...</code>）。Lean 提供了两个语法糖：</p>
               <blockquote><p>
@@ -1068,7 +1068,7 @@ window.onload = () => {
               </section>
             <section>
               <h2 id="constructing-expr">
-                3.5. 2.5 构造 Expr<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=constructing-expr" title="Permalink">🔗</a></span></h2>
+                3.5. 构造 Expr<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=constructing-expr" title="Permalink">🔗</a></span></h2>
               <p>
                 读取 <code>Expr</code> 用模式匹配，构造 <code>Expr</code> 用 <code>mkApp</code> 系列函数：</p>
               <section>
@@ -1081,15 +1081,32 @@ let eqExpr := mkApp3 (mkConst ``Eq) (mkConst ``Nat) a b
 let rflExpr := mkApp2 (mkConst ``Eq.refl) (mkConst ``Nat) a
 </pre><p>
                   常用构造函数：</p>
-                <p>
-                  | 函数 | 说明 |
-|------|------|
-| <code>mkConst n</code> | 常量引用 |
-| <code>mkApp f a</code> | 单参数应用 |
-| <code>mkApp2/3/4/5/6</code> | 多参数应用 |
-| <code>mkAppN f #[a,b,c]</code> | 数组参数应用 |
-| <code>mkLambda n bi t body</code> | 构造 λ 表达式 |
-| <code>mkForall n bi t body</code> | 构造 ∀ 表达式 |</p>
+                <ul>
+                  <li>
+                    <p>
+                      <code>mkConst n</code>：常量引用</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>mkApp f a</code>：单参数应用</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>mkApp2/3/4/5/6</code>：多参数应用</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>mkAppN f #[a,b,c]</code>：数组参数应用</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>mkLambda n bi t body</code>：构造 λ 表达式</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>mkForall n bi t body</code>：构造 ∀ 表达式</p>
+                    </li>
+                  </ul>
                 </section>
               <section>
                 <h3 id="quotation-construction">
@@ -1104,7 +1121,7 @@ let rflExpr := mkApp2 (mkConst ``Eq.refl) (mkConst ``Nat) a
               </section>
             <section>
               <h2 id="debruijn-vs-fvar">
-                3.6. 2.6 de Bruijn 索引 vs 自由变量<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=debruijn-vs-fvar" title="Permalink">🔗</a></span></h2>
+                3.6. de Bruijn 索引 vs 自由变量<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=debruijn-vs-fvar" title="Permalink">🔗</a></span></h2>
               <p>
                 <code>Expr</code> 中有两种变量：</p>
               <ul>
@@ -1149,7 +1166,7 @@ lambdaTelescope e fun fvars body =&gt; do
               </section>
             <section>
               <h2 id="expr-utility-functions">
-                3.7. 2.7 实用工具函数<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=expr-utility-functions" title="Permalink">🔗</a></span></h2>
+                3.7. 实用工具函数<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=expr-utility-functions" title="Permalink">🔗</a></span></h2>
               <p>
                 <code>MetaM</code> 提供了大量操作 <code>Expr</code> 的工具：</p>
               <section>
@@ -1180,20 +1197,37 @@ Expr.foldlM (init : α) (f : α → Expr → MetaM α) (e : Expr) : MetaM α  --
               </section>
             <section>
               <h2 id="ch02-summary">
-                3.8. 2.8 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch02-summary" title="Permalink">🔗</a></span></h2>
-              <p>
-                | 概念 | 关键点 |
-|------|--------|
-| <code>Expr</code> | Lean 中一切项的内部表示，树形结构 |
-| <code>app</code> | 函数应用，多参数 = 嵌套 app（curried） |
-| <code>bvar</code> / <code>fvar</code> | 绑定变量 vs 自由变量；元程序中用 <code>fvar</code> |
-| <code>match_expr</code> / <code>let_expr</code> | 按 head constant 模式匹配，避免手动解 app |
-| <code>mkApp*</code> | 手动构造表达式；性能敏感时优于 <code>elabTerm</code> |
-| <code>forallTelescope</code> | 进入 ∀ 类型的标准方式 |</p>
+                3.8. 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch02-summary" title="Permalink">🔗</a></span></h2>
+              <ul>
+                <li>
+                  <p>
+                    <code>Expr</code>：Lean 中一切项的内部表示，树形结构</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>app</code>：函数应用，多参数 = 嵌套 app（curried）</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>bvar</code> / <code>fvar</code>：绑定变量 vs 自由变量；元程序中用 <code>fvar</code></p>
+                  </li>
+                <li>
+                  <p>
+                    <code>match_expr</code> / <code>let_expr</code>：按 head constant 模式匹配，避免手动解 app</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>mkApp*</code>：手动构造表达式；性能敏感时优于 <code>elabTerm</code></p>
+                  </li>
+                <li>
+                  <p>
+                    <code>forallTelescope</code>：进入 ∀ 类型的标准方式</p>
+                  </li>
+                </ul>
               </section>
             <section>
               <h2 id="ch02-common-failures">
-                3.9. 2.9 常见失败模式与 debug<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch02-common-failures" title="Permalink">🔗</a></span></h2>
+                3.9. 常见失败模式与 debug<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch02-common-failures" title="Permalink">🔗</a></span></h2>
               <section>
                 <h3 id="failure-match-expr-whnf">
                   3.9.1. 失败 1：<code>match_expr</code> 匹配不上，明明目标看起来是对的<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-match-expr-whnf" title="Permalink">🔗</a></span></h3>
@@ -1241,7 +1275,7 @@ forallTelescope goalType fun fvars body =&gt; do
               </section>
             <section>
               <h2 id="ch02-exercises">
-                3.10. 2.10 练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch02-exercises" title="Permalink">🔗</a></span></h2>
+                3.10. 练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch02-exercises" title="Permalink">🔗</a></span></h2>
               <section>
                 <h3 id="exercise-2-1">
                   3.10.1. 练习 2.1（热身）：用 <code>#check @Eq</code> 观察 Expr 结构<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-2-1" title="Permalink">🔗</a></span></h3>

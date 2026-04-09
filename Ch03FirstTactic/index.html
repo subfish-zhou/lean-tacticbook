@@ -949,7 +949,7 @@ window.onload = () => {
             <div class="split-toc">
               <div class="title">
                 <label for="--verso-manual-toc-ch03-first-tactic" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch03-first-tactic" checked="checked"></label><span class="number">4.</span> <span class="current"><a href="Ch03FirstTactic/#ch03-first-tactic">第三章 编写你的第一个 Tactic</a></span></div>
-              <table><tr class="numbered"><td class="num">4.1.</td><td><a href="Ch03FirstTactic/#recap-expr-to-tactic">回顾：从 Expr 到 Tactic</a></td></tr><tr class="numbered"><td class="num">4.2.</td><td><a href="Ch03FirstTactic/#tactic-lifecycle">3.1 Tactic 的生命周期</a></td></tr><tr class="numbered"><td class="num">4.3.</td><td><a href="Ch03FirstTactic/#assumption-search">3.2 assumption：在假设中搜索</a></td></tr><tr class="numbered"><td class="num">4.4.</td><td><a href="Ch03FirstTactic/#split-and">3.3 <code>split_and</code>：拆分合取目标</a></td></tr><tr class="numbered"><td class="num">4.5.</td><td><a href="Ch03FirstTactic/#combining-tactics">3.4 调用已有 tactic：组合式证明</a></td></tr><tr class="numbered"><td class="num">4.6.</td><td><a href="Ch03FirstTactic/#operate-all-goals">3.5 对所有目标执行同一操作</a></td></tr><tr class="numbered"><td class="num">4.7.</td><td><a href="Ch03FirstTactic/#error-handling">3.6 错误处理与 diagnostics</a></td></tr><tr class="numbered"><td class="num">4.8.</td><td><a href="Ch03FirstTactic/#ch03-common-failures">3.7 常见失败模式与 debug</a></td></tr><tr class="numbered"><td class="num">4.9.</td><td><a href="Ch03FirstTactic/#ch03-exercises">3.8 练习</a></td></tr><tr class="numbered"><td class="num">4.10.</td><td><a href="Ch03FirstTactic/#ch03-summary">3.9 小结</a></td></tr></table></div>
+              <table><tr class="numbered"><td class="num">4.1.</td><td><a href="Ch03FirstTactic/#recap-expr-to-tactic">回顾：从 Expr 到 Tactic</a></td></tr><tr class="numbered"><td class="num">4.2.</td><td><a href="Ch03FirstTactic/#tactic-lifecycle">Tactic 的生命周期</a></td></tr><tr class="numbered"><td class="num">4.3.</td><td><a href="Ch03FirstTactic/#assumption-search">assumption：在假设中搜索</a></td></tr><tr class="numbered"><td class="num">4.4.</td><td><a href="Ch03FirstTactic/#split-and"><code>split_and</code>：拆分合取目标</a></td></tr><tr class="numbered"><td class="num">4.5.</td><td><a href="Ch03FirstTactic/#combining-tactics">调用已有 tactic：组合式证明</a></td></tr><tr class="numbered"><td class="num">4.6.</td><td><a href="Ch03FirstTactic/#operate-all-goals">对所有目标执行同一操作</a></td></tr><tr class="numbered"><td class="num">4.7.</td><td><a href="Ch03FirstTactic/#error-handling">错误处理与 diagnostics</a></td></tr><tr class="numbered"><td class="num">4.8.</td><td><a href="Ch03FirstTactic/#ch03-common-failures">常见失败模式与 debug</a></td></tr><tr class="numbered"><td class="num">4.9.</td><td><a href="Ch03FirstTactic/#ch03-exercises">练习</a></td></tr><tr class="numbered"><td class="num">4.10.</td><td><a href="Ch03FirstTactic/#ch03-summary">小结</a></td></tr></table></div>
             </div>
           </div>
         <div class="last">
@@ -982,7 +982,7 @@ window.onload = () => {
               </section>
             <section>
               <h2 id="tactic-lifecycle">
-                4.2. 3.1 Tactic 的生命周期<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=tactic-lifecycle" title="Permalink">🔗</a></span></h2>
+                4.2. Tactic 的生命周期<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=tactic-lifecycle" title="Permalink">🔗</a></span></h2>
               <p>
                 回顾第一章：tactic 是一个 <code>Syntax → TacticM Unit</code> 函数。当 Lean 在证明模式中遇到你注册的 tactic 关键字时，就会调用这个函数。它的完整生命周期分为五步：</p>
               <ol start="1">
@@ -1012,7 +1012,7 @@ window.onload = () => {
               </section>
             <section>
               <h2 id="assumption-search">
-                4.3. 3.2 assumption：在假设中搜索<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=assumption-search" title="Permalink">🔗</a></span></h2>
+                4.3. assumption：在假设中搜索<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=assumption-search" title="Permalink">🔗</a></span></h2>
               <p>
                 <code>assumption</code> 是最经典的入门 tactic：在局部上下文中找一个类型匹配目标的假设，然后用它关闭目标。这个 tactic 虽然简单，但展示了 tactic 编写的基本骨架。</p>
               <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.elab-65">elab</span><span class="inter-text"> </span><span class="literal string token" data-binding="" data-verso-hover="26">"my_assumption"</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Lean.Parser.Category.tactic" data-verso-hover="1">tactic</span><span class="inter-text"> </span><span class="unknown token" data-binding="">=&gt;</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.do-98">do</span><span class="inter-text">
@@ -1048,7 +1048,7 @@ window.onload = () => {
               </section>
             <section>
               <h2 id="split-and">
-                4.4. 3.3 <code>split_and</code>：拆分合取目标<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=split-and" title="Permalink">🔗</a></span></h2>
+                4.4. <code>split_and</code>：拆分合取目标<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=split-and" title="Permalink">🔗</a></span></h2>
               <p>
                 如果目标是 <code>P ∧ Q</code>，我们希望把它拆成两个子目标 <code>P</code> 和 <code>Q</code>。这个 tactic 展示了一个比 <code>assumption</code> 更复杂的模式：不是直接关闭目标，而是把目标"拆开"。</p>
               <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.elab-492">elab</span><span class="inter-text"> </span><span class="literal string token" data-binding="" data-verso-hover="40">"split_and"</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Lean.Parser.Category.tactic" data-verso-hover="1">tactic</span><span class="inter-text"> </span><span class="unknown token" data-binding="">=&gt;</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.do-521">do</span><span class="inter-text">
@@ -1099,7 +1099,7 @@ window.onload = () => {
                 </blockquote></section>
             <section>
               <h2 id="combining-tactics">
-                4.5. 3.4 调用已有 tactic：组合式证明<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=combining-tactics" title="Permalink">🔗</a></span></h2>
+                4.5. 调用已有 tactic：组合式证明<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=combining-tactics" title="Permalink">🔗</a></span></h2>
               <p>
                 手动构造 <code>Expr</code> 虽然灵活，但很多时候你不需要从头来——Lean 标准库已经提供了大量 tactic，你可以在自己的 tactic 中直接调用它们。这就是"组合式"tactic 的思路：把已有的自动化当作积木块来组合。</p>
               <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.elab-1033">elab</span><span class="inter-text"> </span><span class="literal string token" data-binding="" data-verso-hover="51">"my_smart_close"</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Lean.Parser.Category.tactic" data-verso-hover="1">tactic</span><span class="inter-text"> </span><span class="unknown token" data-binding="">=&gt;</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.do-1067">do</span><span class="inter-text">
@@ -1128,7 +1128,7 @@ window.onload = () => {
               </section>
             <section>
               <h2 id="operate-all-goals">
-                4.6. 3.5 对所有目标执行同一操作<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=operate-all-goals" title="Permalink">🔗</a></span></h2>
+                4.6. 对所有目标执行同一操作<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=operate-all-goals" title="Permalink">🔗</a></span></h2>
               <p>
                 前面的 tactic 都只处理第一个目标（<code>getMainGoal</code>）。但有时你希望对所有未解决的目标执行同一操作——比如"把所有能用 <code>assumption</code> 关掉的目标都关掉"。</p>
               <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.elab-1725">elab</span><span class="inter-text"> </span><span class="literal string token" data-binding="" data-verso-hover="59">"assumption_on_all"</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Lean.Parser.Category.tactic" data-verso-hover="1">tactic</span><span class="inter-text"> </span><span class="unknown token" data-binding="">=&gt;</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.do-1762">do</span><span class="inter-text">
@@ -1162,7 +1162,7 @@ window.onload = () => {
               </section>
             <section>
               <h2 id="error-handling">
-                4.7. 3.6 错误处理与 diagnostics<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=error-handling" title="Permalink">🔗</a></span></h2>
+                4.7. 错误处理与 diagnostics<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=error-handling" title="Permalink">🔗</a></span></h2>
               <p>
                 好的 tactic 不仅要能成功，还要在失败时给出有用的信息。Lean 提供了多个层次的诊断工具：</p>
               <code class="hl lean block" data-lean-context="examples"><span class="inter-text">-- throwTacticEx 会显示目标上下文
@@ -1188,7 +1188,7 @@ window.onload = () => {
               </section>
             <section>
               <h2 id="ch03-common-failures">
-                4.8. 3.7 常见失败模式与 debug<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch03-common-failures" title="Permalink">🔗</a></span></h2>
+                4.8. 常见失败模式与 debug<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch03-common-failures" title="Permalink">🔗</a></span></h2>
               <p>
                 编写 tactic 时，有几类错误特别常见。本节列出最典型的失败模式，帮助你快速定位问题。</p>
               <section>
@@ -1277,7 +1277,7 @@ throwError "my_tactic: unexpected number of arguments"
               </section>
             <section>
               <h2 id="ch03-exercises">
-                4.9. 3.8 练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch03-exercises" title="Permalink">🔗</a></span></h2>
+                4.9. 练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch03-exercises" title="Permalink">🔗</a></span></h2>
               <section>
                 <h3 id="exercise-3-1">
                   4.9.1. 练习 1（热身）：<code>my_exact</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-3-1" title="Permalink">🔗</a></span></h3>
@@ -1375,19 +1375,45 @@ elab "rfl_all" : tactic =&gt; do
               </section>
             <section>
               <h2 id="ch03-summary">
-                4.10. 3.9 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch03-summary" title="Permalink">🔗</a></span></h2>
-              <p>
-                | 模式 | 说明 |
-|------|------|
-| <code>getMainGoal</code> + <code>goal.withContext</code> | 获取目标并切换上下文 |
-| <code>goal.getType</code> | 读取目标命题 |
-| <code>goal.assign proof</code> | 用证明项关闭目标 |
-| <code>mkFreshExprMVar T</code> | 创建类型 T 的新 hole（子目标） |
-| <code>setGoals</code> | 更新目标列表 |
-| <code>isDefEq a b</code> | 判断定义等价（核心匹配操作） |
-| <code>throwTacticEx</code> | 带目标上下文的错误信息 |
-| <code>evalTactic</code> | 在 tactic 中调用其他 tactic |
-| <code>withoutModifyingState</code> | 不产生副作用地执行操作 |</p>
+                4.10. 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch03-summary" title="Permalink">🔗</a></span></h2>
+              <ul>
+                <li>
+                  <p>
+                    <code>getMainGoal</code> + <code>goal.withContext</code>：获取目标并切换上下文</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>goal.getType</code>：读取目标命题</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>goal.assign proof</code>：用证明项关闭目标</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>mkFreshExprMVar T</code>：创建类型 T 的新 hole（子目标）</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>setGoals</code>：更新目标列表</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>isDefEq a b</code>：判断定义等价（核心匹配操作）</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>throwTacticEx</code>：带目标上下文的错误信息</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>evalTactic</code>：在 tactic 中调用其他 tactic</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>withoutModifyingState</code>：不产生副作用地执行操作</p>
+                  </li>
+                </ul>
               <p>
                 <strong>核心原则</strong>：tactic = 读目标 + 分析结构 + 构造证明项 + 更新目标列表。</p>
               <p>

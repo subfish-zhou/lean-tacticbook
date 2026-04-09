@@ -949,7 +949,7 @@ window.onload = () => {
             <div class="split-toc">
               <div class="title">
                 <label for="--verso-manual-toc-ch00-setup" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch00-setup" checked="checked"></label><span class="number">1.</span> <span class="current"><a href="Ch00Setup/#ch00-setup">第零章 环境与运行约定</a></span></div>
-              <table><tr class="numbered"><td class="num">1.1.</td><td><a href="Ch00Setup/#prerequisites">0.1 你需要什么基础</a></td></tr><tr class="numbered"><td class="num">1.2.</td><td><a href="Ch00Setup/#install-lean4">0.2 安装 Lean 4</a></td></tr><tr class="numbered"><td class="num">1.3.</td><td><a href="Ch00Setup/#create-project">0.3 创建本书的配套项目</a></td></tr><tr class="numbered"><td class="num">1.4.</td><td><a href="Ch00Setup/#tactic-origins">0.4 哪些 tactic 来自哪里</a></td></tr><tr class="numbered"><td class="num">1.5.</td><td><a href="Ch00Setup/#code-conventions">0.5 本书的代码约定</a></td></tr><tr class="numbered"><td class="num">1.6.</td><td><a href="Ch00Setup/#learning-tips">0.6 跟着本书学的建议</a></td></tr><tr class="numbered"><td class="num">1.7.</td><td><a href="Ch00Setup/#book-overview">0.7 全书结构概览</a></td></tr><tr class="numbered"><td class="num">1.8.</td><td><a href="Ch00Setup/#setup-exercises">0.8 环境验证练习</a></td></tr></table></div>
+              <table><tr class="numbered"><td class="num">1.1.</td><td><a href="Ch00Setup/#prerequisites">你需要什么基础</a></td></tr><tr class="numbered"><td class="num">1.2.</td><td><a href="Ch00Setup/#install-lean4">安装 Lean 4</a></td></tr><tr class="numbered"><td class="num">1.3.</td><td><a href="Ch00Setup/#create-project">创建本书的配套项目</a></td></tr><tr class="numbered"><td class="num">1.4.</td><td><a href="Ch00Setup/#tactic-origins">哪些 tactic 来自哪里</a></td></tr><tr class="numbered"><td class="num">1.5.</td><td><a href="Ch00Setup/#code-conventions">本书的代码约定</a></td></tr><tr class="numbered"><td class="num">1.6.</td><td><a href="Ch00Setup/#learning-tips">跟着本书学的建议</a></td></tr><tr class="numbered"><td class="num">1.7.</td><td><a href="Ch00Setup/#book-overview">全书结构概览</a></td></tr><tr class="numbered"><td class="num">1.8.</td><td><a href="Ch00Setup/#setup-exercises">环境验证练习</a></td></tr></table></div>
             </div>
           </div>
         <div class="last">
@@ -977,7 +977,7 @@ window.onload = () => {
 lake env lean --version     # 实际运行的 Lean 版本
 </pre><section>
               <h2 id="prerequisites">
-                1.1. 0.1 你需要什么基础<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=prerequisites" title="Permalink">🔗</a></span></h2>
+                1.1. 你需要什么基础<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=prerequisites" title="Permalink">🔗</a></span></h2>
               <p>
                 本书假设你：</p>
               <ul>
@@ -999,7 +999,7 @@ lake env lean --version     # 实际运行的 Lean 版本
               </section>
             <section>
               <h2 id="install-lean4">
-                1.2. 0.2 安装 Lean 4<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=install-lean4" title="Permalink">🔗</a></span></h2>
+                1.2. 安装 Lean 4<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=install-lean4" title="Permalink">🔗</a></span></h2>
               <p>
                 如果你还没安装 Lean 4：</p>
               <pre># 安装 elan（Lean 版本管理器）
@@ -1057,7 +1057,7 @@ export PATH="$HOME/.elan/bin:$PATH"
               </section>
             <section>
               <h2 id="create-project">
-                1.3. 0.3 创建本书的配套项目<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=create-project" title="Permalink">🔗</a></span></h2>
+                1.3. 创建本书的配套项目<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=create-project" title="Permalink">🔗</a></span></h2>
               <p>
                 <strong>这一步非常重要</strong>——本书大部分示例依赖 Mathlib 库。如果你直接新建一个 <code>.lean</code> 文件写 <code>import Mathlib</code>，会报错。</p>
               <section>
@@ -1123,32 +1123,73 @@ lake exe cache get
               </section>
             <section>
               <h2 id="tactic-origins">
-                1.4. 0.4 哪些 tactic 来自哪里<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=tactic-origins" title="Permalink">🔗</a></span></h2>
+                1.4. 哪些 tactic 来自哪里<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=tactic-origins" title="Permalink">🔗</a></span></h2>
               <p>
                 一个初学者常见的困惑：为什么有的 tactic 不需要 import 就能用，有的需要 <code>import Mathlib</code>？</p>
-              <p>
-                | tactic | 来源 | 需要 import |
-|--------|------|------------|
-| <code>simp</code> | Lean core | 不需要（但 <code>@[simp]</code> 引理大部分来自 Mathlib） |
-| <code>ring</code> | Mathlib | <code>import Mathlib.Tactic.Ring</code> |
-| <code>omega</code> | Lean core（v4.8+） | 不需要 |
-| <code>linarith</code> | Mathlib | <code>import Mathlib.Tactic.Linarith</code> |
-| <code>nlinarith</code> | Mathlib | <code>import Mathlib.Tactic.Linarith</code> |
-| <code>polyrith</code> | Mathlib | <code>import Mathlib.Tactic.Polyrith</code> |
-| <code>norm_num</code> | Mathlib | <code>import Mathlib.Tactic.NormNum</code> |
-| <code>aesop</code> | Lean core + Mathlib 规则 | <code>import Aesop</code>（core）或 Mathlib |
-| <code>grind</code> | Lean core（v4.14+） | 不需要 |
-| <code>decide</code> | Lean core | 不需要 |
-| <code>positivity</code> | Mathlib | <code>import Mathlib.Tactic.Positivity</code> |
-| <code>field_simp</code> | Mathlib | <code>import Mathlib.Tactic.FieldSimp</code> |
-| <code>gcongr</code> | Mathlib | <code>import Mathlib.Tactic.GCongr</code> |
-| <code>fun_prop</code> | Mathlib | <code>import Mathlib.Tactic.FunProp</code> |</p>
+              <ul>
+                <li>
+                  <p>
+                    <code>simp</code>：Lean core，不需要 import（但 <code>@[simp]</code> 引理大部分来自 Mathlib）</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>ring</code>：Mathlib，<code>import Mathlib.Tactic.Ring</code></p>
+                  </li>
+                <li>
+                  <p>
+                    <code>omega</code>：Lean core（v4.8+），不需要 import</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>linarith</code>：Mathlib，<code>import Mathlib.Tactic.Linarith</code></p>
+                  </li>
+                <li>
+                  <p>
+                    <code>nlinarith</code>：Mathlib，<code>import Mathlib.Tactic.Linarith</code></p>
+                  </li>
+                <li>
+                  <p>
+                    <code>polyrith</code>：Mathlib，<code>import Mathlib.Tactic.Polyrith</code></p>
+                  </li>
+                <li>
+                  <p>
+                    <code>norm_num</code>：Mathlib，<code>import Mathlib.Tactic.NormNum</code></p>
+                  </li>
+                <li>
+                  <p>
+                    <code>aesop</code>：Lean core + Mathlib 规则，<code>import Aesop</code>（core）或 Mathlib</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>grind</code>：Lean core（v4.14+），不需要 import</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>decide</code>：Lean core，不需要 import</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>positivity</code>：Mathlib，<code>import Mathlib.Tactic.Positivity</code></p>
+                  </li>
+                <li>
+                  <p>
+                    <code>field_simp</code>：Mathlib，<code>import Mathlib.Tactic.FieldSimp</code></p>
+                  </li>
+                <li>
+                  <p>
+                    <code>gcongr</code>：Mathlib，<code>import Mathlib.Tactic.GCongr</code></p>
+                  </li>
+                <li>
+                  <p>
+                    <code>fun_prop</code>：Mathlib，<code>import Mathlib.Tactic.FunProp</code></p>
+                  </li>
+                </ul>
               <p>
                 <strong>简单规则</strong>：如果 <code>import Mathlib</code> 能跑通，以上全部可用。本书示例默认在 Mathlib 项目环境中运行。</p>
               </section>
             <section>
               <h2 id="code-conventions">
-                1.5. 0.5 本书的代码约定<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=code-conventions" title="Permalink">🔗</a></span></h2>
+                1.5. 本书的代码约定<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=code-conventions" title="Permalink">🔗</a></span></h2>
               <p>
                 本书中的代码分为三类，请注意区分：</p>
               <section>
@@ -1183,7 +1224,7 @@ elab "my_tactic" : tactic =&gt; do
               </section>
             <section>
               <h2 id="learning-tips">
-                1.6. 0.6 跟着本书学的建议<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=learning-tips" title="Permalink">🔗</a></span></h2>
+                1.6. 跟着本书学的建议<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=learning-tips" title="Permalink">🔗</a></span></h2>
               <ol start="1">
                 <li>
                   <p>
@@ -1209,7 +1250,7 @@ elab "my_tactic" : tactic =&gt; do
               </section>
             <section>
               <h2 id="book-overview">
-                1.7. 0.7 全书结构概览<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=book-overview" title="Permalink">🔗</a></span></h2>
+                1.7. 全书结构概览<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=book-overview" title="Permalink">🔗</a></span></h2>
               <pre>Part I:  基础（Ch1-5）     — 元编程模型、Expr、写 tactic、目标管理、typeclass
 Part II: 核心自动化（Ch6-13）— simp, ring, omega, linarith, norm_num, aesop, grind, decide
 Part III:领域自动化（Ch14-19）— positivity, fun_prop, gcongr, field_simp, 逻辑变换, 设计自己的
@@ -1219,7 +1260,7 @@ Part IV: 高级专题（Ch20-24） — 反射, 性能, 外部工具, 方法论, 
               </section>
             <section>
               <h2 id="setup-exercises">
-                1.8. 0.8 环境验证练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=setup-exercises" title="Permalink">🔗</a></span></h2>
+                1.8. 环境验证练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=setup-exercises" title="Permalink">🔗</a></span></h2>
               <p>
                 在进入下一章之前，完成以下练习确认你的环境搭建成功。</p>
               <section>
