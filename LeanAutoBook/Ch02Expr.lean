@@ -343,15 +343,16 @@ tag := "exercise-2-1"
 
 在 VS Code 中运行：
 
-```
-import Lean
-open Lean
+```leanCmd
+#check @Eq
 ```
 
-```anchor check_eq_types
-#check @Eq         -- Eq : α → α → Prop
-#check @And        -- And : Prop → Prop → Prop
-#check @Eq.refl    -- Eq.refl : ∀ {α} (a : α), a = a
+```leanCmd
+#check @And
+```
+
+```leanCmd
+#check @Eq.refl
 ```
 
 观察每个常量需要几个参数。这能帮你理解为什么 `match_expr` 写 `Eq α lhs rhs`（3 个参数）而 `And p q`（2 个参数）。
