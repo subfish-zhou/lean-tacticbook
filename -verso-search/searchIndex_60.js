@@ -1,1 +1,1 @@
-window.docContents[60].resolve({"/Ch02Expr/#constructing-expr":{"contents":"读取  用模式匹配，构造  用  系列函数：\n\n\n\n\n\n","context":"Lean 4 自动化内幕\u0009第二章 Expr：Lean 4 的内部表示","header":"3.5. 构造 Expr","id":"/Ch02Expr/#constructing-expr"}});
+window.docContents[60].resolve({"/Ch02Expr/#constructing-expr":{"contents":"读取 Expr 用模式匹配，构造 Expr 用  系列函数：\n\n\n\n\n\n","context":"Lean 4 自动化内幕\u0009第二章 Expr：Lean 4 的内部表示","header":"3.5. 构造 Expr","id":"/Ch02Expr/#constructing-expr"}});
