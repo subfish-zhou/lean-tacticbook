@@ -1,6 +1,10 @@
 import VersoManual
 
 open Verso.Genre Manual
+open Verso Code External
+
+set_option verso.exampleProject "../examples"
+set_option verso.exampleModule "Examples.Ch02Expr"
 
 #doc (Manual) "第二章 Expr：Lean 4 的内部表示" =>
 %%%
@@ -343,10 +347,11 @@ tag := "exercise-2-1"
 在 VS Code 中运行：
 
 ```
--- [可运行]
 import Lean
 open Lean
+```
 
+```anchor check_eq_types
 #check @Eq         -- Eq : α → α → Prop
 #check @And        -- And : Prop → Prop → Prop
 #check @Eq.refl    -- Eq.refl : ∀ {α} (a : α), a = a
@@ -362,10 +367,11 @@ tag := "exercise-2-2"
 写一个 tactic，打印当前目标的 head constant 名字：
 
 ```
--- [可运行]
 import Lean
 open Lean Elab Tactic Meta
+```
 
+```anchor show_head
 elab "show_head" : tactic => do
   let goal ← getMainGoal
   goal.withContext do
@@ -391,7 +397,7 @@ tag := "exercise-2-3"
 以下 tactic 想匹配 `∀ x, P x` 形式的目标，但总是走到 `_` 分支。为什么？
 
 ```
--- [可运行] 这段代码有逻辑错误
+-- 这段代码有逻辑错误
 import Lean
 open Lean Elab Tactic Meta
 

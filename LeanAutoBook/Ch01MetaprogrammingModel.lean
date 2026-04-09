@@ -1,6 +1,10 @@
 import VersoManual
 
 open Verso.Genre Manual
+open Verso Code External
+
+set_option verso.exampleProject "../examples"
+set_option verso.exampleModule "Examples.Ch01MetaprogrammingModel"
 
 #doc (Manual) "第一章 Lean 4 元编程模型" =>
 %%%
@@ -237,10 +241,11 @@ tag := "first-tactic"
 来写一个有实际功能的最小 tactic。目标：实现 `trace_goal`，打印当前目标然后什么都不做。
 
 ```
--- [可运行]
 import Lean
 open Lean Elab Tactic Meta
+```
 
+```anchor trace_goal
 syntax "trace_goal" : tactic
 
 elab_rules : tactic
@@ -325,7 +330,6 @@ tag := "failure-unknown-identifier"
 忘记 `open` 相关命名空间了。确保文件顶部有：
 
 ```
--- [可运行]
 import Lean
 open Lean Elab Tactic Meta
 ```
@@ -380,21 +384,23 @@ tag := "exercise-1-1"
 在你的 Mathlib 项目里新建 `Ch01.lean`，复制 1.5 节的 `trace_goal` 实现，然后验证它能输出当前目标：
 
 ```
--- [可运行]
 import Lean
 open Lean Elab Tactic Meta
+```
 
+```anchor trace_goal
 syntax "trace_goal" : tactic
 
 elab_rules : tactic
   | `(tactic| trace_goal) => do
-    let goal ← getMainGoal
-    let goalType ← goal.getType
-    let goalPP ← ppExpr goalType
+    let goal ← getMainGoal           -- 获取第一个目标的 MVarId
+    let goalType ← goal.getType      -- 获取目标类型（Expr）
+    let goalPP ← ppExpr goalType     -- 美化打印
     logInfo m!"Current goal: {goalPP}"
 
+-- 测试
 example (n : Nat) : n + 0 = n := by
-  trace_goal
+  trace_goal  -- 输出: Current goal: n + 0 = n
   simp
 ```
 
