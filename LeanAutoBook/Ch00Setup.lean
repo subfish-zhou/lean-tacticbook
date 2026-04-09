@@ -20,6 +20,9 @@ lake env lean --version     # 实际运行的 Lean 版本
 ```
 
 # 0.1 你需要什么基础
+%%%
+tag := "prerequisites"
+%%%
 
 本书假设你：
 - 会基本的数学（本科水平的代数、分析即可）
@@ -29,6 +32,9 @@ lake env lean --version     # 实际运行的 Lean 版本
 如果你还没写过任何 Lean 代码，建议先完成 Mathematics in Lean 的前几章。
 
 # 0.2 安装 Lean 4
+%%%
+tag := "install-lean4"
+%%%
 
 如果你还没安装 Lean 4：
 
@@ -43,6 +49,9 @@ lean --version
 推荐使用 VS Code + Lean 4 插件作为编辑器——你可以实时看到目标状态和错误信息。
 
 ## 常见安装问题
+%%%
+tag := "install-troubleshooting"
+%%%
 
 *问题 1：`elan` 安装后 `lean` 命令找不到*
 
@@ -70,10 +79,16 @@ export PATH="$HOME/.elan/bin:$PATH"
 - 用 `lake env lean YourFile.lean` 而不是裸 `lean YourFile.lean`
 
 # 0.3 创建本书的配套项目
+%%%
+tag := "create-project"
+%%%
 
 *这一步非常重要*——本书大部分示例依赖 Mathlib 库。如果你直接新建一个 `.lean` 文件写 `import Mathlib`，会报错。
 
 ## 方式一：用 lake 创建 Mathlib 项目（推荐）
+%%%
+tag := "create-with-lake"
+%%%
 
 ```
 # 创建项目
@@ -99,6 +114,9 @@ lake env lean Test.lean
 成功后，你就有了一个能 `import Mathlib` 的项目。在 `LeanAutoBook/` 目录下新建 `.lean` 文件即可开始跟着本书做实验。
 
 ## 常见项目创建问题
+%%%
+tag := "project-troubleshooting"
+%%%
 
 *问题 1：`lake exe cache get` 失败，报网络错误*
 
@@ -139,6 +157,9 @@ lake exe cache get
 ```
 
 ## 方式二：克隆本书配套仓库
+%%%
+tag := "clone-companion-repo"
+%%%
 
 ```
 git clone https://github.com/your-org/lean-auto-book-code.git
@@ -149,6 +170,9 @@ lake exe cache get
 （配套仓库包含每章的示例文件和练习题，后续会提供。）
 
 # 0.4 哪些 tactic 来自哪里
+%%%
+tag := "tactic-origins"
+%%%
 
 一个初学者常见的困惑：为什么有的 tactic 不需要 import 就能用，有的需要 `import Mathlib`？
 
@@ -172,10 +196,16 @@ lake exe cache get
 *简单规则*：如果 `import Mathlib` 能跑通，以上全部可用。本书示例默认在 Mathlib 项目环境中运行。
 
 # 0.5 本书的代码约定
+%%%
+tag := "code-conventions"
+%%%
 
 本书中的代码分为三类，请注意区分：
 
 ## 可运行示例
+%%%
+tag := "runnable-examples"
+%%%
 
 标注为 *\[可运行\]* 或没有特殊标注的代码块。你可以直接复制到 `.lean` 文件中运行。
 
@@ -185,6 +215,9 @@ example (x : ℝ) : x + 0 = x := by simp
 ```
 
 ## 示意代码
+%%%
+tag := "illustrative-code"
+%%%
 
 标注为 *\[示意\]*。展示内部机制或模式，可能省略了 import、辅助定义等。不保证直接编译。
 
@@ -196,6 +229,9 @@ elab "my_tactic" : tactic => do
 ```
 
 ## 伪代码
+%%%
+tag := "pseudocode"
+%%%
 
 标注为 *\[伪代码\]*。只用于解释算法流程，不是 Lean 代码。
 
@@ -208,6 +244,9 @@ elab "my_tactic" : tactic => do
 ```
 
 # 0.6 跟着本书学的建议
+%%%
+tag := "learning-tips"
+%%%
 
 1. *先跑再看*：每章的示例，先复制到 VS Code 里跑一遍，看目标状态的变化
 2. *改着玩*：把例子里的数字、函数、条件改一改，看 tactic 还能不能工作
@@ -216,6 +255,9 @@ elab "my_tactic" : tactic => do
 5. *查源码*：想深入理解某个 tactic 时，用 VS Code 的 "Go to Definition" 跳到源码
 
 # 0.7 全书结构概览
+%%%
+tag := "book-overview"
+%%%
 
 ```
 Part I:  基础（Ch1-5）     — 元编程模型、Expr、写 tactic、目标管理、typeclass
@@ -227,10 +269,16 @@ Part IV: 高级专题（Ch20-24） — 反射, 性能, 外部工具, 方法论, 
 *Part I-II 是核心*，建议按顺序读。Part III-IV 可以按需跳读。
 
 # 0.8 环境验证练习
+%%%
+tag := "setup-exercises"
+%%%
 
 在进入下一章之前，完成以下练习确认你的环境搭建成功。
 
 ## 练习 0.1（热身）：Hello, Lean!
+%%%
+tag := "exercise-0-1"
+%%%
 
 在你的项目中新建 `Hello.lean`，写入以下内容：
 
@@ -249,6 +297,9 @@ import Mathlib
 如果看不到输出，检查 VS Code 右侧的 "Lean Infoview" 面板是否打开（快捷键 `Ctrl+Shift+P` → "Lean 4: Infoview: Toggle"）。
 
 ## 练习 0.2（热身）：第一个证明
+%%%
+tag := "exercise-0-2"
+%%%
 
 ```
 -- [可运行]
@@ -262,6 +313,9 @@ example (n : ℕ) : n + 0 = n := by simp
 复制到 `.lean` 文件，确认没有红色波浪线。如果有——恭喜，你遇到了第一个 debug 机会！把光标移到红线上，看 Lean Infoview 里的错误信息。
 
 ## 练习 0.3（debug 练习）：故意出错
+%%%
+tag := "exercise-0-3"
+%%%
 
 以下代码有一个故意的错误，找出来并修复：
 
@@ -276,6 +330,9 @@ example (x : ℝ) : x * 1 = x := by
 提示：`ring_nf` 会化简但不一定能关闭目标。想想该用什么 tactic 替代？（答案：`ring` 可以直接关闭等式目标。试试把 `ring_nf` 换成 `ring`。）
 
 ## 练习 0.4（综合）：选对 tactic
+%%%
+tag := "exercise-0-4"
+%%%
 
 尝试分别用不同的 tactic 证明以下命题。哪个能用，哪个不能？
 
