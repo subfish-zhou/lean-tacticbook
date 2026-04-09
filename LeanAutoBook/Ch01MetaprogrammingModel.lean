@@ -14,7 +14,7 @@ tag := "ch01-metaprogramming-model"
 
 *本章目标*：理解 Lean 4 的元编程层次结构，建立"tactic 是什么、在哪里运行、怎么工作"的心智模型。
 
-# 1.1 为什么要理解元编程模型？
+# 为什么要理解元编程模型？
 %%%
 tag := "why-metaprogramming"
 %%%
@@ -23,7 +23,7 @@ tag := "why-metaprogramming"
 
 理解 tactic 的实现，第一步是理解它们运行的"操作系统"：Lean 4 的元编程 monad 栈。
 
-# 1.2 Monad 栈：从底层到顶层
+# Monad 栈：从底层到顶层
 %%%
 tag := "monad-stack"
 %%%
@@ -97,14 +97,12 @@ tag := "metam-typechecking"
 
 `MetaM` 是 Lean 元编程的核心层。以下关键操作都在 `MetaM` 中：
 
-| 操作 | 说明 |
-|------|------|
-| `inferType e` | 推断表达式 `e` 的类型 |
-| `isDefEq e1 e2` | 判断两个表达式是否定义等价（可能赋值元变量） |
-| `whnf e` | 将表达式规约到弱头范式 |
-| `mkFreshExprMVar t` | 创建类型为 `t` 的新元变量 |
-| `forallTelescope T f` | 展开 `∀` 类型，进入其 body |
-| `lambdaTelescope e f` | 展开 `λ` 表达式，进入其 body |
+- `inferType e`：推断表达式 `e` 的类型
+- `isDefEq e1 e2`：判断两个表达式是否定义等价（可能赋值元变量）
+- `whnf e`：将表达式规约到弱头范式
+- `mkFreshExprMVar t`：创建类型为 `t` 的新元变量
+- `forallTelescope T f`：展开 `∀` 类型，进入其 body
+- `lambdaTelescope e f`：展开 `λ` 表达式，进入其 body
 
 ## TermElabM：项的精化
 %%%
@@ -145,7 +143,7 @@ def getMainGoal : TacticM MVarId          -- 获取第一个目标
 def getMainTarget : TacticM Expr          -- 获取第一个目标的类型（命题）
 ```
 
-# 1.3 关键类型速览
+# 关键类型速览
 %%%
 tag := "key-types"
 %%%
@@ -183,7 +181,7 @@ tag := "fvarid-mvarid"
 - *`FVarId`*（free variable id）：局部上下文中的变量的唯一标识。当你在证明中引入假设 `h : P`，`h` 就是一个 `FVarId`。
 - *`MVarId`*（metavariable id）：元变量的唯一标识。每个未解决的证明目标就是一个 `MVarId`。
 
-# 1.4 tactic 是怎么注册和调用的
+# tactic 是怎么注册和调用的
 %%%
 tag := "tactic-registration"
 %%%
@@ -233,7 +231,7 @@ tag := "tactic-dispatch"
 4. `simp` 的实现运行，修改目标列表
 5. 剩余目标继续处理后续 tactic
 
-# 1.5 第一个 tactic：从零开始
+# 第一个 tactic：从零开始
 %%%
 tag := "first-tactic"
 %%%
@@ -277,7 +275,7 @@ elab "exact_if_rfl" : tactic => do
     throwTacticEx `exact_if_rfl goal "sides are not definitionally equal"
 ```
 
-# 1.6 层次之间的穿越
+# 层次之间的穿越
 %%%
 tag := "monad-lifting"
 %%%
@@ -300,24 +298,22 @@ def runTacticInMeta (mvarId : MVarId) (tac : TacticM Unit) : MetaM (List MVarId)
   Lean.Elab.Tactic.run mvarId tac
 ```
 
-# 1.7 小结
+# 小结
 %%%
 tag := "ch01-summary"
 %%%
 
-| Monad | 核心状态 | 典型操作 |
-|-------|---------|---------|
-| `CoreM` | `Environment`, `NameGenerator` | 查询定义、生成名字 |
-| `MetaM` | `LocalContext`, `MetavarContext` | 类型检查、创建元变量 |
-| `TermElabM` | 精化上下文 | 语法→表达式 |
-| `TacticM` | `goals : List MVarId` | 操作证明目标 |
+- `CoreM`：核心状态为 `Environment`、`NameGenerator`，典型操作为查询定义、生成名字
+- `MetaM`：核心状态为 `LocalContext`、`MetavarContext`，典型操作为类型检查、创建元变量
+- `TermElabM`：核心状态为精化上下文，典型操作为语法→表达式
+- `TacticM`：核心状态为 `goals : List MVarId`，典型操作为操作证明目标
 
 *核心原则*：
 - tactic 的本质是：接收目标列表，返回（更小的）目标列表
 - 每个未解决目标是一个 `MVarId`（元变量）
 - 解决目标 = 给元变量赋值一个正确的证明项
 
-# 1.8 常见失败模式与 debug
+# 常见失败模式与 debug
 %%%
 tag := "ch01-common-failures"
 %%%
@@ -371,7 +367,7 @@ tag := "failure-isdefeq-side-effect"
 let equal ← withoutModifyingState (isDefEq a b)
 ```
 
-# 1.9 练习
+# 练习
 %%%
 tag := "ch01-exercises"
 %%%

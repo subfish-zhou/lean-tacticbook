@@ -19,7 +19,7 @@ cat lean-toolchain          # 项目使用的 Lean 版本
 lake env lean --version     # 实际运行的 Lean 版本
 ```
 
-# 0.1 你需要什么基础
+# 你需要什么基础
 %%%
 tag := "prerequisites"
 %%%
@@ -31,7 +31,7 @@ tag := "prerequisites"
 
 如果你还没写过任何 Lean 代码，建议先完成 Mathematics in Lean 的前几章。
 
-# 0.2 安装 Lean 4
+# 安装 Lean 4
 %%%
 tag := "install-lean4"
 %%%
@@ -78,7 +78,7 @@ export PATH="$HOME/.elan/bin:$PATH"
 - 终端 `cd` 到了有 `lakefile.lean` 的目录
 - 用 `lake env lean YourFile.lean` 而不是裸 `lean YourFile.lean`
 
-# 0.3 创建本书的配套项目
+# 创建本书的配套项目
 %%%
 tag := "create-project"
 %%%
@@ -169,33 +169,31 @@ lake exe cache get
 
 （配套仓库包含每章的示例文件和练习题，后续会提供。）
 
-# 0.4 哪些 tactic 来自哪里
+# 哪些 tactic 来自哪里
 %%%
 tag := "tactic-origins"
 %%%
 
 一个初学者常见的困惑：为什么有的 tactic 不需要 import 就能用，有的需要 `import Mathlib`？
 
-| tactic | 来源 | 需要 import |
-|--------|------|------------|
-| `simp` | Lean core | 不需要（但 `@[simp]` 引理大部分来自 Mathlib） |
-| `ring` | Mathlib | `import Mathlib.Tactic.Ring` |
-| `omega` | Lean core（v4.8+） | 不需要 |
-| `linarith` | Mathlib | `import Mathlib.Tactic.Linarith` |
-| `nlinarith` | Mathlib | `import Mathlib.Tactic.Linarith` |
-| `polyrith` | Mathlib | `import Mathlib.Tactic.Polyrith` |
-| `norm_num` | Mathlib | `import Mathlib.Tactic.NormNum` |
-| `aesop` | Lean core + Mathlib 规则 | `import Aesop`（core）或 Mathlib |
-| `grind` | Lean core（v4.14+） | 不需要 |
-| `decide` | Lean core | 不需要 |
-| `positivity` | Mathlib | `import Mathlib.Tactic.Positivity` |
-| `field_simp` | Mathlib | `import Mathlib.Tactic.FieldSimp` |
-| `gcongr` | Mathlib | `import Mathlib.Tactic.GCongr` |
-| `fun_prop` | Mathlib | `import Mathlib.Tactic.FunProp` |
+- `simp`：Lean core，不需要 import（但 `@[simp]` 引理大部分来自 Mathlib）
+- `ring`：Mathlib，`import Mathlib.Tactic.Ring`
+- `omega`：Lean core（v4.8+），不需要 import
+- `linarith`：Mathlib，`import Mathlib.Tactic.Linarith`
+- `nlinarith`：Mathlib，`import Mathlib.Tactic.Linarith`
+- `polyrith`：Mathlib，`import Mathlib.Tactic.Polyrith`
+- `norm_num`：Mathlib，`import Mathlib.Tactic.NormNum`
+- `aesop`：Lean core + Mathlib 规则，`import Aesop`（core）或 Mathlib
+- `grind`：Lean core（v4.14+），不需要 import
+- `decide`：Lean core，不需要 import
+- `positivity`：Mathlib，`import Mathlib.Tactic.Positivity`
+- `field_simp`：Mathlib，`import Mathlib.Tactic.FieldSimp`
+- `gcongr`：Mathlib，`import Mathlib.Tactic.GCongr`
+- `fun_prop`：Mathlib，`import Mathlib.Tactic.FunProp`
 
 *简单规则*：如果 `import Mathlib` 能跑通，以上全部可用。本书示例默认在 Mathlib 项目环境中运行。
 
-# 0.5 本书的代码约定
+# 本书的代码约定
 %%%
 tag := "code-conventions"
 %%%
@@ -243,7 +241,7 @@ tag := "pseudocode"
 4. 检查矛盾
 ```
 
-# 0.6 跟着本书学的建议
+# 跟着本书学的建议
 %%%
 tag := "learning-tips"
 %%%
@@ -254,7 +252,7 @@ tag := "learning-tips"
 4. *做练习*：每章末尾的练习是学习闭环的关键，不要跳过
 5. *查源码*：想深入理解某个 tactic 时，用 VS Code 的 "Go to Definition" 跳到源码
 
-# 0.7 全书结构概览
+# 全书结构概览
 %%%
 tag := "book-overview"
 %%%
@@ -268,7 +266,7 @@ Part IV: 高级专题（Ch20-24） — 反射, 性能, 外部工具, 方法论, 
 
 *Part I-II 是核心*，建议按顺序读。Part III-IV 可以按需跳读。
 
-# 0.8 环境验证练习
+# 环境验证练习
 %%%
 tag := "setup-exercises"
 %%%
