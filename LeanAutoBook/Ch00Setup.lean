@@ -4,7 +4,7 @@ open Verso.Genre Manual
 open Verso Code External
 
 set_option verso.exampleProject "../examples"
-set_option verso.exampleModule "Examples.Ch01MetaprogrammingModel"
+set_option verso.exampleModule "Examples.Ch00Setup"
 
 #doc (Manual) "第零章 环境与运行约定" =>
 %%%
@@ -186,7 +186,7 @@ tag := "tactic-origins"
 - `linarith`：Mathlib，{lit}`import Mathlib.Tactic.Linarith`
 - `nlinarith`：Mathlib，{lit}`import Mathlib.Tactic.Linarith`
 - `polyrith`：Mathlib，{lit}`import Mathlib.Tactic.Polyrith`
-- `norm_num`：Mathlib，{lit}`import Mathlib.Tactic.NormNum`
+- {moduleTerm}`norm_num`：Mathlib，{lit}`import Mathlib.Tactic.NormNum`
 - `aesop`：Lean core + Mathlib 规则，{lit}`import Aesop`（core）或 Mathlib
 - `grind`：Lean core（v4.14+），不需要 import
 - `decide`：Lean core，不需要 import
