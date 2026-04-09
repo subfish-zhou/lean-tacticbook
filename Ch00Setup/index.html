@@ -1133,23 +1133,23 @@ lake exe cache get
                   </li>
                 <li>
                   <p>
-                    <code>ring</code>：Mathlib，<code>import Mathlib.Tactic.Ring</code></p>
+                    <code class="hl lean inline" data-lean-context="examples"><span class="keyword token" data-binding="">ring</span></code>：Mathlib，<code>import Mathlib.Tactic.Ring</code></p>
                   </li>
                 <li>
                   <p>
-                    <code>omega</code>：Lean core（v4.8+），不需要 import</p>
+                    <code class="hl lean inline" data-lean-context="examples"><span class="keyword token" data-binding="">omega</span></code>：Lean core（v4.8+），不需要 import</p>
                   </li>
                 <li>
                   <p>
-                    <code>linarith</code>：Mathlib，<code>import Mathlib.Tactic.Linarith</code></p>
+                    <code class="hl lean inline" data-lean-context="examples"><span class="keyword token" data-binding="">linarith</span></code>：Mathlib，<code>import Mathlib.Tactic.Linarith</code></p>
                   </li>
                 <li>
                   <p>
-                    <code>nlinarith</code>：Mathlib，<code>import Mathlib.Tactic.Linarith</code></p>
+                    <code class="hl lean inline" data-lean-context="examples"><span class="keyword token" data-binding="">nlinarith</span></code>：Mathlib，<code>import Mathlib.Tactic.Linarith</code></p>
                   </li>
                 <li>
                   <p>
-                    <code>polyrith</code>：Mathlib，<code>import Mathlib.Tactic.Polyrith</code></p>
+                    <code class="hl lean inline" data-lean-context="examples"><span class="keyword token" data-binding="">polyrith</span></code>：Mathlib，<code>import Mathlib.Tactic.Polyrith</code></p>
                   </li>
                 <li>
                   <p>
@@ -1157,31 +1157,31 @@ lake exe cache get
                   </li>
                 <li>
                   <p>
-                    <code>aesop</code>：Lean core + Mathlib 规则，<code>import Aesop</code>（core）或 Mathlib</p>
+                    <code class="hl lean inline" data-lean-context="examples"><span class="keyword token" data-binding="">aesop</span></code>：Lean core + Mathlib 规则，<code>import Aesop</code>（core）或 Mathlib</p>
                   </li>
                 <li>
                   <p>
-                    <code>grind</code>：Lean core（v4.14+），不需要 import</p>
+                    <code class="hl lean inline" data-lean-context="examples"><span class="keyword token" data-binding="">grind</span></code>：Lean core（v4.14+），不需要 import</p>
                   </li>
                 <li>
                   <p>
-                    <code>decide</code>：Lean core，不需要 import</p>
+                    <code class="hl lean inline" data-lean-context="examples"><span class="keyword token" data-binding="">decide</span></code>：Lean core，不需要 import</p>
                   </li>
                 <li>
                   <p>
-                    <code>positivity</code>：Mathlib，<code>import Mathlib.Tactic.Positivity</code></p>
+                    <code class="hl lean inline" data-lean-context="examples"><span class="keyword token" data-binding="">positivity</span></code>：Mathlib，<code>import Mathlib.Tactic.Positivity</code></p>
                   </li>
                 <li>
                   <p>
-                    <code>field_simp</code>：Mathlib，<code>import Mathlib.Tactic.FieldSimp</code></p>
+                    <code class="hl lean inline" data-lean-context="examples"><span class="keyword token" data-binding="">field_simp</span></code>：Mathlib，<code>import Mathlib.Tactic.FieldSimp</code></p>
                   </li>
                 <li>
                   <p>
-                    <code>gcongr</code>：Mathlib，<code>import Mathlib.Tactic.GCongr</code></p>
+                    <code class="hl lean inline" data-lean-context="examples"><span class="keyword token" data-binding="">gcongr</span></code>：Mathlib，<code>import Mathlib.Tactic.GCongr</code></p>
                   </li>
                 <li>
                   <p>
-                    <code>fun_prop</code>：Mathlib，<code>import Mathlib.Tactic.FunProp</code></p>
+                    <code class="hl lean inline" data-lean-context="examples"><span class="keyword token" data-binding="">fun_prop</span></code>：Mathlib，<code>import Mathlib.Tactic.FunProp</code></p>
                   </li>
                 </ul>
               <p>
@@ -1236,7 +1236,7 @@ elab "my_tactic" : tactic =&gt; do
                   </li>
                 <li>
                   <p>
-                    <strong>故意破坏</strong>：把 <code class="hl lean inline" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Tactic.simp-313" data-verso-hover="0">simp</span></code> 换成 <code>ring</code>，看报错信息——理解"为什么不行"和"为什么行"一样重要</p>
+                    <strong>故意破坏</strong>：把 <code class="hl lean inline" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Tactic.simp-313" data-verso-hover="0">simp</span></code> 换成 <code class="hl lean inline" data-lean-context="examples"><span class="keyword token" data-binding="">ring</span></code>，看报错信息——理解"为什么不行"和"为什么行"一样重要</p>
                   </li>
                 <li>
                   <p>
@@ -1311,7 +1311,7 @@ import Mathlib
 example (x : ℝ) : x * 1 = x := by
   ring_nf
 </pre><p>
-                  提示：<code>ring_nf</code> 会化简但不一定能关闭目标。想想该用什么 tactic 替代？（答案：<code>ring</code> 可以直接关闭等式目标。试试把 <code>ring_nf</code> 换成 <code>ring</code>。）</p>
+                  提示：<code class="hl lean inline" data-lean-context="examples"><span class="keyword token" data-binding="">ring_nf</span></code> 会化简但不一定能关闭目标。想想该用什么 tactic 替代？（答案：<code class="hl lean inline" data-lean-context="examples"><span class="keyword token" data-binding="">ring</span></code> 可以直接关闭等式目标。试试把 <code class="hl lean inline" data-lean-context="examples"><span class="keyword token" data-binding="">ring_nf</span></code> 换成 <code class="hl lean inline" data-lean-context="examples"><span class="keyword token" data-binding="">ring</span></code>。）</p>
                 </section>
               <section>
                 <h3 id="exercise-0-4">

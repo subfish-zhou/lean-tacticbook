@@ -973,7 +973,7 @@ window.onload = () => {
               <h2 id="why-metaprogramming">
                 2.1. 为什么要理解元编程模型？<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=why-metaprogramming" title="Permalink">🔗</a></span></h2>
               <p>
-                当你写下 <code>simp</code> 或 <code>linarith</code>，你调用的不只是一个函数——你在执行一段 <strong>元程序</strong>：一段在 Lean 的推导引擎内部运行、操作证明状态的程序。</p>
+                当你写下 <code>simp</code> 或 <code class="hl lean inline" data-lean-context="examples"><span class="keyword token" data-binding="">linarith</span></code>，你调用的不只是一个函数——你在执行一段 <strong>元程序</strong>：一段在 Lean 的推导引擎内部运行、操作证明状态的程序。</p>
               <p>
                 理解 tactic 的实现，第一步是理解它们运行的"操作系统"：Lean 4 的元编程 monad 栈。</p>
               </section>
@@ -1234,7 +1234,7 @@ open Lean Elab Tactic Meta
   </span><span class="tactic"><label for="tactic-state-7-516-520-4"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Tactic.simp-516" data-verso-hover="0">simp</span></label><input type="checkbox" class="tactic-toggle" id="tactic-state-7-516-520-4"><span class="tactic-state">All goals completed! 🐙</span></span></code><p>
                 <strong>注意</strong>：<code>trace_goal</code> 只打印信息、不改变目标，所以 Lean 可能会显示 <code>"tactic does nothing"</code> 的 linter 警告。这不是 bug——tactic 确实运行了，只是没有修改 goal 状态。忽略这个警告即可。</p>
               <p>
-                再写一个稍复杂的：<code>exact_if_rfl</code>，如果目标是 <code>a = a</code> 就用 <code>rfl</code> 关闭，否则报错。</p>
+                再写一个稍复杂的：<code>exact_if_rfl</code>，如果目标是 <code>a = a</code> 就用 <code class="hl lean inline" data-lean-context="examples"><span class="keyword token" data-binding="">rfl</span></code> 关闭，否则报错。</p>
               <pre>elab "exact_if_rfl" : tactic =&gt; do
   let goal ← getMainGoal
   let goalType ← goal.getType
@@ -1417,7 +1417,7 @@ example : (42 : Nat) = 42 := by close_rfl
                 <h3 id="exercise-1-4">
                   2.9.4. 练习 1.4（综合）：实现 <code>my_rfl</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-1-4" title="Permalink">🔗</a></span></h3>
                 <p>
-                  不用 <code>macro</code>，用完整的 <code>elab_rules</code> 实现一个 <code>my_rfl</code> tactic：如果目标是定义等价的等式（<code>a = b</code> 且 <code>a</code> 和 <code>b</code> 定义等价），用 <code>rfl</code> 关闭；否则给出清晰的错误信息（包含目标内容）。</p>
+                  不用 <code>macro</code>，用完整的 <code>elab_rules</code> 实现一个 <code>my_rfl</code> tactic：如果目标是定义等价的等式（<code>a = b</code> 且 <code>a</code> 和 <code>b</code> 定义等价），用 <code class="hl lean inline" data-lean-context="examples"><span class="keyword token" data-binding="">rfl</span></code> 关闭；否则给出清晰的错误信息（包含目标内容）。</p>
                 <p>
                   测试用例：</p>
                 <pre>-- [可运行] 实现 my_rfl 后，以下应全部通过
