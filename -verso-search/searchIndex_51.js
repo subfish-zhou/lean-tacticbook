@@ -1,0 +1,1 @@
+window.docContents[51].resolve({"/Ch02Expr/#expr-utility-functions":{"contents":"MetaM 提供了大量操作 Expr 的工具：\n\n\n\n\n\n\n\n","context":"Lean 4 自动化内幕\u0009第二章 Expr：Lean 4 的内部表示","header":"3.7. 2.7 实用工具函数","id":"/Ch02Expr/#expr-utility-functions"}});

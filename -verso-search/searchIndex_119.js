@@ -1,0 +1,1 @@
+window.docContents[119].resolve({"/Ch01MetaprogrammingModel/#why-metaprogramming":{"contents":"当你写下 simp 或 linarith，你调用的不只是一个函数——你在执行一段 元程序：一段在 Lean 的推导引擎内部运行、操作证明状态的程序。\n\n理解 tactic 的实现，第一步是理解它们运行的\"操作系统\"：Lean 4 的元编程 monad 栈。\n\n","context":"Lean 4 自动化内幕\u0009第一章 Lean 4 元编程模型","header":"2.1. 1.1 为什么要理解元编程模型？","id":"/Ch01MetaprogrammingModel/#why-metaprogramming"}});

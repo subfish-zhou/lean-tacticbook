@@ -1,0 +1,1 @@
+window.docContents[50].resolve({"/Ch00Setup/#prerequisites":{"contents":"本书假设你：\n\n* 会基本的数学（本科水平的代数、分析即可）* 在 Lean 4 中写过简单的形式化证明（by simp、by ring、by intro h; exact h 这类）* 了解 theorem、example、by 的基本语法\n\n如果你还没写过任何 Lean 代码，建议先完成 Mathematics in Lean 的前几章。\n\n","context":"Lean 4 自动化内幕\u0009第零章 环境与运行约定","header":"1.1. 0.1 你需要什么基础","id":"/Ch00Setup/#prerequisites"}});

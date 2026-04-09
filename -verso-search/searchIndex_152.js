@@ -1,0 +1,1 @@
+window.docContents[152].resolve({"/Ch02Expr/#ch02-common-failures":{"contents":"\n\n\n\n\n\n\n\n","context":"Lean 4 自动化内幕\u0009第二章 Expr：Lean 4 的内部表示","header":"3.9. 2.9 常见失败模式与 debug","id":"/Ch02Expr/#ch02-common-failures"}});

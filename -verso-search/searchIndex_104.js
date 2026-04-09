@@ -1,0 +1,1 @@
+window.docContents[104].resolve({"/Ch01MetaprogrammingModel/#tactic-registration":{"contents":"\n\n\n\n","context":"Lean 4 自动化内幕\u0009第一章 Lean 4 元编程模型","header":"2.4. 1.4 tactic 是怎么注册和调用的","id":"/Ch01MetaprogrammingModel/#tactic-registration"}});

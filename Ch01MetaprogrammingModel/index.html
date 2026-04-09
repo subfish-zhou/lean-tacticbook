@@ -47,42 +47,465 @@
             <div class="split-toc">
               <div class="title">
                 <label for="--verso-manual-toc-ch01-metaprogramming-model" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch01-metaprogramming-model" checked="checked"></label><span class="number">2.</span> <span class="current"><a href="Ch01MetaprogrammingModel/#ch01-metaprogramming-model">第一章 Lean 4 元编程模型</a></span></div>
-              <table><tr class="numbered"><td class="num">2.1.</td><td><a href="Ch01MetaprogrammingModel/1___1-____________________________________/#Lean-4-_______________--_________-Lean-4-_______________--1___1-____________________________________">1.1 为什么要理解元编程模型？</a></td></tr><tr class="numbered"><td class="num">2.2.</td><td><a href="Ch01MetaprogrammingModel/1___2-Monad-________________________/#Lean-4-_______________--_________-Lean-4-_______________--1___2-Monad-________________________">1.2 Monad 栈：从底层到顶层</a></td></tr><tr class="numbered"><td class="num">2.3.</td><td><a href="Ch01MetaprogrammingModel/1___3-__________________/#Lean-4-_______________--_________-Lean-4-_______________--1___3-__________________">1.3 关键类型速览</a></td></tr><tr class="numbered"><td class="num">2.4.</td><td><a href="Ch01MetaprogrammingModel/1___4-tactic-___________________________/#Lean-4-_______________--_________-Lean-4-_______________--1___4-tactic-___________________________">1.4 tactic 是怎么注册和调用的</a></td></tr><tr class="numbered"><td class="num">2.5.</td><td><a href="Ch01MetaprogrammingModel/1___5-_________-tactic_______________/#Lean-4-_______________--_________-Lean-4-_______________--1___5-_________-tactic_______________">1.5 第一个 tactic：从零开始</a></td></tr><tr class="numbered"><td class="num">2.6.</td><td><a href="Ch01MetaprogrammingModel/1___6-_____________________/#Lean-4-_______________--_________-Lean-4-_______________--1___6-_____________________">1.6 层次之间的穿越</a></td></tr><tr class="numbered"><td class="num">2.7.</td><td><a href="Ch01MetaprogrammingModel/1___7-______/#Lean-4-_______________--_________-Lean-4-_______________--1___7-______">1.7 小结</a></td></tr><tr class="numbered"><td class="num">2.8.</td><td><a href="Ch01MetaprogrammingModel/1___8-_____________________-debug/#Lean-4-_______________--_________-Lean-4-_______________--1___8-_____________________-debug">1.8 常见失败模式与 debug</a></td></tr><tr class="numbered"><td class="num">2.9.</td><td><a href="Ch01MetaprogrammingModel/1___9-______/#Lean-4-_______________--_________-Lean-4-_______________--1___9-______">1.9 练习</a></td></tr></table></div>
+              <table><tr class="numbered"><td class="num">2.1.</td><td><a href="Ch01MetaprogrammingModel/#why-metaprogramming">1.1 为什么要理解元编程模型？</a></td></tr><tr class="numbered"><td class="num">2.2.</td><td><a href="Ch01MetaprogrammingModel/#monad-stack">1.2 Monad 栈：从底层到顶层</a></td></tr><tr class="numbered"><td class="num">2.3.</td><td><a href="Ch01MetaprogrammingModel/#key-types">1.3 关键类型速览</a></td></tr><tr class="numbered"><td class="num">2.4.</td><td><a href="Ch01MetaprogrammingModel/#tactic-registration">1.4 tactic 是怎么注册和调用的</a></td></tr><tr class="numbered"><td class="num">2.5.</td><td><a href="Ch01MetaprogrammingModel/#first-tactic">1.5 第一个 tactic：从零开始</a></td></tr><tr class="numbered"><td class="num">2.6.</td><td><a href="Ch01MetaprogrammingModel/#monad-lifting">1.6 层次之间的穿越</a></td></tr><tr class="numbered"><td class="num">2.7.</td><td><a href="Ch01MetaprogrammingModel/#ch01-summary">1.7 小结</a></td></tr><tr class="numbered"><td class="num">2.8.</td><td><a href="Ch01MetaprogrammingModel/#ch01-common-failures">1.8 常见失败模式与 debug</a></td></tr><tr class="numbered"><td class="num">2.9.</td><td><a href="Ch01MetaprogrammingModel/#ch01-exercises">1.9 练习</a></td></tr></table></div>
             </div>
           </div>
-        <div class="last"></div>
+        <div class="last">
+          <ul id="meta-links">
+            <li>
+              <a href="https://github.com/subfish-zhou/lean-tacticbook">Source Code</a></li>
+            <li>
+              <a href="https://github.com/subfish-zhou/lean-tacticbook/issues">Report Issues</a></li>
+            </ul>
+          </div>
         </nav>
       <main><div class="content-wrapper">
           <nav class="prev-next-buttons">
-            <a class="local-button active" href="Ch00Setup/0___8-__________________/#Lean-4-_______________--_________-_____________________--0___8-__________________" rel="prev" title="1.8. 0.8 环境验证练习"><span class="arrow">←</span><span class="where">1.8. 0.8 环境验证练习</span></a><a class="local-button active" href="Ch01MetaprogrammingModel/1___1-____________________________________/#Lean-4-_______________--_________-Lean-4-_______________--1___1-____________________________________" rel="next" title="2.1. 1.1 为什么要理解元编程模型？"><span class="where">2.1. 1.1 为什么要理解元编程模型？</span><span class="arrow">→</span></a></nav>
+            <a class="local-button active" href="Ch00Setup/#ch00-setup" rel="prev" title="1. 第零章 环境与运行约定"><span class="arrow">←</span><span class="where">1. 第零章 环境与运行约定</span></a><a class="local-button active" href="Ch02Expr/#ch02-expr" rel="next" title="3. 第二章 Expr：Lean 4 的内部表示"><span class="where">3. 第二章 Expr：Lean 4 的内部表示</span><span class="arrow">→</span></a></nav>
           <section>
             <h1>
               2. 第一章 Lean 4 元编程模型<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch01-metaprogramming-model" title="Permalink">🔗</a></span></h1>
             <p>
               <strong>本章目标</strong>：理解 Lean 4 的元编程层次结构，建立"tactic 是什么、在哪里运行、怎么工作"的心智模型。</p>
-            <ol class="section-toc">
-              <li>
-                <a href="Ch01MetaprogrammingModel/1___1-____________________________________/#Lean-4-_______________--_________-Lean-4-_______________--1___1-____________________________________"><span class="number">2.1.</span> 1.1 为什么要理解元编程模型？</a></li>
-              <li>
-                <a href="Ch01MetaprogrammingModel/1___2-Monad-________________________/#Lean-4-_______________--_________-Lean-4-_______________--1___2-Monad-________________________"><span class="number">2.2.</span> 1.2 Monad 栈：从底层到顶层</a></li>
-              <li>
-                <a href="Ch01MetaprogrammingModel/1___3-__________________/#Lean-4-_______________--_________-Lean-4-_______________--1___3-__________________"><span class="number">2.3.</span> 1.3 关键类型速览</a></li>
-              <li>
-                <a href="Ch01MetaprogrammingModel/1___4-tactic-___________________________/#Lean-4-_______________--_________-Lean-4-_______________--1___4-tactic-___________________________"><span class="number">2.4.</span> 1.4 tactic 是怎么注册和调用的</a></li>
-              <li>
-                <a href="Ch01MetaprogrammingModel/1___5-_________-tactic_______________/#Lean-4-_______________--_________-Lean-4-_______________--1___5-_________-tactic_______________"><span class="number">2.5.</span> 1.5 第一个 tactic：从零开始</a></li>
-              <li>
-                <a href="Ch01MetaprogrammingModel/1___6-_____________________/#Lean-4-_______________--_________-Lean-4-_______________--1___6-_____________________"><span class="number">2.6.</span> 1.6 层次之间的穿越</a></li>
-              <li>
-                <a href="Ch01MetaprogrammingModel/1___7-______/#Lean-4-_______________--_________-Lean-4-_______________--1___7-______"><span class="number">2.7.</span> 1.7 小结</a></li>
-              <li>
-                <a href="Ch01MetaprogrammingModel/1___8-_____________________-debug/#Lean-4-_______________--_________-Lean-4-_______________--1___8-_____________________-debug"><span class="number">2.8.</span> 1.8 常见失败模式与 debug</a></li>
-              <li>
-                <a href="Ch01MetaprogrammingModel/1___9-______/#Lean-4-_______________--_________-Lean-4-_______________--1___9-______"><span class="number">2.9.</span> 1.9 练习</a></li>
-              </ol>
+            <section>
+              <h2 id="why-metaprogramming">
+                2.1. 1.1 为什么要理解元编程模型？<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=why-metaprogramming" title="Permalink">🔗</a></span></h2>
+              <p>
+                当你写下 <code>simp</code> 或 <code>linarith</code>，你调用的不只是一个函数——你在执行一段 <strong>元程序</strong>：一段在 Lean 的推导引擎内部运行、操作证明状态的程序。</p>
+              <p>
+                理解 tactic 的实现，第一步是理解它们运行的"操作系统"：Lean 4 的元编程 monad 栈。</p>
+              </section>
+            <section>
+              <h2 id="monad-stack">
+                2.2. 1.2 Monad 栈：从底层到顶层<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=monad-stack" title="Permalink">🔗</a></span></h2>
+              <p>
+                Lean 4 的元编程由四层 monad 组成，从底到顶依次叠加：</p>
+              <pre>CoreM          ← 基础层：环境 + 名字生成器 + 选项
+  └─ MetaM     ← 元变量 + 局部上下文 + 类型检查
+      └─ TermElabM  ← 项的精化（elaboration）
+          └─ TacticM    ← tactic 框架：目标列表管理
+</pre><p>
+                每一层的定义都能在 Lean 源码中找到：</p>
+              <pre>-- Lean/CoreM.lean
+abbrev CoreM := ReaderT Context &lt;| StateRefT State (EIO Exception)
+
+-- Lean/Meta/Basic.lean
+abbrev MetaM := ReaderT Context $ StateRefT State CoreM
+
+-- Lean/Elab/Term.lean
+abbrev TermElabM := ReaderT Context $ StateRefT State MetaM
+
+-- Lean/Elab/Tactic/Basic.lean
+abbrev TacticM := ReaderT Context $ StateRefT State TermElabM
+</pre><p>
+                每一层都是 <code>ReaderT Context (StateRefT State ...)</code> 的模式：有只读的 <code>Context</code>（配置/环境），有可变的 <code>State</code>（当前状态）。</p>
+              <section>
+                <h3 id="corem-basics">
+                  2.2.1. CoreM：基础层<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=corem-basics" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>CoreM</code> 是整个系统的地基。它的 <code>State</code> 包含：</p>
+                <pre>structure State where
+  env           : Environment      -- 当前环境（所有定义/定理）
+  nextMacroScope: MacroScope       -- 宏展开用的作用域计数器
+  ngen          : NameGenerator    -- 唯一名字生成器
+  traceState    : TraceState       -- trace 信息
+  messages      : MessageLog       -- 错误/警告消息
+</pre><p>
+                  它的 <code>Context</code> 包含：</p>
+                <pre>structure Context where
+  fileName      : String           -- 当前文件名
+  options       : Options          -- 用户选项（set_option）
+  currNamespace : Name             -- 当前命名空间
+  maxHeartbeats : Nat              -- 超时限制
+  currMacroScope: MacroScope       -- 当前宏作用域
+</pre><p>
+                  <code>CoreM</code> 能做什么：查询/修改环境、生成新名字、记录消息、读取选项。<strong>不能</strong>做类型检查或创建元变量。</p>
+                </section>
+              <section>
+                <h3 id="metam-typechecking">
+                  2.2.2. MetaM：元变量与类型检查<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=metam-typechecking" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>MetaM</code> 在 <code>CoreM</code> 之上添加了：</p>
+                <ul>
+                  <li>
+                    <p>
+                      <strong><code>LocalContext</code></strong>：当前的局部变量（free variables, <code>FVarId</code>）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong><code>MetavarContext</code></strong>：所有元变量（<code>MVarId</code>）的声明和赋值</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>类型检查缓存</strong>：<code>inferType</code>、<code>isDefEq</code>、<code>whnf</code> 的结果缓存</p>
+                    </li>
+                  </ul>
+                <p>
+                  <code>MetaM</code> 是 Lean 元编程的核心层。以下关键操作都在 <code>MetaM</code> 中：</p>
+                <p>
+                  | 操作 | 说明 |
+|------|------|
+| <code>inferType e</code> | 推断表达式 <code>e</code> 的类型 |
+| <code>isDefEq e1 e2</code> | 判断两个表达式是否定义等价（可能赋值元变量） |
+| <code>whnf e</code> | 将表达式规约到弱头范式 |
+| <code>mkFreshExprMVar t</code> | 创建类型为 <code>t</code> 的新元变量 |
+| <code>forallTelescope T f</code> | 展开 <code>∀</code> 类型，进入其 body |
+| <code>lambdaTelescope e f</code> | 展开 <code>λ</code> 表达式，进入其 body |</p>
+                </section>
+              <section>
+                <h3 id="termelabm-elaboration">
+                  2.2.3. TermElabM：项的精化<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=termelabm-elaboration" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>TermElabM</code> 处理从语法到表达式的转换（elaboration）。当你写 <code>x + 1</code>，elaborator 负责：</p>
+                <ul>
+                  <li>
+                    <p>
+                      推断 <code>x</code> 的类型</p>
+                    </li>
+                  <li>
+                    <p>
+                      找到合适的 <code>+</code> 实例</p>
+                    </li>
+                  <li>
+                    <p>
+                      插入隐式参数</p>
+                    </li>
+                  </ul>
+                <p>
+                  对于 tactic 编写者，<code>TermElabM</code> 主要用于在 tactic 中使用 <code>elabTerm</code> 将语法片段精化为表达式。</p>
+                </section>
+              <section>
+                <h3 id="tacticm-goals">
+                  2.2.4. TacticM：目标管理<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=tacticm-goals" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>TacticM</code> 是 tactic 的直接运行环境。它的 <code>State</code> 核心很简单：</p>
+                <pre>-- Lean/Elab/Tactic/Basic.lean
+structure State where
+  goals : List MVarId   -- 当前待证目标列表
+
+abbrev TacticM := ReaderT Context $ StateRefT State TermElabM
+abbrev Tactic  := Syntax → TacticM Unit
+</pre><p>
+                  <strong>关键心智模型</strong>：一个 tactic 接收一个 <code>goals : List MVarId</code>，执行某些操作后产生新的 <code>goals</code>。"证明完成"就是 <code>goals</code> 变为空列表。</p>
+                <p>
+                  基本的目标操作：</p>
+                <pre>def getGoals : TacticM (List MVarId)      -- 获取当前所有目标
+def setGoals (gs : List MVarId) : TacticM Unit  -- 设置目标列表
+def getMainGoal : TacticM MVarId          -- 获取第一个目标
+def getMainTarget : TacticM Expr          -- 获取第一个目标的类型（命题）
+</pre></section>
+              </section>
+            <section>
+              <h2 id="key-types">
+                2.3. 1.3 关键类型速览<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=key-types" title="Permalink">🔗</a></span></h2>
+              <p>
+                理解元编程需要熟悉这几个核心类型：</p>
+              <section>
+                <h3 id="name-type">
+                  2.3.1. Name<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=name-type" title="Permalink">🔗</a></span></h3>
+                <p>
+                  Lean 中一切都有名字。<code>Name</code> 是一个层次化的标识符：</p>
+                <pre>-- `Nat.add` 表示为：
+Name.str (Name.str Name.anonymous "Nat") "add"
+-- 或用反引号语法：
+``Nat.add
+</pre><p>
+                  在元程序中，你会频繁用到反引号语法来引用名字。</p>
+                </section>
+              <section>
+                <h3 id="expr-type-overview">
+                  2.3.2. Expr<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=expr-type-overview" title="Permalink">🔗</a></span></h3>
+                <p>
+                  表达式树，Lean 中所有项的内部表示。详见第二章。</p>
+                </section>
+              <section>
+                <h3 id="fvarid-mvarid">
+                  2.3.3. FVarId 与 MVarId<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=fvarid-mvarid" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong><code>FVarId</code></strong>（free variable id）：局部上下文中的变量的唯一标识。当你在证明中引入假设 <code>h : P</code>，<code>h</code> 就是一个 <code>FVarId</code>。</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong><code>MVarId</code></strong>（metavariable id）：元变量的唯一标识。每个未解决的证明目标就是一个 <code>MVarId</code>。</p>
+                    </li>
+                  </ul>
+                </section>
+              </section>
+            <section>
+              <h2 id="tactic-registration">
+                2.4. 1.4 tactic 是怎么注册和调用的<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=tactic-registration" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="elab-and-macro">
+                  2.4.1. 注册：<code>elab</code> 和 <code>macro</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=elab-and-macro" title="Permalink">🔗</a></span></h3>
+                <p>
+                  在 Lean 4 中，注册一个新 tactic 有两条路：</p>
+                <p>
+                  <strong>方式一：<code>macro</code></strong>（语法糖，展开为其他 tactic）</p>
+                <pre>macro "my_rfl" : tactic =&gt; `(tactic| rfl)
+</pre><p>
+                  <code>macro</code> 在语法层面展开，不进入 <code>TacticM</code>。适合简单的 tactic 组合。</p>
+                <p>
+                  <strong>方式二：<code>elab</code></strong>（完整的语义实现）</p>
+                <pre>syntax "my_assumption" : tactic
+
+elab_rules : tactic
+  | `(tactic| my_assumption) =&gt; do
+    let goal ← getMainGoal
+    let lctx ← getLCtx
+    for decl in lctx do
+      if ← isDefEq decl.type (← goal.getType) then
+        goal.assign decl.toExpr
+        return
+    throwTacticEx `my_assumption goal "no matching hypothesis"
+</pre><p>
+                  <code>elab_rules</code> 进入 <code>TacticM</code>，可以完整访问证明状态。</p>
+                </section>
+              <section>
+                <h3 id="tactic-dispatch">
+                  2.4.2. 调用流程<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=tactic-dispatch" title="Permalink">🔗</a></span></h3>
+                <p>
+                  当 Lean 解析 <code>by simp</code> 时：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <code>by</code> 关键字触发 tactic block 的解析</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>simp</code> 被匹配到它注册的 <code>elab_rules</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      当前目标列表作为 <code>TacticM</code> 的状态传入</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>simp</code> 的实现运行，修改目标列表</p>
+                    </li>
+                  <li>
+                    <p>
+                      剩余目标继续处理后续 tactic</p>
+                    </li>
+                  </ol>
+                </section>
+              </section>
+            <section>
+              <h2 id="first-tactic">
+                2.5. 1.5 第一个 tactic：从零开始<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=first-tactic" title="Permalink">🔗</a></span></h2>
+              <p>
+                来写一个有实际功能的最小 tactic。目标：实现 <code>trace_goal</code>，打印当前目标然后什么都不做。</p>
+              <pre>-- [可运行]
+import Lean
+open Lean Elab Tactic Meta
+
+syntax "trace_goal" : tactic
+
+elab_rules : tactic
+  | `(tactic| trace_goal) =&gt; do
+    let goal ← getMainGoal           -- 获取第一个目标的 MVarId
+    let goalType ← goal.getType      -- 获取目标类型（Expr）
+    let goalPP ← ppExpr goalType     -- 美化打印
+    logInfo m!"Current goal: {goalPP}"
+
+-- 测试
+example (n : Nat) : n + 0 = n := by
+  trace_goal  -- 输出: Current goal: n + 0 = n
+  simp
+</pre><p>
+                <strong>注意</strong>：<code>trace_goal</code> 只打印信息、不改变目标，所以 Lean 可能会显示 <code>"tactic does nothing"</code> 的 linter 警告。这不是 bug——tactic 确实运行了，只是没有修改 goal 状态。忽略这个警告即可。</p>
+              <p>
+                再写一个稍复杂的：<code>exact_if_rfl</code>，如果目标是 <code>a = a</code> 就用 <code>rfl</code> 关闭，否则报错。</p>
+              <pre>elab "exact_if_rfl" : tactic =&gt; do
+  let goal ← getMainGoal
+  let goalType ← goal.getType
+  -- 检查目标是否是 a = a 的形式
+  let_expr Eq _ lhs rhs := goalType | throwTacticEx `exact_if_rfl goal "goal is not an equality"
+  if ← isDefEq lhs rhs then
+    goal.assign (← mkEqRefl lhs)  -- 构造 rfl 证明项
+  else
+    throwTacticEx `exact_if_rfl goal "sides are not definitionally equal"
+</pre></section>
+            <section>
+              <h2 id="monad-lifting">
+                2.6. 1.6 层次之间的穿越<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=monad-lifting" title="Permalink">🔗</a></span></h2>
+              <p>
+                有时你需要从 <code>TacticM</code> 调用 <code>MetaM</code> 的函数。由于 <code>TacticM</code> 包含了 <code>MetaM</code>，可以直接调用：</p>
+              <pre>elab "show_type" : tactic =&gt; do
+  let goal ← getMainGoal
+  -- inferType 是 MetaM 函数，可以直接在 TacticM 中调用
+  let goalType ← goal.getType
+  let typeOfType ← inferType goalType  -- Expr 的类型
+  logInfo m!"Goal type's type: {← ppExpr typeOfType}"
+</pre><p>
+                反过来，在 <code>MetaM</code> 中运行 <code>TacticM</code> 代码，需要手动提供目标：</p>
+              <pre>def runTacticInMeta (mvarId : MVarId) (tac : TacticM Unit) : MetaM (List MVarId) :=
+  Lean.Elab.Tactic.run mvarId tac
+</pre></section>
+            <section>
+              <h2 id="ch01-summary">
+                2.7. 1.7 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch01-summary" title="Permalink">🔗</a></span></h2>
+              <p>
+                | Monad | 核心状态 | 典型操作 |
+|-------|---------|---------|
+| <code>CoreM</code> | <code>Environment</code>, <code>NameGenerator</code> | 查询定义、生成名字 |
+| <code>MetaM</code> | <code>LocalContext</code>, <code>MetavarContext</code> | 类型检查、创建元变量 |
+| <code>TermElabM</code> | 精化上下文 | 语法→表达式 |
+| <code>TacticM</code> | <code>goals : List MVarId</code> | 操作证明目标 |</p>
+              <p>
+                <strong>核心原则</strong>：</p>
+              <ul>
+                <li>
+                  <p>
+                    tactic 的本质是：接收目标列表，返回（更小的）目标列表</p>
+                  </li>
+                <li>
+                  <p>
+                    每个未解决目标是一个 <code>MVarId</code>（元变量）</p>
+                  </li>
+                <li>
+                  <p>
+                    解决目标 = 给元变量赋值一个正确的证明项</p>
+                  </li>
+                </ul>
+              </section>
+            <section>
+              <h2 id="ch01-common-failures">
+                2.8. 1.8 常见失败模式与 debug<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch01-common-failures" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="failure-unknown-identifier">
+                  2.8.1. 失败 1：<code>unknown identifier 'getMainGoal'</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-unknown-identifier" title="Permalink">🔗</a></span></h3>
+                <p>
+                  忘记 <code>open</code> 相关命名空间了。确保文件顶部有：</p>
+                <pre>-- [可运行]
+import Lean
+open Lean Elab Tactic Meta
+</pre><p>
+                  这四个命名空间覆盖了日常 tactic 编写的绝大多数 API。</p>
+                </section>
+              <section>
+                <h3 id="failure-pattern-mismatch">
+                  2.8.2. 失败 2：<code>elab_rules</code> 里的模式匹配报错<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-pattern-mismatch" title="Permalink">🔗</a></span></h3>
+                <p>
+                  语法声明和 <code>elab_rules</code> 的模式名字不一致。检查：</p>
+                <pre>-- [示意]
+syntax "my_tac" : tactic     -- 这里叫 my_tac
+
+elab_rules : tactic
+  | `(tactic| my_tac) =&gt; do  -- 这里也必须是 my_tac，不能写成 mytac 或 my-tac
+    ...
+</pre></section>
+              <section>
+                <h3 id="failure-goal-assign">
+                  2.8.3. 失败 3：<code>goal.assign</code> 之后还有目标报错<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-goal-assign" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>goal.assign e</code> 只关闭了 <code>goal</code> 这一个目标，但 <code>setGoals</code> 里还留着它。正确做法：赋值后 <code>return</code>（让框架自动清理），或者手动从 goals 列表中移除。</p>
+                </section>
+              <section>
+                <h3 id="failure-isdefeq-side-effect">
+                  2.8.4. 失败 4：<code>isDefEq</code> 意外修改了元变量<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-isdefeq-side-effect" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>isDefEq</code> 是<strong>有副作用</strong>的——它会在成功时给元变量赋值。如果你只是想探查相等性而不想赋值，用 <code>withoutModifyingState</code> 包裹：</p>
+                <pre>-- [示意]
+let equal ← withoutModifyingState (isDefEq a b)
+</pre></section>
+              </section>
+            <section>
+              <h2 id="ch01-exercises">
+                2.9. 1.9 练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch01-exercises" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="exercise-1-1">
+                  2.9.1. 练习 1.1（热身）：跑通 <code>trace_goal</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-1-1" title="Permalink">🔗</a></span></h3>
+                <p>
+                  在你的 Mathlib 项目里新建 <code>Ch01.lean</code>，复制 1.5 节的 <code>trace_goal</code> 实现，然后验证它能输出当前目标：</p>
+                <pre>-- [可运行]
+import Lean
+open Lean Elab Tactic Meta
+
+syntax "trace_goal" : tactic
+
+elab_rules : tactic
+  | `(tactic| trace_goal) =&gt; do
+    let goal ← getMainGoal
+    let goalType ← goal.getType
+    let goalPP ← ppExpr goalType
+    logInfo m!"Current goal: {goalPP}"
+
+example (n : Nat) : n + 0 = n := by
+  trace_goal
+  simp
+</pre><p>
+                  打开 VS Code 的 Lean Infoview，把光标放在 <code>trace_goal</code> 那一行，你应该能看到目标输出。</p>
+                </section>
+              <section>
+                <h3 id="exercise-1-2">
+                  2.9.2. 练习 1.2（热身）：识别 Monad 层次<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-1-2" title="Permalink">🔗</a></span></h3>
+                <p>
+                  以下操作各属于哪个 Monad 层？填写括号：</p>
+                <pre> inferType (e : Expr)          → (        )
+ logInfo m!"hello"             → (        )
+ getMainGoal                   → (        )
+ elabTerm stx none             → (        )
+ mkFreshExprMVar T             → (        )
+</pre><p>
+                  参考答案：MetaM、CoreM、TacticM、TermElabM、MetaM。</p>
+                </section>
+              <section>
+                <h3 id="exercise-1-3">
+                  2.9.3. 练习 1.3（debug）：找出并修复错误<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-1-3" title="Permalink">🔗</a></span></h3>
+                <p>
+                  以下 tactic 实现有两处错误，找出来并修复：</p>
+                <pre>-- [可运行] 这段代码有错误，修复后应该能关闭 n = n 这类目标
+import Lean
+open Lean Elab Meta
+
+elab "close_rfl" : tactic =&gt; do
+  let goal ← getMainGoal
+  let goalType ← goal.getType
+  let_expr Eq _ lhs rhs := goalType | throwError "not an equality"
+  if ← isDefEq lhs rhs then
+    goal.assign (mkConst ``Eq.refl)  -- 错误 1
+  else
+    throwError "not reflexive"
+
+example : (42 : Nat) = 42 := by close_rfl
+</pre><p>
+                  提示：</p>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>错误 1</strong> 是 proof term 构造错误——<code>Eq.refl</code> 需要显式传入类型和值两个参数（用 <code>mkApp2</code>）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>错误 2</strong> 是命名空间可见性错误——<code>getMainGoal</code> 在 <code>Tactic</code> 命名空间里，<code>open Lean Elab Meta</code> 少了 <code>Tactic</code></p>
+                    </li>
+                  </ul>
+                <p>
+                  这两类错误性质不同：一个是 API 调用不完整，一个是符号找不到。以后遇到类似报错时，先判断是哪一类再对症下药。</p>
+                </section>
+              <section>
+                <h3 id="exercise-1-4">
+                  2.9.4. 练习 1.4（综合）：实现 <code>my_rfl</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-1-4" title="Permalink">🔗</a></span></h3>
+                <p>
+                  不用 <code>macro</code>，用完整的 <code>elab_rules</code> 实现一个 <code>my_rfl</code> tactic：如果目标是定义等价的等式（<code>a = b</code> 且 <code>a</code> 和 <code>b</code> 定义等价），用 <code>rfl</code> 关闭；否则给出清晰的错误信息（包含目标内容）。</p>
+                <p>
+                  测试用例：</p>
+                <pre>-- [可运行] 实现 my_rfl 后，以下应全部通过
+example : (2 : Nat) + 3 = 5 := by my_rfl     -- 应通过（计算等价）
+example : (0 : Nat) + n = n := by my_rfl       -- 应通过（定义等价）
+example (h : n = m) : n = m := by my_rfl       -- 应失败
+</pre><p>
+                  最后一个例子解释：这里的命题 <code>n = m</code> 当然是可证的（用 <code>exact h</code> 就行），但 <code>my_rfl</code> 只能关闭「两侧定义等价」的等式目标，它不会搜索假设中的 <code>h</code>。<strong>tactic 的失败不代表命题假，只代表这个 tactic 的适用边界到了</strong>。这种边界意识在后面设计和选用 tactic 时非常重要。</p>
+                <p>
+                  下一章，我们深入 <code>Expr</code>——Lean 4 中所有项的内部表示。
+</p>
+                </section>
+              </section>
             </section>
           <nav class="prev-next-buttons">
-            <a class="local-button active" href="Ch00Setup/0___8-__________________/#Lean-4-_______________--_________-_____________________--0___8-__________________" rel="prev" title="1.8. 0.8 环境验证练习"><span class="arrow">←</span><span class="where">1.8. 0.8 环境验证练习</span></a><a class="local-button active" href="Ch01MetaprogrammingModel/1___1-____________________________________/#Lean-4-_______________--_________-Lean-4-_______________--1___1-____________________________________" rel="next" title="2.1. 1.1 为什么要理解元编程模型？"><span class="where">2.1. 1.1 为什么要理解元编程模型？</span><span class="arrow">→</span></a></nav>
+            <a class="local-button active" href="Ch00Setup/#ch00-setup" rel="prev" title="1. 第零章 环境与运行约定"><span class="arrow">←</span><span class="where">1. 第零章 环境与运行约定</span></a><a class="local-button active" href="Ch02Expr/#ch02-expr" rel="next" title="3. 第二章 Expr：Lean 4 的内部表示"><span class="where">3. 第二章 Expr：Lean 4 的内部表示</span><span class="arrow">→</span></a></nav>
           </div>
         </main></div>
     </body>

@@ -1,1 +1,0 @@
-window.docContents[35].resolve({"/Ch03FirstTactic/3___8-______/#Lean-4-_______________--_________-_____________________-Tactic--3___8-______":{"contents":"\n\n\n\n\n\n\n\n","context":"Lean 4 自动化内幕\u0009第三章 编写你的第一个 Tactic","header":"4.9. 3.8 练习","id":"/Ch03FirstTactic/3___8-______/#Lean-4-_______________--_________-_____________________-Tactic--3___8-______"}});

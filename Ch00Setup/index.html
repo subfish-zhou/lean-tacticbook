@@ -47,14 +47,21 @@
             <div class="split-toc">
               <div class="title">
                 <label for="--verso-manual-toc-ch00-setup" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch00-setup" checked="checked"></label><span class="number">1.</span> <span class="current"><a href="Ch00Setup/#ch00-setup">第零章 环境与运行约定</a></span></div>
-              <table><tr class="numbered"><td class="num">1.1.</td><td><a href="Ch00Setup/0___1-_____________________/#Lean-4-_______________--_________-_____________________--0___1-_____________________">0.1 你需要什么基础</a></td></tr><tr class="numbered"><td class="num">1.2.</td><td><a href="Ch00Setup/0___2-______-Lean-4/#Lean-4-_______________--_________-_____________________--0___2-______-Lean-4">0.2 安装 Lean 4</a></td></tr><tr class="numbered"><td class="num">1.3.</td><td><a href="Ch00Setup/0___3-___________________________/#Lean-4-_______________--_________-_____________________--0___3-___________________________">0.3 创建本书的配套项目</a></td></tr><tr class="numbered"><td class="num">1.4.</td><td><a href="Ch00Setup/0___4-______-tactic-____________/#Lean-4-_______________--_________-_____________________--0___4-______-tactic-____________">0.4 哪些 tactic 来自哪里</a></td></tr><tr class="numbered"><td class="num">1.5.</td><td><a href="Ch00Setup/0___5-_____________________/#Lean-4-_______________--_________-_____________________--0___5-_____________________">0.5 本书的代码约定</a></td></tr><tr class="numbered"><td class="num">1.6.</td><td><a href="Ch00Setup/0___6-________________________/#Lean-4-_______________--_________-_____________________--0___6-________________________">0.6 跟着本书学的建议</a></td></tr><tr class="numbered"><td class="num">1.7.</td><td><a href="Ch00Setup/0___7-__________________/#Lean-4-_______________--_________-_____________________--0___7-__________________">0.7 全书结构概览</a></td></tr><tr class="numbered"><td class="num">1.8.</td><td><a href="Ch00Setup/0___8-__________________/#Lean-4-_______________--_________-_____________________--0___8-__________________">0.8 环境验证练习</a></td></tr></table></div>
+              <table><tr class="numbered"><td class="num">1.1.</td><td><a href="Ch00Setup/#prerequisites">0.1 你需要什么基础</a></td></tr><tr class="numbered"><td class="num">1.2.</td><td><a href="Ch00Setup/#install-lean4">0.2 安装 Lean 4</a></td></tr><tr class="numbered"><td class="num">1.3.</td><td><a href="Ch00Setup/#create-project">0.3 创建本书的配套项目</a></td></tr><tr class="numbered"><td class="num">1.4.</td><td><a href="Ch00Setup/#tactic-origins">0.4 哪些 tactic 来自哪里</a></td></tr><tr class="numbered"><td class="num">1.5.</td><td><a href="Ch00Setup/#code-conventions">0.5 本书的代码约定</a></td></tr><tr class="numbered"><td class="num">1.6.</td><td><a href="Ch00Setup/#learning-tips">0.6 跟着本书学的建议</a></td></tr><tr class="numbered"><td class="num">1.7.</td><td><a href="Ch00Setup/#book-overview">0.7 全书结构概览</a></td></tr><tr class="numbered"><td class="num">1.8.</td><td><a href="Ch00Setup/#setup-exercises">0.8 环境验证练习</a></td></tr></table></div>
             </div>
           </div>
-        <div class="last"></div>
+        <div class="last">
+          <ul id="meta-links">
+            <li>
+              <a href="https://github.com/subfish-zhou/lean-tacticbook">Source Code</a></li>
+            <li>
+              <a href="https://github.com/subfish-zhou/lean-tacticbook/issues">Report Issues</a></li>
+            </ul>
+          </div>
         </nav>
       <main><div class="content-wrapper">
           <nav class="prev-next-buttons">
-            <a class="local-button active" href="#" rel="prev" title=" Lean 4 自动化内幕"><span class="arrow">←</span><span class="where"> Lean 4 自动化内幕</span></a><a class="local-button active" href="Ch00Setup/0___1-_____________________/#Lean-4-_______________--_________-_____________________--0___1-_____________________" rel="next" title="1.1. 0.1 你需要什么基础"><span class="where">1.1. 0.1 你需要什么基础</span><span class="arrow">→</span></a></nav>
+            <a class="local-button active" href="#" rel="prev" title=" Lean 4 自动化内幕"><span class="arrow">←</span><span class="where"> Lean 4 自动化内幕</span></a><a class="local-button active" href="Ch01MetaprogrammingModel/#ch01-metaprogramming-model" rel="next" title="2. 第一章 Lean 4 元编程模型"><span class="where">2. 第一章 Lean 4 元编程模型</span><span class="arrow">→</span></a></nav>
           <section>
             <h1>
               1. 第零章 环境与运行约定<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch00-setup" title="Permalink">🔗</a></span></h1>
@@ -66,27 +73,329 @@
               查看当前版本：</p>
             <pre>cat lean-toolchain          # 项目使用的 Lean 版本
 lake env lean --version     # 实际运行的 Lean 版本
-</pre><ol class="section-toc">
-              <li>
-                <a href="Ch00Setup/0___1-_____________________/#Lean-4-_______________--_________-_____________________--0___1-_____________________"><span class="number">1.1.</span> 0.1 你需要什么基础</a></li>
-              <li>
-                <a href="Ch00Setup/0___2-______-Lean-4/#Lean-4-_______________--_________-_____________________--0___2-______-Lean-4"><span class="number">1.2.</span> 0.2 安装 Lean 4</a></li>
-              <li>
-                <a href="Ch00Setup/0___3-___________________________/#Lean-4-_______________--_________-_____________________--0___3-___________________________"><span class="number">1.3.</span> 0.3 创建本书的配套项目</a></li>
-              <li>
-                <a href="Ch00Setup/0___4-______-tactic-____________/#Lean-4-_______________--_________-_____________________--0___4-______-tactic-____________"><span class="number">1.4.</span> 0.4 哪些 tactic 来自哪里</a></li>
-              <li>
-                <a href="Ch00Setup/0___5-_____________________/#Lean-4-_______________--_________-_____________________--0___5-_____________________"><span class="number">1.5.</span> 0.5 本书的代码约定</a></li>
-              <li>
-                <a href="Ch00Setup/0___6-________________________/#Lean-4-_______________--_________-_____________________--0___6-________________________"><span class="number">1.6.</span> 0.6 跟着本书学的建议</a></li>
-              <li>
-                <a href="Ch00Setup/0___7-__________________/#Lean-4-_______________--_________-_____________________--0___7-__________________"><span class="number">1.7.</span> 0.7 全书结构概览</a></li>
-              <li>
-                <a href="Ch00Setup/0___8-__________________/#Lean-4-_______________--_________-_____________________--0___8-__________________"><span class="number">1.8.</span> 0.8 环境验证练习</a></li>
-              </ol>
+</pre><section>
+              <h2 id="prerequisites">
+                1.1. 0.1 你需要什么基础<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=prerequisites" title="Permalink">🔗</a></span></h2>
+              <p>
+                本书假设你：</p>
+              <ul>
+                <li>
+                  <p>
+                    会基本的数学（本科水平的代数、分析即可）</p>
+                  </li>
+                <li>
+                  <p>
+                    在 Lean 4 中写过简单的形式化证明（<code>by simp</code>、<code>by ring</code>、<code>by intro h; exact h</code> 这类）</p>
+                  </li>
+                <li>
+                  <p>
+                    了解 <code>theorem</code>、<code>example</code>、<code>by</code> 的基本语法</p>
+                  </li>
+                </ul>
+              <p>
+                如果你还没写过任何 Lean 代码，建议先完成 Mathematics in Lean 的前几章。</p>
+              </section>
+            <section>
+              <h2 id="install-lean4">
+                1.2. 0.2 安装 Lean 4<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=install-lean4" title="Permalink">🔗</a></span></h2>
+              <p>
+                如果你还没安装 Lean 4：</p>
+              <pre># 安装 elan（Lean 版本管理器）
+curl https://elan.lean-lang.org/install.sh -sSf | sh
+
+# 验证安装
+lean --version
+</pre><p>
+                推荐使用 VS Code + Lean 4 插件作为编辑器——你可以实时看到目标状态和错误信息。</p>
+              <section>
+                <h3 id="install-troubleshooting">
+                  1.2.1. 常见安装问题<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=install-troubleshooting" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong>问题 1：<code>elan</code> 安装后 <code>lean</code> 命令找不到</strong></p>
+                <pre># elan 默认安装到 ~/.elan/bin，需要把它加到 PATH
+export PATH="$HOME/.elan/bin:$PATH"
+# 建议写入 ~/.bashrc 或 ~/.zshrc，然后重新打开终端
+</pre><p>
+                  <strong>问题 2：<code>lean --version</code> 报错 <code>no default toolchain configured</code></strong></p>
+                <p>
+                  这说明 elan 装好了，但还没指定默认工具链。不用担心——创建项目时 <code>lean-toolchain</code> 文件会自动指定版本。</p>
+                <p>
+                  <strong>问题 3：VS Code 插件安装后没反应</strong></p>
+                <p>
+                  检查：</p>
+                <ul>
+                  <li>
+                    <p>
+                      是否打开的是<strong>文件夹</strong>（不是单个 <code>.lean</code> 文件）</p>
+                    </li>
+                  <li>
+                    <p>
+                      文件夹根目录是否有 <code>lakefile.lean</code> 或 <code>lakefile.toml</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      右下角状态栏是否显示 Lean 版本号（如果显示 "Loading..." 等一会儿）</p>
+                    </li>
+                  </ul>
+                <p>
+                  <strong>问题 4：VS Code 里能 <code>import Mathlib</code>，终端里不行</strong></p>
+                <p>
+                  大概率是你没有在项目根目录下运行，或者没用 <code>lake env lean</code>。确保：</p>
+                <ul>
+                  <li>
+                    <p>
+                      终端 <code>cd</code> 到了有 <code>lakefile.lean</code> 的目录</p>
+                    </li>
+                  <li>
+                    <p>
+                      用 <code>lake env lean YourFile.lean</code> 而不是裸 <code>lean YourFile.lean</code></p>
+                    </li>
+                  </ul>
+                </section>
+              </section>
+            <section>
+              <h2 id="create-project">
+                1.3. 0.3 创建本书的配套项目<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=create-project" title="Permalink">🔗</a></span></h2>
+              <p>
+                <strong>这一步非常重要</strong>——本书大部分示例依赖 Mathlib 库。如果你直接新建一个 <code>.lean</code> 文件写 <code>import Mathlib</code>，会报错。</p>
+              <section>
+                <h3 id="create-with-lake">
+                  1.3.1. 方式一：用 lake 创建 Mathlib 项目（推荐）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=create-with-lake" title="Permalink">🔗</a></span></h3>
+                <pre># 创建项目
+lake new LeanAutoBook math
+cd LeanAutoBook
+
+# 获取 Mathlib 缓存（避免从源码编译，节省大量时间）
+lake exe cache get
+</pre><p>
+                  验证环境——写一个最小测试文件：</p>
+                <pre>cat &gt; Test.lean &lt;&lt;'EOF'
+import Mathlib
+#check Nat.add_comm
+EOF
+lake env lean Test.lean
+</pre><p>
+                  如果看到 <code>Nat.add_comm : ∀ (n m : ℕ), n + m = m + n</code>（或类似输出），说明环境搭建成功。</p>
+                <p>
+                  成功后，你就有了一个能 <code>import Mathlib</code> 的项目。在 <code>LeanAutoBook/</code> 目录下新建 <code>.lean</code> 文件即可开始跟着本书做实验。</p>
+                </section>
+              <section>
+                <h3 id="project-troubleshooting">
+                  1.3.2. 常见项目创建问题<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=project-troubleshooting" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong>问题 1：<code>lake exe cache get</code> 失败，报网络错误</strong></p>
+                <pre># Mathlib 缓存托管在 GitHub Releases，如果网络不通可以设代理：
+export https_proxy=http://your-proxy:port
+lake exe cache get
+</pre><p>
+                  如果完全无法下载缓存，可以从源码编译（但非常慢，30 分钟到几小时）：</p>
+                <pre>lake build
+</pre><p>
+                  <strong>问题 2：<code>lake new LeanAutoBook math</code> 报错 <code>unknown template 'math'</code></strong></p>
+                <p>
+                  你的 <code>lake</code> 版本可能太旧。运行 <code>elan update</code> 更新，或者手动创建项目后在 <code>lakefile.lean</code> 中添加 Mathlib 依赖：</p>
+                <pre>-- lakefile.lean
+require mathlib from git
+  "https://github.com/leanprover-community/mathlib4"
+</pre><p>
+                  然后运行 <code>lake update && lake exe cache get</code>。</p>
+                <p>
+                  <strong>问题 3：编译/类型检查极慢（每个文件几十秒）</strong></p>
+                <p>
+                  大概率是缓存没下好。检查：</p>
+                <pre># 如果输出大量 "Building ..." 说明缓存缺失
+lake build --log-level=info 2&gt;&1 | head -20
+
+# 重新获取缓存
+lake exe cache get
+</pre></section>
+              <section>
+                <h3 id="clone-companion-repo">
+                  1.3.3. 方式二：克隆本书配套仓库<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=clone-companion-repo" title="Permalink">🔗</a></span></h3>
+                <pre>git clone https://github.com/your-org/lean-auto-book-code.git
+cd lean-auto-book-code
+lake exe cache get
+</pre><p>
+                  （配套仓库包含每章的示例文件和练习题，后续会提供。）</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="tactic-origins">
+                1.4. 0.4 哪些 tactic 来自哪里<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=tactic-origins" title="Permalink">🔗</a></span></h2>
+              <p>
+                一个初学者常见的困惑：为什么有的 tactic 不需要 import 就能用，有的需要 <code>import Mathlib</code>？</p>
+              <p>
+                | tactic | 来源 | 需要 import |
+|--------|------|------------|
+| <code>simp</code> | Lean core | 不需要（但 <code>@[simp]</code> 引理大部分来自 Mathlib） |
+| <code>ring</code> | Mathlib | <code>import Mathlib.Tactic.Ring</code> |
+| <code>omega</code> | Lean core（v4.8+） | 不需要 |
+| <code>linarith</code> | Mathlib | <code>import Mathlib.Tactic.Linarith</code> |
+| <code>nlinarith</code> | Mathlib | <code>import Mathlib.Tactic.Linarith</code> |
+| <code>polyrith</code> | Mathlib | <code>import Mathlib.Tactic.Polyrith</code> |
+| <code>norm_num</code> | Mathlib | <code>import Mathlib.Tactic.NormNum</code> |
+| <code>aesop</code> | Lean core + Mathlib 规则 | <code>import Aesop</code>（core）或 Mathlib |
+| <code>grind</code> | Lean core（v4.14+） | 不需要 |
+| <code>decide</code> | Lean core | 不需要 |
+| <code>positivity</code> | Mathlib | <code>import Mathlib.Tactic.Positivity</code> |
+| <code>field_simp</code> | Mathlib | <code>import Mathlib.Tactic.FieldSimp</code> |
+| <code>gcongr</code> | Mathlib | <code>import Mathlib.Tactic.GCongr</code> |
+| <code>fun_prop</code> | Mathlib | <code>import Mathlib.Tactic.FunProp</code> |</p>
+              <p>
+                <strong>简单规则</strong>：如果 <code>import Mathlib</code> 能跑通，以上全部可用。本书示例默认在 Mathlib 项目环境中运行。</p>
+              </section>
+            <section>
+              <h2 id="code-conventions">
+                1.5. 0.5 本书的代码约定<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=code-conventions" title="Permalink">🔗</a></span></h2>
+              <p>
+                本书中的代码分为三类，请注意区分：</p>
+              <section>
+                <h3 id="runnable-examples">
+                  1.5.1. 可运行示例<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=runnable-examples" title="Permalink">🔗</a></span></h3>
+                <p>
+                  标注为 <strong>[可运行]</strong> 或没有特殊标注的代码块。你可以直接复制到 <code>.lean</code> 文件中运行。</p>
+                <pre>-- [可运行] 复制到你的 .lean 文件试试
+example (x : ℝ) : x + 0 = x := by simp
+</pre></section>
+              <section>
+                <h3 id="illustrative-code">
+                  1.5.2. 示意代码<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=illustrative-code" title="Permalink">🔗</a></span></h3>
+                <p>
+                  标注为 <strong>[示意]</strong>。展示内部机制或模式，可能省略了 import、辅助定义等。不保证直接编译。</p>
+                <pre>-- [示意] 展示 tactic 内部的模式，省略了部分细节
+elab "my_tactic" : tactic =&gt; do
+  let goal ← getMainGoal
+  -- ... 略去具体实现 ...
+</pre></section>
+              <section>
+                <h3 id="pseudocode">
+                  1.5.3. 伪代码<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=pseudocode" title="Permalink">🔗</a></span></h3>
+                <p>
+                  标注为 <strong>[伪代码]</strong>。只用于解释算法流程，不是 Lean 代码。</p>
+                <pre>-- [伪代码] omega 算法的高层流程
+1. 收集线性不等式假设
+2. 规范化为标准形
+3. 变量消去（Fourier-Motzkin + 整数修正）
+4. 检查矛盾
+</pre></section>
+              </section>
+            <section>
+              <h2 id="learning-tips">
+                1.6. 0.6 跟着本书学的建议<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=learning-tips" title="Permalink">🔗</a></span></h2>
+              <ol start="1">
+                <li>
+                  <p>
+                    <strong>先跑再看</strong>：每章的示例，先复制到 VS Code 里跑一遍，看目标状态的变化</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>改着玩</strong>：把例子里的数字、函数、条件改一改，看 tactic 还能不能工作</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>故意破坏</strong>：把 <code>simp</code> 换成 <code>ring</code>，看报错信息——理解"为什么不行"和"为什么行"一样重要</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>做练习</strong>：每章末尾的练习是学习闭环的关键，不要跳过</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>查源码</strong>：想深入理解某个 tactic 时，用 VS Code 的 "Go to Definition" 跳到源码</p>
+                  </li>
+                </ol>
+              </section>
+            <section>
+              <h2 id="book-overview">
+                1.7. 0.7 全书结构概览<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=book-overview" title="Permalink">🔗</a></span></h2>
+              <pre>Part I:  基础（Ch1-5）     — 元编程模型、Expr、写 tactic、目标管理、typeclass
+Part II: 核心自动化（Ch6-13）— simp, ring, omega, linarith, norm_num, aesop, grind, decide
+Part III:领域自动化（Ch14-19）— positivity, fun_prop, gcongr, field_simp, 逻辑变换, 设计自己的
+Part IV: 高级专题（Ch20-24） — 反射, 性能, 外部工具, 方法论, 分析自动化展望
+</pre><p>
+                <strong>Part I-II 是核心</strong>，建议按顺序读。Part III-IV 可以按需跳读。</p>
+              </section>
+            <section>
+              <h2 id="setup-exercises">
+                1.8. 0.8 环境验证练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=setup-exercises" title="Permalink">🔗</a></span></h2>
+              <p>
+                在进入下一章之前，完成以下练习确认你的环境搭建成功。</p>
+              <section>
+                <h3 id="exercise-0-1">
+                  1.8.1. 练习 0.1（热身）：Hello, Lean!<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-0-1" title="Permalink">🔗</a></span></h3>
+                <p>
+                  在你的项目中新建 <code>Hello.lean</code>，写入以下内容：</p>
+                <pre>-- [可运行]
+import Mathlib
+
+#check Nat.add_comm
+#eval 2 + 3
+</pre><p>
+                  在 VS Code 中打开这个文件。你应该能看到：</p>
+                <ul>
+                  <li>
+                    <p>
+                      <code>#check</code> 输出 <code>Nat.add_comm : ∀ (n m : ℕ), n + m = m + n</code>（或类似）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>#eval</code> 输出 <code>5</code></p>
+                    </li>
+                  </ul>
+                <p>
+                  如果看不到输出，检查 VS Code 右侧的 "Lean Infoview" 面板是否打开（快捷键 <code>Ctrl+Shift+P</code> → "Lean 4: Infoview: Toggle"）。</p>
+                </section>
+              <section>
+                <h3 id="exercise-0-2">
+                  1.8.2. 练习 0.2（热身）：第一个证明<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-0-2" title="Permalink">🔗</a></span></h3>
+                <pre>-- [可运行]
+import Mathlib
+
+example : 2 + 3 = 5 := by norm_num
+
+example (n : ℕ) : n + 0 = n := by simp
+</pre><p>
+                  复制到 <code>.lean</code> 文件，确认没有红色波浪线。如果有——恭喜，你遇到了第一个 debug 机会！把光标移到红线上，看 Lean Infoview 里的错误信息。</p>
+                </section>
+              <section>
+                <h3 id="exercise-0-3">
+                  1.8.3. 练习 0.3（debug 练习）：故意出错<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-0-3" title="Permalink">🔗</a></span></h3>
+                <p>
+                  以下代码有一个故意的错误，找出来并修复：</p>
+                <pre>-- [可运行] 这段代码有错，你能找到吗？
+import Mathlib
+
+example (x : ℝ) : x * 1 = x := by
+  ring_nf
+</pre><p>
+                  提示：<code>ring_nf</code> 会化简但不一定能关闭目标。想想该用什么 tactic 替代？（答案：<code>ring</code> 可以直接关闭等式目标。试试把 <code>ring_nf</code> 换成 <code>ring</code>。）</p>
+                </section>
+              <section>
+                <h3 id="exercise-0-4">
+                  1.8.4. 练习 0.4（综合）：选对 tactic<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-0-4" title="Permalink">🔗</a></span></h3>
+                <p>
+                  尝试分别用不同的 tactic 证明以下命题。哪个能用，哪个不能？</p>
+                <pre>-- [可运行]
+import Mathlib
+
+-- 试试分别用 simp、ring、omega、decide 证明以下命题
+-- 哪些能成功？哪些会失败？失败时报什么错？
+
+example : (3 : ℤ) + 4 = 7 := by sorry  -- 替换 sorry
+
+example : (10 : ℕ) &lt; 20 := by sorry  -- 替换 sorry
+
+example (n : ℕ) : n + n = 2 * n := by sorry  -- 替换 sorry
+</pre><p>
+                  这个练习没有唯一正确答案——关键是体验不同 tactic 的适用范围。到本书结束时，你会对每个 tactic 的能力边界了如指掌。</p>
+                <p>
+                  准备好了？翻到下一章，我们从 Lean 4 的元编程模型开始。
+</p>
+                </section>
+              </section>
             </section>
           <nav class="prev-next-buttons">
-            <a class="local-button active" href="#" rel="prev" title=" Lean 4 自动化内幕"><span class="arrow">←</span><span class="where"> Lean 4 自动化内幕</span></a><a class="local-button active" href="Ch00Setup/0___1-_____________________/#Lean-4-_______________--_________-_____________________--0___1-_____________________" rel="next" title="1.1. 0.1 你需要什么基础"><span class="where">1.1. 0.1 你需要什么基础</span><span class="arrow">→</span></a></nav>
+            <a class="local-button active" href="#" rel="prev" title=" Lean 4 自动化内幕"><span class="arrow">←</span><span class="where"> Lean 4 自动化内幕</span></a><a class="local-button active" href="Ch01MetaprogrammingModel/#ch01-metaprogramming-model" rel="next" title="2. 第一章 Lean 4 元编程模型"><span class="where">2. 第一章 Lean 4 元编程模型</span><span class="arrow">→</span></a></nav>
           </div>
         </main></div>
     </body>

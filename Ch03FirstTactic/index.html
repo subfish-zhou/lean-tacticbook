@@ -47,44 +47,482 @@
             <div class="split-toc">
               <div class="title">
                 <label for="--verso-manual-toc-ch03-first-tactic" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch03-first-tactic" checked="checked"></label><span class="number">4.</span> <span class="current"><a href="Ch03FirstTactic/#ch03-first-tactic">第三章 编写你的第一个 Tactic</a></span></div>
-              <table><tr class="numbered"><td class="num">4.1.</td><td><a href="Ch03FirstTactic/____________-Expr-___-Tactic/#Lean-4-_______________--_________-_____________________-Tactic--____________-Expr-___-Tactic">回顾：从 Expr 到 Tactic</a></td></tr><tr class="numbered"><td class="num">4.2.</td><td><a href="Ch03FirstTactic/3___1-Tactic-_______________/#Lean-4-_______________--_________-_____________________-Tactic--3___1-Tactic-_______________">3.1 Tactic 的生命周期</a></td></tr><tr class="numbered"><td class="num">4.3.</td><td><a href="Ch03FirstTactic/3___2-assumption_____________________/#Lean-4-_______________--_________-_____________________-Tactic--3___2-assumption_____________________">3.2 assumption：在假设中搜索</a></td></tr><tr class="numbered"><td class="num">4.4.</td><td><a href="Ch03FirstTactic/3___3--split_and-_____________________/#Lean-4-_______________--_________-_____________________-Tactic--3___3--split_and-_____________________">3.3 <code>split_and</code>：拆分合取目标</a></td></tr><tr class="numbered"><td class="num">4.5.</td><td><a href="Ch03FirstTactic/3___4-____________-tactic__________________/#Lean-4-_______________--_________-_____________________-Tactic--3___4-____________-tactic__________________">3.4 调用已有 tactic：组合式证明</a></td></tr><tr class="numbered"><td class="num">4.6.</td><td><a href="Ch03FirstTactic/3___5-_________________________________/#Lean-4-_______________--_________-_____________________-Tactic--3___5-_________________________________">3.5 对所有目标执行同一操作</a></td></tr><tr class="numbered"><td class="num">4.7.</td><td><a href="Ch03FirstTactic/3___6-_______________-diagnostics/#Lean-4-_______________--_________-_____________________-Tactic--3___6-_______________-diagnostics">3.6 错误处理与 diagnostics</a></td></tr><tr class="numbered"><td class="num">4.8.</td><td><a href="Ch03FirstTactic/3___7-_____________________-debug/#Lean-4-_______________--_________-_____________________-Tactic--3___7-_____________________-debug">3.7 常见失败模式与 debug</a></td></tr><tr class="numbered"><td class="num">4.9.</td><td><a href="Ch03FirstTactic/3___8-______/#Lean-4-_______________--_________-_____________________-Tactic--3___8-______">3.8 练习</a></td></tr><tr class="numbered"><td class="num">4.10.</td><td><a href="Ch03FirstTactic/3___9-______/#Lean-4-_______________--_________-_____________________-Tactic--3___9-______">3.9 小结</a></td></tr></table></div>
+              <table><tr class="numbered"><td class="num">4.1.</td><td><a href="Ch03FirstTactic/#recap-expr-to-tactic">回顾：从 Expr 到 Tactic</a></td></tr><tr class="numbered"><td class="num">4.2.</td><td><a href="Ch03FirstTactic/#tactic-lifecycle">3.1 Tactic 的生命周期</a></td></tr><tr class="numbered"><td class="num">4.3.</td><td><a href="Ch03FirstTactic/#assumption-search">3.2 assumption：在假设中搜索</a></td></tr><tr class="numbered"><td class="num">4.4.</td><td><a href="Ch03FirstTactic/#split-and">3.3 <code>split_and</code>：拆分合取目标</a></td></tr><tr class="numbered"><td class="num">4.5.</td><td><a href="Ch03FirstTactic/#combining-tactics">3.4 调用已有 tactic：组合式证明</a></td></tr><tr class="numbered"><td class="num">4.6.</td><td><a href="Ch03FirstTactic/#operate-all-goals">3.5 对所有目标执行同一操作</a></td></tr><tr class="numbered"><td class="num">4.7.</td><td><a href="Ch03FirstTactic/#error-handling">3.6 错误处理与 diagnostics</a></td></tr><tr class="numbered"><td class="num">4.8.</td><td><a href="Ch03FirstTactic/#ch03-common-failures">3.7 常见失败模式与 debug</a></td></tr><tr class="numbered"><td class="num">4.9.</td><td><a href="Ch03FirstTactic/#ch03-exercises">3.8 练习</a></td></tr><tr class="numbered"><td class="num">4.10.</td><td><a href="Ch03FirstTactic/#ch03-summary">3.9 小结</a></td></tr></table></div>
             </div>
           </div>
-        <div class="last"></div>
+        <div class="last">
+          <ul id="meta-links">
+            <li>
+              <a href="https://github.com/subfish-zhou/lean-tacticbook">Source Code</a></li>
+            <li>
+              <a href="https://github.com/subfish-zhou/lean-tacticbook/issues">Report Issues</a></li>
+            </ul>
+          </div>
         </nav>
       <main><div class="content-wrapper">
           <nav class="prev-next-buttons">
-            <a class="local-button active" href="Ch02Expr/2___10-______/#Lean-4-_______________--_________-Expr___Lean-4-_______________--2___10-______" rel="prev" title="3.10. 2.10 练习"><span class="arrow">←</span><span class="where">3.10. 2.10 练习</span></a><a class="local-button active" href="Ch03FirstTactic/____________-Expr-___-Tactic/#Lean-4-_______________--_________-_____________________-Tactic--____________-Expr-___-Tactic" rel="next" title="4.1. 回顾：从 Expr 到 Tactic"><span class="where">4.1. 回顾：从 Expr 到 Tactic</span><span class="arrow">→</span></a></nav>
+            <a class="local-button active" href="Ch02Expr/#ch02-expr" rel="prev" title="3. 第二章 Expr：Lean 4 的内部表示"><span class="arrow">←</span><span class="where">3. 第二章 Expr：Lean 4 的内部表示</span></a><div></div>
+            </nav>
           <section>
             <h1>
               4. 第三章 编写你的第一个 Tactic<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch03-first-tactic" title="Permalink">🔗</a></span></h1>
             <p>
               <strong>本章目标</strong>：从零实现几个有实际用途的 tactic，掌握 <code>TacticM</code> 的核心模式。</p>
-            <ol class="section-toc">
-              <li>
-                <a href="Ch03FirstTactic/____________-Expr-___-Tactic/#Lean-4-_______________--_________-_____________________-Tactic--____________-Expr-___-Tactic"><span class="number">4.1.</span> 回顾：从 Expr 到 Tactic</a></li>
-              <li>
-                <a href="Ch03FirstTactic/3___1-Tactic-_______________/#Lean-4-_______________--_________-_____________________-Tactic--3___1-Tactic-_______________"><span class="number">4.2.</span> 3.1 Tactic 的生命周期</a></li>
-              <li>
-                <a href="Ch03FirstTactic/3___2-assumption_____________________/#Lean-4-_______________--_________-_____________________-Tactic--3___2-assumption_____________________"><span class="number">4.3.</span> 3.2 assumption：在假设中搜索</a></li>
-              <li>
-                <a href="Ch03FirstTactic/3___3--split_and-_____________________/#Lean-4-_______________--_________-_____________________-Tactic--3___3--split_and-_____________________"><span class="number">4.4.</span> 3.3 <code>split_and</code>：拆分合取目标</a></li>
-              <li>
-                <a href="Ch03FirstTactic/3___4-____________-tactic__________________/#Lean-4-_______________--_________-_____________________-Tactic--3___4-____________-tactic__________________"><span class="number">4.5.</span> 3.4 调用已有 tactic：组合式证明</a></li>
-              <li>
-                <a href="Ch03FirstTactic/3___5-_________________________________/#Lean-4-_______________--_________-_____________________-Tactic--3___5-_________________________________"><span class="number">4.6.</span> 3.5 对所有目标执行同一操作</a></li>
-              <li>
-                <a href="Ch03FirstTactic/3___6-_______________-diagnostics/#Lean-4-_______________--_________-_____________________-Tactic--3___6-_______________-diagnostics"><span class="number">4.7.</span> 3.6 错误处理与 diagnostics</a></li>
-              <li>
-                <a href="Ch03FirstTactic/3___7-_____________________-debug/#Lean-4-_______________--_________-_____________________-Tactic--3___7-_____________________-debug"><span class="number">4.8.</span> 3.7 常见失败模式与 debug</a></li>
-              <li>
-                <a href="Ch03FirstTactic/3___8-______/#Lean-4-_______________--_________-_____________________-Tactic--3___8-______"><span class="number">4.9.</span> 3.8 练习</a></li>
-              <li>
-                <a href="Ch03FirstTactic/3___9-______/#Lean-4-_______________--_________-_____________________-Tactic--3___9-______"><span class="number">4.10.</span> 3.9 小结</a></li>
-              </ol>
+            <section>
+              <h2 id="recap-expr-to-tactic">
+                4.1. 回顾：从 Expr 到 Tactic<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=recap-expr-to-tactic" title="Permalink">🔗</a></span></h2>
+              <p>
+                第二章中，你学习了 Lean 4 内部表示表达式的核心数据类型 <code>Expr</code>。你已经知道 <code>Expr.app</code>、<code>Expr.const</code>、<code>Expr.mvar</code> 等构造子分别代表什么，也知道如何用 <code>mkApp</code>、<code>mkConst</code> 等辅助函数构造表达式。本章要做的事情是：<strong>把 Expr 的知识用起来</strong>。</p>
+              <p>
+                Tactic 的本质是什么？它是一个接收当前证明状态、返回新证明状态的函数。而"证明状态"的核心就是一组尚未填充的元变量（metavariable），每个元变量对应一个待证目标。Tactic 的工作就是读取这些元变量的类型（即目标命题），构造出合适的 <code>Expr</code> 来填充它们，或者把一个目标拆分成更小的子目标。</p>
+              <p>
+                换句话说，第二章教你认识了积木的形状，本章教你用这些积木搭建证明。</p>
+              </section>
+            <section>
+              <h2 id="tactic-lifecycle">
+                4.2. 3.1 Tactic 的生命周期<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=tactic-lifecycle" title="Permalink">🔗</a></span></h2>
+              <p>
+                回顾第一章：tactic 是一个 <code>Syntax → TacticM Unit</code> 函数。当 Lean 在证明模式中遇到你注册的 tactic 关键字时，就会调用这个函数。它的完整生命周期分为五步：</p>
+              <ol start="1">
+                <li>
+                  <p>
+                    <strong>接收语法</strong>：Lean 解析器根据你用 <code>syntax</code> 或 <code>elab</code> 注册的语法规则进行匹配，把解析出的 <code>Syntax</code> 节点传给你的函数。如果你的 tactic 接受参数（比如一个假设名），参数也在这个 <code>Syntax</code> 里。</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>读取状态</strong>：从 <code>TacticM</code> monad 中获取当前目标列表。最常用的是 <code>getMainGoal</code>（取第一个目标）和 <code>getGoals</code>（取全部目标）。每个目标是一个 <code>MVarId</code>——元变量的唯一标识符。</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>分析目标</strong>：通过 <code>goal.getType</code> 拿到目标的类型（一个 <code>Expr</code>），然后用第二章学到的模式匹配技术分析它的结构。比如判断它是否形如 <code>P ∧ Q</code>，或者是否是一个等式 <code>a = b</code>。</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>构造证明项并更新状态</strong>：这是最关键的一步。你需要构造一个 <code>Expr</code> 来"回答"当前目标。如果证明项中还有未填充的部分（hole），那些 hole 就变成新的子目标。最后调用 <code>goal.assign proof</code> 关闭当前目标，调用 <code>setGoals</code> 设置新的目标列表。</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>返回</strong>：<code>TacticM Unit</code> 不需要显式返回值。剩余的目标留在目标列表中，由后续 tactic 继续处理。如果所有目标都被关闭了，证明就完成了。</p>
+                  </li>
+                </ol>
+              <p>
+                最简单的 tactic 只做第 2 和第 4 步——读取目标，然后直接用一个现成的表达式关闭它。复杂的 tactic 会在第 3 步做大量分析，甚至递归地调用自己或其他 tactic。</p>
+              </section>
+            <section>
+              <h2 id="assumption-search">
+                4.3. 3.2 assumption：在假设中搜索<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=assumption-search" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code>assumption</code> 是最经典的入门 tactic：在局部上下文中找一个类型匹配目标的假设，然后用它关闭目标。这个 tactic 虽然简单，但展示了 tactic 编写的基本骨架。</p>
+              <pre>-- [可运行]
+import Lean
+open Lean Elab Tactic Meta
+
+elab "my_assumption" : tactic =&gt; do
+  let goal ← getMainGoal
+  goal.withContext do           -- 进入目标的局部上下文
+    let target ← goal.getType
+    let lctx ← getLCtx
+    for decl in lctx do
+      if decl.isImplementationDetail then continue
+      if ← isDefEq decl.type target then
+        goal.assign decl.toExpr
+        return
+    throwTacticEx `my_assumption goal "no matching hypothesis found"
+</pre><p>
+                逐行解释这段代码：</p>
+              <p>
+                <strong><code>let goal ← getMainGoal</code></strong>：从当前证明状态中取出第一个未解决的目标。<code>getMainGoal</code> 返回 <code>MVarId</code>，它是元变量的标识符。为什么叫"main goal"？因为 Lean 的目标列表是有序的，第一个目标就是用户在 Infoview 中看到的那个。</p>
+              <p>
+                <strong><code>goal.withContext do</code></strong>：这一步至关重要。每个目标都有自己的局部上下文（local context），包含该目标可见的所有局部变量和假设。不同目标的上下文可能不同——比如 <code>cases</code> 拆分出的两个子目标，各自有不同的假设。<code>withContext</code> 把 monad 的环境切换到该目标的上下文，这样后续的 <code>getLCtx</code> 才能拿到正确的假设列表。<strong>忘记 <code>withContext</code> 是新手最常犯的错误之一</strong>，后面 3.8 节会专门讨论。</p>
+              <p>
+                <strong><code>let target ← goal.getType</code></strong>：获取目标的类型，即待证命题。返回值是一个 <code>Expr</code>。</p>
+              <p>
+                <strong><code>let lctx ← getLCtx</code></strong>：获取当前局部上下文，它是一个 <code>LocalContext</code>，包含所有局部声明（local declaration）。</p>
+              <p>
+                <strong><code>for decl in lctx do</code></strong>：遍历所有局部声明。每个 <code>decl</code> 是一个 <code>LocalDecl</code>，包含 <code>.userName</code>（用户可见的名字）、<code>.type</code>（类型）、<code>.toExpr</code>（对应的自由变量表达式，即 <code>Expr.fvar</code>）等字段。</p>
+              <p>
+                <strong><code>if decl.isImplementationDetail then continue</code></strong>：跳过编译器内部生成的辅助变量。这些变量对用户不可见，不应该被 tactic 使用。</p>
+              <p>
+                <strong><code>if ← isDefEq decl.type target then</code></strong>：这是核心判断。<code>isDefEq</code> 检查两个表达式是否 definitionally equal——不只是语法层面的相等，而是考虑 beta 规约（<code>(fun x =&gt; x) a ≡ a</code>）、delta 规约（展开定义）、iota 规约（结构体投影和匹配）等所有计算规则之后的相等性。如果假设的类型和目标匹配，我们就找到了证明。</p>
+              <p>
+                <strong><code>goal.assign decl.toExpr</code></strong>：用这个假设（一个 <code>Expr.fvar</code>）填充目标元变量。这相当于说"这个目标的证明就是这个假设"。赋值后，目标就被关闭了。</p>
+              <p>
+                <strong><code>throwTacticEx</code></strong>：如果遍历完所有假设都没找到匹配的，抛出一个带目标上下文的错误。用户会看到错误信息和当前目标的完整状态，便于 debug。</p>
+              </section>
+            <section>
+              <h2 id="split-and">
+                4.4. 3.3 <code>split_and</code>：拆分合取目标<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=split-and" title="Permalink">🔗</a></span></h2>
+              <p>
+                如果目标是 <code>P ∧ Q</code>，我们希望把它拆成两个子目标 <code>P</code> 和 <code>Q</code>。这个 tactic 展示了一个比 <code>assumption</code> 更复杂的模式：不是直接关闭目标，而是把目标"拆开"。</p>
+              <pre>-- [可运行]
+elab "split_and" : tactic =&gt; do
+  let goal ← getMainGoal
+  goal.withContext do
+    let target ← goal.getType
+    -- 检查目标是否是 And P Q
+    let_expr And P Q := target | throwTacticEx `split_and goal "goal is not a conjunction"
+    -- 创建两个新元变量作为子目标
+    let mvarP ← mkFreshExprMVar P
+    let mvarQ ← mkFreshExprMVar Q
+    -- 构造 And.intro 证明项并赋值
+    let proof := mkApp4 (mkConst ``And.intro) P Q mvarP mvarQ
+    goal.assign proof
+    -- 设置新的目标列表
+    let newGoals := [mvarP.mvarId!, mvarQ.mvarId!]
+    let others := (← getGoals).erase goal
+    setGoals (newGoals ++ others)
+</pre><p>
+                这段代码的思路是什么？要证明 <code>P ∧ Q</code>，需要构造 <code>And.intro hP hQ</code>，其中 <code>hP : P</code>、<code>hQ : Q</code>。但我们现在手上还没有 <code>hP</code> 和 <code>hQ</code>，所以先创建两个"占位符"（元变量），拼成证明项赋值给原目标，然后把这两个占位符作为新的子目标留给用户。</p>
+              <p>
+                逐行拆解：</p>
+              <p>
+                <strong><code>let_expr And P Q := target | ...</code></strong>：这是 Lean 提供的宏，专门用于对 <code>Expr</code> 做模式匹配。它会检查 <code>target</code> 是否形如 <code>@And P Q</code>（即 <code>Expr.app (Expr.app (Expr.const And _) P) Q</code>），如果是则绑定 <code>P</code> 和 <code>Q</code>，否则执行 <code>|</code> 后面的分支。这比手写 <code>match</code> 简洁很多。</p>
+              <p>
+                <strong><code>let mvarP ← mkFreshExprMVar P</code></strong>：创建一个类型为 <code>P</code> 的新元变量。<code>mkFreshExprMVar</code> 返回 <code>Expr</code>（具体来说是一个 <code>Expr.mvar</code>），这个表达式代表一个尚未填充的 hole。<code>.mvarId!</code> 可以取出它的 <code>MVarId</code>。</p>
+              <p>
+                <strong><code>let proof := mkApp4 (mkConst And.intro) P Q mvarP mvarQ</code></strong>：构造表达式 <code>@And.intro P Q ?mvarP ?mvarQ</code>。<code>mkApp4</code> 是 <code>mkApp</code> 的四参数版本。注意 <code>And.intro</code> 的完整签名是 <code>And.intro : {a b : Prop} → a → b → a ∧ b</code>，这里四个参数分别是 <code>a := P</code>、<code>b := Q</code>、以及两个证明。</p>
+              <p>
+                <strong><code>goal.assign proof</code></strong>：把原目标赋值为这个带 hole 的证明项。Lean 的元变量系统会自动追踪哪些 hole 尚未填充。</p>
+              <p>
+                <strong><code>let others := (← getGoals).erase goal</code></strong>：从目标列表中移除当前目标。用 <code>List.erase</code> 而不是 <code>tail!</code>，是因为当前目标不一定在列表首位——在多目标场景中，目标的顺序可能已被其他 tactic 调整过。</p>
+              <p>
+                <strong><code>setGoals (newGoals ++ others)</code></strong>：把两个新子目标放在前面，其余未处理的目标跟在后面。<strong>这一步不能遗漏</strong>——如果你不调用 <code>setGoals</code>，新创建的元变量不会出现在目标列表中，用户在 Infoview 里看不到它们，也无法用后续 tactic 处理它们。</p>
+              <p>
+                这个例子展示了 tactic 最核心的模式：<strong>分析目标结构 → 构造部分证明项（带 hole）→ 把 hole 变成新的子目标</strong>。几乎所有非平凡的 tactic 都遵循这个模式。</p>
+              <blockquote><p>
+                  <strong><code>replaceMainGoal</code> vs <code>setGoals</code> 的选择</strong></p>
+                </blockquote><blockquote></blockquote><blockquote><ul>
+                  <li>
+                    <p>
+                      <strong>只替换当前主目标</strong>时，用 <code>replaceMainGoal newGoals</code>——它自动把主目标替换为 <code>newGoals</code>，并保留其余目标，不需要手动做 <code>erase</code>。</p>
+                    </li>
+                  </ul>
+                </blockquote><blockquote><ul>
+                  <li>
+                    <p>
+                      <strong>需要完全控制整个目标列表</strong>时（比如重新排序、批量过滤），才用 <code>setGoals</code>。</p>
+                    </li>
+                  </ul>
+                </blockquote><blockquote></blockquote><blockquote><p>
+                  经验法则：如果你的 tactic 只处理一个目标并产出若干子目标，<code>replaceMainGoal</code> 更简洁也更安全。</p>
+                </blockquote></section>
+            <section>
+              <h2 id="combining-tactics">
+                4.5. 3.4 调用已有 tactic：组合式证明<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=combining-tactics" title="Permalink">🔗</a></span></h2>
+              <p>
+                手动构造 <code>Expr</code> 虽然灵活，但很多时候你不需要从头来——Lean 标准库已经提供了大量 tactic，你可以在自己的 tactic 中直接调用它们。这就是"组合式"tactic 的思路：把已有的自动化当作积木块来组合。</p>
+              <pre>-- [可运行]
+/-- 依次尝试 assumption 和 rfl，展示 tactic 组合的模式。 -/
+elab "my_smart_close" : tactic =&gt; do
+  let goal ← getMainGoal
+  goal.withContext do
+    -- 策略 1：直接在假设中搜索（和 3.2 的 my_assumption 一样）
+    let target ← goal.getType
+    let lctx ← getLCtx
+    for decl in lctx do
+      if decl.isImplementationDetail then continue
+      if ← isDefEq decl.type target then
+        goal.assign decl.toExpr
+        return
+    -- 策略 2：调用已有 tactic
+    try
+      evalTactic (← `(tactic| rfl))
+      return
+    catch _ =&gt; pure ()
+    throwTacticEx `my_smart_close goal "no hypothesis matches and rfl failed"
+</pre><p>
+                核心 API 是 <strong><code>evalTactic</code></strong>：它接收一个 <code>Syntax</code> 节点，执行对应的 tactic。<code>← `(tactic| ...)</code> 是 Lean 的 quotation 语法，用于在代码中构造 <code>Syntax</code>。</p>
+              <p>
+                这段代码的策略是<strong>搜索 + 回退</strong>：先试最简单的方法（直接在假设中找精确匹配），失败了再试 <code>rfl</code>（关闭 <code>a = a</code> 形式的等式目标）。<code>try ... catch _ =&gt; pure ()</code> 确保第二个策略失败时不会中断整个 tactic，而是回退到最后的 <code>throwTacticEx</code>。</p>
+              <p>
+                你也可以用 <code>evalTactic</code> 一次性表达同样的逻辑：</p>
+              <pre>-- [示意]
+evalTactic (← `(tactic| first | assumption | rfl))
+</pre><p>
+                <code>first</code> 会依次尝试列出的 tactic，直到有一个成功。这种写法更简洁，但手动写搜索循环给你更多控制权——比如你可以过滤掉特定类型的假设，或者按照特定顺序搜索。直接操作 <code>Expr</code> 也比通过 <code>evalTactic</code> 调用更高效，因为省去了语法解析和 tactic 调度的开销。在性能敏感的场景（比如要在大量目标上运行的自动化），这种混合风格很常见。</p>
+              </section>
+            <section>
+              <h2 id="operate-all-goals">
+                4.6. 3.5 对所有目标执行同一操作<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=operate-all-goals" title="Permalink">🔗</a></span></h2>
+              <p>
+                前面的 tactic 都只处理第一个目标（<code>getMainGoal</code>）。但有时你希望对所有未解决的目标执行同一操作——比如"把所有能用 <code>assumption</code> 关掉的目标都关掉"。</p>
+              <pre>-- [可运行]
+-- 对所有目标执行同一个 tactic
+elab "assumption_on_all" : tactic =&gt; do
+  let goals ← getGoals
+  let mut remaining : List MVarId := []
+  for g in goals do
+    if ← g.isAssigned then continue
+    g.withContext do
+      let target ← g.getType
+      let lctx ← getLCtx
+      let mut found := false
+      for decl in lctx do
+        if decl.isImplementationDetail then continue
+        if ← isDefEq decl.type target then
+          g.assign decl.toExpr
+          found := true
+          break
+      if !found then
+        remaining := remaining ++ [g]
+  setGoals remaining
+</pre><p>
+                注意几个关键点：</p>
+              <p>
+                <strong><code>let goals ← getGoals</code></strong>：获取所有目标，而不是只取第一个。</p>
+              <p>
+                <strong><code>if ← g.isAssigned then continue</code></strong>：检查目标是否已经被赋值。为什么需要这个检查？因为 <code>isDefEq</code> 有副作用——它在判断等价性的过程中可能会实例化（instantiate）某些元变量。这意味着在处理目标 A 时调用 <code>isDefEq</code>，可能会"顺带"解决了目标 B。所以在处理每个目标之前，先检查它是否已经被解决了。</p>
+              <p>
+                <strong><code>g.withContext do</code></strong>：注意这里每个目标都需要单独调用 <code>withContext</code>，因为不同目标的局部上下文可能不同。</p>
+              <p>
+                <strong><code>remaining := remaining ++ [g]</code></strong>：如果某个目标没能被关闭，把它加入 remaining 列表。</p>
+              <p>
+                <strong><code>setGoals remaining</code></strong>：最后用 remaining 更新目标列表。被关闭的目标不在列表中，用户看到的就只剩没解决的。</p>
+              </section>
+            <section>
+              <h2 id="error-handling">
+                4.7. 3.6 错误处理与 diagnostics<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=error-handling" title="Permalink">🔗</a></span></h2>
+              <p>
+                好的 tactic 不仅要能成功，还要在失败时给出有用的信息。Lean 提供了多个层次的诊断工具：</p>
+              <pre>-- [示意]
+-- throwTacticEx 会显示目标上下文
+throwTacticEx `my_tactic goal "expected an equality goal"
+
+-- throwError 是通用错误
+throwError "my_tactic: internal error"
+
+-- logWarning 不中断执行
+logWarning "this goal might not be provable by my_tactic"
+
+-- trace 用于调试（需要 set_option trace.my_tactic true）
+trace[my_tactic] "trying hypothesis {decl.userName}"
+</pre><p>
+                <strong><code>throwTacticEx</code> vs <code>throwError</code></strong>：<code>throwTacticEx</code> 接受一个 <code>MVarId</code> 参数，抛出的错误信息会包含该目标的完整上下文（包括所有假设和目标类型）。这对用户来说非常有价值——他们不需要自己去翻 Infoview 就能看到出错时的状态。<code>throwError</code> 则是通用的错误抛出函数，不附带目标上下文，适合用于和特定目标无关的错误（比如参数解析失败）。</p>
+              <p>
+                <strong><code>logWarning</code></strong>：发出警告但不中断执行。适合用于"这个情况可能有问题但不确定"的场景。</p>
+              <p>
+                <strong><code>trace</code></strong>：调试专用。只有在用户设置了 <code>set_option trace.my_tactic true</code> 时才会输出。适合在开发过程中打印中间状态。</p>
+              <p>
+                注册 trace option：</p>
+              <pre>-- [可运行]
+initialize registerTraceClass `my_tactic
+</pre><p>
+                你需要在文件顶部调用 <code>registerTraceClass</code> 来注册 trace 类别。之后就可以在代码中使用 <code>trace[my_tactic]</code> 来输出调试信息。Lean 的 trace 系统支持层级结构——你可以注册 <code>my_tactic.search</code> 和 <code>my_tactic.unify</code> 来分别控制搜索和 unification 阶段的调试输出。</p>
+              </section>
+            <section>
+              <h2 id="ch03-common-failures">
+                4.8. 3.7 常见失败模式与 debug<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch03-common-failures" title="Permalink">🔗</a></span></h2>
+              <p>
+                编写 tactic 时，有几类错误特别常见。本节列出最典型的失败模式，帮助你快速定位问题。</p>
+              <section>
+                <h3 id="failure-missing-withcontext">
+                  4.8.1. 忘记 withContext<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-missing-withcontext" title="Permalink">🔗</a></span></h3>
+                <p>
+                  这是新手最容易犯的错误。看下面的代码：</p>
+                <pre>-- [示意]
+-- 错误示范：忘记 withContext
+elab "bad_assumption" : tactic =&gt; do
+  let goal ← getMainGoal
+  -- 没有调用 goal.withContext！
+  let target ← goal.getType
+  let lctx ← getLCtx    -- 拿到的可能是错误的上下文
+  for decl in lctx do
+    if ← isDefEq decl.type target then
+      goal.assign decl.toExpr
+      return
+  throwError "not found"
+</pre><p>
+                  如果你在证明过程中只有一个目标、且没有经过 <code>intro</code> 或 <code>cases</code> 之类改变上下文的操作，这段代码可能"碰巧"能工作。但一旦有多个目标或上下文被修改过，<code>getLCtx</code> 拿到的就不是当前目标的上下文，而是"默认"上下文（通常是最外层的），导致找不到该有的假设，或者更糟——找到错误的假设。</p>
+                <p>
+                  <strong>规则</strong>：只要你要读取目标的局部上下文，就用 <code>goal.withContext do</code> 包裹。没有例外。</p>
+                </section>
+              <section>
+                <h3 id="failure-isdefeq-unification">
+                  4.8.2. isDefEq 的 unification 副作用<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-isdefeq-unification" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>isDefEq</code> 不是一个纯函数——它会修改元变量的状态。当你调用 <code>isDefEq a b</code>，如果 <code>a</code> 或 <code>b</code> 中包含未实例化的元变量，<code>isDefEq</code> 可能会把它们实例化来使等式成立。</p>
+                <pre>-- [伪代码]
+-- 危险场景：isDefEq 的副作用
+let mvar ← mkFreshExprMVar (mkConst ``Nat)
+-- 此时 mvar 尚未赋值
+let _ ← isDefEq mvar (mkNatLit 42)
+-- 现在 mvar 被赋值为 42 了！
+</pre><p>
+                  这有两个实际后果：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <strong>不要把 <code>isDefEq</code> 当作"无害的检查"来用</strong>。如果你只是想"试试看两个类型是否相同"但不想产生任何副作用，你需要用 <code>withoutModifyingState</code> 包裹：<code>withoutModifyingState (isDefEq a b)</code>。</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>遍历假设时注意顺序</strong>。如果你先用 <code>isDefEq</code> 匹配了假设 A，虽然最终没用它（比如后来发现假设 B 更好），但 A 的匹配过程可能已经实例化了某些元变量，影响后续的匹配。这是 3.5 节中需要 <code>g.isAssigned</code> 检查的根本原因。</p>
+                    </li>
+                  </ol>
+                </section>
+              <section>
+                <h3 id="failure-setgoals-missing">
+                  4.8.3. setGoals 遗漏目标<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-setgoals-missing" title="Permalink">🔗</a></span></h3>
+                <pre>-- [伪代码]
+-- 错误示范：忘记保留其他目标
+elab "bad_split" : tactic =&gt; do
+  let goal ← getMainGoal
+  goal.withContext do
+    -- ...构造子目标 mvarP 和 mvarQ...
+    goal.assign proof
+    setGoals [mvarP.mvarId!, mvarQ.mvarId!]  -- 只设置了新目标！
+</pre><p>
+                  问题在哪？如果调用 <code>bad_split</code> 时目标列表是 <code>[goal, g2, g3]</code>，<code>setGoals</code> 只设置了 <code>[mvarP, mvarQ]</code>，那 <code>g2</code> 和 <code>g3</code> 就从目标列表中消失了。用户看不到它们，也无法用后续 tactic 处理它们——但它们还在那里，未被证明，最终会导致"unsolved goals"错误。</p>
+                <p>
+                  正确的做法是保留原目标列表中除了当前目标以外的所有目标：</p>
+                <pre>-- [伪代码]
+let others := (← getGoals).erase goal
+setGoals (newGoals ++ others)
+</pre><p>
+                  用 <code>List.erase</code> 而不是 <code>tail!</code>，是因为当前目标不一定在列表首位——在多目标场景中顺序可能已被调整。</p>
+                </section>
+              <section>
+                <h3 id="throw-tactic-ex-vs-error">
+                  4.8.4. throwTacticEx vs throwError 的选择<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=throw-tactic-ex-vs-error" title="Permalink">🔗</a></span></h3>
+                <pre>-- [伪代码]
+-- 当你有 MVarId 时，优先用 throwTacticEx
+throwTacticEx `my_tactic goal "expected a conjunction"
+-- 输出会包含完整的目标上下文，类似：
+-- my_tactic: expected a conjunction
+-- h : P
+-- ⊢ P → Q
+
+-- 当你没有特定目标、或者错误与目标无关时，用 throwError
+throwError "my_tactic: unexpected number of arguments"
+</pre><p>
+                  经验法则：如果你的错误信息中包含"目标应该是 XXX 形式"之类的内容，用 <code>throwTacticEx</code>，因为用户需要看到目标上下文才能理解为什么不匹配。如果是语法错误、参数错误等和目标无关的情况，用 <code>throwError</code>。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch03-exercises">
+                4.9. 3.8 练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch03-exercises" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="exercise-3-1">
+                  4.9.1. 练习 1（热身）：<code>my_exact</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-3-1" title="Permalink">🔗</a></span></h3>
+                <p>
+                  编写一个 tactic <code>my_exact</code>，接受一个标识符参数，在局部上下文中查找该名字的假设并用它关闭目标。</p>
+                <p>
+                  提示：</p>
+                <ul>
+                  <li>
+                    <p>
+                      用 <code>elab "my_exact" ident:ident : tactic =&gt; do</code> 接收参数</p>
+                    </li>
+                  <li>
+                    <p>
+                      用 <code>ident.getId</code> 获取名字</p>
+                    </li>
+                  <li>
+                    <p>
+                      在 <code>lctx</code> 中用 <code>lctx.findFromUserName?</code> 查找</p>
+                    </li>
+                  </ul>
+                <p>
+                  测试用例：</p>
+                <pre>-- [示意]
+example (h : 1 + 1 = 2) : 1 + 1 = 2 := by
+  my_exact h  -- 应该成功
+</pre></section>
+              <section>
+                <h3 id="exercise-3-2">
+                  4.9.2. 练习 2（热身）：<code>my_intro</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-3-2" title="Permalink">🔗</a></span></h3>
+                <p>
+                  编写一个 tactic <code>my_intro</code>，当目标是 <code>P → Q</code> 时引入假设。</p>
+                <p>
+                  提示：</p>
+                <ul>
+                  <li>
+                    <p>
+                      目标 <code>P → Q</code> 在 <code>Expr</code> 层面是 <code>Expr.forallE name P Q info</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      用 <code>goal.intro name</code> 来引入——它会自动创建新的局部假设并返回新目标</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>goal.intro</code> 返回的是新目标的 <code>MVarId</code>，你需要 <code>replaceMainGoal [newGoal]</code> 来更新</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="exercise-3-3">
+                  4.9.3. 练习 3（debug）：找出 bug<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-3-3" title="Permalink">🔗</a></span></h3>
+                <p>
+                  下面的 tactic 试图对所有目标执行 <code>rfl</code>，但有两个 bug。找出并修复它们。</p>
+                <pre>-- [示意]
+elab "rfl_all" : tactic =&gt; do
+  let goals ← getGoals
+  for g in goals do
+    g.withContext do
+      try
+        let target ← g.getType
+        let_expr Eq _ lhs _ := target | throwError "not eq"
+        g.assign (← mkEqRefl lhs)
+      catch _ =&gt; pure ()
+  setGoals []  -- bug 在这里附近
+</pre><p>
+                  提示：bug 1 与 <code>setGoals</code> 有关（参考 3.7 节），bug 2 与 <code>Eq</code> 的参数个数有关（<code>@Eq α a b</code> 有三个参数，不是两个）。</p>
+                </section>
+              <section>
+                <h3 id="exercise-3-4">
+                  4.9.4. 练习 4（综合）：<code>split_iff</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-3-4" title="Permalink">🔗</a></span></h3>
+                <p>
+                  编写一个 tactic <code>split_iff</code>，当目标是 <code>P ↔ Q</code> 时拆成两个子目标 <code>P → Q</code> 和 <code>Q → P</code>。</p>
+                <p>
+                  提示：</p>
+                <ul>
+                  <li>
+                    <p>
+                      <code>Iff.intro</code> 的签名是 <code>{a b : Prop} → (a → b) → (b → a) → (a ↔ b)</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      模仿 3.3 节的 <code>split_and</code>，但换成 <code>Iff</code> 和 <code>Iff.intro</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      两个子目标的类型分别是 <code>P → Q</code> 和 <code>Q → P</code>——你需要用 <code>mkArrow</code> 来构造箭头类型</p>
+                    </li>
+                  <li>
+                    <p>
+                      不要忘记用 <code>(← getGoals).erase goal</code> 保留其他目标，或者用 <code>replaceMainGoal</code></p>
+                    </li>
+                  </ul>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch03-summary">
+                4.10. 3.9 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch03-summary" title="Permalink">🔗</a></span></h2>
+              <p>
+                | 模式 | 说明 |
+|------|------|
+| <code>getMainGoal</code> + <code>goal.withContext</code> | 获取目标并切换上下文 |
+| <code>goal.getType</code> | 读取目标命题 |
+| <code>goal.assign proof</code> | 用证明项关闭目标 |
+| <code>mkFreshExprMVar T</code> | 创建类型 T 的新 hole（子目标） |
+| <code>setGoals</code> | 更新目标列表 |
+| <code>isDefEq a b</code> | 判断定义等价（核心匹配操作） |
+| <code>throwTacticEx</code> | 带目标上下文的错误信息 |
+| <code>evalTactic</code> | 在 tactic 中调用其他 tactic |
+| <code>withoutModifyingState</code> | 不产生副作用地执行操作 |</p>
+              <p>
+                <strong>核心原则</strong>：tactic = 读目标 + 分析结构 + 构造证明项 + 更新目标列表。</p>
+              <p>
+                本章你学到了编写 tactic 的完整流程：从最简单的 <code>assumption</code> 到拆分目标的 <code>split_and</code>，从组合已有 tactic 到对多目标批量操作，再到错误处理和常见陷阱。每个 tactic 都遵循同一个模式——读取目标、分析 <code>Expr</code> 结构、构造证明项、更新目标列表。</p>
+              <p>
+                下一章将深入目标管理的进阶技巧：如何用 <code>focus</code> 聚焦单个目标、如何用 <code>withMainContext</code> 简化上下文切换、如何实现回溯搜索（backtracking），以及 <code>MonadBacktrack</code> 的工作原理。
+</p>
+              </section>
             </section>
           <nav class="prev-next-buttons">
-            <a class="local-button active" href="Ch02Expr/2___10-______/#Lean-4-_______________--_________-Expr___Lean-4-_______________--2___10-______" rel="prev" title="3.10. 2.10 练习"><span class="arrow">←</span><span class="where">3.10. 2.10 练习</span></a><a class="local-button active" href="Ch03FirstTactic/____________-Expr-___-Tactic/#Lean-4-_______________--_________-_____________________-Tactic--____________-Expr-___-Tactic" rel="next" title="4.1. 回顾：从 Expr 到 Tactic"><span class="where">4.1. 回顾：从 Expr 到 Tactic</span><span class="arrow">→</span></a></nav>
+            <a class="local-button active" href="Ch02Expr/#ch02-expr" rel="prev" title="3. 第二章 Expr：Lean 4 的内部表示"><span class="arrow">←</span><span class="where">3. 第二章 Expr：Lean 4 的内部表示</span></a><div></div>
+            </nav>
           </div>
         </main></div>
     </body>

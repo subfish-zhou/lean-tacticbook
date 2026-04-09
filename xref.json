@@ -2,146 +2,42 @@
  {"title": "Sections or chapters of the manual",
   "description": null,
   "contents":
-  {"lean-automation-internals":
-   [{"id": "lean-automation-internals",
+  {"why-metaprogramming":
+   [{"id": "why-metaprogramming",
      "data":
-     {"title": "Lean 4 自动化内幕",
+     {"title": "1.1 为什么要理解元编程模型？",
       "shortTitle": null,
-      "sectionNum": "",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null}]},
-     "address": "/"}],
-   "ch03-first-tactic":
-   [{"id": "ch03-first-tactic",
-     "data":
-     {"title": "第三章 编写你的第一个 Tactic",
-      "shortTitle": null,
-      "sectionNum": "4.",
+      "sectionNum": "2.1.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"}]},
-     "address": "/Ch03FirstTactic/"}],
-   "ch02-expr":
-   [{"id": "ch02-expr",
-     "data":
-     {"title": "第二章 Expr：Lean 4 的内部表示",
-      "shortTitle": null,
-      "sectionNum": "3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch02Expr/"}],
-   "ch01-metaprogramming-model":
-   [{"id": "ch01-metaprogramming-model",
-     "data":
-     {"title": "第一章 Lean 4 元编程模型",
-      "shortTitle": null,
-      "sectionNum": "2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"}]},
+       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
+       {"title": "1.1 为什么要理解元编程模型？", "shortTitle": null, "number": "1"}]},
      "address": "/Ch01MetaprogrammingModel/"}],
-   "ch00-setup":
-   [{"id": "ch00-setup",
+   "what-is-expr":
+   [{"id": "what-is-expr",
      "data":
-     {"title": "第零章 环境与运行约定",
+     {"title": "2.1 Expr 是什么",
       "shortTitle": null,
-      "sectionNum": "1.",
+      "sectionNum": "3.1.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch00Setup/"}],
-   "Lean-4-_______________--_________-_____________________-Tactic--____________-Expr-___-Tactic":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________-Tactic--____________-Expr-___-Tactic",
+       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
+       {"title": "2.1 Expr 是什么", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch02Expr/"}],
+   "type-related-utils":
+   [{"id": "type-related-utils",
      "data":
-     {"title": "回顾：从 Expr 到 Tactic",
+     {"title": "类型相关",
       "shortTitle": null,
-      "sectionNum": "4.1.",
+      "sectionNum": "3.7.1.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
-       {"title": "回顾：从 Expr 到 Tactic", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch03FirstTactic/____________-Expr-___-Tactic/"}],
-   "Lean-4-_______________--_________-_____________________-Tactic--3___9-______":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________-Tactic--3___9-______",
-     "data":
-     {"title": "3.9 小结",
-      "shortTitle": null,
-      "sectionNum": "4.10.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
-       {"title": "3.9 小结", "shortTitle": null, "number": "10"}]},
-     "address": "/Ch03FirstTactic/3___9-______/"}],
-   "Lean-4-_______________--_________-_____________________-Tactic--3___8-______--______-4_______________-split_iff":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________-Tactic--3___8-______--______-4_______________-split_iff",
-     "data":
-     {"title": "练习 4（综合）： split_iff",
-      "shortTitle": null,
-      "sectionNum": "4.9.4.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
-       {"title": "3.8 练习", "shortTitle": null, "number": "9"},
-       {"title": "练习 4（综合）： split_iff", "shortTitle": null, "number": "4"}]},
-     "address": "/Ch03FirstTactic/3___8-______/"}],
-   "Lean-4-_______________--_________-_____________________-Tactic--3___8-______--______-3___debug____________-bug":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________-Tactic--3___8-______--______-3___debug____________-bug",
-     "data":
-     {"title": "练习 3（debug）：找出 bug",
-      "shortTitle": null,
-      "sectionNum": "4.9.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
-       {"title": "3.8 练习", "shortTitle": null, "number": "9"},
-       {"title": "练习 3（debug）：找出 bug", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch03FirstTactic/3___8-______/"}],
-   "Lean-4-_______________--_________-_____________________-Tactic--3___8-______--______-2_______________-my_intro":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________-Tactic--3___8-______--______-2_______________-my_intro",
-     "data":
-     {"title": "练习 2（热身）： my_intro",
-      "shortTitle": null,
-      "sectionNum": "4.9.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
-       {"title": "3.8 练习", "shortTitle": null, "number": "9"},
-       {"title": "练习 2（热身）： my_intro", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch03FirstTactic/3___8-______/"}],
-   "Lean-4-_______________--_________-_____________________-Tactic--3___8-______--______-1_______________-my_exact":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________-Tactic--3___8-______--______-1_______________-my_exact",
-     "data":
-     {"title": "练习 1（热身）： my_exact",
-      "shortTitle": null,
-      "sectionNum": "4.9.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
-       {"title": "3.8 练习", "shortTitle": null, "number": "9"},
-       {"title": "练习 1（热身）： my_exact", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch03FirstTactic/3___8-______/"}],
-   "Lean-4-_______________--_________-_____________________-Tactic--3___8-______":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________-Tactic--3___8-______",
-     "data":
-     {"title": "3.8 练习",
-      "shortTitle": null,
-      "sectionNum": "4.9.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
-       {"title": "3.8 练习", "shortTitle": null, "number": "9"}]},
-     "address": "/Ch03FirstTactic/3___8-______/"}],
-   "Lean-4-_______________--_________-_____________________-Tactic--3___7-_____________________-debug--throwTacticEx-vs-throwError-_________":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________-Tactic--3___7-_____________________-debug--throwTacticEx-vs-throwError-_________",
+       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
+       {"title": "2.7 实用工具函数", "shortTitle": null, "number": "7"},
+       {"title": "类型相关", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch02Expr/"}],
+   "throw-tactic-ex-vs-error":
+   [{"id": "throw-tactic-ex-vs-error",
      "data":
      {"title": "throwTacticEx vs throwError 的选择",
       "shortTitle": null,
@@ -153,651 +49,9 @@
        {"title": "throwTacticEx vs throwError 的选择",
         "shortTitle": null,
         "number": "4"}]},
-     "address": "/Ch03FirstTactic/3___7-_____________________-debug/"}],
-   "Lean-4-_______________--_________-_____________________-Tactic--3___7-_____________________-debug--setGoals-____________":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________-Tactic--3___7-_____________________-debug--setGoals-____________",
-     "data":
-     {"title": "setGoals 遗漏目标",
-      "shortTitle": null,
-      "sectionNum": "4.8.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
-       {"title": "3.7 常见失败模式与 debug", "shortTitle": null, "number": "8"},
-       {"title": "setGoals 遗漏目标", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch03FirstTactic/3___7-_____________________-debug/"}],
-   "Lean-4-_______________--_________-_____________________-Tactic--3___7-_____________________-debug--isDefEq-___-unification-_________":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________-Tactic--3___7-_____________________-debug--isDefEq-___-unification-_________",
-     "data":
-     {"title": "isDefEq 的 unification 副作用",
-      "shortTitle": null,
-      "sectionNum": "4.8.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
-       {"title": "3.7 常见失败模式与 debug", "shortTitle": null, "number": "8"},
-       {"title": "isDefEq 的 unification 副作用",
-        "shortTitle": null,
-        "number": "2"}]},
-     "address": "/Ch03FirstTactic/3___7-_____________________-debug/"}],
-   "Lean-4-_______________--_________-_____________________-Tactic--3___7-_____________________-debug--______-withContext":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________-Tactic--3___7-_____________________-debug--______-withContext",
-     "data":
-     {"title": "忘记 withContext",
-      "shortTitle": null,
-      "sectionNum": "4.8.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
-       {"title": "3.7 常见失败模式与 debug", "shortTitle": null, "number": "8"},
-       {"title": "忘记 withContext", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch03FirstTactic/3___7-_____________________-debug/"}],
-   "Lean-4-_______________--_________-_____________________-Tactic--3___7-_____________________-debug":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________-Tactic--3___7-_____________________-debug",
-     "data":
-     {"title": "3.7 常见失败模式与 debug",
-      "shortTitle": null,
-      "sectionNum": "4.8.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
-       {"title": "3.7 常见失败模式与 debug", "shortTitle": null, "number": "8"}]},
-     "address": "/Ch03FirstTactic/3___7-_____________________-debug/"}],
-   "Lean-4-_______________--_________-_____________________-Tactic--3___6-_______________-diagnostics":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________-Tactic--3___6-_______________-diagnostics",
-     "data":
-     {"title": "3.6 错误处理与 diagnostics",
-      "shortTitle": null,
-      "sectionNum": "4.7.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
-       {"title": "3.6 错误处理与 diagnostics", "shortTitle": null, "number": "7"}]},
-     "address": "/Ch03FirstTactic/3___6-_______________-diagnostics/"}],
-   "Lean-4-_______________--_________-_____________________-Tactic--3___5-_________________________________":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________-Tactic--3___5-_________________________________",
-     "data":
-     {"title": "3.5 对所有目标执行同一操作",
-      "shortTitle": null,
-      "sectionNum": "4.6.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
-       {"title": "3.5 对所有目标执行同一操作", "shortTitle": null, "number": "6"}]},
-     "address": "/Ch03FirstTactic/3___5-_________________________________/"}],
-   "Lean-4-_______________--_________-_____________________-Tactic--3___4-____________-tactic__________________":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________-Tactic--3___4-____________-tactic__________________",
-     "data":
-     {"title": "3.4 调用已有 tactic：组合式证明",
-      "shortTitle": null,
-      "sectionNum": "4.5.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
-       {"title": "3.4 调用已有 tactic：组合式证明", "shortTitle": null, "number": "5"}]},
-     "address":
-     "/Ch03FirstTactic/3___4-____________-tactic__________________/"}],
-   "Lean-4-_______________--_________-_____________________-Tactic--3___3--split_and-_____________________":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________-Tactic--3___3--split_and-_____________________",
-     "data":
-     {"title": "3.3  split_and ：拆分合取目标",
-      "shortTitle": null,
-      "sectionNum": "4.4.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
-       {"title": "3.3  split_and ：拆分合取目标", "shortTitle": null, "number": "4"}]},
-     "address": "/Ch03FirstTactic/3___3--split_and-_____________________/"}],
-   "Lean-4-_______________--_________-_____________________-Tactic--3___2-assumption_____________________":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________-Tactic--3___2-assumption_____________________",
-     "data":
-     {"title": "3.2 assumption：在假设中搜索",
-      "shortTitle": null,
-      "sectionNum": "4.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
-       {"title": "3.2 assumption：在假设中搜索", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch03FirstTactic/3___2-assumption_____________________/"}],
-   "Lean-4-_______________--_________-_____________________-Tactic--3___1-Tactic-_______________":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________-Tactic--3___1-Tactic-_______________",
-     "data":
-     {"title": "3.1 Tactic 的生命周期",
-      "shortTitle": null,
-      "sectionNum": "4.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
-       {"title": "3.1 Tactic 的生命周期", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch03FirstTactic/3___1-Tactic-_______________/"}],
-   "Lean-4-_______________--_________-_____________________--0___8-__________________--______-0___4_____________________-tactic":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________--0___8-__________________--______-0___4_____________________-tactic",
-     "data":
-     {"title": "练习 0.4（综合）：选对 tactic",
-      "shortTitle": null,
-      "sectionNum": "1.8.4.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
-       {"title": "0.8 环境验证练习", "shortTitle": null, "number": "8"},
-       {"title": "练习 0.4（综合）：选对 tactic", "shortTitle": null, "number": "4"}]},
-     "address": "/Ch00Setup/0___8-__________________/"}],
-   "Lean-4-_______________--_________-_____________________--0___8-__________________--______-0___3___debug-________________________":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________--0___8-__________________--______-0___3___debug-________________________",
-     "data":
-     {"title": "练习 0.3（debug 练习）：故意出错",
-      "shortTitle": null,
-      "sectionNum": "1.8.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
-       {"title": "0.8 环境验证练习", "shortTitle": null, "number": "8"},
-       {"title": "练习 0.3（debug 练习）：故意出错", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch00Setup/0___8-__________________/"}],
-   "Lean-4-_______________--_________-_____________________--0___8-__________________--______-0___2______________________________":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________--0___8-__________________--______-0___2______________________________",
-     "data":
-     {"title": "练习 0.2（热身）：第一个证明",
-      "shortTitle": null,
-      "sectionNum": "1.8.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
-       {"title": "0.8 环境验证练习", "shortTitle": null, "number": "8"},
-       {"title": "练习 0.2（热身）：第一个证明", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch00Setup/0___8-__________________/"}],
-   "Lean-4-_______________--_________-_____________________--0___8-__________________--______-0___1_______________Hello___-Lean___":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________--0___8-__________________--______-0___1_______________Hello___-Lean___",
-     "data":
-     {"title": "练习 0.1（热身）：Hello, Lean!",
-      "shortTitle": null,
-      "sectionNum": "1.8.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
-       {"title": "0.8 环境验证练习", "shortTitle": null, "number": "8"},
-       {"title": "练习 0.1（热身）：Hello, Lean!",
-        "shortTitle": null,
-        "number": "1"}]},
-     "address": "/Ch00Setup/0___8-__________________/"}],
-   "Lean-4-_______________--_________-_____________________--0___8-__________________":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________--0___8-__________________",
-     "data":
-     {"title": "0.8 环境验证练习",
-      "shortTitle": null,
-      "sectionNum": "1.8.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
-       {"title": "0.8 环境验证练习", "shortTitle": null, "number": "8"}]},
-     "address": "/Ch00Setup/0___8-__________________/"}],
-   "Lean-4-_______________--_________-_____________________--0___7-__________________":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________--0___7-__________________",
-     "data":
-     {"title": "0.7 全书结构概览",
-      "shortTitle": null,
-      "sectionNum": "1.7.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
-       {"title": "0.7 全书结构概览", "shortTitle": null, "number": "7"}]},
-     "address": "/Ch00Setup/0___7-__________________/"}],
-   "Lean-4-_______________--_________-_____________________--0___6-________________________":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________--0___6-________________________",
-     "data":
-     {"title": "0.6 跟着本书学的建议",
-      "shortTitle": null,
-      "sectionNum": "1.6.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
-       {"title": "0.6 跟着本书学的建议", "shortTitle": null, "number": "6"}]},
-     "address": "/Ch00Setup/0___6-________________________/"}],
-   "Lean-4-_______________--_________-_____________________--0___5-_____________________--_______________":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________--0___5-_____________________--_______________",
-     "data":
-     {"title": "可运行示例",
-      "shortTitle": null,
-      "sectionNum": "1.5.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
-       {"title": "0.5 本书的代码约定", "shortTitle": null, "number": "5"},
-       {"title": "可运行示例", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch00Setup/0___5-_____________________/"}],
-   "Lean-4-_______________--_________-_____________________--0___5-_____________________--____________":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________--0___5-_____________________--____________",
-     "data":
-     {"title": "示意代码",
-      "shortTitle": null,
-      "sectionNum": "1.5.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
-       {"title": "0.5 本书的代码约定", "shortTitle": null, "number": "5"},
-       {"title": "示意代码", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch00Setup/0___5-_____________________/"}],
-   "Lean-4-_______________--_________-_____________________--0___5-_____________________--_________":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________--0___5-_____________________--_________",
-     "data":
-     {"title": "伪代码",
-      "shortTitle": null,
-      "sectionNum": "1.5.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
-       {"title": "0.5 本书的代码约定", "shortTitle": null, "number": "5"},
-       {"title": "伪代码", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch00Setup/0___5-_____________________/"}],
-   "Lean-4-_______________--_________-_____________________--0___5-_____________________":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________--0___5-_____________________",
-     "data":
-     {"title": "0.5 本书的代码约定",
-      "shortTitle": null,
-      "sectionNum": "1.5.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
-       {"title": "0.5 本书的代码约定", "shortTitle": null, "number": "5"}]},
-     "address": "/Ch00Setup/0___5-_____________________/"}],
-   "Lean-4-_______________--_________-_____________________--0___4-______-tactic-____________":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________--0___4-______-tactic-____________",
-     "data":
-     {"title": "0.4 哪些 tactic 来自哪里",
-      "shortTitle": null,
-      "sectionNum": "1.4.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
-       {"title": "0.4 哪些 tactic 来自哪里", "shortTitle": null, "number": "4"}]},
-     "address": "/Ch00Setup/0___4-______-tactic-____________/"}],
-   "Lean-4-_______________--_________-_____________________--0___3-___________________________--____________________________________":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________--0___3-___________________________--____________________________________",
-     "data":
-     {"title": "方式二：克隆本书配套仓库",
-      "shortTitle": null,
-      "sectionNum": "1.3.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
-       {"title": "0.3 创建本书的配套项目", "shortTitle": null, "number": "3"},
-       {"title": "方式二：克隆本书配套仓库", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch00Setup/0___3-___________________________/"}],
-   "Lean-4-_______________--_________-_____________________--0___3-___________________________--________________________":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________--0___3-___________________________--________________________",
-     "data":
-     {"title": "常见项目创建问题",
-      "shortTitle": null,
-      "sectionNum": "1.3.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
-       {"title": "0.3 创建本书的配套项目", "shortTitle": null, "number": "3"},
-       {"title": "常见项目创建问题", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch00Setup/0___3-___________________________/"}],
-   "Lean-4-_______________--_________-_____________________--0___3-___________________________--_______________-lake-______-Mathlib-__________________":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________--0___3-___________________________--_______________-lake-______-Mathlib-__________________",
-     "data":
-     {"title": "方式一：用 lake 创建 Mathlib 项目（推荐）",
-      "shortTitle": null,
-      "sectionNum": "1.3.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
-       {"title": "0.3 创建本书的配套项目", "shortTitle": null, "number": "3"},
-       {"title": "方式一：用 lake 创建 Mathlib 项目（推荐）",
-        "shortTitle": null,
-        "number": "1"}]},
-     "address": "/Ch00Setup/0___3-___________________________/"}],
-   "Lean-4-_______________--_________-_____________________--0___3-___________________________":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________--0___3-___________________________",
-     "data":
-     {"title": "0.3 创建本书的配套项目",
-      "shortTitle": null,
-      "sectionNum": "1.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
-       {"title": "0.3 创建本书的配套项目", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch00Setup/0___3-___________________________/"}],
-   "Lean-4-_______________--_________-_____________________--0___2-______-Lean-4--__________________":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________--0___2-______-Lean-4--__________________",
-     "data":
-     {"title": "常见安装问题",
-      "shortTitle": null,
-      "sectionNum": "1.2.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
-       {"title": "0.2 安装 Lean 4", "shortTitle": null, "number": "2"},
-       {"title": "常见安装问题", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch00Setup/0___2-______-Lean-4/"}],
-   "Lean-4-_______________--_________-_____________________--0___2-______-Lean-4":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________--0___2-______-Lean-4",
-     "data":
-     {"title": "0.2 安装 Lean 4",
-      "shortTitle": null,
-      "sectionNum": "1.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
-       {"title": "0.2 安装 Lean 4", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch00Setup/0___2-______-Lean-4/"}],
-   "Lean-4-_______________--_________-_____________________--0___1-_____________________":
-   [{"id":
-     "Lean-4-_______________--_________-_____________________--0___1-_____________________",
-     "data":
-     {"title": "0.1 你需要什么基础",
-      "shortTitle": null,
-      "sectionNum": "1.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
-       {"title": "0.1 你需要什么基础", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch00Setup/0___1-_____________________/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___9-______--______-1___4_____________________--my_rfl":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___9-______--______-1___4_____________________--my_rfl",
-     "data":
-     {"title": "练习 1.4（综合）：实现  my_rfl",
-      "shortTitle": null,
-      "sectionNum": "2.9.4.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
-       {"title": "1.9 练习", "shortTitle": null, "number": "9"},
-       {"title": "练习 1.4（综合）：实现  my_rfl", "shortTitle": null, "number": "4"}]},
-     "address": "/Ch01MetaprogrammingModel/1___9-______/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___9-______--______-1___3___debug___________________________":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___9-______--______-1___3___debug___________________________",
-     "data":
-     {"title": "练习 1.3（debug）：找出并修复错误",
-      "shortTitle": null,
-      "sectionNum": "2.9.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
-       {"title": "1.9 练习", "shortTitle": null, "number": "9"},
-       {"title": "练习 1.3（debug）：找出并修复错误", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch01MetaprogrammingModel/1___9-______/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___9-______--______-1___2_____________________-Monad-______":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___9-______--______-1___2_____________________-Monad-______",
-     "data":
-     {"title": "练习 1.2（热身）：识别 Monad 层次",
-      "shortTitle": null,
-      "sectionNum": "2.9.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
-       {"title": "1.9 练习", "shortTitle": null, "number": "9"},
-       {"title": "练习 1.2（热身）：识别 Monad 层次", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch01MetaprogrammingModel/1___9-______/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___9-______--______-1___1_____________________--trace_goal":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___9-______--______-1___1_____________________--trace_goal",
-     "data":
-     {"title": "练习 1.1（热身）：跑通  trace_goal",
-      "shortTitle": null,
-      "sectionNum": "2.9.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
-       {"title": "1.9 练习", "shortTitle": null, "number": "9"},
-       {"title": "练习 1.1（热身）：跑通  trace_goal",
-        "shortTitle": null,
-        "number": "1"}]},
-     "address": "/Ch01MetaprogrammingModel/1___9-______/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___9-______":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___9-______",
-     "data":
-     {"title": "1.9 练习",
-      "shortTitle": null,
-      "sectionNum": "2.9.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
-       {"title": "1.9 练习", "shortTitle": null, "number": "9"}]},
-     "address": "/Ch01MetaprogrammingModel/1___9-______/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___8-_____________________-debug--______-4___-isDefEq--________________________":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___8-_____________________-debug--______-4___-isDefEq--________________________",
-     "data":
-     {"title": "失败 4： isDefEq  意外修改了元变量",
-      "shortTitle": null,
-      "sectionNum": "2.8.4.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
-       {"title": "1.8 常见失败模式与 debug", "shortTitle": null, "number": "8"},
-       {"title": "失败 4： isDefEq  意外修改了元变量",
-        "shortTitle": null,
-        "number": "4"}]},
-     "address":
-     "/Ch01MetaprogrammingModel/1___8-_____________________-debug/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___8-_____________________-debug--______-3___-goal___assign--________________________":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___8-_____________________-debug--______-3___-goal___assign--________________________",
-     "data":
-     {"title": "失败 3： goal.assign  之后还有目标报错",
-      "shortTitle": null,
-      "sectionNum": "2.8.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
-       {"title": "1.8 常见失败模式与 debug", "shortTitle": null, "number": "8"},
-       {"title": "失败 3： goal.assign  之后还有目标报错",
-        "shortTitle": null,
-        "number": "3"}]},
-     "address":
-     "/Ch01MetaprogrammingModel/1___8-_____________________-debug/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___8-_____________________-debug--______-2___-elab_rules--________________________":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___8-_____________________-debug--______-2___-elab_rules--________________________",
-     "data":
-     {"title": "失败 2： elab_rules  里的模式匹配报错",
-      "shortTitle": null,
-      "sectionNum": "2.8.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
-       {"title": "1.8 常见失败模式与 debug", "shortTitle": null, "number": "8"},
-       {"title": "失败 2： elab_rules  里的模式匹配报错",
-        "shortTitle": null,
-        "number": "2"}]},
-     "address":
-     "/Ch01MetaprogrammingModel/1___8-_____________________-debug/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___8-_____________________-debug--______-1___-unknown-identifier-___getMainGoal___":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___8-_____________________-debug--______-1___-unknown-identifier-___getMainGoal___",
-     "data":
-     {"title": "失败 1： unknown identifier 'getMainGoal'",
-      "shortTitle": null,
-      "sectionNum": "2.8.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
-       {"title": "1.8 常见失败模式与 debug", "shortTitle": null, "number": "8"},
-       {"title": "失败 1： unknown identifier 'getMainGoal'",
-        "shortTitle": null,
-        "number": "1"}]},
-     "address":
-     "/Ch01MetaprogrammingModel/1___8-_____________________-debug/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___8-_____________________-debug":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___8-_____________________-debug",
-     "data":
-     {"title": "1.8 常见失败模式与 debug",
-      "shortTitle": null,
-      "sectionNum": "2.8.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
-       {"title": "1.8 常见失败模式与 debug", "shortTitle": null, "number": "8"}]},
-     "address":
-     "/Ch01MetaprogrammingModel/1___8-_____________________-debug/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___7-______":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___7-______",
-     "data":
-     {"title": "1.7 小结",
-      "shortTitle": null,
-      "sectionNum": "2.7.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
-       {"title": "1.7 小结", "shortTitle": null, "number": "7"}]},
-     "address": "/Ch01MetaprogrammingModel/1___7-______/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___6-_____________________":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___6-_____________________",
-     "data":
-     {"title": "1.6 层次之间的穿越",
-      "shortTitle": null,
-      "sectionNum": "2.6.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
-       {"title": "1.6 层次之间的穿越", "shortTitle": null, "number": "6"}]},
-     "address": "/Ch01MetaprogrammingModel/1___6-_____________________/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___5-_________-tactic_______________":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___5-_________-tactic_______________",
-     "data":
-     {"title": "1.5 第一个 tactic：从零开始",
-      "shortTitle": null,
-      "sectionNum": "2.5.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
-       {"title": "1.5 第一个 tactic：从零开始", "shortTitle": null, "number": "5"}]},
-     "address":
-     "/Ch01MetaprogrammingModel/1___5-_________-tactic_______________/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___4-tactic-___________________________--____________":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___4-tactic-___________________________--____________",
-     "data":
-     {"title": "调用流程",
-      "shortTitle": null,
-      "sectionNum": "2.4.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
-       {"title": "1.4 tactic 是怎么注册和调用的", "shortTitle": null, "number": "4"},
-       {"title": "调用流程", "shortTitle": null, "number": "2"}]},
-     "address":
-     "/Ch01MetaprogrammingModel/1___4-tactic-___________________________/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___4-tactic-___________________________--_________-elab--___--macro":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___4-tactic-___________________________--_________-elab--___--macro",
-     "data":
-     {"title": "注册： elab  和  macro",
-      "shortTitle": null,
-      "sectionNum": "2.4.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
-       {"title": "1.4 tactic 是怎么注册和调用的", "shortTitle": null, "number": "4"},
-       {"title": "注册： elab  和  macro", "shortTitle": null, "number": "1"}]},
-     "address":
-     "/Ch01MetaprogrammingModel/1___4-tactic-___________________________/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___4-tactic-___________________________":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___4-tactic-___________________________",
-     "data":
-     {"title": "1.4 tactic 是怎么注册和调用的",
-      "shortTitle": null,
-      "sectionNum": "2.4.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
-       {"title": "1.4 tactic 是怎么注册和调用的", "shortTitle": null, "number": "4"}]},
-     "address":
-     "/Ch01MetaprogrammingModel/1___4-tactic-___________________________/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___3-__________________--Name":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___3-__________________--Name",
-     "data":
-     {"title": "Name",
-      "shortTitle": null,
-      "sectionNum": "2.3.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
-       {"title": "1.3 关键类型速览", "shortTitle": null, "number": "3"},
-       {"title": "Name", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch01MetaprogrammingModel/1___3-__________________/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___3-__________________--FVarId-___-MVarId":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___3-__________________--FVarId-___-MVarId",
-     "data":
-     {"title": "FVarId 与 MVarId",
-      "shortTitle": null,
-      "sectionNum": "2.3.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
-       {"title": "1.3 关键类型速览", "shortTitle": null, "number": "3"},
-       {"title": "FVarId 与 MVarId", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch01MetaprogrammingModel/1___3-__________________/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___3-__________________--Expr":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___3-__________________--Expr",
-     "data":
-     {"title": "Expr",
-      "shortTitle": null,
-      "sectionNum": "2.3.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
-       {"title": "1.3 关键类型速览", "shortTitle": null, "number": "3"},
-       {"title": "Expr", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch01MetaprogrammingModel/1___3-__________________/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___3-__________________":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___3-__________________",
-     "data":
-     {"title": "1.3 关键类型速览",
-      "shortTitle": null,
-      "sectionNum": "2.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
-       {"title": "1.3 关键类型速览", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch01MetaprogrammingModel/1___3-__________________/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___2-Monad-________________________--TermElabM_______________":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___2-Monad-________________________--TermElabM_______________",
+     "address": "/Ch03FirstTactic/"}],
+   "termelabm-elaboration":
+   [{"id": "termelabm-elaboration",
      "data":
      {"title": "TermElabM：项的精化",
       "shortTitle": null,
@@ -807,11 +61,9 @@
        {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
        {"title": "1.2 Monad 栈：从底层到顶层", "shortTitle": null, "number": "2"},
        {"title": "TermElabM：项的精化", "shortTitle": null, "number": "3"}]},
-     "address":
-     "/Ch01MetaprogrammingModel/1___2-Monad-________________________/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___2-Monad-________________________--TacticM_______________":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___2-Monad-________________________--TacticM_______________",
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "tacticm-goals":
+   [{"id": "tacticm-goals",
      "data":
      {"title": "TacticM：目标管理",
       "shortTitle": null,
@@ -821,147 +73,54 @@
        {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
        {"title": "1.2 Monad 栈：从底层到顶层", "shortTitle": null, "number": "2"},
        {"title": "TacticM：目标管理", "shortTitle": null, "number": "4"}]},
-     "address":
-     "/Ch01MetaprogrammingModel/1___2-Monad-________________________/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___2-Monad-________________________--MetaM___________________________":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___2-Monad-________________________--MetaM___________________________",
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "tactic-registration":
+   [{"id": "tactic-registration",
      "data":
-     {"title": "MetaM：元变量与类型检查",
+     {"title": "1.4 tactic 是怎么注册和调用的",
       "shortTitle": null,
-      "sectionNum": "2.2.2.",
+      "sectionNum": "2.4.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
        {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
-       {"title": "1.2 Monad 栈：从底层到顶层", "shortTitle": null, "number": "2"},
-       {"title": "MetaM：元变量与类型检查", "shortTitle": null, "number": "2"}]},
-     "address":
-     "/Ch01MetaprogrammingModel/1___2-Monad-________________________/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___2-Monad-________________________--CoreM____________":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___2-Monad-________________________--CoreM____________",
+       {"title": "1.4 tactic 是怎么注册和调用的", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "tactic-origins":
+   [{"id": "tactic-origins",
      "data":
-     {"title": "CoreM：基础层",
+     {"title": "0.4 哪些 tactic 来自哪里",
       "shortTitle": null,
-      "sectionNum": "2.2.1.",
+      "sectionNum": "1.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
+       {"title": "0.4 哪些 tactic 来自哪里", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch00Setup/"}],
+   "tactic-lifecycle":
+   [{"id": "tactic-lifecycle",
+     "data":
+     {"title": "3.1 Tactic 的生命周期",
+      "shortTitle": null,
+      "sectionNum": "4.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
+       {"title": "3.1 Tactic 的生命周期", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch03FirstTactic/"}],
+   "tactic-dispatch":
+   [{"id": "tactic-dispatch",
+     "data":
+     {"title": "调用流程",
+      "shortTitle": null,
+      "sectionNum": "2.4.2.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
        {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
-       {"title": "1.2 Monad 栈：从底层到顶层", "shortTitle": null, "number": "2"},
-       {"title": "CoreM：基础层", "shortTitle": null, "number": "1"}]},
-     "address":
-     "/Ch01MetaprogrammingModel/1___2-Monad-________________________/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___2-Monad-________________________":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___2-Monad-________________________",
-     "data":
-     {"title": "1.2 Monad 栈：从底层到顶层",
-      "shortTitle": null,
-      "sectionNum": "2.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
-       {"title": "1.2 Monad 栈：从底层到顶层", "shortTitle": null, "number": "2"}]},
-     "address":
-     "/Ch01MetaprogrammingModel/1___2-Monad-________________________/"}],
-   "Lean-4-_______________--_________-Lean-4-_______________--1___1-____________________________________":
-   [{"id":
-     "Lean-4-_______________--_________-Lean-4-_______________--1___1-____________________________________",
-     "data":
-     {"title": "1.1 为什么要理解元编程模型？",
-      "shortTitle": null,
-      "sectionNum": "2.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
-       {"title": "1.1 为什么要理解元编程模型？", "shortTitle": null, "number": "1"}]},
-     "address":
-     "/Ch01MetaprogrammingModel/1___1-____________________________________/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___9-_____________________-debug--______-4_________--mkApp--_______________":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___9-_____________________-debug--______-4_________--mkApp--_______________",
-     "data":
-     {"title": "失败 4：手动  mkApp  参数个数错",
-      "shortTitle": null,
-      "sectionNum": "3.9.4.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
-       {"title": "2.9 常见失败模式与 debug", "shortTitle": null, "number": "9"},
-       {"title": "失败 4：手动  mkApp  参数个数错", "shortTitle": null, "number": "4"}]},
-     "address": "/Ch02Expr/2___9-_____________________-debug/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___9-_____________________-debug--______-3___-fvar--_________-telescope-______":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___9-_____________________-debug--______-3___-fvar--_________-telescope-______",
-     "data":
-     {"title": "失败 3： fvar  泄漏出 telescope 回调",
-      "shortTitle": null,
-      "sectionNum": "3.9.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
-       {"title": "2.9 常见失败模式与 debug", "shortTitle": null, "number": "9"},
-       {"title": "失败 3： fvar  泄漏出 telescope 回调",
-        "shortTitle": null,
-        "number": "3"}]},
-     "address": "/Ch02Expr/2___9-_____________________-debug/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___9-_____________________-debug--______-2___-Expr___constName--panic":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___9-_____________________-debug--______-2___-Expr___constName--panic",
-     "data":
-     {"title": "失败 2： Expr.constName  panic",
-      "shortTitle": null,
-      "sectionNum": "3.9.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
-       {"title": "2.9 常见失败模式与 debug", "shortTitle": null, "number": "9"},
-       {"title": "失败 2： Expr.constName  panic",
-        "shortTitle": null,
-        "number": "2"}]},
-     "address": "/Ch02Expr/2___9-_____________________-debug/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___9-_____________________-debug--______-1___-match_expr--_____________________________________________":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___9-_____________________-debug--______-1___-match_expr--_____________________________________________",
-     "data":
-     {"title": "失败 1： match_expr  匹配不上，明明目标看起来是对的",
-      "shortTitle": null,
-      "sectionNum": "3.9.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
-       {"title": "2.9 常见失败模式与 debug", "shortTitle": null, "number": "9"},
-       {"title": "失败 1： match_expr  匹配不上，明明目标看起来是对的",
-        "shortTitle": null,
-        "number": "1"}]},
-     "address": "/Ch02Expr/2___9-_____________________-debug/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___9-_____________________-debug":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___9-_____________________-debug",
-     "data":
-     {"title": "2.9 常见失败模式与 debug",
-      "shortTitle": null,
-      "sectionNum": "3.9.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
-       {"title": "2.9 常见失败模式与 debug", "shortTitle": null, "number": "9"}]},
-     "address": "/Ch02Expr/2___9-_____________________-debug/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___8-______":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___8-______",
-     "data":
-     {"title": "2.8 小结",
-      "shortTitle": null,
-      "sectionNum": "3.8.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
-       {"title": "2.8 小结", "shortTitle": null, "number": "8"}]},
-     "address": "/Ch02Expr/2___8-______/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___7-__________________--_______________":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___7-__________________--_______________",
+       {"title": "1.4 tactic 是怎么注册和调用的", "shortTitle": null, "number": "4"},
+       {"title": "调用流程", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "substitution-traversal":
+   [{"id": "substitution-traversal",
      "data":
      {"title": "替换与遍历",
       "shortTitle": null,
@@ -971,10 +130,9 @@
        {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
        {"title": "2.7 实用工具函数", "shortTitle": null, "number": "7"},
        {"title": "替换与遍历", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch02Expr/2___7-__________________/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___7-__________________--____________-next":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___7-__________________--____________-next",
+     "address": "/Ch02Expr/"}],
+   "structural-analysis-utils":
+   [{"id": "structural-analysis-utils",
      "data":
      {"title": "结构分析",
       "shortTitle": null,
@@ -984,49 +142,54 @@
        {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
        {"title": "2.7 实用工具函数", "shortTitle": null, "number": "7"},
        {"title": "结构分析", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch02Expr/2___7-__________________/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___7-__________________--____________":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___7-__________________--____________",
+     "address": "/Ch02Expr/"}],
+   "split-and":
+   [{"id": "split-and",
      "data":
-     {"title": "类型相关",
+     {"title": "3.3  split_and ：拆分合取目标",
       "shortTitle": null,
-      "sectionNum": "3.7.1.",
+      "sectionNum": "4.4.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
-       {"title": "2.7 实用工具函数", "shortTitle": null, "number": "7"},
-       {"title": "类型相关", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch02Expr/2___7-__________________/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___7-__________________":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___7-__________________",
+       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
+       {"title": "3.3  split_and ：拆分合取目标", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch03FirstTactic/"}],
+   "setup-exercises":
+   [{"id": "setup-exercises",
      "data":
-     {"title": "2.7 实用工具函数",
+     {"title": "0.8 环境验证练习",
       "shortTitle": null,
-      "sectionNum": "3.7.",
+      "sectionNum": "1.8.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
-       {"title": "2.7 实用工具函数", "shortTitle": null, "number": "7"}]},
-     "address": "/Ch02Expr/2___7-__________________/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___6-de-Bruijn-______-vs-____________":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___6-de-Bruijn-______-vs-____________",
+       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
+       {"title": "0.8 环境验证练习", "shortTitle": null, "number": "8"}]},
+     "address": "/Ch00Setup/"}],
+   "runnable-examples":
+   [{"id": "runnable-examples",
      "data":
-     {"title": "2.6 de Bruijn 索引 vs 自由变量",
+     {"title": "可运行示例",
       "shortTitle": null,
-      "sectionNum": "3.6.",
+      "sectionNum": "1.5.1.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
-       {"title": "2.6 de Bruijn 索引 vs 自由变量",
-        "shortTitle": null,
-        "number": "6"}]},
-     "address": "/Ch02Expr/2___6-de-Bruijn-______-vs-____________/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___5-______-Expr--__________________quotation___":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___5-______-Expr--__________________quotation___",
+       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
+       {"title": "0.5 本书的代码约定", "shortTitle": null, "number": "5"},
+       {"title": "可运行示例", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch00Setup/"}],
+   "recap-expr-to-tactic":
+   [{"id": "recap-expr-to-tactic",
+     "data":
+     {"title": "回顾：从 Expr 到 Tactic",
+      "shortTitle": null,
+      "sectionNum": "4.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
+       {"title": "回顾：从 Expr 到 Tactic", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch03FirstTactic/"}],
+   "quotation-construction":
+   [{"id": "quotation-construction",
      "data":
      {"title": "用引号构造（quotation）",
       "shortTitle": null,
@@ -1036,35 +199,114 @@
        {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
        {"title": "2.5 构造 Expr", "shortTitle": null, "number": "5"},
        {"title": "用引号构造（quotation）", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch02Expr/2___5-______-Expr/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___5-______-Expr--____________":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___5-______-Expr--____________",
+     "address": "/Ch02Expr/"}],
+   "pseudocode":
+   [{"id": "pseudocode",
      "data":
-     {"title": "手动构造",
+     {"title": "伪代码",
       "shortTitle": null,
-      "sectionNum": "3.5.1.",
+      "sectionNum": "1.5.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
+       {"title": "0.5 本书的代码约定", "shortTitle": null, "number": "5"},
+       {"title": "伪代码", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch00Setup/"}],
+   "project-troubleshooting":
+   [{"id": "project-troubleshooting",
+     "data":
+     {"title": "常见项目创建问题",
+      "shortTitle": null,
+      "sectionNum": "1.3.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
+       {"title": "0.3 创建本书的配套项目", "shortTitle": null, "number": "3"},
+       {"title": "常见项目创建问题", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch00Setup/"}],
+   "prerequisites":
+   [{"id": "prerequisites",
+     "data":
+     {"title": "0.1 你需要什么基础",
+      "shortTitle": null,
+      "sectionNum": "1.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
+       {"title": "0.1 你需要什么基础", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch00Setup/"}],
+   "pattern-matching-expr":
+   [{"id": "pattern-matching-expr",
+     "data":
+     {"title": "2.4 模式匹配 Expr： match_expr  和  let_expr",
+      "shortTitle": null,
+      "sectionNum": "3.4.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
        {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
-       {"title": "2.5 构造 Expr", "shortTitle": null, "number": "5"},
-       {"title": "手动构造", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch02Expr/2___5-______-Expr/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___5-______-Expr":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___5-______-Expr",
+       {"title": "2.4 模式匹配 Expr： match_expr  和  let_expr",
+        "shortTitle": null,
+        "number": "4"}]},
+     "address": "/Ch02Expr/"}],
+   "operate-all-goals":
+   [{"id": "operate-all-goals",
      "data":
-     {"title": "2.5 构造 Expr",
+     {"title": "3.5 对所有目标执行同一操作",
       "shortTitle": null,
-      "sectionNum": "3.5.",
+      "sectionNum": "4.6.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
-       {"title": "2.5 构造 Expr", "shortTitle": null, "number": "5"}]},
-     "address": "/Ch02Expr/2___5-______-Expr/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___4-____________-Expr___-match_expr--___--let_expr--match_expr":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___4-____________-Expr___-match_expr--___--let_expr--match_expr",
+       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
+       {"title": "3.5 对所有目标执行同一操作", "shortTitle": null, "number": "6"}]},
+     "address": "/Ch03FirstTactic/"}],
+   "name-type":
+   [{"id": "name-type",
+     "data":
+     {"title": "Name",
+      "shortTitle": null,
+      "sectionNum": "2.3.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
+       {"title": "1.3 关键类型速览", "shortTitle": null, "number": "3"},
+       {"title": "Name", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "monad-stack":
+   [{"id": "monad-stack",
+     "data":
+     {"title": "1.2 Monad 栈：从底层到顶层",
+      "shortTitle": null,
+      "sectionNum": "2.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
+       {"title": "1.2 Monad 栈：从底层到顶层", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "monad-lifting":
+   [{"id": "monad-lifting",
+     "data":
+     {"title": "1.6 层次之间的穿越",
+      "shortTitle": null,
+      "sectionNum": "2.6.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
+       {"title": "1.6 层次之间的穿越", "shortTitle": null, "number": "6"}]},
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "metam-typechecking":
+   [{"id": "metam-typechecking",
+     "data":
+     {"title": "MetaM：元变量与类型检查",
+      "shortTitle": null,
+      "sectionNum": "2.2.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
+       {"title": "1.2 Monad 栈：从底层到顶层", "shortTitle": null, "number": "2"},
+       {"title": "MetaM：元变量与类型检查", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "match-expr":
+   [{"id": "match-expr",
      "data":
      {"title": "match_expr",
       "shortTitle": null,
@@ -1076,11 +318,21 @@
         "shortTitle": null,
         "number": "4"},
        {"title": "match_expr", "shortTitle": null, "number": "1"}]},
-     "address":
-     "/Ch02Expr/2___4-____________-Expr___-match_expr--___--let_expr/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___4-____________-Expr___-match_expr--___--let_expr--let_expr":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___4-____________-Expr___-match_expr--___--let_expr--let_expr",
+     "address": "/Ch02Expr/"}],
+   "manual-construction":
+   [{"id": "manual-construction",
+     "data":
+     {"title": "手动构造",
+      "shortTitle": null,
+      "sectionNum": "3.5.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
+       {"title": "2.5 构造 Expr", "shortTitle": null, "number": "5"},
+       {"title": "手动构造", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch02Expr/"}],
+   "let-expr":
+   [{"id": "let-expr",
      "data":
      {"title": "let_expr",
       "shortTitle": null,
@@ -1092,67 +344,269 @@
         "shortTitle": null,
         "number": "4"},
        {"title": "let_expr", "shortTitle": null, "number": "2"}]},
-     "address":
-     "/Ch02Expr/2___4-____________-Expr___-match_expr--___--let_expr/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___4-____________-Expr___-match_expr--___--let_expr":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___4-____________-Expr___-match_expr--___--let_expr",
+     "address": "/Ch02Expr/"}],
+   "learning-tips":
+   [{"id": "learning-tips",
      "data":
-     {"title": "2.4 模式匹配 Expr： match_expr  和  let_expr",
+     {"title": "0.6 跟着本书学的建议",
       "shortTitle": null,
-      "sectionNum": "3.4.",
+      "sectionNum": "1.6.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
-       {"title": "2.4 模式匹配 Expr： match_expr  和  let_expr",
+       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
+       {"title": "0.6 跟着本书学的建议", "shortTitle": null, "number": "6"}]},
+     "address": "/Ch00Setup/"}],
+   "lean-automation-internals":
+   [{"id": "lean-automation-internals",
+     "data":
+     {"title": "Lean 4 自动化内幕",
+      "shortTitle": null,
+      "sectionNum": "",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null}]},
+     "address": "/"}],
+   "key-types":
+   [{"id": "key-types",
+     "data":
+     {"title": "1.3 关键类型速览",
+      "shortTitle": null,
+      "sectionNum": "2.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
+       {"title": "1.3 关键类型速览", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "install-troubleshooting":
+   [{"id": "install-troubleshooting",
+     "data":
+     {"title": "常见安装问题",
+      "shortTitle": null,
+      "sectionNum": "1.2.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
+       {"title": "0.2 安装 Lean 4", "shortTitle": null, "number": "2"},
+       {"title": "常见安装问题", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch00Setup/"}],
+   "install-lean4":
+   [{"id": "install-lean4",
+     "data":
+     {"title": "0.2 安装 Lean 4",
+      "shortTitle": null,
+      "sectionNum": "1.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
+       {"title": "0.2 安装 Lean 4", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch00Setup/"}],
+   "illustrative-code":
+   [{"id": "illustrative-code",
+     "data":
+     {"title": "示意代码",
+      "shortTitle": null,
+      "sectionNum": "1.5.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
+       {"title": "0.5 本书的代码约定", "shortTitle": null, "number": "5"},
+       {"title": "示意代码", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch00Setup/"}],
+   "fvarid-mvarid":
+   [{"id": "fvarid-mvarid",
+     "data":
+     {"title": "FVarId 与 MVarId",
+      "shortTitle": null,
+      "sectionNum": "2.3.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
+       {"title": "1.3 关键类型速览", "shortTitle": null, "number": "3"},
+       {"title": "FVarId 与 MVarId", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "first-tactic":
+   [{"id": "first-tactic",
+     "data":
+     {"title": "1.5 第一个 tactic：从零开始",
+      "shortTitle": null,
+      "sectionNum": "2.5.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
+       {"title": "1.5 第一个 tactic：从零开始", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "failure-unknown-identifier":
+   [{"id": "failure-unknown-identifier",
+     "data":
+     {"title": "失败 1： unknown identifier 'getMainGoal'",
+      "shortTitle": null,
+      "sectionNum": "2.8.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
+       {"title": "1.8 常见失败模式与 debug", "shortTitle": null, "number": "8"},
+       {"title": "失败 1： unknown identifier 'getMainGoal'",
         "shortTitle": null,
-        "number": "4"}]},
-     "address":
-     "/Ch02Expr/2___4-____________-Expr___-match_expr--___--let_expr/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___3-____________________________________--___-3___-___-n-___-Nat___-n-___-n":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___3-____________________________________--___-3___-___-n-___-Nat___-n-___-n",
+        "number": "1"}]},
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "failure-setgoals-missing":
+   [{"id": "failure-setgoals-missing",
      "data":
-     {"title": "例 3： ∀ n : Nat, n = n",
+     {"title": "setGoals 遗漏目标",
       "shortTitle": null,
-      "sectionNum": "3.3.3.",
+      "sectionNum": "4.8.3.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
-       {"title": "2.3 表达式如何编码：几个例子", "shortTitle": null, "number": "3"},
-       {"title": "例 3： ∀ n : Nat, n = n", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch02Expr/2___3-____________________________________/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___3-____________________________________--___-2___-fun-n-___-Nat-____GT_-n-___-1":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___3-____________________________________--___-2___-fun-n-___-Nat-____GT_-n-___-1",
+       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
+       {"title": "3.7 常见失败模式与 debug", "shortTitle": null, "number": "8"},
+       {"title": "setGoals 遗漏目标", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch03FirstTactic/"}],
+   "failure-pattern-mismatch":
+   [{"id": "failure-pattern-mismatch",
      "data":
-     {"title": "例 2： fun n : Nat => n + 1",
+     {"title": "失败 2： elab_rules  里的模式匹配报错",
       "shortTitle": null,
-      "sectionNum": "3.3.2.",
+      "sectionNum": "2.8.2.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
-       {"title": "2.3 表达式如何编码：几个例子", "shortTitle": null, "number": "3"},
-       {"title": "例 2： fun n : Nat => n + 1",
+       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
+       {"title": "1.8 常见失败模式与 debug", "shortTitle": null, "number": "8"},
+       {"title": "失败 2： elab_rules  里的模式匹配报错",
         "shortTitle": null,
         "number": "2"}]},
-     "address": "/Ch02Expr/2___3-____________________________________/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___3-____________________________________--___-1___-Nat___add-2-3":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___3-____________________________________--___-1___-Nat___add-2-3",
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "failure-mkapp-arity":
+   [{"id": "failure-mkapp-arity",
      "data":
-     {"title": "例 1： Nat.add 2 3",
+     {"title": "失败 4：手动  mkApp  参数个数错",
       "shortTitle": null,
-      "sectionNum": "3.3.1.",
+      "sectionNum": "3.9.4.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
        {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
-       {"title": "2.3 表达式如何编码：几个例子", "shortTitle": null, "number": "3"},
-       {"title": "例 1： Nat.add 2 3", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch02Expr/2___3-____________________________________/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___3-____________________________________":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___3-____________________________________",
+       {"title": "2.9 常见失败模式与 debug", "shortTitle": null, "number": "9"},
+       {"title": "失败 4：手动  mkApp  参数个数错", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch02Expr/"}],
+   "failure-missing-withcontext":
+   [{"id": "failure-missing-withcontext",
+     "data":
+     {"title": "忘记 withContext",
+      "shortTitle": null,
+      "sectionNum": "4.8.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
+       {"title": "3.7 常见失败模式与 debug", "shortTitle": null, "number": "8"},
+       {"title": "忘记 withContext", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch03FirstTactic/"}],
+   "failure-match-expr-whnf":
+   [{"id": "failure-match-expr-whnf",
+     "data":
+     {"title": "失败 1： match_expr  匹配不上，明明目标看起来是对的",
+      "shortTitle": null,
+      "sectionNum": "3.9.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
+       {"title": "2.9 常见失败模式与 debug", "shortTitle": null, "number": "9"},
+       {"title": "失败 1： match_expr  匹配不上，明明目标看起来是对的",
+        "shortTitle": null,
+        "number": "1"}]},
+     "address": "/Ch02Expr/"}],
+   "failure-isdefeq-unification":
+   [{"id": "failure-isdefeq-unification",
+     "data":
+     {"title": "isDefEq 的 unification 副作用",
+      "shortTitle": null,
+      "sectionNum": "4.8.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
+       {"title": "3.7 常见失败模式与 debug", "shortTitle": null, "number": "8"},
+       {"title": "isDefEq 的 unification 副作用",
+        "shortTitle": null,
+        "number": "2"}]},
+     "address": "/Ch03FirstTactic/"}],
+   "failure-isdefeq-side-effect":
+   [{"id": "failure-isdefeq-side-effect",
+     "data":
+     {"title": "失败 4： isDefEq  意外修改了元变量",
+      "shortTitle": null,
+      "sectionNum": "2.8.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
+       {"title": "1.8 常见失败模式与 debug", "shortTitle": null, "number": "8"},
+       {"title": "失败 4： isDefEq  意外修改了元变量",
+        "shortTitle": null,
+        "number": "4"}]},
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "failure-goal-assign":
+   [{"id": "failure-goal-assign",
+     "data":
+     {"title": "失败 3： goal.assign  之后还有目标报错",
+      "shortTitle": null,
+      "sectionNum": "2.8.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
+       {"title": "1.8 常见失败模式与 debug", "shortTitle": null, "number": "8"},
+       {"title": "失败 3： goal.assign  之后还有目标报错",
+        "shortTitle": null,
+        "number": "3"}]},
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "failure-fvar-leak":
+   [{"id": "failure-fvar-leak",
+     "data":
+     {"title": "失败 3： fvar  泄漏出 telescope 回调",
+      "shortTitle": null,
+      "sectionNum": "3.9.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
+       {"title": "2.9 常见失败模式与 debug", "shortTitle": null, "number": "9"},
+       {"title": "失败 3： fvar  泄漏出 telescope 回调",
+        "shortTitle": null,
+        "number": "3"}]},
+     "address": "/Ch02Expr/"}],
+   "failure-constname-panic":
+   [{"id": "failure-constname-panic",
+     "data":
+     {"title": "失败 2： Expr.constName  panic",
+      "shortTitle": null,
+      "sectionNum": "3.9.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
+       {"title": "2.9 常见失败模式与 debug", "shortTitle": null, "number": "9"},
+       {"title": "失败 2： Expr.constName  panic",
+        "shortTitle": null,
+        "number": "2"}]},
+     "address": "/Ch02Expr/"}],
+   "expr-utility-functions":
+   [{"id": "expr-utility-functions",
+     "data":
+     {"title": "2.7 实用工具函数",
+      "shortTitle": null,
+      "sectionNum": "3.7.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
+       {"title": "2.7 实用工具函数", "shortTitle": null, "number": "7"}]},
+     "address": "/Ch02Expr/"}],
+   "expr-type-overview":
+   [{"id": "expr-type-overview",
+     "data":
+     {"title": "Expr",
+      "shortTitle": null,
+      "sectionNum": "2.3.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
+       {"title": "1.3 关键类型速览", "shortTitle": null, "number": "3"},
+       {"title": "Expr", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "expr-encoding-examples":
+   [{"id": "expr-encoding-examples",
      "data":
      {"title": "2.3 表达式如何编码：几个例子",
       "shortTitle": null,
@@ -1161,10 +615,9 @@
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
        {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
        {"title": "2.3 表达式如何编码：几个例子", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch02Expr/2___3-____________________________________/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___2-Expr-____________":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___2-Expr-____________",
+     "address": "/Ch02Expr/"}],
+   "expr-constructors":
+   [{"id": "expr-constructors",
      "data":
      {"title": "2.2 Expr 的构造子",
       "shortTitle": null,
@@ -1173,10 +626,57 @@
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
        {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
        {"title": "2.2 Expr 的构造子", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch02Expr/2___2-Expr-____________/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___10-______--______-2___4_____________________--show_structure--tactic":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___10-______--______-2___4_____________________--show_structure--tactic",
+     "address": "/Ch02Expr/"}],
+   "exercise-3-4":
+   [{"id": "exercise-3-4",
+     "data":
+     {"title": "练习 4（综合）： split_iff",
+      "shortTitle": null,
+      "sectionNum": "4.9.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
+       {"title": "3.8 练习", "shortTitle": null, "number": "9"},
+       {"title": "练习 4（综合）： split_iff", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch03FirstTactic/"}],
+   "exercise-3-3":
+   [{"id": "exercise-3-3",
+     "data":
+     {"title": "练习 3（debug）：找出 bug",
+      "shortTitle": null,
+      "sectionNum": "4.9.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
+       {"title": "3.8 练习", "shortTitle": null, "number": "9"},
+       {"title": "练习 3（debug）：找出 bug", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch03FirstTactic/"}],
+   "exercise-3-2":
+   [{"id": "exercise-3-2",
+     "data":
+     {"title": "练习 2（热身）： my_intro",
+      "shortTitle": null,
+      "sectionNum": "4.9.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
+       {"title": "3.8 练习", "shortTitle": null, "number": "9"},
+       {"title": "练习 2（热身）： my_intro", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch03FirstTactic/"}],
+   "exercise-3-1":
+   [{"id": "exercise-3-1",
+     "data":
+     {"title": "练习 1（热身）： my_exact",
+      "shortTitle": null,
+      "sectionNum": "4.9.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
+       {"title": "3.8 练习", "shortTitle": null, "number": "9"},
+       {"title": "练习 1（热身）： my_exact", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch03FirstTactic/"}],
+   "exercise-2-4":
+   [{"id": "exercise-2-4",
      "data":
      {"title": "练习 2.4（综合）：实现  show_structure  tactic",
       "shortTitle": null,
@@ -1188,10 +688,9 @@
        {"title": "练习 2.4（综合）：实现  show_structure  tactic",
         "shortTitle": null,
         "number": "4"}]},
-     "address": "/Ch02Expr/2___10-______/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___10-______--______-2___3___debug____________--match_expr--_______________":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___10-______--______-2___3___debug____________--match_expr--_______________",
+     "address": "/Ch02Expr/"}],
+   "exercise-2-3":
+   [{"id": "exercise-2-3",
      "data":
      {"title": "练习 2.3（debug）：找出  match_expr  失败的原因",
       "shortTitle": null,
@@ -1203,10 +702,9 @@
        {"title": "练习 2.3（debug）：找出  match_expr  失败的原因",
         "shortTitle": null,
         "number": "3"}]},
-     "address": "/Ch02Expr/2___10-______/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___10-______--______-2___2______________________________-head-constant":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___10-______--______-2___2______________________________-head-constant",
+     "address": "/Ch02Expr/"}],
+   "exercise-2-2":
+   [{"id": "exercise-2-2",
      "data":
      {"title": "练习 2.2（热身）：打印目标的 head constant",
       "shortTitle": null,
@@ -1218,10 +716,9 @@
        {"title": "练习 2.2（热身）：打印目标的 head constant",
         "shortTitle": null,
         "number": "2"}]},
-     "address": "/Ch02Expr/2___10-______/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___10-______--______-2___1__________________--___check-___Eq--______-Expr-______":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___10-______--______-2___1__________________--___check-___Eq--______-Expr-______",
+     "address": "/Ch02Expr/"}],
+   "exercise-2-1":
+   [{"id": "exercise-2-1",
      "data":
      {"title": "练习 2.1（热身）：用  #check @Eq  观察 Expr 结构",
       "shortTitle": null,
@@ -1233,10 +730,329 @@
        {"title": "练习 2.1（热身）：用  #check @Eq  观察 Expr 结构",
         "shortTitle": null,
         "number": "1"}]},
-     "address": "/Ch02Expr/2___10-______/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___10-______":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___10-______",
+     "address": "/Ch02Expr/"}],
+   "exercise-1-4":
+   [{"id": "exercise-1-4",
+     "data":
+     {"title": "练习 1.4（综合）：实现  my_rfl",
+      "shortTitle": null,
+      "sectionNum": "2.9.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
+       {"title": "1.9 练习", "shortTitle": null, "number": "9"},
+       {"title": "练习 1.4（综合）：实现  my_rfl", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "exercise-1-3":
+   [{"id": "exercise-1-3",
+     "data":
+     {"title": "练习 1.3（debug）：找出并修复错误",
+      "shortTitle": null,
+      "sectionNum": "2.9.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
+       {"title": "1.9 练习", "shortTitle": null, "number": "9"},
+       {"title": "练习 1.3（debug）：找出并修复错误", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "exercise-1-2":
+   [{"id": "exercise-1-2",
+     "data":
+     {"title": "练习 1.2（热身）：识别 Monad 层次",
+      "shortTitle": null,
+      "sectionNum": "2.9.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
+       {"title": "1.9 练习", "shortTitle": null, "number": "9"},
+       {"title": "练习 1.2（热身）：识别 Monad 层次", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "exercise-1-1":
+   [{"id": "exercise-1-1",
+     "data":
+     {"title": "练习 1.1（热身）：跑通  trace_goal",
+      "shortTitle": null,
+      "sectionNum": "2.9.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
+       {"title": "1.9 练习", "shortTitle": null, "number": "9"},
+       {"title": "练习 1.1（热身）：跑通  trace_goal",
+        "shortTitle": null,
+        "number": "1"}]},
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "exercise-0-4":
+   [{"id": "exercise-0-4",
+     "data":
+     {"title": "练习 0.4（综合）：选对 tactic",
+      "shortTitle": null,
+      "sectionNum": "1.8.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
+       {"title": "0.8 环境验证练习", "shortTitle": null, "number": "8"},
+       {"title": "练习 0.4（综合）：选对 tactic", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch00Setup/"}],
+   "exercise-0-3":
+   [{"id": "exercise-0-3",
+     "data":
+     {"title": "练习 0.3（debug 练习）：故意出错",
+      "shortTitle": null,
+      "sectionNum": "1.8.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
+       {"title": "0.8 环境验证练习", "shortTitle": null, "number": "8"},
+       {"title": "练习 0.3（debug 练习）：故意出错", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch00Setup/"}],
+   "exercise-0-2":
+   [{"id": "exercise-0-2",
+     "data":
+     {"title": "练习 0.2（热身）：第一个证明",
+      "shortTitle": null,
+      "sectionNum": "1.8.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
+       {"title": "0.8 环境验证练习", "shortTitle": null, "number": "8"},
+       {"title": "练习 0.2（热身）：第一个证明", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch00Setup/"}],
+   "exercise-0-1":
+   [{"id": "exercise-0-1",
+     "data":
+     {"title": "练习 0.1（热身）：Hello, Lean!",
+      "shortTitle": null,
+      "sectionNum": "1.8.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
+       {"title": "0.8 环境验证练习", "shortTitle": null, "number": "8"},
+       {"title": "练习 0.1（热身）：Hello, Lean!",
+        "shortTitle": null,
+        "number": "1"}]},
+     "address": "/Ch00Setup/"}],
+   "example-nat-add":
+   [{"id": "example-nat-add",
+     "data":
+     {"title": "例 1： Nat.add 2 3",
+      "shortTitle": null,
+      "sectionNum": "3.3.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
+       {"title": "2.3 表达式如何编码：几个例子", "shortTitle": null, "number": "3"},
+       {"title": "例 1： Nat.add 2 3", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch02Expr/"}],
+   "example-lambda":
+   [{"id": "example-lambda",
+     "data":
+     {"title": "例 2： fun n : Nat => n + 1",
+      "shortTitle": null,
+      "sectionNum": "3.3.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
+       {"title": "2.3 表达式如何编码：几个例子", "shortTitle": null, "number": "3"},
+       {"title": "例 2： fun n : Nat => n + 1",
+        "shortTitle": null,
+        "number": "2"}]},
+     "address": "/Ch02Expr/"}],
+   "example-forall":
+   [{"id": "example-forall",
+     "data":
+     {"title": "例 3： ∀ n : Nat, n = n",
+      "shortTitle": null,
+      "sectionNum": "3.3.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
+       {"title": "2.3 表达式如何编码：几个例子", "shortTitle": null, "number": "3"},
+       {"title": "例 3： ∀ n : Nat, n = n", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch02Expr/"}],
+   "error-handling":
+   [{"id": "error-handling",
+     "data":
+     {"title": "3.6 错误处理与 diagnostics",
+      "shortTitle": null,
+      "sectionNum": "4.7.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
+       {"title": "3.6 错误处理与 diagnostics", "shortTitle": null, "number": "7"}]},
+     "address": "/Ch03FirstTactic/"}],
+   "elab-and-macro":
+   [{"id": "elab-and-macro",
+     "data":
+     {"title": "注册： elab  和  macro",
+      "shortTitle": null,
+      "sectionNum": "2.4.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
+       {"title": "1.4 tactic 是怎么注册和调用的", "shortTitle": null, "number": "4"},
+       {"title": "注册： elab  和  macro", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "debruijn-vs-fvar":
+   [{"id": "debruijn-vs-fvar",
+     "data":
+     {"title": "2.6 de Bruijn 索引 vs 自由变量",
+      "shortTitle": null,
+      "sectionNum": "3.6.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
+       {"title": "2.6 de Bruijn 索引 vs 自由变量",
+        "shortTitle": null,
+        "number": "6"}]},
+     "address": "/Ch02Expr/"}],
+   "create-with-lake":
+   [{"id": "create-with-lake",
+     "data":
+     {"title": "方式一：用 lake 创建 Mathlib 项目（推荐）",
+      "shortTitle": null,
+      "sectionNum": "1.3.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
+       {"title": "0.3 创建本书的配套项目", "shortTitle": null, "number": "3"},
+       {"title": "方式一：用 lake 创建 Mathlib 项目（推荐）",
+        "shortTitle": null,
+        "number": "1"}]},
+     "address": "/Ch00Setup/"}],
+   "create-project":
+   [{"id": "create-project",
+     "data":
+     {"title": "0.3 创建本书的配套项目",
+      "shortTitle": null,
+      "sectionNum": "1.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
+       {"title": "0.3 创建本书的配套项目", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch00Setup/"}],
+   "corem-basics":
+   [{"id": "corem-basics",
+     "data":
+     {"title": "CoreM：基础层",
+      "shortTitle": null,
+      "sectionNum": "2.2.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
+       {"title": "1.2 Monad 栈：从底层到顶层", "shortTitle": null, "number": "2"},
+       {"title": "CoreM：基础层", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "constructing-expr":
+   [{"id": "constructing-expr",
+     "data":
+     {"title": "2.5 构造 Expr",
+      "shortTitle": null,
+      "sectionNum": "3.5.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
+       {"title": "2.5 构造 Expr", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch02Expr/"}],
+   "combining-tactics":
+   [{"id": "combining-tactics",
+     "data":
+     {"title": "3.4 调用已有 tactic：组合式证明",
+      "shortTitle": null,
+      "sectionNum": "4.5.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
+       {"title": "3.4 调用已有 tactic：组合式证明", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch03FirstTactic/"}],
+   "code-conventions":
+   [{"id": "code-conventions",
+     "data":
+     {"title": "0.5 本书的代码约定",
+      "shortTitle": null,
+      "sectionNum": "1.5.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
+       {"title": "0.5 本书的代码约定", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch00Setup/"}],
+   "clone-companion-repo":
+   [{"id": "clone-companion-repo",
+     "data":
+     {"title": "方式二：克隆本书配套仓库",
+      "shortTitle": null,
+      "sectionNum": "1.3.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
+       {"title": "0.3 创建本书的配套项目", "shortTitle": null, "number": "3"},
+       {"title": "方式二：克隆本书配套仓库", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch00Setup/"}],
+   "ch03-summary":
+   [{"id": "ch03-summary",
+     "data":
+     {"title": "3.9 小结",
+      "shortTitle": null,
+      "sectionNum": "4.10.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
+       {"title": "3.9 小结", "shortTitle": null, "number": "10"}]},
+     "address": "/Ch03FirstTactic/"}],
+   "ch03-first-tactic":
+   [{"id": "ch03-first-tactic",
+     "data":
+     {"title": "第三章 编写你的第一个 Tactic",
+      "shortTitle": null,
+      "sectionNum": "4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch03FirstTactic/"}],
+   "ch03-exercises":
+   [{"id": "ch03-exercises",
+     "data":
+     {"title": "3.8 练习",
+      "shortTitle": null,
+      "sectionNum": "4.9.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
+       {"title": "3.8 练习", "shortTitle": null, "number": "9"}]},
+     "address": "/Ch03FirstTactic/"}],
+   "ch03-common-failures":
+   [{"id": "ch03-common-failures",
+     "data":
+     {"title": "3.7 常见失败模式与 debug",
+      "shortTitle": null,
+      "sectionNum": "4.8.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
+       {"title": "3.7 常见失败模式与 debug", "shortTitle": null, "number": "8"}]},
+     "address": "/Ch03FirstTactic/"}],
+   "ch02-summary":
+   [{"id": "ch02-summary",
+     "data":
+     {"title": "2.8 小结",
+      "shortTitle": null,
+      "sectionNum": "3.8.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
+       {"title": "2.8 小结", "shortTitle": null, "number": "8"}]},
+     "address": "/Ch02Expr/"}],
+   "ch02-expr":
+   [{"id": "ch02-expr",
+     "data":
+     {"title": "第二章 Expr：Lean 4 的内部表示",
+      "shortTitle": null,
+      "sectionNum": "3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch02Expr/"}],
+   "ch02-exercises":
+   [{"id": "ch02-exercises",
      "data":
      {"title": "2.10 练习",
       "shortTitle": null,
@@ -1245,19 +1061,93 @@
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
        {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
        {"title": "2.10 练习", "shortTitle": null, "number": "10"}]},
-     "address": "/Ch02Expr/2___10-______/"}],
-   "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___1-Expr-_________":
-   [{"id":
-     "Lean-4-_______________--_________-Expr___Lean-4-_______________--2___1-Expr-_________",
+     "address": "/Ch02Expr/"}],
+   "ch02-common-failures":
+   [{"id": "ch02-common-failures",
      "data":
-     {"title": "2.1 Expr 是什么",
+     {"title": "2.9 常见失败模式与 debug",
       "shortTitle": null,
-      "sectionNum": "3.1.",
+      "sectionNum": "3.9.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
        {"title": "第二章 Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
-       {"title": "2.1 Expr 是什么", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch02Expr/2___1-Expr-_________/"}]}},
+       {"title": "2.9 常见失败模式与 debug", "shortTitle": null, "number": "9"}]},
+     "address": "/Ch02Expr/"}],
+   "ch01-summary":
+   [{"id": "ch01-summary",
+     "data":
+     {"title": "1.7 小结",
+      "shortTitle": null,
+      "sectionNum": "2.7.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
+       {"title": "1.7 小结", "shortTitle": null, "number": "7"}]},
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "ch01-metaprogramming-model":
+   [{"id": "ch01-metaprogramming-model",
+     "data":
+     {"title": "第一章 Lean 4 元编程模型",
+      "shortTitle": null,
+      "sectionNum": "2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "ch01-exercises":
+   [{"id": "ch01-exercises",
+     "data":
+     {"title": "1.9 练习",
+      "shortTitle": null,
+      "sectionNum": "2.9.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
+       {"title": "1.9 练习", "shortTitle": null, "number": "9"}]},
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "ch01-common-failures":
+   [{"id": "ch01-common-failures",
+     "data":
+     {"title": "1.8 常见失败模式与 debug",
+      "shortTitle": null,
+      "sectionNum": "2.8.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第一章 Lean 4 元编程模型", "shortTitle": null, "number": "2"},
+       {"title": "1.8 常见失败模式与 debug", "shortTitle": null, "number": "8"}]},
+     "address": "/Ch01MetaprogrammingModel/"}],
+   "ch00-setup":
+   [{"id": "ch00-setup",
+     "data":
+     {"title": "第零章 环境与运行约定",
+      "shortTitle": null,
+      "sectionNum": "1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch00Setup/"}],
+   "book-overview":
+   [{"id": "book-overview",
+     "data":
+     {"title": "0.7 全书结构概览",
+      "shortTitle": null,
+      "sectionNum": "1.7.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第零章 环境与运行约定", "shortTitle": null, "number": "1"},
+       {"title": "0.7 全书结构概览", "shortTitle": null, "number": "7"}]},
+     "address": "/Ch00Setup/"}],
+   "assumption-search":
+   [{"id": "assumption-search",
+     "data":
+     {"title": "3.2 assumption：在假设中搜索",
+      "shortTitle": null,
+      "sectionNum": "4.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "第三章 编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
+       {"title": "3.2 assumption：在假设中搜索", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch03FirstTactic/"}]}},
  "Verso.Genre.Manual.doc.tech":
  {"title": "Terminology",
   "description": "Definitions of technical terms",
