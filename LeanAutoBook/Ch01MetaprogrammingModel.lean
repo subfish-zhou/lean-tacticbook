@@ -61,7 +61,7 @@ abbrev TacticM := ReaderT Context $ StateRefT State TermElabM
 tag := "corem-basics"
 %%%
 
-{lean}`CoreM` 是整个系统的地基。它的 `State` 包含：
+{leanName}`Lean.CoreM` 是整个系统的地基。它的 `State` 包含：
 
 ```
 structure State where
@@ -181,6 +181,8 @@ tag := "fvarid-mvarid"
 
 - *{lean}`FVarId`*（free variable id）：局部上下文中的变量的唯一标识。当你在证明中引入假设 `h : P`，`h` 就是一个 {lean}`FVarId`。
 - *{lean}`MVarId`*（metavariable id）：元变量的唯一标识。每个未解决的证明目标就是一个 {lean}`MVarId`。
+
+你可以用 {leanName}`Lean.MVarId` 和 {leanName}`Lean.FVarId` 在编辑器中悬停查看它们的定义。
 
 # tactic 是怎么注册和调用的
 %%%

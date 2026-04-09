@@ -68,7 +68,7 @@ elab "my_assumption" : tactic => do
 
 逐行解释这段代码：
 
-*`let goal ← getMainGoal`*：从当前证明状态中取出第一个未解决的目标。{lean}`getMainGoal` 返回 {lean}`MVarId`，它是元变量的标识符。为什么叫"main goal"？因为 Lean 的目标列表是有序的，第一个目标就是用户在 Infoview 中看到的那个。
+*`let goal ← getMainGoal`*：从当前证明状态中取出第一个未解决的目标。{lean}`getMainGoal` 返回 {lean}`MVarId`，它是元变量的标识符。为什么叫"main goal"？因为 Lean 的目标列表是有序的，第一个目标就是用户在 Infoview 中看到的那个。你可以查看它的签名：{leanCmd}`#check @getMainGoal`
 
 *`goal.withContext do`*：这一步至关重要。每个目标都有自己的局部上下文（local context），包含该目标可见的所有局部变量和假设。不同目标的上下文可能不同——比如 {kw}`cases` 拆分出的两个子目标，各自有不同的假设。`withContext` 把 monad 的环境切换到该目标的上下文，这样后续的 {lean}`getLCtx` 才能拿到正确的假设列表。*忘记 `withContext` 是新手最常犯的错误之一*，后面 3.8 节会专门讨论。
 
@@ -80,7 +80,7 @@ elab "my_assumption" : tactic => do
 
 *`if decl.isImplementationDetail then continue`*：跳过编译器内部生成的辅助变量。这些变量对用户不可见，不应该被 tactic 使用。
 
-*`if ← isDefEq decl.type target then`*：这是核心判断。{lean}`isDefEq` 检查两个表达式是否 definitionally equal——不只是语法层面的相等，而是考虑 beta 规约（`(fun x => x) a ≡ a`）、delta 规约（展开定义）、iota 规约（结构体投影和匹配）等所有计算规则之后的相等性。如果假设的类型和目标匹配，我们就找到了证明。
+*`if ← isDefEq decl.type target then`*：这是核心判断。{leanCmd}`#check @isDefEq` 检查两个表达式是否 definitionally equal——不只是语法层面的相等，而是考虑 beta 规约（`(fun x => x) a ≡ a`）、delta 规约（展开定义）、iota 规约（结构体投影和匹配）等所有计算规则之后的相等性。如果假设的类型和目标匹配，我们就找到了证明。
 
 *`goal.assign decl.toExpr`*：用这个假设（一个 `Expr.fvar`）填充目标元变量。这相当于说"这个目标的证明就是这个假设"。赋值后，目标就被关闭了。
 
