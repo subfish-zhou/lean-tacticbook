@@ -1,0 +1,1 @@
+window.docContents[21].resolve({"/Ch03FirstTactic/#ch03-exercises":{"contents":"\n\n\n\n\n\n\n\n","context":"Lean 4 自动化内幕\u0009第三章 编写你的第一个 Tactic","header":"4.9. 练习","id":"/Ch03FirstTactic/#ch03-exercises"}});

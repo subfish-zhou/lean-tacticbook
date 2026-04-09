@@ -1,0 +1,1 @@
+window.docContents[212].resolve({"/Ch01MetaprogrammingModel/#fvarid-mvarid":{"contents":"* （free variable id）：局部上下文中的变量的唯一标识。当你在证明中引入假设 h : P，h 就是一个 。* （metavariable id）：元变量的唯一标识。每个未解决的证明目标就是一个 。\n\n","context":"Lean 4 自动化内幕\u0009第一章 Lean 4 元编程模型\u0009关键类型速览","header":"2.3.3. FVarId 与 MVarId","id":"/Ch01MetaprogrammingModel/#fvarid-mvarid"}});

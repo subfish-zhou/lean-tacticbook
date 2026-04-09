@@ -1,0 +1,1 @@
+window.docContents[128].resolve({"/Ch00Setup/#runnable-examples":{"contents":"标注为 [可运行] 或没有特殊标注的代码块。你可以直接复制到 .lean 文件中运行。\n\n-- [可运行] 复制到你的 .lean 文件试试\nexample (x : ℝ) : x + 0 = x := by simp\n\n\n","context":"Lean 4 自动化内幕\u0009第零章 环境与运行约定\u0009本书的代码约定","header":"1.5.1. 可运行示例","id":"/Ch00Setup/#runnable-examples"}});

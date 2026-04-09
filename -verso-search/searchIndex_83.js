@@ -1,0 +1,1 @@
+window.docContents[83].resolve({"/Ch01MetaprogrammingModel/#key-types":{"contents":"理解元编程需要熟悉这几个核心类型：\n\n\n\n\n\n\n\n","context":"Lean 4 自动化内幕\u0009第一章 Lean 4 元编程模型","header":"2.3. 关键类型速览","id":"/Ch01MetaprogrammingModel/#key-types"}});

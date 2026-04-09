@@ -12,23 +12,23 @@ file := "Ch02Expr"
 tag := "ch02-expr"
 %%%
 
-*本章目标*：理解 `Expr` 的构造方式、模式匹配惯用法，以及在元程序中操作表达式的基本技巧。
+*本章目标*：理解 {moduleTerm}`Expr` 的构造方式、模式匹配惯用法，以及在元程序中操作表达式的基本技巧。
 
 # Expr 是什么
 %%%
 tag := "what-is-expr"
 %%%
 
-Lean 4 中的每个项——数值、函数、命题、证明——在内核里都表示为 `Expr` 类型的值。当你写 `fun n => n + 1`，Lean 解析并精化后，内部存储的就是一棵 `Expr` 树。
+Lean 4 中的每个项——数值、函数、命题、证明——在内核里都表示为 {moduleTerm}`Expr` 类型的值。当你写 `fun n => n + 1`，Lean 解析并精化后，内部存储的就是一棵 {moduleTerm}`Expr` 树。
 
-理解 `Expr` 是写 tactic 的基础：你的 tactic 读取目标（一个 `Expr`），分析它的结构，构造新的 `Expr` 作为证明项。
+理解 {moduleTerm}`Expr` 是写 tactic 的基础：你的 tactic 读取目标（一个 {moduleTerm}`Expr`），分析它的结构，构造新的 {moduleTerm}`Expr` 作为证明项。
 
 # Expr 的构造子
 %%%
 tag := "expr-constructors"
 %%%
 
-`Expr` 定义在 {lit}`Lean/Expr.lean` 中，有以下核心构造子：
+{moduleTerm}`Expr` 定义在 {lit}`Lean/Expr.lean` 中，有以下核心构造子：
 
 ```
 inductive Expr where
@@ -101,7 +101,7 @@ forallE `n (const `Nat [])
 tag := "pattern-matching-expr"
 %%%
 
-手动 match `Expr` 构造子非常繁琐（要处理 `app (app (const ...) ...) ...`）。Lean 提供了两个语法糖：
+手动 match {moduleTerm}`Expr` 构造子非常繁琐（要处理 `app (app (const ...) ...) ...`）。Lean 提供了两个语法糖：
 
 > *注意*：`match_expr` 和 `let_expr` 是专门的模式匹配语法糖，不是普通函数名。你不能对它们用 `#check`（不像 {moduleTerm}`forallTelescope` 那样是一个可查类型的函数）。它们的作用是按 *head constant* 匹配表达式（如 `Eq`、`And`、`Or`），自动拆开嵌套的 `app`。对于 `forallE` 这类 binder 构造子，应该用普通的 `Expr.isForall` 或直接 `match`。
 
@@ -143,7 +143,7 @@ let_expr Eq α lhs rhs := goalType | throwError "not an equality"
 tag := "constructing-expr"
 %%%
 
-读取 `Expr` 用模式匹配，构造 `Expr` 用 {moduleTerm}`mkApp` 系列函数：
+读取 {moduleTerm}`Expr` 用模式匹配，构造 {moduleTerm}`Expr` 用 {moduleTerm}`mkApp` 系列函数：
 
 ## 手动构造
 %%%
@@ -172,7 +172,7 @@ let rflExpr := mkApp2 (mkConst ``Eq.refl) (mkConst ``Nat) a
 tag := "quotation-construction"
 %%%
 
-在 `TermElabM` / `TacticM` 中，可以用 quotation + `elabTerm` 从语法直接构造：
+在 {moduleTerm}`TermElabM` / {moduleTerm}`TacticM` 中，可以用 quotation + `elabTerm` 从语法直接构造：
 
 ```
 let e ← elabTerm (← `(Nat.add 2 3)) none
@@ -186,7 +186,7 @@ let e ← elabTerm (← `(Nat.add 2 3)) none
 tag := "debruijn-vs-fvar"
 %%%
 
-`Expr` 中有两种变量：
+{moduleTerm}`Expr` 中有两种变量：
 
 - *`bvar n`*（bound variable）：de Bruijn 索引，表示"向外数第 n 个 λ/∀ 绑定者"。索引 0 = 最近的绑定。
 - *`fvar id`*（free variable）：局部上下文中的变量，用唯一 ID 标识。
@@ -210,14 +210,14 @@ lambdaTelescope e fun fvars body => do
 2. 把 body 中的 `bvar` 替换为对应 `fvar`
 3. 回调结束后自动清理
 
-*注意*：`fvar` 只在创建它的 `LocalContext` 中有效。不要把一个 telescope 回调里的 `fvar` 泄漏到外面。
+*注意*：`fvar` 只在创建它的 {moduleTerm}`LocalContext` 中有效。不要把一个 telescope 回调里的 `fvar` 泄漏到外面。
 
 # 实用工具函数
 %%%
 tag := "expr-utility-functions"
 %%%
 
-`MetaM` 提供了大量操作 `Expr` 的工具：
+{moduleTerm}`MetaM` 提供了大量操作 {moduleTerm}`Expr` 的工具：
 
 ## 类型相关
 %%%
@@ -261,7 +261,7 @@ Expr.foldlM (init : α) (f : α → Expr → MetaM α) (e : Expr) : MetaM α  --
 tag := "ch02-summary"
 %%%
 
-- `Expr`：Lean 中一切项的内部表示，树形结构
+- {moduleTerm}`Expr`：Lean 中一切项的内部表示，树形结构
 - `app`：函数应用，多参数 = 嵌套 app（curried）
 - `bvar` / `fvar`：绑定变量 vs 自由变量；元程序中用 `fvar`
 - `match_expr` / `let_expr`：按 head constant 模式匹配，避免手动解 app
@@ -434,4 +434,4 @@ example : ∀ n : Nat, n = n := by show_structure; intro n; rfl
 example : True := by show_structure; trivial
 ```
 
-下一章：用 `Expr` 和 `TacticM` 写出你的第一个有用的 tactic。
+下一章：用 {moduleTerm}`Expr` 和 {moduleTerm}`TacticM` 写出你的第一个有用的 tactic。

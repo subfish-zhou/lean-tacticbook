@@ -60,7 +60,7 @@ abbrev TacticM := ReaderT Context $ StateRefT State TermElabM
 tag := "corem-basics"
 %%%
 
-`CoreM` 是整个系统的地基。它的 `State` 包含：
+{moduleTerm}`CoreM` 是整个系统的地基。它的 `State` 包含：
 
 ```
 structure State where
@@ -82,20 +82,20 @@ structure Context where
   currMacroScope: MacroScope       -- 当前宏作用域
 ```
 
-`CoreM` 能做什么：查询/修改环境、生成新名字、记录消息、读取选项。*不能*做类型检查或创建元变量。
+{moduleTerm}`CoreM` 能做什么：查询/修改环境、生成新名字、记录消息、读取选项。*不能*做类型检查或创建元变量。
 
 ## MetaM：元变量与类型检查
 %%%
 tag := "metam-typechecking"
 %%%
 
-`MetaM` 在 `CoreM` 之上添加了：
+{moduleTerm}`MetaM` 在 {moduleTerm}`CoreM` 之上添加了：
 
-- *`LocalContext`*：当前的局部变量（free variables, `FVarId`）
-- *`MetavarContext`*：所有元变量（`MVarId`）的声明和赋值
+- *{moduleTerm}`LocalContext`*：当前的局部变量（free variables, {moduleTerm}`FVarId`）
+- *`MetavarContext`*：所有元变量（{moduleTerm}`MVarId`）的声明和赋值
 - *类型检查缓存*：{moduleTerm}`inferType`、{moduleTerm}`isDefEq`、{moduleTerm}`whnf` 的结果缓存
 
-`MetaM` 是 Lean 元编程的核心层。以下关键操作都在 `MetaM` 中：
+{moduleTerm}`MetaM` 是 Lean 元编程的核心层。以下关键操作都在 {moduleTerm}`MetaM` 中：
 
 - `inferType e`：推断表达式 `e` 的类型
 - `isDefEq e1 e2`：判断两个表达式是否定义等价（可能赋值元变量）
@@ -109,19 +109,19 @@ tag := "metam-typechecking"
 tag := "termelabm-elaboration"
 %%%
 
-`TermElabM` 处理从语法到表达式的转换（elaboration）。当你写 `x + 1`，elaborator 负责：
+{moduleTerm}`TermElabM` 处理从语法到表达式的转换（elaboration）。当你写 `x + 1`，elaborator 负责：
 - 推断 `x` 的类型
 - 找到合适的 `+` 实例
 - 插入隐式参数
 
-对于 tactic 编写者，`TermElabM` 主要用于在 tactic 中使用 `elabTerm` 将语法片段精化为表达式。
+对于 tactic 编写者，{moduleTerm}`TermElabM` 主要用于在 tactic 中使用 `elabTerm` 将语法片段精化为表达式。
 
 ## TacticM：目标管理
 %%%
 tag := "tacticm-goals"
 %%%
 
-`TacticM` 是 tactic 的直接运行环境。它的 `State` 核心很简单：
+{moduleTerm}`TacticM` 是 tactic 的直接运行环境。它的 `State` 核心很简单：
 
 ```
 -- Lean/Elab/Tactic/Basic.lean
@@ -155,7 +155,7 @@ tag := "key-types"
 tag := "name-type"
 %%%
 
-Lean 中一切都有名字。`Name` 是一个层次化的标识符：
+Lean 中一切都有名字。{moduleTerm}`Name` 是一个层次化的标识符：
 
 ```
 -- `Nat.add` 表示为：
@@ -178,8 +178,8 @@ tag := "expr-type-overview"
 tag := "fvarid-mvarid"
 %%%
 
-- *`FVarId`*（free variable id）：局部上下文中的变量的唯一标识。当你在证明中引入假设 `h : P`，`h` 就是一个 `FVarId`。
-- *`MVarId`*（metavariable id）：元变量的唯一标识。每个未解决的证明目标就是一个 `MVarId`。
+- *{moduleTerm}`FVarId`*（free variable id）：局部上下文中的变量的唯一标识。当你在证明中引入假设 `h : P`，`h` 就是一个 {moduleTerm}`FVarId`。
+- *{moduleTerm}`MVarId`*（metavariable id）：元变量的唯一标识。每个未解决的证明目标就是一个 {moduleTerm}`MVarId`。
 
 # tactic 是怎么注册和调用的
 %%%
@@ -199,7 +199,7 @@ tag := "elab-and-macro"
 macro "my_rfl" : tactic => `(tactic| rfl)
 ```
 
-`macro` 在语法层面展开，不进入 `TacticM`。适合简单的 tactic 组合。
+`macro` 在语法层面展开，不进入 {moduleTerm}`TacticM`。适合简单的 tactic 组合。
 
 *方式二：`elab`*（完整的语义实现）
 
@@ -217,7 +217,7 @@ elab_rules : tactic
     throwTacticEx `my_assumption goal "no matching hypothesis"
 ```
 
-`elab_rules` 进入 `TacticM`，可以完整访问证明状态。
+`elab_rules` 进入 {moduleTerm}`TacticM`，可以完整访问证明状态。
 
 ## 调用流程
 %%%
@@ -227,7 +227,7 @@ tag := "tactic-dispatch"
 当 Lean 解析 `by simp` 时：
 1. `by` 关键字触发 tactic block 的解析
 2. `simp` 被匹配到它注册的 `elab_rules`
-3. 当前目标列表作为 `TacticM` 的状态传入
+3. 当前目标列表作为 {moduleTerm}`TacticM` 的状态传入
 4. `simp` 的实现运行，修改目标列表
 5. 剩余目标继续处理后续 tactic
 
@@ -280,7 +280,7 @@ elab "exact_if_rfl" : tactic => do
 tag := "monad-lifting"
 %%%
 
-有时你需要从 `TacticM` 调用 `MetaM` 的函数。由于 `TacticM` 包含了 `MetaM`，可以直接调用：
+有时你需要从 {moduleTerm}`TacticM` 调用 {moduleTerm}`MetaM` 的函数。由于 {moduleTerm}`TacticM` 包含了 {moduleTerm}`MetaM`，可以直接调用：
 
 ```
 elab "show_type" : tactic => do
@@ -291,7 +291,7 @@ elab "show_type" : tactic => do
   logInfo m!"Goal type's type: {← ppExpr typeOfType}"
 ```
 
-反过来，在 `MetaM` 中运行 `TacticM` 代码，需要手动提供目标：
+反过来，在 {moduleTerm}`MetaM` 中运行 {moduleTerm}`TacticM` 代码，需要手动提供目标：
 
 ```
 def runTacticInMeta (mvarId : MVarId) (tac : TacticM Unit) : MetaM (List MVarId) :=
@@ -303,14 +303,14 @@ def runTacticInMeta (mvarId : MVarId) (tac : TacticM Unit) : MetaM (List MVarId)
 tag := "ch01-summary"
 %%%
 
-- `CoreM`：核心状态为 `Environment`、`NameGenerator`，典型操作为查询定义、生成名字
-- `MetaM`：核心状态为 `LocalContext`、`MetavarContext`，典型操作为类型检查、创建元变量
-- `TermElabM`：核心状态为精化上下文，典型操作为语法→表达式
-- `TacticM`：核心状态为 `goals : List MVarId`，典型操作为操作证明目标
+- {moduleTerm}`CoreM`：核心状态为 {moduleTerm}`Environment`、`NameGenerator`，典型操作为查询定义、生成名字
+- {moduleTerm}`MetaM`：核心状态为 {moduleTerm}`LocalContext`、`MetavarContext`，典型操作为类型检查、创建元变量
+- {moduleTerm}`TermElabM`：核心状态为精化上下文，典型操作为语法→表达式
+- {moduleTerm}`TacticM`：核心状态为 `goals : List MVarId`，典型操作为操作证明目标
 
 *核心原则*：
 - tactic 的本质是：接收目标列表，返回（更小的）目标列表
-- 每个未解决目标是一个 `MVarId`（元变量）
+- 每个未解决目标是一个 {moduleTerm}`MVarId`（元变量）
 - 解决目标 = 给元变量赋值一个正确的证明项
 
 # 常见失败模式与 debug
@@ -467,4 +467,4 @@ example (h : n = m) : n = m := by my_rfl       -- 应失败
 
 最后一个例子解释：这里的命题 `n = m` 当然是可证的（用 `exact h` 就行），但 `my_rfl` 只能关闭「两侧定义等价」的等式目标，它不会搜索假设中的 `h`。*tactic 的失败不代表命题假，只代表这个 tactic 的适用边界到了*。这种边界意识在后面设计和选用 tactic 时非常重要。
 
-下一章，我们深入 `Expr`——Lean 4 中所有项的内部表示。
+下一章，我们深入 {moduleTerm}`Expr`——Lean 4 中所有项的内部表示。

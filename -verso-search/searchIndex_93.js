@@ -1,0 +1,1 @@
+window.docContents[93].resolve({"/#lean-automation-internals":{"contents":"本书深入讲解 Lean 4 的自动化（tactic）系统内幕：元编程模型、表达式操作、tactic 实现原理，以及 Mathlib 中各种自动化工具的工作机制。\n\n本书假设你已有基本的 Lean 4 使用经验，了解 theorem、by、simp 等基础语法。\n\n本书校验版本：Lean 4 v4.30.0-rc1，Mathlib 同期主线（2026 年 4 月）。\n\n\n\n\n\n\n\n\n\n","context":"","header":"Lean 4 自动化内幕","id":"/#lean-automation-internals"}});

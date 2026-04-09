@@ -1,0 +1,1 @@
+window.docContents[56].resolve({"/Ch01MetaprogrammingModel/#name-type":{"contents":"Lean 中一切都有名字。 是一个层次化的标识符：\n\n-- `Nat.add` 表示为：\nName.str (Name.str Name.anonymous \"Nat\") \"add\"\n-- 或用反引号语法：\n``Nat.add\n\n\n在元程序中，你会频繁用到反引号语法来引用名字。\n\n","context":"Lean 4 自动化内幕\u0009第一章 Lean 4 元编程模型\u0009关键类型速览","header":"2.3.1. Name","id":"/Ch01MetaprogrammingModel/#name-type"}});

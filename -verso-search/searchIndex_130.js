@@ -1,0 +1,1 @@
+window.docContents[130].resolve({"/Ch00Setup/#clone-companion-repo":{"contents":"git clone https://github.com/your-org/lean-auto-book-code.git\ncd lean-auto-book-code\nlake exe cache get\n\n\n（配套仓库包含每章的示例文件和练习题，后续会提供。）\n\n","context":"Lean 4 自动化内幕\u0009第零章 环境与运行约定\u0009创建本书的配套项目","header":"1.3.3. 方式二：克隆本书配套仓库","id":"/Ch00Setup/#clone-companion-repo"}});

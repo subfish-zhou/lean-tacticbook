@@ -1,0 +1,1 @@
+window.docContents[137].resolve({"/Ch01MetaprogrammingModel/#ch01-metaprogramming-model":{"contents":"本章目标：理解 Lean 4 的元编程层次结构，建立\"tactic 是什么、在哪里运行、怎么工作\"的心智模型。\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n","context":"Lean 4 自动化内幕","header":"2. 第一章 Lean 4 元编程模型","id":"/Ch01MetaprogrammingModel/#ch01-metaprogramming-model"}});
