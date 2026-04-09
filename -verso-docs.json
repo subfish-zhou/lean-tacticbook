@@ -1,1 +1,86 @@
-{}
+{"9":
+ "<code class=\"docstring\">`for x in e do s`  iterates over `e` assuming `e`'s type has an instance of the `ForIn` typeclass.\n`break` and `continue` are supported inside `for` loops.\n`for x in e, x2 in e2, ... do s` iterates of the given collections in parallel,\nuntil at least one of them is exhausted.\nThe types of `e2` etc. must implement the `Std.ToStream` typeclass.\n</code>",
+ "8":
+ "<code>Lean.MonadLCtx.getLCtx {m : Type → Type} [self : MonadLCtx m] : m LocalContext</code>",
+ "7": "<code>LocalContext</code>",
+ "6":
+ "<code>Lean.MVarId.getType (mvarId : MVarId) : MetaM Expr</code><span class=\"sep\"></span><code class=\"docstring\">Get the type of the given metavariable. </code>",
+ "5": "<code>Expr</code>",
+ "47":
+ "<code>Lean.registerTraceClass (traceClassName : Name) (inherited : Bool := false) (ref : Name := by exact decl_name%) :\n  IO Unit</code><span class=\"sep\"></span><code class=\"docstring\">Registers a trace class.\n\nBy default, trace classes are not inherited;\nthat is, `set_option trace.foo true` does not imply `set_option trace.foo.bar true`.\nCalling ``registerTraceClass `foo.bar (inherited := true)`` enables this inheritance\non an opt-in basis.\n</code>",
+ "46":
+ "<code>Bool.false : Bool</code><span class=\"sep\"></span><code class=\"docstring\">The Boolean value `false`, not to be confused with the proposition `False`. </code>",
+ "45":
+ "<code>Bool.true : Bool</code><span class=\"sep\"></span><code class=\"docstring\">The Boolean value `true`, not to be confused with the proposition `True`. </code>",
+ "44": "<code>Bool</code>",
+ "43":
+ "<code>Lean.MVarId.isAssigned {m : Type → Type} [Monad m] [MonadMCtx m] (mvarId : MVarId) : m Bool</code><span class=\"sep\"></span><code class=\"docstring\">Return `true` if the give metavariable is already assigned. </code>",
+ "42":
+ "<code>Lean.MVarId : Type</code><span class=\"sep\"></span><code class=\"docstring\">Expression metavariable Id   </code>",
+ "41":
+ "<code>List.{u} (α : Type u) : Type u</code><span class=\"sep\"></span><code class=\"docstring\">Linked lists: ordered lists, in which each element has a reference to the next element.\n\nMost operations on linked lists take time proportional to the length of the list, because each\nelement must be traversed to find the next element.\n\n`List α` is isomorphic to `Array α`, but they are useful for different things:\n* `List α` is easier for reasoning, and `Array α` is modeled as a wrapper around `List α`.\n* `List α` works well as a persistent data structure, when many copies of the tail are shared. When\n  the value is not shared, `Array α` will have better performance because it can do destructive\n  updates.\n</code>",
+ "40":
+ "<code><span class=\"literal string\">\"assumption_on_all\"</span> : String</code>",
+ "4":
+ "<code>Lean.MVarId.withContext.{u_1} {n : Type → Type u_1} [MonadControlT MetaM n] [Monad n] {α : Type} (mvarId : MVarId) :\n  n α → n α</code><span class=\"sep\"></span><code class=\"docstring\">Executes `x` using the given metavariable `LocalContext` and `LocalInstances`.\nThe type class resolution cache is flushed when executing `x` if its `LocalInstances` are\ndifferent from the current ones. </code>",
+ "39":
+ "<code class=\"docstring\">`assumption` tries to solve the main goal using a hypothesis of compatible type, or else fails.\nNote also the `‹t›` term notation, which is a shorthand for `show t by assumption`.\n</code>",
+ "38":
+ "<code class=\"docstring\">`first | tac | ...` runs each `tac` until one succeeds, or else fails. </code>",
+ "37":
+ "<code><span class=\"literal string\">\"my_smart_close₂\"</span> : String</code>",
+ "36":
+ "<code><span class=\"literal string\">\"no hypothesis matches and rfl failed\"</span> : String</code>",
+ "35":
+ "<code>Pure.pure.{u, v} {f : Type u → Type v} [self : Pure f] {α : Type u} : α → f α</code><span class=\"sep\"></span><code class=\"docstring\">Given `a : α`, then `pure a : f α` represents an action that does nothing and returns `a`.\n\nExamples:\n* `(pure \"hello\" : Option String) = some \"hello\"`\n* `(pure \"hello\" : Except (Array String) String) = Except.ok \"hello\"`\n* `(pure \"hello\" : StateM Nat String).run 105 = (\"hello\", 105)`\n</code>",
+ "34":
+ "<code class=\"docstring\">This tactic applies to a goal whose target has the form `x ~ x`,\nwhere `~` is equality, heterogeneous equality or any relation that\nhas a reflexivity lemma tagged with the attribute @[refl].\n</code>",
+ "33": "<code>Lean.Elab.Tactic.evalTactic (stx : Syntax) : TacticM Unit</code>",
+ "32":
+ "<code><span class=\"literal string\">\"my_smart_close\"</span> : String</code>",
+ "31":
+ "<code>Lean.Elab.Tactic.setGoals (mvarIds : List MVarId) : TacticM Unit</code>",
+ "30":
+ "<code>List.erase.{u_1} {α : Type u_1} [BEq α] : List α → α → List α</code><span class=\"sep\"></span><code class=\"docstring\">Removes the first occurrence of `a` from `l`. If `a` does not occur in `l`, the list is returned\nunmodified.\n\n`O(|l|)`.\n\nExamples:\n* `[1, 5, 3, 2, 5].erase 5 = [1, 3, 2, 5]`\n* `[1, 5, 3, 2, 5].erase 6 = [1, 5, 3, 2, 5]`\n</code>",
+ "3":
+ "<code>Lean.Elab.Tactic.getMainGoal : TacticM MVarId</code><span class=\"sep\"></span><code class=\"docstring\">Return the first goal. </code>",
+ "29":
+ "<code>Lean.Elab.Tactic.getGoals : TacticM (List MVarId)</code><span class=\"sep\"></span><code class=\"docstring\">Returns the list of goals. Goals may or may not already be assigned. </code>",
+ "28": "<code>Lean.Expr.mvarId! : Expr → MVarId</code>",
+ "27": "<code>List MVarId</code>",
+ "26":
+ "<code>And.intro {a b : Prop} (left : a) (right : b) : a ∧ b</code><span class=\"sep\"></span><code class=\"docstring\">`And.intro : a → b → a ∧ b` is the constructor for the And operation. </code>",
+ "25":
+ "<code>Lean.mkConst (declName : Name) (us : List Level := []) : Expr</code><span class=\"sep\"></span><code class=\"docstring\">`mkConst declName us` return `.const declName us`. </code>",
+ "24": "<code>Lean.mkApp4 (f a b c d : Expr) : Expr</code>",
+ "23":
+ "<code>Lean.Meta.mkFreshExprMVar (type? : Option Expr) (kind : MetavarKind := MetavarKind.natural)\n  (userName : Name := Name.anonymous) : MetaM Expr</code>",
+ "22":
+ "<code><span class=\"literal string\">\"goal is not a conjunction\"</span> : String</code>",
+ "21":
+ "<code>And (a b : Prop) : Prop</code><span class=\"sep\"></span><code class=\"docstring\">`And a b`, or `a ∧ b`, is the conjunction of propositions. It can be\nconstructed and destructed like a pair: if `ha : a` and `hb : b` then\n`⟨ha, hb⟩ : a ∧ b`, and if `h : a ∧ b` then `h.left : a` and `h.right : b`.\n\n\nConventions for notations in identifiers:\n\n * The recommended spelling of `∧` in identifiers is `and`.</code>",
+ "20":
+ "<code><span class=\"literal string\">\"split_and\"</span> : String</code>",
+ "2": "<code>MVarId</code>",
+ "19":
+ "<code><span class=\"literal string\">\"no matching hypothesis found\"</span> : String</code>",
+ "18":
+ "<code>Lean.Meta.throwTacticEx {α : Type} (tacticName : Name) (mvarId : MVarId) (msg? : Option MessageData := none) : MetaM α</code>",
+ "17":
+ "<code class=\"docstring\">`return e` inside of a `do` block makes the surrounding block evaluate to `pure e`,\nskipping any further statements.\nNote that uses of the `do` keyword in other syntax like in `for _ in _ do`\ndo not constitute a surrounding block in this sense;\nin supported editors, the corresponding `do` keyword of the surrounding block\nis highlighted when hovering over `return`.\n\n`return` not followed by a term starting on the same line is equivalent to `return ()`.\n</code>",
+ "16": "<code>Lean.LocalDecl.toExpr (decl : LocalDecl) : Expr</code>",
+ "15":
+ "<code>Lean.MVarId.assign {m : Type → Type} [MonadMCtx m] (mvarId : MVarId) (val : Expr) : m Unit</code><span class=\"sep\"></span><code class=\"docstring\">Add `mvarId := x` to the metavariable assignment.\nThis method does not check whether `mvarId` is already assigned, nor does it check whether\na cycle is being introduced, or whether the expression has the right type.\nThis is a low-level API, and it is safer to use `isDefEq (mkMVar mvarId) x`.\n</code>",
+ "14":
+ "<code>Lean.LocalDecl.type : LocalDecl → Expr</code><span class=\"sep\"></span><code class=\"docstring\">The type of the variable. </code>",
+ "13":
+ "<code>Lean.Meta.isDefEq (t s : Expr) : MetaM Bool</code><span class=\"sep\"></span><code class=\"docstring\">Determines whether two expressions are definitionally equal to each other.\n\nTo control how metavariables are assigned and unified, metavariables and their context have a \"depth\".\nGiven a metavariable `?m` and a `MetavarContext` `mctx`, `?m` is not assigned if `?m.depth != mctx.depth`.\nThe combinator `withNewMCtxDepth x` will bump the depth while executing `x`.\nSo, `withNewMCtxDepth (isDefEq a b)` is `isDefEq` without any mvar assignment happening\nwhereas `isDefEq a b` will assign any metavariables of the current depth in `a` and `b` to unify them.\n\nFor matching (where only mvars in `b` should be assigned), we create the term inside the `withNewMCtxDepth`.\nFor an example, see [Lean.Meta.Simp.tryTheoremWithExtraArgs?](https://github.com/leanprover/lean4/blob/master/src/Lean/Meta/Tactic/Simp/Rewrite.lean#L100-L106)\n</code>",
+ "12":
+ "<code class=\"docstring\">`continue` skips to the next iteration of the surrounding `for` loop. </code>",
+ "11":
+ "<code>Lean.LocalDecl.isImplementationDetail (d : LocalDecl) : Bool</code><span class=\"sep\"></span><code class=\"docstring\">Is the local declaration an implementation-detail hypothesis\n(including auxiliary declarations)?\n</code>",
+ "10": "<code>LocalDecl</code>",
+ "1":
+ "<code>Lean.Parser.Category.tactic : Parser.Category</code><span class=\"sep\"></span><code class=\"docstring\">`tactic` is the builtin syntax category for tactics. These appear after\n`by` in proofs, and they are programs that take in the proof context\n(the hypotheses in scope plus the type of the term to synthesize) and construct\na term of the expected type. For example, `simp` is a tactic, used in:\n```\nexample : 2 + 2 = 4 := by simp\n```\n</code>",
+ "0":
+ "<code><span class=\"literal string\">\"my_assumption\"</span> : String</code>"}
