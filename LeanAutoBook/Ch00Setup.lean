@@ -1,4 +1,5 @@
 import VersoManual
+import LeanAutoBook.Helpers
 
 open Verso.Genre Manual
 open Verso Code External
@@ -181,19 +182,19 @@ tag := "tactic-origins"
 一个初学者常见的困惑：为什么有的 tactic 不需要 import 就能用，有的需要 {lit}`import Mathlib`？
 
 - {moduleTerm}`simp`：Lean core，不需要 import（但 `@[simp]` 引理大部分来自 Mathlib）
-- `ring`：Mathlib，{lit}`import Mathlib.Tactic.Ring`
-- `omega`：Lean core（v4.8+），不需要 import
-- `linarith`：Mathlib，{lit}`import Mathlib.Tactic.Linarith`
-- `nlinarith`：Mathlib，{lit}`import Mathlib.Tactic.Linarith`
-- `polyrith`：Mathlib，{lit}`import Mathlib.Tactic.Polyrith`
+- {kw}`ring`：Mathlib，{lit}`import Mathlib.Tactic.Ring`
+- {kw}`omega`：Lean core（v4.8+），不需要 import
+- {kw}`linarith`：Mathlib，{lit}`import Mathlib.Tactic.Linarith`
+- {kw}`nlinarith`：Mathlib，{lit}`import Mathlib.Tactic.Linarith`
+- {kw}`polyrith`：Mathlib，{lit}`import Mathlib.Tactic.Polyrith`
 - {moduleTerm}`norm_num`：Mathlib，{lit}`import Mathlib.Tactic.NormNum`
-- `aesop`：Lean core + Mathlib 规则，{lit}`import Aesop`（core）或 Mathlib
-- `grind`：Lean core（v4.14+），不需要 import
-- `decide`：Lean core，不需要 import
-- `positivity`：Mathlib，{lit}`import Mathlib.Tactic.Positivity`
-- `field_simp`：Mathlib，{lit}`import Mathlib.Tactic.FieldSimp`
-- `gcongr`：Mathlib，{lit}`import Mathlib.Tactic.GCongr`
-- `fun_prop`：Mathlib，{lit}`import Mathlib.Tactic.FunProp`
+- {kw}`aesop`：Lean core + Mathlib 规则，{lit}`import Aesop`（core）或 Mathlib
+- {kw}`grind`：Lean core（v4.14+），不需要 import
+- {kw}`decide`：Lean core，不需要 import
+- {kw}`positivity`：Mathlib，{lit}`import Mathlib.Tactic.Positivity`
+- {kw}`field_simp`：Mathlib，{lit}`import Mathlib.Tactic.FieldSimp`
+- {kw}`gcongr`：Mathlib，{lit}`import Mathlib.Tactic.GCongr`
+- {kw}`fun_prop`：Mathlib，{lit}`import Mathlib.Tactic.FunProp`
 
 *简单规则*：如果 {lit}`import Mathlib` 能跑通，以上全部可用。本书示例默认在 Mathlib 项目环境中运行。
 
@@ -252,7 +253,7 @@ tag := "learning-tips"
 
 1. *先跑再看*：每章的示例，先复制到 VS Code 里跑一遍，看目标状态的变化
 2. *改着玩*：把例子里的数字、函数、条件改一改，看 tactic 还能不能工作
-3. *故意破坏*：把 {moduleTerm}`simp` 换成 `ring`，看报错信息——理解"为什么不行"和"为什么行"一样重要
+3. *故意破坏*：把 {moduleTerm}`simp` 换成 {kw}`ring`，看报错信息——理解"为什么不行"和"为什么行"一样重要
 4. *做练习*：每章末尾的练习是学习闭环的关键，不要跳过
 5. *查源码*：想深入理解某个 tactic 时，用 VS Code 的 "Go to Definition" 跳到源码
 
@@ -329,7 +330,7 @@ example (x : ℝ) : x * 1 = x := by
   ring_nf
 ```
 
-提示：`ring_nf` 会化简但不一定能关闭目标。想想该用什么 tactic 替代？（答案：`ring` 可以直接关闭等式目标。试试把 `ring_nf` 换成 `ring`。）
+提示：{kw}`ring_nf` 会化简但不一定能关闭目标。想想该用什么 tactic 替代？（答案：{kw}`ring` 可以直接关闭等式目标。试试把 {kw}`ring_nf` 换成 {kw}`ring`。）
 
 ## 练习 0.4（综合）：选对 tactic
 %%%

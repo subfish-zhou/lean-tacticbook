@@ -1,4 +1,5 @@
 import VersoManual
+import LeanAutoBook.Helpers
 
 open Verso.Genre Manual
 open Verso Code External
@@ -19,7 +20,7 @@ tag := "ch01-metaprogramming-model"
 tag := "why-metaprogramming"
 %%%
 
-当你写下 `simp` 或 `linarith`，你调用的不只是一个函数——你在执行一段 *元程序*：一段在 Lean 的推导引擎内部运行、操作证明状态的程序。
+当你写下 `simp` 或 {kw}`linarith`，你调用的不只是一个函数——你在执行一段 *元程序*：一段在 Lean 的推导引擎内部运行、操作证明状态的程序。
 
 理解 tactic 的实现，第一步是理解它们运行的"操作系统"：Lean 4 的元编程 monad 栈。
 
@@ -261,7 +262,7 @@ example (n : Nat) : n + 0 = n := by
 
 *注意*：`trace_goal` 只打印信息、不改变目标，所以 Lean 可能会显示 `"tactic does nothing"` 的 linter 警告。这不是 bug——tactic 确实运行了，只是没有修改 goal 状态。忽略这个警告即可。
 
-再写一个稍复杂的：`exact_if_rfl`，如果目标是 `a = a` 就用 `rfl` 关闭，否则报错。
+再写一个稍复杂的：`exact_if_rfl`，如果目标是 `a = a` 就用 {kw}`rfl` 关闭，否则报错。
 
 ```
 elab "exact_if_rfl" : tactic => do
@@ -454,7 +455,7 @@ example : (42 : Nat) = 42 := by close_rfl
 tag := "exercise-1-4"
 %%%
 
-不用 `macro`，用完整的 `elab_rules` 实现一个 `my_rfl` tactic：如果目标是定义等价的等式（`a = b` 且 `a` 和 `b` 定义等价），用 `rfl` 关闭；否则给出清晰的错误信息（包含目标内容）。
+不用 `macro`，用完整的 `elab_rules` 实现一个 `my_rfl` tactic：如果目标是定义等价的等式（`a = b` 且 `a` 和 `b` 定义等价），用 {kw}`rfl` 关闭；否则给出清晰的错误信息（包含目标内容）。
 
 测试用例：
 

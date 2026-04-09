@@ -1,4 +1,5 @@
 import VersoManual
+import LeanAutoBook.Helpers
 
 open Verso.Genre Manual
 open Verso Code External
@@ -49,7 +50,7 @@ tag := "tactic-lifecycle"
 tag := "assumption-search"
 %%%
 
-`assumption` 是最经典的入门 tactic：在局部上下文中找一个类型匹配目标的假设，然后用它关闭目标。这个 tactic 虽然简单，但展示了 tactic 编写的基本骨架。
+{kw}`assumption` 是最经典的入门 tactic：在局部上下文中找一个类型匹配目标的假设，然后用它关闭目标。这个 tactic 虽然简单，但展示了 tactic 编写的基本骨架。
 
 ```anchor my_assumption
 elab "my_assumption" : tactic => do
@@ -69,7 +70,7 @@ elab "my_assumption" : tactic => do
 
 *`let goal ← getMainGoal`*：从当前证明状态中取出第一个未解决的目标。{moduleTerm}`getMainGoal` 返回 {moduleTerm}`MVarId`，它是元变量的标识符。为什么叫"main goal"？因为 Lean 的目标列表是有序的，第一个目标就是用户在 Infoview 中看到的那个。
 
-*`goal.withContext do`*：这一步至关重要。每个目标都有自己的局部上下文（local context），包含该目标可见的所有局部变量和假设。不同目标的上下文可能不同——比如 `cases` 拆分出的两个子目标，各自有不同的假设。`withContext` 把 monad 的环境切换到该目标的上下文，这样后续的 {moduleTerm}`getLCtx` 才能拿到正确的假设列表。*忘记 `withContext` 是新手最常犯的错误之一*，后面 3.8 节会专门讨论。
+*`goal.withContext do`*：这一步至关重要。每个目标都有自己的局部上下文（local context），包含该目标可见的所有局部变量和假设。不同目标的上下文可能不同——比如 {kw}`cases` 拆分出的两个子目标，各自有不同的假设。`withContext` 把 monad 的环境切换到该目标的上下文，这样后续的 {moduleTerm}`getLCtx` 才能拿到正确的假设列表。*忘记 `withContext` 是新手最常犯的错误之一*，后面 3.8 节会专门讨论。
 
 *`let target ← goal.getType`*：获取目标的类型，即待证命题。返回值是一个 {moduleTerm}`Expr`。
 
@@ -90,7 +91,7 @@ elab "my_assumption" : tactic => do
 tag := "split-and"
 %%%
 
-如果目标是 `P ∧ Q`，我们希望把它拆成两个子目标 `P` 和 `Q`。这个 tactic 展示了一个比 `assumption` 更复杂的模式：不是直接关闭目标，而是把目标"拆开"。
+如果目标是 `P ∧ Q`，我们希望把它拆成两个子目标 `P` 和 `Q`。这个 tactic 展示了一个比 {kw}`assumption` 更复杂的模式：不是直接关闭目标，而是把目标"拆开"。
 
 ```anchor split_and
 elab "split_and" : tactic => do
@@ -159,7 +160,7 @@ elab "my_smart_close" : tactic => do
 
 核心 API 是 *{moduleTerm}`evalTactic`*：它接收一个 {moduleTerm}`Syntax` 节点，执行对应的 tactic。`` ← `(tactic| ...) `` 是 Lean 的 quotation 语法，用于在代码中构造 {moduleTerm}`Syntax`。
 
-这段代码的策略是*搜索 + 回退*：先试最简单的方法（直接在假设中找精确匹配），失败了再试 `rfl`（关闭 `a = a` 形式的等式目标）。`try ... catch _ => pure ()` 确保第二个策略失败时不会中断整个 tactic，而是回退到最后的 `throwTacticEx`。
+这段代码的策略是*搜索 + 回退*：先试最简单的方法（直接在假设中找精确匹配），失败了再试 {kw}`rfl`（关闭 `a = a` 形式的等式目标）。`try ... catch _ => pure ()` 确保第二个策略失败时不会中断整个 tactic，而是回退到最后的 `throwTacticEx`。
 
 你也可以用 {moduleTerm}`evalTactic` 一次性表达同样的逻辑：
 
@@ -175,7 +176,7 @@ elab "my_smart_close₂" : tactic => do
 tag := "operate-all-goals"
 %%%
 
-前面的 tactic 都只处理第一个目标（{moduleTerm}`getMainGoal`）。但有时你希望对所有未解决的目标执行同一操作——比如"把所有能用 `assumption` 关掉的目标都关掉"。
+前面的 tactic 都只处理第一个目标（{moduleTerm}`getMainGoal`）。但有时你希望对所有未解决的目标执行同一操作——比如"把所有能用 {kw}`assumption` 关掉的目标都关掉"。
 
 ```anchor assumption_on_all
 elab "assumption_on_all" : tactic => do
@@ -273,7 +274,7 @@ elab "bad_assumption" : tactic => do
   throwError "not found"
 ```
 
-如果你在证明过程中只有一个目标、且没有经过 `intro` 或 `cases` 之类改变上下文的操作，这段代码可能"碰巧"能工作。但一旦有多个目标或上下文被修改过，{moduleTerm}`getLCtx` 拿到的就不是当前目标的上下文，而是"默认"上下文（通常是最外层的），导致找不到该有的假设，或者更糟——找到错误的假设。
+如果你在证明过程中只有一个目标、且没有经过 {kw}`intro` 或 {kw}`cases` 之类改变上下文的操作，这段代码可能"碰巧"能工作。但一旦有多个目标或上下文被修改过，{moduleTerm}`getLCtx` 拿到的就不是当前目标的上下文，而是"默认"上下文（通常是最外层的），导致找不到该有的假设，或者更糟——找到错误的假设。
 
 *规则*：只要你要读取目标的局部上下文，就用 `goal.withContext do` 包裹。没有例外。
 
@@ -389,7 +390,7 @@ tag := "exercise-3-2"
 tag := "exercise-3-3"
 %%%
 
-下面的 tactic 试图对所有目标执行 `rfl`，但有两个 bug。找出并修复它们。
+下面的 tactic 试图对所有目标执行 {kw}`rfl`，但有两个 bug。找出并修复它们。
 
 ```
 -- [示意]
@@ -437,6 +438,6 @@ tag := "ch03-summary"
 
 *核心原则*：tactic = 读目标 + 分析结构 + 构造证明项 + 更新目标列表。
 
-本章你学到了编写 tactic 的完整流程：从最简单的 `assumption` 到拆分目标的 `split_and`，从组合已有 tactic 到对多目标批量操作，再到错误处理和常见陷阱。每个 tactic 都遵循同一个模式——读取目标、分析 {moduleTerm}`Expr` 结构、构造证明项、更新目标列表。
+本章你学到了编写 tactic 的完整流程：从最简单的 {kw}`assumption` 到拆分目标的 `split_and`，从组合已有 tactic 到对多目标批量操作，再到错误处理和常见陷阱。每个 tactic 都遵循同一个模式——读取目标、分析 {moduleTerm}`Expr` 结构、构造证明项、更新目标列表。
 
 下一章将深入目标管理的进阶技巧：如何用 `focus` 聚焦单个目标、如何用 `withMainContext` 简化上下文切换、如何实现回溯搜索（backtracking），以及 `MonadBacktrack` 的工作原理。
