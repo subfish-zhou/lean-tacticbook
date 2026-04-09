@@ -1005,7 +1005,7 @@ abbrev TacticM := ReaderT Context $ StateRefT State TermElabM
                 <h3 id="corem-basics">
                   2.2.1. CoreM：基础层<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=corem-basics" title="Permalink">🔗</a></span></h3>
                 <p>
-                  <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Core.CoreM" data-verso-hover="5">CoreM</span></code> 是整个系统的地基。它的 <code>State</code> 包含：</p>
+                  <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Core.CoreM" data-verso-hover="5">Lean.CoreM</span></code> 是整个系统的地基。它的 <code>State</code> 包含：</p>
                 <pre>structure State where
   env           : Environment      -- 当前环境（所有定义/定理）
   nextMacroScope: MacroScope       -- 宏展开用的作用域计数器
@@ -1150,6 +1150,8 @@ Name.str (Name.str Name.anonymous "Nat") "add"
                       <strong><code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.MVarId" data-verso-hover="9">MVarId</span></code></strong>（metavariable id）：元变量的唯一标识。每个未解决的证明目标就是一个 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.MVarId" data-verso-hover="9">MVarId</span></code>。</p>
                     </li>
                   </ul>
+                <p>
+                  你可以用 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.MVarId" data-verso-hover="9">Lean.MVarId</span></code> 和 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.FVarId" data-verso-hover="8">Lean.FVarId</span></code> 在编辑器中悬停查看它们的定义。</p>
                 </section>
               </section>
             <section>
