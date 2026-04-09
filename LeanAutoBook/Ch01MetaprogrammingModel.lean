@@ -61,7 +61,7 @@ abbrev TacticM := ReaderT Context $ StateRefT State TermElabM
 tag := "corem-basics"
 %%%
 
-{moduleTerm}`CoreM` 是整个系统的地基。它的 `State` 包含：
+{lean}`CoreM` 是整个系统的地基。它的 `State` 包含：
 
 ```
 structure State where
@@ -83,20 +83,20 @@ structure Context where
   currMacroScope: MacroScope       -- 当前宏作用域
 ```
 
-{moduleTerm}`CoreM` 能做什么：查询/修改环境、生成新名字、记录消息、读取选项。*不能*做类型检查或创建元变量。
+{lean}`CoreM` 能做什么：查询/修改环境、生成新名字、记录消息、读取选项。*不能*做类型检查或创建元变量。
 
 ## MetaM：元变量与类型检查
 %%%
 tag := "metam-typechecking"
 %%%
 
-{moduleTerm}`MetaM` 在 {moduleTerm}`CoreM` 之上添加了：
+{lean}`MetaM` 在 {lean}`CoreM` 之上添加了：
 
-- *{moduleTerm}`LocalContext`*：当前的局部变量（free variables, {moduleTerm}`FVarId`）
-- *`MetavarContext`*：所有元变量（{moduleTerm}`MVarId`）的声明和赋值
-- *类型检查缓存*：{moduleTerm}`inferType`、{moduleTerm}`isDefEq`、{moduleTerm}`whnf` 的结果缓存
+- *{lean}`LocalContext`*：当前的局部变量（free variables, {lean}`FVarId`）
+- *`MetavarContext`*：所有元变量（{lean}`MVarId`）的声明和赋值
+- *类型检查缓存*：{lean}`inferType`、{lean}`isDefEq`、{lean}`whnf` 的结果缓存
 
-{moduleTerm}`MetaM` 是 Lean 元编程的核心层。以下关键操作都在 {moduleTerm}`MetaM` 中：
+{lean}`MetaM` 是 Lean 元编程的核心层。以下关键操作都在 {lean}`MetaM` 中：
 
 - `inferType e`：推断表达式 `e` 的类型
 - `isDefEq e1 e2`：判断两个表达式是否定义等价（可能赋值元变量）
@@ -110,19 +110,19 @@ tag := "metam-typechecking"
 tag := "termelabm-elaboration"
 %%%
 
-{moduleTerm}`TermElabM` 处理从语法到表达式的转换（elaboration）。当你写 `x + 1`，elaborator 负责：
+{lean}`TermElabM` 处理从语法到表达式的转换（elaboration）。当你写 `x + 1`，elaborator 负责：
 - 推断 `x` 的类型
 - 找到合适的 `+` 实例
 - 插入隐式参数
 
-对于 tactic 编写者，{moduleTerm}`TermElabM` 主要用于在 tactic 中使用 `elabTerm` 将语法片段精化为表达式。
+对于 tactic 编写者，{lean}`TermElabM` 主要用于在 tactic 中使用 `elabTerm` 将语法片段精化为表达式。
 
 ## TacticM：目标管理
 %%%
 tag := "tacticm-goals"
 %%%
 
-{moduleTerm}`TacticM` 是 tactic 的直接运行环境。它的 `State` 核心很简单：
+{lean}`TacticM` 是 tactic 的直接运行环境。它的 `State` 核心很简单：
 
 ```
 -- Lean/Elab/Tactic/Basic.lean
@@ -156,7 +156,7 @@ tag := "key-types"
 tag := "name-type"
 %%%
 
-Lean 中一切都有名字。{moduleTerm}`Name` 是一个层次化的标识符：
+Lean 中一切都有名字。{lean}`Name` 是一个层次化的标识符：
 
 ```
 -- `Nat.add` 表示为：
@@ -179,8 +179,8 @@ tag := "expr-type-overview"
 tag := "fvarid-mvarid"
 %%%
 
-- *{moduleTerm}`FVarId`*（free variable id）：局部上下文中的变量的唯一标识。当你在证明中引入假设 `h : P`，`h` 就是一个 {moduleTerm}`FVarId`。
-- *{moduleTerm}`MVarId`*（metavariable id）：元变量的唯一标识。每个未解决的证明目标就是一个 {moduleTerm}`MVarId`。
+- *{lean}`FVarId`*（free variable id）：局部上下文中的变量的唯一标识。当你在证明中引入假设 `h : P`，`h` 就是一个 {lean}`FVarId`。
+- *{lean}`MVarId`*（metavariable id）：元变量的唯一标识。每个未解决的证明目标就是一个 {lean}`MVarId`。
 
 # tactic 是怎么注册和调用的
 %%%
@@ -200,7 +200,7 @@ tag := "elab-and-macro"
 macro "my_rfl" : tactic => `(tactic| rfl)
 ```
 
-`macro` 在语法层面展开，不进入 {moduleTerm}`TacticM`。适合简单的 tactic 组合。
+`macro` 在语法层面展开，不进入 {lean}`TacticM`。适合简单的 tactic 组合。
 
 *方式二：`elab`*（完整的语义实现）
 
@@ -218,7 +218,7 @@ elab_rules : tactic
     throwTacticEx `my_assumption goal "no matching hypothesis"
 ```
 
-`elab_rules` 进入 {moduleTerm}`TacticM`，可以完整访问证明状态。
+`elab_rules` 进入 {lean}`TacticM`，可以完整访问证明状态。
 
 ## 调用流程
 %%%
@@ -228,7 +228,7 @@ tag := "tactic-dispatch"
 当 Lean 解析 `by simp` 时：
 1. `by` 关键字触发 tactic block 的解析
 2. `simp` 被匹配到它注册的 `elab_rules`
-3. 当前目标列表作为 {moduleTerm}`TacticM` 的状态传入
+3. 当前目标列表作为 {lean}`TacticM` 的状态传入
 4. `simp` 的实现运行，修改目标列表
 5. 剩余目标继续处理后续 tactic
 
@@ -262,7 +262,7 @@ example (n : Nat) : n + 0 = n := by
 
 *注意*：`trace_goal` 只打印信息、不改变目标，所以 Lean 可能会显示 `"tactic does nothing"` 的 linter 警告。这不是 bug——tactic 确实运行了，只是没有修改 goal 状态。忽略这个警告即可。
 
-再写一个稍复杂的：`exact_if_rfl`，如果目标是 `a = a` 就用 {kw}`rfl` 关闭，否则报错。
+再写一个稍复杂的：`exact_if_rfl`，如果目标是 `a = a` 就用 {lean}`rfl` 关闭，否则报错。
 
 ```
 elab "exact_if_rfl" : tactic => do
@@ -281,7 +281,7 @@ elab "exact_if_rfl" : tactic => do
 tag := "monad-lifting"
 %%%
 
-有时你需要从 {moduleTerm}`TacticM` 调用 {moduleTerm}`MetaM` 的函数。由于 {moduleTerm}`TacticM` 包含了 {moduleTerm}`MetaM`，可以直接调用：
+有时你需要从 {lean}`TacticM` 调用 {lean}`MetaM` 的函数。由于 {lean}`TacticM` 包含了 {lean}`MetaM`，可以直接调用：
 
 ```
 elab "show_type" : tactic => do
@@ -292,7 +292,7 @@ elab "show_type" : tactic => do
   logInfo m!"Goal type's type: {← ppExpr typeOfType}"
 ```
 
-反过来，在 {moduleTerm}`MetaM` 中运行 {moduleTerm}`TacticM` 代码，需要手动提供目标：
+反过来，在 {lean}`MetaM` 中运行 {lean}`TacticM` 代码，需要手动提供目标：
 
 ```
 def runTacticInMeta (mvarId : MVarId) (tac : TacticM Unit) : MetaM (List MVarId) :=
@@ -304,14 +304,14 @@ def runTacticInMeta (mvarId : MVarId) (tac : TacticM Unit) : MetaM (List MVarId)
 tag := "ch01-summary"
 %%%
 
-- {moduleTerm}`CoreM`：核心状态为 {moduleTerm}`Environment`、`NameGenerator`，典型操作为查询定义、生成名字
-- {moduleTerm}`MetaM`：核心状态为 {moduleTerm}`LocalContext`、`MetavarContext`，典型操作为类型检查、创建元变量
-- {moduleTerm}`TermElabM`：核心状态为精化上下文，典型操作为语法→表达式
-- {moduleTerm}`TacticM`：核心状态为 `goals : List MVarId`，典型操作为操作证明目标
+- {lean}`CoreM`：核心状态为 {lean}`Environment`、`NameGenerator`，典型操作为查询定义、生成名字
+- {lean}`MetaM`：核心状态为 {lean}`LocalContext`、`MetavarContext`，典型操作为类型检查、创建元变量
+- {lean}`TermElabM`：核心状态为精化上下文，典型操作为语法→表达式
+- {lean}`TacticM`：核心状态为 `goals : List MVarId`，典型操作为操作证明目标
 
 *核心原则*：
 - tactic 的本质是：接收目标列表，返回（更小的）目标列表
-- 每个未解决目标是一个 {moduleTerm}`MVarId`（元变量）
+- 每个未解决目标是一个 {lean}`MVarId`（元变量）
 - 解决目标 = 给元变量赋值一个正确的证明项
 
 # 常见失败模式与 debug
@@ -354,14 +354,14 @@ elab_rules : tactic
 tag := "failure-goal-assign"
 %%%
 
-`goal.assign e` 只关闭了 `goal` 这一个目标，但 {moduleTerm}`setGoals` 里还留着它。正确做法：赋值后 `return`（让框架自动清理），或者手动从 goals 列表中移除。
+`goal.assign e` 只关闭了 `goal` 这一个目标，但 {lean}`setGoals` 里还留着它。正确做法：赋值后 `return`（让框架自动清理），或者手动从 goals 列表中移除。
 
 ## 失败 4：`isDefEq` 意外修改了元变量
 %%%
 tag := "failure-isdefeq-side-effect"
 %%%
 
-{moduleTerm}`isDefEq` 是*有副作用*的——它会在成功时给元变量赋值。如果你只是想探查相等性而不想赋值，用 `withoutModifyingState` 包裹：
+{lean}`isDefEq` 是*有副作用*的——它会在成功时给元变量赋值。如果你只是想探查相等性而不想赋值，用 `withoutModifyingState` 包裹：
 
 ```
 -- [示意]
@@ -445,8 +445,8 @@ example : (42 : Nat) = 42 := by close_rfl
 ```
 
 提示：
-- *错误 1* 是 proof term 构造错误——`Eq.refl` 需要显式传入类型和值两个参数（用 {moduleTerm}`mkApp2`）
-- *错误 2* 是命名空间可见性错误——{moduleTerm}`getMainGoal` 在 `Tactic` 命名空间里，{lit}`open Lean Elab Meta` 少了 `Tactic`
+- *错误 1* 是 proof term 构造错误——`Eq.refl` 需要显式传入类型和值两个参数（用 {lean}`mkApp2`）
+- *错误 2* 是命名空间可见性错误——{lean}`getMainGoal` 在 `Tactic` 命名空间里，{lit}`open Lean Elab Meta` 少了 `Tactic`
 
 这两类错误性质不同：一个是 API 调用不完整，一个是符号找不到。以后遇到类似报错时，先判断是哪一类再对症下药。
 
@@ -455,7 +455,7 @@ example : (42 : Nat) = 42 := by close_rfl
 tag := "exercise-1-4"
 %%%
 
-不用 `macro`，用完整的 `elab_rules` 实现一个 `my_rfl` tactic：如果目标是定义等价的等式（`a = b` 且 `a` 和 `b` 定义等价），用 {kw}`rfl` 关闭；否则给出清晰的错误信息（包含目标内容）。
+不用 `macro`，用完整的 `elab_rules` 实现一个 `my_rfl` tactic：如果目标是定义等价的等式（`a = b` 且 `a` 和 `b` 定义等价），用 {lean}`rfl` 关闭；否则给出清晰的错误信息（包含目标内容）。
 
 测试用例：
 
@@ -468,4 +468,4 @@ example (h : n = m) : n = m := by my_rfl       -- 应失败
 
 最后一个例子解释：这里的命题 `n = m` 当然是可证的（用 `exact h` 就行），但 `my_rfl` 只能关闭「两侧定义等价」的等式目标，它不会搜索假设中的 `h`。*tactic 的失败不代表命题假，只代表这个 tactic 的适用边界到了*。这种边界意识在后面设计和选用 tactic 时非常重要。
 
-下一章，我们深入 {moduleTerm}`Expr`——Lean 4 中所有项的内部表示。
+下一章，我们深入 {lean}`Expr`——Lean 4 中所有项的内部表示。

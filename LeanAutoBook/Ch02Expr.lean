@@ -13,23 +13,23 @@ file := "Ch02Expr"
 tag := "ch02-expr"
 %%%
 
-*本章目标*：理解 {moduleTerm}`Expr` 的构造方式、模式匹配惯用法，以及在元程序中操作表达式的基本技巧。
+*本章目标*：理解 {lean}`Expr` 的构造方式、模式匹配惯用法，以及在元程序中操作表达式的基本技巧。
 
 # Expr 是什么
 %%%
 tag := "what-is-expr"
 %%%
 
-Lean 4 中的每个项——数值、函数、命题、证明——在内核里都表示为 {moduleTerm}`Expr` 类型的值。当你写 `fun n => n + 1`，Lean 解析并精化后，内部存储的就是一棵 {moduleTerm}`Expr` 树。
+Lean 4 中的每个项——数值、函数、命题、证明——在内核里都表示为 {lean}`Expr` 类型的值。当你写 `fun n => n + 1`，Lean 解析并精化后，内部存储的就是一棵 {lean}`Expr` 树。
 
-理解 {moduleTerm}`Expr` 是写 tactic 的基础：你的 tactic 读取目标（一个 {moduleTerm}`Expr`），分析它的结构，构造新的 {moduleTerm}`Expr` 作为证明项。
+理解 {lean}`Expr` 是写 tactic 的基础：你的 tactic 读取目标（一个 {lean}`Expr`），分析它的结构，构造新的 {lean}`Expr` 作为证明项。
 
 # Expr 的构造子
 %%%
 tag := "expr-constructors"
 %%%
 
-{moduleTerm}`Expr` 定义在 {lit}`Lean/Expr.lean` 中，有以下核心构造子：
+{lean}`Expr` 定义在 {lit}`Lean/Expr.lean` 中，有以下核心构造子：
 
 ```
 inductive Expr where
@@ -102,9 +102,9 @@ forallE `n (const `Nat [])
 tag := "pattern-matching-expr"
 %%%
 
-手动 match {moduleTerm}`Expr` 构造子非常繁琐（要处理 `app (app (const ...) ...) ...`）。Lean 提供了两个语法糖：
+手动 match {lean}`Expr` 构造子非常繁琐（要处理 `app (app (const ...) ...) ...`）。Lean 提供了两个语法糖：
 
-> *注意*：`match_expr` 和 `let_expr` 是专门的模式匹配语法糖，不是普通函数名。你不能对它们用 `#check`（不像 {moduleTerm}`forallTelescope` 那样是一个可查类型的函数）。它们的作用是按 *head constant* 匹配表达式（如 `Eq`、`And`、`Or`），自动拆开嵌套的 `app`。对于 `forallE` 这类 binder 构造子，应该用普通的 `Expr.isForall` 或直接 `match`。
+> *注意*：`match_expr` 和 `let_expr` 是专门的模式匹配语法糖，不是普通函数名。你不能对它们用 `#check`（不像 {lean}`forallTelescope` 那样是一个可查类型的函数）。它们的作用是按 *head constant* 匹配表达式（如 `Eq`、`And`、`Or`），自动拆开嵌套的 `app`。对于 `forallE` 这类 binder 构造子，应该用普通的 `Expr.isForall` 或直接 `match`。
 
 ## `match_expr`
 %%%
@@ -144,7 +144,7 @@ let_expr Eq α lhs rhs := goalType | throwError "not an equality"
 tag := "constructing-expr"
 %%%
 
-读取 {moduleTerm}`Expr` 用模式匹配，构造 {moduleTerm}`Expr` 用 {moduleTerm}`mkApp` 系列函数：
+读取 {lean}`Expr` 用模式匹配，构造 {lean}`Expr` 用 {lean}`mkApp` 系列函数：
 
 ## 手动构造
 %%%
@@ -173,26 +173,26 @@ let rflExpr := mkApp2 (mkConst ``Eq.refl) (mkConst ``Nat) a
 tag := "quotation-construction"
 %%%
 
-在 {moduleTerm}`TermElabM` / {moduleTerm}`TacticM` 中，可以用 quotation + `elabTerm` 从语法直接构造：
+在 {lean}`TermElabM` / {lean}`TacticM` 中，可以用 quotation + `elabTerm` 从语法直接构造：
 
 ```
 let e ← elabTerm (← `(Nat.add 2 3)) none
 -- e 是精化后的 Expr
 ```
 
-这更方便，但有额外开销（要走一遍 elaboration）。在性能敏感的 tactic 中，手动 {moduleTerm}`mkApp` 更好。
+这更方便，但有额外开销（要走一遍 elaboration）。在性能敏感的 tactic 中，手动 {lean}`mkApp` 更好。
 
 # de Bruijn 索引 vs 自由变量
 %%%
 tag := "debruijn-vs-fvar"
 %%%
 
-{moduleTerm}`Expr` 中有两种变量：
+{lean}`Expr` 中有两种变量：
 
 - *`bvar n`*（bound variable）：de Bruijn 索引，表示"向外数第 n 个 λ/∀ 绑定者"。索引 0 = 最近的绑定。
 - *`fvar id`*（free variable）：局部上下文中的变量，用唯一 ID 标识。
 
-在元程序中，我们通常借助 {moduleTerm}`forallTelescope`、{moduleTerm}`lambdaTelescope` 等 API 打开绑定结构；这些 API 会把 body 中对应的 `bvar` 替换成当前局部上下文里的 `fvar`，因此日常 tactic 代码里更常直接操作 `fvar`。关键 API：
+在元程序中，我们通常借助 {lean}`forallTelescope`、{lean}`lambdaTelescope` 等 API 打开绑定结构；这些 API 会把 body 中对应的 `bvar` 替换成当前局部上下文里的 `fvar`，因此日常 tactic 代码里更常直接操作 `fvar`。关键 API：
 
 ```
 -- 进入 ∀ 类型，把绑定变量转为 fvar
@@ -206,19 +206,19 @@ lambdaTelescope e fun fvars body => do
   ...
 ```
 
-{moduleTerm}`forallTelescope` 和 {moduleTerm}`lambdaTelescope` 是处理绑定结构的标准方式。它们：
+{lean}`forallTelescope` 和 {lean}`lambdaTelescope` 是处理绑定结构的标准方式。它们：
 1. 创建新的 `fvar` 加入局部上下文
 2. 把 body 中的 `bvar` 替换为对应 `fvar`
 3. 回调结束后自动清理
 
-*注意*：`fvar` 只在创建它的 {moduleTerm}`LocalContext` 中有效。不要把一个 telescope 回调里的 `fvar` 泄漏到外面。
+*注意*：`fvar` 只在创建它的 {lean}`LocalContext` 中有效。不要把一个 telescope 回调里的 `fvar` 泄漏到外面。
 
 # 实用工具函数
 %%%
 tag := "expr-utility-functions"
 %%%
 
-{moduleTerm}`MetaM` 提供了大量操作 {moduleTerm}`Expr` 的工具：
+{lean}`MetaM` 提供了大量操作 {lean}`Expr` 的工具：
 
 ## 类型相关
 %%%
@@ -262,12 +262,12 @@ Expr.foldlM (init : α) (f : α → Expr → MetaM α) (e : Expr) : MetaM α  --
 tag := "ch02-summary"
 %%%
 
-- {moduleTerm}`Expr`：Lean 中一切项的内部表示，树形结构
+- {lean}`Expr`：Lean 中一切项的内部表示，树形结构
 - `app`：函数应用，多参数 = 嵌套 app（curried）
 - `bvar` / `fvar`：绑定变量 vs 自由变量；元程序中用 `fvar`
 - `match_expr` / `let_expr`：按 head constant 模式匹配，避免手动解 app
 - `mkApp*`：手动构造表达式；性能敏感时优于 `elabTerm`
-- {moduleTerm}`forallTelescope`：进入 ∀ 类型的标准方式
+- {lean}`forallTelescope`：进入 ∀ 类型的标准方式
 
 # 常见失败模式与 debug
 %%%
@@ -279,7 +279,7 @@ tag := "ch02-common-failures"
 tag := "failure-match-expr-whnf"
 %%%
 
-`match_expr` 按 head constant 匹配，但 {moduleTerm}`whnf` 没有自动调用。如果目标被 `let` 或 `abbrev` 包了一层，需要先 {moduleTerm}`whnf`：
+`match_expr` 按 head constant 匹配，但 {lean}`whnf` 没有自动调用。如果目标被 `let` 或 `abbrev` 包了一层，需要先 {lean}`whnf`：
 
 ```
 -- [示意]
@@ -310,7 +310,7 @@ if e.isConst then
 tag := "failure-fvar-leak"
 %%%
 
-{moduleTerm}`forallTelescope` 里创建的 `fvar` 只在回调内有效。如果你把它存到外面的变量里再使用，会得到 `unknown free variable` 错误。
+{lean}`forallTelescope` 里创建的 `fvar` 只在回调内有效。如果你把它存到外面的变量里再使用，会得到 `unknown free variable` 错误。
 
 ```
 -- [示意] 错误做法
@@ -327,7 +327,7 @@ forallTelescope goalType fun fvars body => do
 tag := "failure-mkapp-arity"
 %%%
 
-`mkApp3 (mkConst Eq) a b` 会构造出类型错误的表达式（`Eq` 需要 3 个参数：类型 α、lhs、rhs）。这类错误不会立即 panic，而是在后续 {moduleTerm}`isDefEq` 或 `check` 时才报 type mismatch。
+`mkApp3 (mkConst Eq) a b` 会构造出类型错误的表达式（`Eq` 需要 3 个参数：类型 α、lhs、rhs）。这类错误不会立即 panic，而是在后续 {lean}`isDefEq` 或 `check` 时才报 type mismatch。
 
 *建议*：用 `mkEq`、`mkEqRefl` 等高层 API，而不是手动数参数。
 
@@ -435,4 +435,4 @@ example : ∀ n : Nat, n = n := by show_structure; intro n; rfl
 example : True := by show_structure; trivial
 ```
 
-下一章：用 {moduleTerm}`Expr` 和 {moduleTerm}`TacticM` 写出你的第一个有用的 tactic。
+下一章：用 {lean}`Expr` 和 {lean}`TacticM` 写出你的第一个有用的 tactic。
