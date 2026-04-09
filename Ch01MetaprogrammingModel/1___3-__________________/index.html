@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      (function(){
+  const {protocol:proto, host:hostName, pathname:path, search:srch, hash:hsh} = window.location;
+  if (!(path.endsWith("/") || path.endsWith(".html"))) {
+    window.location.replace(`${proto}//${hostName}${path}/${srch}${hsh}`);
+  }
+})()</script>
+    <base href="./../../"><meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <title>1.3 关键类型速览</title><link rel="stylesheet" href="book.css">
+    <link rel="stylesheet" href="verso-vars.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js" integrity="sha384-zbcZAIxlvJtNE3Dp5nxLXdXtXyxwOdnILY1TDPVmKFhl4r4nSUG1r8bcFXGVa4Te" crossorigin="anonymous"></script>
+    <script src="-verso-search/elasticlunr.min.js"></script>
+    <script src="-verso-search/fuzzysort.min.js"></script>
+    <script src="-verso-search/searchIndex.js"></script>
+    <script type="module" src="-verso-search/search-init.js"></script>
+    <link rel="stylesheet" href="-verso-search/search-box.css">
+    <link rel="stylesheet" href="-verso-search/search-highlight.css">
+    <link rel="stylesheet" href="-verso-search/domain-display.css">
+    <script src="-verso-data/katex/katex.js"></script>
+    <script src="-verso-data/katex/math.js"></script>
+    <link rel="stylesheet" href="-verso-data/katex/katex.css">
+    <script src="-verso-search/search-highlight.js" defer="defer"></script>
+    </head>
+  <body>
+    <header>
+      <div class="header-logo-wrapper"></div>
+      <div class="header-title-wrapper">
+        <a href="" class="header-title"><h1>
+            Lean 4 自动化内幕</h1>
+          </a></div>
+      </header>
+    <label for="toggle-toc" id="toggle-toc-click"><span class="line line1"></span><span class="line line2"></span><span class="line line3"></span></label><div class="with-toc">
+      <div class="toc-backdrop" onclick="document.getElementById('toggle-toc-click')?.click()"></div>
+      <nav id="toc">
+        <input type="checkbox" id="toggle-toc"><div class="first">
+          <a href="" class="toc-title"><h1>
+              Lean 4 自动化内幕</h1>
+            </a><div class="split-tocs">
+            <div class="split-toc book">
+              <div class="title">
+                <label for="--verso-manual-toc-----bookRoot" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-----bookRoot"></label><span class="">Table of Contents</span></div>
+              <table><tr class="numbered"><td class="num">1.</td><td><a href="Ch00Setup/#ch00-setup">第零章 环境与运行约定</a></td></tr><tr class="current numbered"><td class="num">2.</td><td><a href="Ch01MetaprogrammingModel/#ch01-metaprogramming-model">第一章 Lean 4 元编程模型</a></td></tr><tr class="numbered"><td class="num">3.</td><td><a href="Ch02Expr/#ch02-expr">第二章 Expr：Lean 4 的内部表示</a></td></tr><tr class="numbered"><td class="num">4.</td><td><a href="Ch03FirstTactic/#ch03-first-tactic">第三章 编写你的第一个 Tactic</a></td></tr></table></div>
+            <div class="split-toc">
+              <div class="title">
+                <label for="--verso-manual-toc-ch01-metaprogramming-model" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch01-metaprogramming-model" checked="checked"></label><span class="number">2.</span> <span class=""><a href="Ch01MetaprogrammingModel/#ch01-metaprogramming-model">第一章 Lean 4 元编程模型</a></span></div>
+              <table><tr class="numbered"><td class="num">2.1.</td><td><a href="Ch01MetaprogrammingModel/1___1-____________________________________/#Lean-4-_______________--_________-Lean-4-_______________--1___1-____________________________________">1.1 为什么要理解元编程模型？</a></td></tr><tr class="numbered"><td class="num">2.2.</td><td><a href="Ch01MetaprogrammingModel/1___2-Monad-________________________/#Lean-4-_______________--_________-Lean-4-_______________--1___2-Monad-________________________">1.2 Monad 栈：从底层到顶层</a></td></tr><tr class="current numbered"><td class="num">2.3.</td><td><a href="Ch01MetaprogrammingModel/1___3-__________________/#Lean-4-_______________--_________-Lean-4-_______________--1___3-__________________">1.3 关键类型速览</a></td></tr><tr class="numbered"><td class="num">2.4.</td><td><a href="Ch01MetaprogrammingModel/1___4-tactic-___________________________/#Lean-4-_______________--_________-Lean-4-_______________--1___4-tactic-___________________________">1.4 tactic 是怎么注册和调用的</a></td></tr><tr class="numbered"><td class="num">2.5.</td><td><a href="Ch01MetaprogrammingModel/1___5-_________-tactic_______________/#Lean-4-_______________--_________-Lean-4-_______________--1___5-_________-tactic_______________">1.5 第一个 tactic：从零开始</a></td></tr><tr class="numbered"><td class="num">2.6.</td><td><a href="Ch01MetaprogrammingModel/1___6-_____________________/#Lean-4-_______________--_________-Lean-4-_______________--1___6-_____________________">1.6 层次之间的穿越</a></td></tr><tr class="numbered"><td class="num">2.7.</td><td><a href="Ch01MetaprogrammingModel/1___7-______/#Lean-4-_______________--_________-Lean-4-_______________--1___7-______">1.7 小结</a></td></tr><tr class="numbered"><td class="num">2.8.</td><td><a href="Ch01MetaprogrammingModel/1___8-_____________________-debug/#Lean-4-_______________--_________-Lean-4-_______________--1___8-_____________________-debug">1.8 常见失败模式与 debug</a></td></tr><tr class="numbered"><td class="num">2.9.</td><td><a href="Ch01MetaprogrammingModel/1___9-______/#Lean-4-_______________--_________-Lean-4-_______________--1___9-______">1.9 练习</a></td></tr></table></div>
+            <div class="split-toc">
+              <div class="title">
+                <label for="--verso-manual-toc-Lean-4-_______________--_________-Lean-4-_______________--1___3-__________________" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-Lean-4-_______________--_________-Lean-4-_______________--1___3-__________________" checked="checked"></label><span class="number">2.3.</span> <span class="current"><a href="Ch01MetaprogrammingModel/1___3-__________________/#Lean-4-_______________--_________-Lean-4-_______________--1___3-__________________">1.3 关键类型速览</a></span></div>
+              <table><tr class="numbered"><td class="num">2.3.1.</td><td><a href="Ch01MetaprogrammingModel/1___3-__________________/#Lean-4-_______________--_________-Lean-4-_______________--1___3-__________________--Name">Name</a></td></tr><tr class="numbered"><td class="num">2.3.2.</td><td><a href="Ch01MetaprogrammingModel/1___3-__________________/#Lean-4-_______________--_________-Lean-4-_______________--1___3-__________________--Expr">Expr</a></td></tr><tr class="numbered"><td class="num">2.3.3.</td><td><a href="Ch01MetaprogrammingModel/1___3-__________________/#Lean-4-_______________--_________-Lean-4-_______________--1___3-__________________--FVarId-___-MVarId">FVarId 与 MVarId</a></td></tr></table></div>
+            </div>
+          </div>
+        <div class="last"></div>
+        </nav>
+      <main><div class="content-wrapper">
+          <nav class="prev-next-buttons">
+            <a class="local-button active" href="Ch01MetaprogrammingModel/1___2-Monad-________________________/#Lean-4-_______________--_________-Lean-4-_______________--1___2-Monad-________________________" rel="prev" title="2.2. 1.2 Monad 栈：从底层到顶层"><span class="arrow">←</span><span class="where">2.2. 1.2 Monad 栈：从底层到顶层</span></a><a class="local-button active" href="Ch01MetaprogrammingModel/1___4-tactic-___________________________/#Lean-4-_______________--_________-Lean-4-_______________--1___4-tactic-___________________________" rel="next" title="2.4. 1.4 tactic 是怎么注册和调用的"><span class="where">2.4. 1.4 tactic 是怎么注册和调用的</span><span class="arrow">→</span></a></nav>
+          <section>
+            <h1>
+              2.3. 1.3 关键类型速览<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=Lean-4-_______________--_________-Lean-4-_______________--1___3-__________________" title="Permalink">🔗</a></span></h1>
+            <p>
+              理解元编程需要熟悉这几个核心类型：</p>
+            <section>
+              <h2 id="Lean-4-_______________--_________-Lean-4-_______________--1___3-__________________--Name">
+                2.3.1. Name<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=Lean-4-_______________--_________-Lean-4-_______________--1___3-__________________--Name" title="Permalink">🔗</a></span></h2>
+              <p>
+                Lean 中一切都有名字。<code>Name</code> 是一个层次化的标识符：</p>
+              <pre>-- `Nat.add` 表示为：
+Name.str (Name.str Name.anonymous "Nat") "add"
+-- 或用反引号语法：
+``Nat.add
+</pre><p>
+                在元程序中，你会频繁用到反引号语法来引用名字。</p>
+              </section>
+            <section>
+              <h2 id="Lean-4-_______________--_________-Lean-4-_______________--1___3-__________________--Expr">
+                2.3.2. Expr<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=Lean-4-_______________--_________-Lean-4-_______________--1___3-__________________--Expr" title="Permalink">🔗</a></span></h2>
+              <p>
+                表达式树，Lean 中所有项的内部表示。详见第二章。</p>
+              </section>
+            <section>
+              <h2 id="Lean-4-_______________--_________-Lean-4-_______________--1___3-__________________--FVarId-___-MVarId">
+                2.3.3. FVarId 与 MVarId<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=Lean-4-_______________--_________-Lean-4-_______________--1___3-__________________--FVarId-___-MVarId" title="Permalink">🔗</a></span></h2>
+              <ul>
+                <li>
+                  <p>
+                    <strong><code>FVarId</code></strong>（free variable id）：局部上下文中的变量的唯一标识。当你在证明中引入假设 <code>h : P</code>，<code>h</code> 就是一个 <code>FVarId</code>。</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong><code>MVarId</code></strong>（metavariable id）：元变量的唯一标识。每个未解决的证明目标就是一个 <code>MVarId</code>。</p>
+                  </li>
+                </ul>
+              </section>
+            </section>
+          <nav class="prev-next-buttons">
+            <a class="local-button active" href="Ch01MetaprogrammingModel/1___2-Monad-________________________/#Lean-4-_______________--_________-Lean-4-_______________--1___2-Monad-________________________" rel="prev" title="2.2. 1.2 Monad 栈：从底层到顶层"><span class="arrow">←</span><span class="where">2.2. 1.2 Monad 栈：从底层到顶层</span></a><a class="local-button active" href="Ch01MetaprogrammingModel/1___4-tactic-___________________________/#Lean-4-_______________--_________-Lean-4-_______________--1___4-tactic-___________________________" rel="next" title="2.4. 1.4 tactic 是怎么注册和调用的"><span class="where">2.4. 1.4 tactic 是怎么注册和调用的</span><span class="arrow">→</span></a></nav>
+          </div>
+        </main></div>
+    </body>
+  </html>
+

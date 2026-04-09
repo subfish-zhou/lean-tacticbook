@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      (function(){
+  const {protocol:proto, host:hostName, pathname:path, search:srch, hash:hsh} = window.location;
+  if (!(path.endsWith("/") || path.endsWith(".html"))) {
+    window.location.replace(`${proto}//${hostName}${path}/${srch}${hsh}`);
+  }
+})()</script>
+    <base href="./../../"><meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <title>0.6 跟着本书学的建议</title><link rel="stylesheet" href="book.css">
+    <link rel="stylesheet" href="verso-vars.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js" integrity="sha384-zbcZAIxlvJtNE3Dp5nxLXdXtXyxwOdnILY1TDPVmKFhl4r4nSUG1r8bcFXGVa4Te" crossorigin="anonymous"></script>
+    <script src="-verso-search/elasticlunr.min.js"></script>
+    <script src="-verso-search/fuzzysort.min.js"></script>
+    <script src="-verso-search/searchIndex.js"></script>
+    <script type="module" src="-verso-search/search-init.js"></script>
+    <link rel="stylesheet" href="-verso-search/search-box.css">
+    <link rel="stylesheet" href="-verso-search/search-highlight.css">
+    <link rel="stylesheet" href="-verso-search/domain-display.css">
+    <script src="-verso-data/katex/katex.js"></script>
+    <script src="-verso-data/katex/math.js"></script>
+    <link rel="stylesheet" href="-verso-data/katex/katex.css">
+    <script src="-verso-search/search-highlight.js" defer="defer"></script>
+    </head>
+  <body>
+    <header>
+      <div class="header-logo-wrapper"></div>
+      <div class="header-title-wrapper">
+        <a href="" class="header-title"><h1>
+            Lean 4 自动化内幕</h1>
+          </a></div>
+      </header>
+    <label for="toggle-toc" id="toggle-toc-click"><span class="line line1"></span><span class="line line2"></span><span class="line line3"></span></label><div class="with-toc">
+      <div class="toc-backdrop" onclick="document.getElementById('toggle-toc-click')?.click()"></div>
+      <nav id="toc">
+        <input type="checkbox" id="toggle-toc"><div class="first">
+          <a href="" class="toc-title"><h1>
+              Lean 4 自动化内幕</h1>
+            </a><div class="split-tocs">
+            <div class="split-toc book">
+              <div class="title">
+                <label for="--verso-manual-toc-----bookRoot" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-----bookRoot"></label><span class="">Table of Contents</span></div>
+              <table><tr class="current numbered"><td class="num">1.</td><td><a href="Ch00Setup/#ch00-setup">第零章 环境与运行约定</a></td></tr><tr class="numbered"><td class="num">2.</td><td><a href="Ch01MetaprogrammingModel/#ch01-metaprogramming-model">第一章 Lean 4 元编程模型</a></td></tr><tr class="numbered"><td class="num">3.</td><td><a href="Ch02Expr/#ch02-expr">第二章 Expr：Lean 4 的内部表示</a></td></tr><tr class="numbered"><td class="num">4.</td><td><a href="Ch03FirstTactic/#ch03-first-tactic">第三章 编写你的第一个 Tactic</a></td></tr></table></div>
+            <div class="split-toc">
+              <div class="title">
+                <label for="--verso-manual-toc-ch00-setup" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch00-setup" checked="checked"></label><span class="number">1.</span> <span class=""><a href="Ch00Setup/#ch00-setup">第零章 环境与运行约定</a></span></div>
+              <table><tr class="numbered"><td class="num">1.1.</td><td><a href="Ch00Setup/0___1-_____________________/#Lean-4-_______________--_________-_____________________--0___1-_____________________">0.1 你需要什么基础</a></td></tr><tr class="numbered"><td class="num">1.2.</td><td><a href="Ch00Setup/0___2-______-Lean-4/#Lean-4-_______________--_________-_____________________--0___2-______-Lean-4">0.2 安装 Lean 4</a></td></tr><tr class="numbered"><td class="num">1.3.</td><td><a href="Ch00Setup/0___3-___________________________/#Lean-4-_______________--_________-_____________________--0___3-___________________________">0.3 创建本书的配套项目</a></td></tr><tr class="numbered"><td class="num">1.4.</td><td><a href="Ch00Setup/0___4-______-tactic-____________/#Lean-4-_______________--_________-_____________________--0___4-______-tactic-____________">0.4 哪些 tactic 来自哪里</a></td></tr><tr class="numbered"><td class="num">1.5.</td><td><a href="Ch00Setup/0___5-_____________________/#Lean-4-_______________--_________-_____________________--0___5-_____________________">0.5 本书的代码约定</a></td></tr><tr class="current numbered"><td class="num">1.6.</td><td><a href="Ch00Setup/0___6-________________________/#Lean-4-_______________--_________-_____________________--0___6-________________________">0.6 跟着本书学的建议</a></td></tr><tr class="numbered"><td class="num">1.7.</td><td><a href="Ch00Setup/0___7-__________________/#Lean-4-_______________--_________-_____________________--0___7-__________________">0.7 全书结构概览</a></td></tr><tr class="numbered"><td class="num">1.8.</td><td><a href="Ch00Setup/0___8-__________________/#Lean-4-_______________--_________-_____________________--0___8-__________________">0.8 环境验证练习</a></td></tr></table></div>
+            <div class="split-toc">
+              <div class="title">
+                <span class="no-toggle"></span><span class="number">1.6.</span> <span class="current"><a href="Ch00Setup/0___6-________________________/#Lean-4-_______________--_________-_____________________--0___6-________________________">0.6 跟着本书学的建议</a></span></div>
+              </div>
+            </div>
+          </div>
+        <div class="last"></div>
+        </nav>
+      <main><div class="content-wrapper">
+          <nav class="prev-next-buttons">
+            <a class="local-button active" href="Ch00Setup/0___5-_____________________/#Lean-4-_______________--_________-_____________________--0___5-_____________________" rel="prev" title="1.5. 0.5 本书的代码约定"><span class="arrow">←</span><span class="where">1.5. 0.5 本书的代码约定</span></a><a class="local-button active" href="Ch00Setup/0___7-__________________/#Lean-4-_______________--_________-_____________________--0___7-__________________" rel="next" title="1.7. 0.7 全书结构概览"><span class="where">1.7. 0.7 全书结构概览</span><span class="arrow">→</span></a></nav>
+          <section>
+            <h1>
+              1.6. 0.6 跟着本书学的建议<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=Lean-4-_______________--_________-_____________________--0___6-________________________" title="Permalink">🔗</a></span></h1>
+            <ol start="1">
+              <li>
+                <p>
+                  <strong>先跑再看</strong>：每章的示例，先复制到 VS Code 里跑一遍，看目标状态的变化</p>
+                </li>
+              <li>
+                <p>
+                  <strong>改着玩</strong>：把例子里的数字、函数、条件改一改，看 tactic 还能不能工作</p>
+                </li>
+              <li>
+                <p>
+                  <strong>故意破坏</strong>：把 <code>simp</code> 换成 <code>ring</code>，看报错信息——理解"为什么不行"和"为什么行"一样重要</p>
+                </li>
+              <li>
+                <p>
+                  <strong>做练习</strong>：每章末尾的练习是学习闭环的关键，不要跳过</p>
+                </li>
+              <li>
+                <p>
+                  <strong>查源码</strong>：想深入理解某个 tactic 时，用 VS Code 的 "Go to Definition" 跳到源码</p>
+                </li>
+              </ol>
+            </section>
+          <nav class="prev-next-buttons">
+            <a class="local-button active" href="Ch00Setup/0___5-_____________________/#Lean-4-_______________--_________-_____________________--0___5-_____________________" rel="prev" title="1.5. 0.5 本书的代码约定"><span class="arrow">←</span><span class="where">1.5. 0.5 本书的代码约定</span></a><a class="local-button active" href="Ch00Setup/0___7-__________________/#Lean-4-_______________--_________-_____________________--0___7-__________________" rel="next" title="1.7. 0.7 全书结构概览"><span class="where">1.7. 0.7 全书结构概览</span><span class="arrow">→</span></a></nav>
+          </div>
+        </main></div>
+    </body>
+  </html>
+

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      (function(){
+  const {protocol:proto, host:hostName, pathname:path, search:srch, hash:hsh} = window.location;
+  if (!(path.endsWith("/") || path.endsWith(".html"))) {
+    window.location.replace(`${proto}//${hostName}${path}/${srch}${hsh}`);
+  }
+})()</script>
+    <base href="./../../"><meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <title>2.3 表达式如何编码：几个例子</title><link rel="stylesheet" href="book.css">
+    <link rel="stylesheet" href="verso-vars.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js" integrity="sha384-zbcZAIxlvJtNE3Dp5nxLXdXtXyxwOdnILY1TDPVmKFhl4r4nSUG1r8bcFXGVa4Te" crossorigin="anonymous"></script>
+    <script src="-verso-search/elasticlunr.min.js"></script>
+    <script src="-verso-search/fuzzysort.min.js"></script>
+    <script src="-verso-search/searchIndex.js"></script>
+    <script type="module" src="-verso-search/search-init.js"></script>
+    <link rel="stylesheet" href="-verso-search/search-box.css">
+    <link rel="stylesheet" href="-verso-search/search-highlight.css">
+    <link rel="stylesheet" href="-verso-search/domain-display.css">
+    <script src="-verso-data/katex/katex.js"></script>
+    <script src="-verso-data/katex/math.js"></script>
+    <link rel="stylesheet" href="-verso-data/katex/katex.css">
+    <script src="-verso-search/search-highlight.js" defer="defer"></script>
+    </head>
+  <body>
+    <header>
+      <div class="header-logo-wrapper"></div>
+      <div class="header-title-wrapper">
+        <a href="" class="header-title"><h1>
+            Lean 4 自动化内幕</h1>
+          </a></div>
+      </header>
+    <label for="toggle-toc" id="toggle-toc-click"><span class="line line1"></span><span class="line line2"></span><span class="line line3"></span></label><div class="with-toc">
+      <div class="toc-backdrop" onclick="document.getElementById('toggle-toc-click')?.click()"></div>
+      <nav id="toc">
+        <input type="checkbox" id="toggle-toc"><div class="first">
+          <a href="" class="toc-title"><h1>
+              Lean 4 自动化内幕</h1>
+            </a><div class="split-tocs">
+            <div class="split-toc book">
+              <div class="title">
+                <label for="--verso-manual-toc-----bookRoot" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-----bookRoot"></label><span class="">Table of Contents</span></div>
+              <table><tr class="numbered"><td class="num">1.</td><td><a href="Ch00Setup/#ch00-setup">第零章 环境与运行约定</a></td></tr><tr class="numbered"><td class="num">2.</td><td><a href="Ch01MetaprogrammingModel/#ch01-metaprogramming-model">第一章 Lean 4 元编程模型</a></td></tr><tr class="current numbered"><td class="num">3.</td><td><a href="Ch02Expr/#ch02-expr">第二章 Expr：Lean 4 的内部表示</a></td></tr><tr class="numbered"><td class="num">4.</td><td><a href="Ch03FirstTactic/#ch03-first-tactic">第三章 编写你的第一个 Tactic</a></td></tr></table></div>
+            <div class="split-toc">
+              <div class="title">
+                <label for="--verso-manual-toc-ch02-expr" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch02-expr" checked="checked"></label><span class="number">3.</span> <span class=""><a href="Ch02Expr/#ch02-expr">第二章 Expr：Lean 4 的内部表示</a></span></div>
+              <table><tr class="numbered"><td class="num">3.1.</td><td><a href="Ch02Expr/2___1-Expr-_________/#Lean-4-_______________--_________-Expr___Lean-4-_______________--2___1-Expr-_________">2.1 Expr 是什么</a></td></tr><tr class="numbered"><td class="num">3.2.</td><td><a href="Ch02Expr/2___2-Expr-____________/#Lean-4-_______________--_________-Expr___Lean-4-_______________--2___2-Expr-____________">2.2 Expr 的构造子</a></td></tr><tr class="current numbered"><td class="num">3.3.</td><td><a href="Ch02Expr/2___3-____________________________________/#Lean-4-_______________--_________-Expr___Lean-4-_______________--2___3-____________________________________">2.3 表达式如何编码：几个例子</a></td></tr><tr class="numbered"><td class="num">3.4.</td><td><a href="Ch02Expr/2___4-____________-Expr___-match_expr--___--let_expr/#Lean-4-_______________--_________-Expr___Lean-4-_______________--2___4-____________-Expr___-match_expr--___--let_expr">2.4 模式匹配 Expr：<code>match_expr</code> 和 <code>let_expr</code></a></td></tr><tr class="numbered"><td class="num">3.5.</td><td><a href="Ch02Expr/2___5-______-Expr/#Lean-4-_______________--_________-Expr___Lean-4-_______________--2___5-______-Expr">2.5 构造 Expr</a></td></tr><tr class="numbered"><td class="num">3.6.</td><td><a href="Ch02Expr/2___6-de-Bruijn-______-vs-____________/#Lean-4-_______________--_________-Expr___Lean-4-_______________--2___6-de-Bruijn-______-vs-____________">2.6 de Bruijn 索引 vs 自由变量</a></td></tr><tr class="numbered"><td class="num">3.7.</td><td><a href="Ch02Expr/2___7-__________________/#Lean-4-_______________--_________-Expr___Lean-4-_______________--2___7-__________________">2.7 实用工具函数</a></td></tr><tr class="numbered"><td class="num">3.8.</td><td><a href="Ch02Expr/2___8-______/#Lean-4-_______________--_________-Expr___Lean-4-_______________--2___8-______">2.8 小结</a></td></tr><tr class="numbered"><td class="num">3.9.</td><td><a href="Ch02Expr/2___9-_____________________-debug/#Lean-4-_______________--_________-Expr___Lean-4-_______________--2___9-_____________________-debug">2.9 常见失败模式与 debug</a></td></tr><tr class="numbered"><td class="num">3.10.</td><td><a href="Ch02Expr/2___10-______/#Lean-4-_______________--_________-Expr___Lean-4-_______________--2___10-______">2.10 练习</a></td></tr></table></div>
+            <div class="split-toc">
+              <div class="title">
+                <label for="--verso-manual-toc-Lean-4-_______________--_________-Expr___Lean-4-_______________--2___3-____________________________________" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-Lean-4-_______________--_________-Expr___Lean-4-_______________--2___3-____________________________________" checked="checked"></label><span class="number">3.3.</span> <span class="current"><a href="Ch02Expr/2___3-____________________________________/#Lean-4-_______________--_________-Expr___Lean-4-_______________--2___3-____________________________________">2.3 表达式如何编码：几个例子</a></span></div>
+              <table><tr class="numbered"><td class="num">3.3.1.</td><td><a href="Ch02Expr/2___3-____________________________________/#Lean-4-_______________--_________-Expr___Lean-4-_______________--2___3-____________________________________--___-1___-Nat___add-2-3">例 1：<code>Nat.add 2 3</code></a></td></tr><tr class="numbered"><td class="num">3.3.2.</td><td><a href="Ch02Expr/2___3-____________________________________/#Lean-4-_______________--_________-Expr___Lean-4-_______________--2___3-____________________________________--___-2___-fun-n-___-Nat-____GT_-n-___-1">例 2：<code>fun n : Nat =&gt; n + 1</code></a></td></tr><tr class="numbered"><td class="num">3.3.3.</td><td><a href="Ch02Expr/2___3-____________________________________/#Lean-4-_______________--_________-Expr___Lean-4-_______________--2___3-____________________________________--___-3___-___-n-___-Nat___-n-___-n">例 3：<code>∀ n : Nat, n = n</code></a></td></tr></table></div>
+            </div>
+          </div>
+        <div class="last"></div>
+        </nav>
+      <main><div class="content-wrapper">
+          <nav class="prev-next-buttons">
+            <a class="local-button active" href="Ch02Expr/2___2-Expr-____________/#Lean-4-_______________--_________-Expr___Lean-4-_______________--2___2-Expr-____________" rel="prev" title="3.2. 2.2 Expr 的构造子"><span class="arrow">←</span><span class="where">3.2. 2.2 Expr 的构造子</span></a><a class="local-button active" href="Ch02Expr/2___4-____________-Expr___-match_expr--___--let_expr/#Lean-4-_______________--_________-Expr___Lean-4-_______________--2___4-____________-Expr___-match_expr--___--let_expr" rel="next" title="3.4. 2.4 模式匹配 Expr：match_expr 和 let_expr"><span class="where">3.4. 2.4 模式匹配 Expr：match_expr 和 let_expr</span><span class="arrow">→</span></a></nav>
+          <section>
+            <h1>
+              3.3. 2.3 表达式如何编码：几个例子<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=Lean-4-_______________--_________-Expr___Lean-4-_______________--2___3-____________________________________" title="Permalink">🔗</a></span></h1>
+            <blockquote><p>
+                以下树形结构是<strong>示意图</strong>，用于说明 <code>app</code> 的嵌套方式，而不是逐字符精确的 elaborated form。</p>
+              </blockquote><section>
+              <h2 id="Lean-4-_______________--_________-Expr___Lean-4-_______________--2___3-____________________________________--___-1___-Nat___add-2-3">
+                3.3.1. 例 1：<code>Nat.add 2 3</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=Lean-4-_______________--_________-Expr___Lean-4-_______________--2___3-____________________________________--___-1___-Nat___add-2-3" title="Permalink">🔗</a></span></h2>
+              <pre>app
+├── app
+│   ├── const `Nat.add []
+│   └── lit (Literal.natVal 2)
+└── lit (Literal.natVal 3)
+</pre><p>
+                Lean 4 中多参数函数是 curried 的：<code>f a b</code> 表示为 <code>app (app f a) b</code>。</p>
+              </section>
+            <section>
+              <h2 id="Lean-4-_______________--_________-Expr___Lean-4-_______________--2___3-____________________________________--___-2___-fun-n-___-Nat-____GT_-n-___-1">
+                3.3.2. 例 2：<code>fun n : Nat =&gt; n + 1</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=Lean-4-_______________--_________-Expr___Lean-4-_______________--2___3-____________________________________--___-2___-fun-n-___-Nat-____GT_-n-___-1" title="Permalink">🔗</a></span></h2>
+              <pre>lam `n (const `Nat [])
+  (app (app (const `HAdd.hAdd [...]) (bvar 0)) (lit 1))
+  BinderInfo.default
+</pre><p>
+                注意 body 中用 <code>bvar 0</code> 指代最近的绑定变量 <code>n</code>——这是 de Bruijn 索引。</p>
+              </section>
+            <section>
+              <h2 id="Lean-4-_______________--_________-Expr___Lean-4-_______________--2___3-____________________________________--___-3___-___-n-___-Nat___-n-___-n">
+                3.3.3. 例 3：<code>∀ n : Nat, n = n</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=Lean-4-_______________--_________-Expr___Lean-4-_______________--2___3-____________________________________--___-3___-___-n-___-Nat___-n-___-n" title="Permalink">🔗</a></span></h2>
+              <pre>forallE `n (const `Nat [])
+  (app (app (app (const `Eq [...]) (const `Nat [])) (bvar 0)) (bvar 0))
+  BinderInfo.default
+</pre><p>
+                <code>∀</code> 和 <code>→</code> 都用 <code>forallE</code>；如果 body 不引用绑定变量（即 <code>bvar 0</code> 不出现），那就是 <code>→</code>。</p>
+              </section>
+            </section>
+          <nav class="prev-next-buttons">
+            <a class="local-button active" href="Ch02Expr/2___2-Expr-____________/#Lean-4-_______________--_________-Expr___Lean-4-_______________--2___2-Expr-____________" rel="prev" title="3.2. 2.2 Expr 的构造子"><span class="arrow">←</span><span class="where">3.2. 2.2 Expr 的构造子</span></a><a class="local-button active" href="Ch02Expr/2___4-____________-Expr___-match_expr--___--let_expr/#Lean-4-_______________--_________-Expr___Lean-4-_______________--2___4-____________-Expr___-match_expr--___--let_expr" rel="next" title="3.4. 2.4 模式匹配 Expr：match_expr 和 let_expr"><span class="where">3.4. 2.4 模式匹配 Expr：match_expr 和 let_expr</span><span class="arrow">→</span></a></nav>
+          </div>
+        </main></div>
+    </body>
+  </html>
+

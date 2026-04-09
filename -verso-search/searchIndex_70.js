@@ -1,0 +1,1 @@
+window.docContents[70].resolve({"/Ch02Expr/#ch02-expr":{"contents":"本章目标：理解 Expr 的构造方式、模式匹配惯用法，以及在元程序中操作表达式的基本技巧。\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n","context":"Lean 4 自动化内幕","header":"3. 第二章 Expr：Lean 4 的内部表示","id":"/Ch02Expr/#ch02-expr"}});

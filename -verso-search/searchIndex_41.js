@@ -1,0 +1,1 @@
+window.docContents[41].resolve({"/Ch01MetaprogrammingModel/1___9-______/#Lean-4-_______________--_________-Lean-4-_______________--1___9-______":{"contents":"\n\n\n\n\n\n\n\n","context":"Lean 4 自动化内幕\u0009第一章 Lean 4 元编程模型","header":"2.9. 1.9 练习","id":"/Ch01MetaprogrammingModel/1___9-______/#Lean-4-_______________--_________-Lean-4-_______________--1___9-______"}});

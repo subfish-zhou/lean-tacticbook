@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      (function(){
+  const {protocol:proto, host:hostName, pathname:path, search:srch, hash:hsh} = window.location;
+  if (!(path.endsWith("/") || path.endsWith(".html"))) {
+    window.location.replace(`${proto}//${hostName}${path}/${srch}${hsh}`);
+  }
+})()</script>
+    <base href="./../../"><meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <title>3.8 练习</title><link rel="stylesheet" href="book.css">
+    <link rel="stylesheet" href="verso-vars.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js" integrity="sha384-zbcZAIxlvJtNE3Dp5nxLXdXtXyxwOdnILY1TDPVmKFhl4r4nSUG1r8bcFXGVa4Te" crossorigin="anonymous"></script>
+    <script src="-verso-search/elasticlunr.min.js"></script>
+    <script src="-verso-search/fuzzysort.min.js"></script>
+    <script src="-verso-search/searchIndex.js"></script>
+    <script type="module" src="-verso-search/search-init.js"></script>
+    <link rel="stylesheet" href="-verso-search/search-box.css">
+    <link rel="stylesheet" href="-verso-search/search-highlight.css">
+    <link rel="stylesheet" href="-verso-search/domain-display.css">
+    <script src="-verso-data/katex/katex.js"></script>
+    <script src="-verso-data/katex/math.js"></script>
+    <link rel="stylesheet" href="-verso-data/katex/katex.css">
+    <script src="-verso-search/search-highlight.js" defer="defer"></script>
+    </head>
+  <body>
+    <header>
+      <div class="header-logo-wrapper"></div>
+      <div class="header-title-wrapper">
+        <a href="" class="header-title"><h1>
+            Lean 4 自动化内幕</h1>
+          </a></div>
+      </header>
+    <label for="toggle-toc" id="toggle-toc-click"><span class="line line1"></span><span class="line line2"></span><span class="line line3"></span></label><div class="with-toc">
+      <div class="toc-backdrop" onclick="document.getElementById('toggle-toc-click')?.click()"></div>
+      <nav id="toc">
+        <input type="checkbox" id="toggle-toc"><div class="first">
+          <a href="" class="toc-title"><h1>
+              Lean 4 自动化内幕</h1>
+            </a><div class="split-tocs">
+            <div class="split-toc book">
+              <div class="title">
+                <label for="--verso-manual-toc-----bookRoot" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-----bookRoot"></label><span class="">Table of Contents</span></div>
+              <table><tr class="numbered"><td class="num">1.</td><td><a href="Ch00Setup/#ch00-setup">第零章 环境与运行约定</a></td></tr><tr class="numbered"><td class="num">2.</td><td><a href="Ch01MetaprogrammingModel/#ch01-metaprogramming-model">第一章 Lean 4 元编程模型</a></td></tr><tr class="numbered"><td class="num">3.</td><td><a href="Ch02Expr/#ch02-expr">第二章 Expr：Lean 4 的内部表示</a></td></tr><tr class="current numbered"><td class="num">4.</td><td><a href="Ch03FirstTactic/#ch03-first-tactic">第三章 编写你的第一个 Tactic</a></td></tr></table></div>
+            <div class="split-toc">
+              <div class="title">
+                <label for="--verso-manual-toc-ch03-first-tactic" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch03-first-tactic" checked="checked"></label><span class="number">4.</span> <span class=""><a href="Ch03FirstTactic/#ch03-first-tactic">第三章 编写你的第一个 Tactic</a></span></div>
+              <table><tr class="numbered"><td class="num">4.1.</td><td><a href="Ch03FirstTactic/____________-Expr-___-Tactic/#Lean-4-_______________--_________-_____________________-Tactic--____________-Expr-___-Tactic">回顾：从 Expr 到 Tactic</a></td></tr><tr class="numbered"><td class="num">4.2.</td><td><a href="Ch03FirstTactic/3___1-Tactic-_______________/#Lean-4-_______________--_________-_____________________-Tactic--3___1-Tactic-_______________">3.1 Tactic 的生命周期</a></td></tr><tr class="numbered"><td class="num">4.3.</td><td><a href="Ch03FirstTactic/3___2-assumption_____________________/#Lean-4-_______________--_________-_____________________-Tactic--3___2-assumption_____________________">3.2 assumption：在假设中搜索</a></td></tr><tr class="numbered"><td class="num">4.4.</td><td><a href="Ch03FirstTactic/3___3--split_and-_____________________/#Lean-4-_______________--_________-_____________________-Tactic--3___3--split_and-_____________________">3.3 <code>split_and</code>：拆分合取目标</a></td></tr><tr class="numbered"><td class="num">4.5.</td><td><a href="Ch03FirstTactic/3___4-____________-tactic__________________/#Lean-4-_______________--_________-_____________________-Tactic--3___4-____________-tactic__________________">3.4 调用已有 tactic：组合式证明</a></td></tr><tr class="numbered"><td class="num">4.6.</td><td><a href="Ch03FirstTactic/3___5-_________________________________/#Lean-4-_______________--_________-_____________________-Tactic--3___5-_________________________________">3.5 对所有目标执行同一操作</a></td></tr><tr class="numbered"><td class="num">4.7.</td><td><a href="Ch03FirstTactic/3___6-_______________-diagnostics/#Lean-4-_______________--_________-_____________________-Tactic--3___6-_______________-diagnostics">3.6 错误处理与 diagnostics</a></td></tr><tr class="numbered"><td class="num">4.8.</td><td><a href="Ch03FirstTactic/3___7-_____________________-debug/#Lean-4-_______________--_________-_____________________-Tactic--3___7-_____________________-debug">3.7 常见失败模式与 debug</a></td></tr><tr class="current numbered"><td class="num">4.9.</td><td><a href="Ch03FirstTactic/3___8-______/#Lean-4-_______________--_________-_____________________-Tactic--3___8-______">3.8 练习</a></td></tr><tr class="numbered"><td class="num">4.10.</td><td><a href="Ch03FirstTactic/3___9-______/#Lean-4-_______________--_________-_____________________-Tactic--3___9-______">3.9 小结</a></td></tr></table></div>
+            <div class="split-toc">
+              <div class="title">
+                <label for="--verso-manual-toc-Lean-4-_______________--_________-_____________________-Tactic--3___8-______" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-Lean-4-_______________--_________-_____________________-Tactic--3___8-______" checked="checked"></label><span class="number">4.9.</span> <span class="current"><a href="Ch03FirstTactic/3___8-______/#Lean-4-_______________--_________-_____________________-Tactic--3___8-______">3.8 练习</a></span></div>
+              <table><tr class="numbered"><td class="num">4.9.1.</td><td><a href="Ch03FirstTactic/3___8-______/#Lean-4-_______________--_________-_____________________-Tactic--3___8-______--______-1_______________-my_exact">练习 1（热身）：<code>my_exact</code></a></td></tr><tr class="numbered"><td class="num">4.9.2.</td><td><a href="Ch03FirstTactic/3___8-______/#Lean-4-_______________--_________-_____________________-Tactic--3___8-______--______-2_______________-my_intro">练习 2（热身）：<code>my_intro</code></a></td></tr><tr class="numbered"><td class="num">4.9.3.</td><td><a href="Ch03FirstTactic/3___8-______/#Lean-4-_______________--_________-_____________________-Tactic--3___8-______--______-3___debug____________-bug">练习 3（debug）：找出 bug</a></td></tr><tr class="numbered"><td class="num">4.9.4.</td><td><a href="Ch03FirstTactic/3___8-______/#Lean-4-_______________--_________-_____________________-Tactic--3___8-______--______-4_______________-split_iff">练习 4（综合）：<code>split_iff</code></a></td></tr></table></div>
+            </div>
+          </div>
+        <div class="last"></div>
+        </nav>
+      <main><div class="content-wrapper">
+          <nav class="prev-next-buttons">
+            <a class="local-button active" href="Ch03FirstTactic/3___7-_____________________-debug/#Lean-4-_______________--_________-_____________________-Tactic--3___7-_____________________-debug" rel="prev" title="4.8. 3.7 常见失败模式与 debug"><span class="arrow">←</span><span class="where">4.8. 3.7 常见失败模式与 debug</span></a><a class="local-button active" href="Ch03FirstTactic/3___9-______/#Lean-4-_______________--_________-_____________________-Tactic--3___9-______" rel="next" title="4.10. 3.9 小结"><span class="where">4.10. 3.9 小结</span><span class="arrow">→</span></a></nav>
+          <section>
+            <h1>
+              4.9. 3.8 练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=Lean-4-_______________--_________-_____________________-Tactic--3___8-______" title="Permalink">🔗</a></span></h1>
+            <section>
+              <h2 id="Lean-4-_______________--_________-_____________________-Tactic--3___8-______--______-1_______________-my_exact">
+                4.9.1. 练习 1（热身）：<code>my_exact</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=Lean-4-_______________--_________-_____________________-Tactic--3___8-______--______-1_______________-my_exact" title="Permalink">🔗</a></span></h2>
+              <p>
+                编写一个 tactic <code>my_exact</code>，接受一个标识符参数，在局部上下文中查找该名字的假设并用它关闭目标。</p>
+              <p>
+                提示：</p>
+              <ul>
+                <li>
+                  <p>
+                    用 <code>elab "my_exact" ident:ident : tactic =&gt; do</code> 接收参数</p>
+                  </li>
+                <li>
+                  <p>
+                    用 <code>ident.getId</code> 获取名字</p>
+                  </li>
+                <li>
+                  <p>
+                    在 <code>lctx</code> 中用 <code>lctx.findFromUserName?</code> 查找</p>
+                  </li>
+                </ul>
+              <p>
+                测试用例：</p>
+              <pre>-- [示意]
+example (h : 1 + 1 = 2) : 1 + 1 = 2 := by
+  my_exact h  -- 应该成功
+</pre></section>
+            <section>
+              <h2 id="Lean-4-_______________--_________-_____________________-Tactic--3___8-______--______-2_______________-my_intro">
+                4.9.2. 练习 2（热身）：<code>my_intro</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=Lean-4-_______________--_________-_____________________-Tactic--3___8-______--______-2_______________-my_intro" title="Permalink">🔗</a></span></h2>
+              <p>
+                编写一个 tactic <code>my_intro</code>，当目标是 <code>P → Q</code> 时引入假设。</p>
+              <p>
+                提示：</p>
+              <ul>
+                <li>
+                  <p>
+                    目标 <code>P → Q</code> 在 <code>Expr</code> 层面是 <code>Expr.forallE name P Q info</code></p>
+                  </li>
+                <li>
+                  <p>
+                    用 <code>goal.intro name</code> 来引入——它会自动创建新的局部假设并返回新目标</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>goal.intro</code> 返回的是新目标的 <code>MVarId</code>，你需要 <code>replaceMainGoal [newGoal]</code> 来更新</p>
+                  </li>
+                </ul>
+              </section>
+            <section>
+              <h2 id="Lean-4-_______________--_________-_____________________-Tactic--3___8-______--______-3___debug____________-bug">
+                4.9.3. 练习 3（debug）：找出 bug<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=Lean-4-_______________--_________-_____________________-Tactic--3___8-______--______-3___debug____________-bug" title="Permalink">🔗</a></span></h2>
+              <p>
+                下面的 tactic 试图对所有目标执行 <code>rfl</code>，但有两个 bug。找出并修复它们。</p>
+              <pre>-- [示意]
+elab "rfl_all" : tactic =&gt; do
+  let goals ← getGoals
+  for g in goals do
+    g.withContext do
+      try
+        let target ← g.getType
+        let_expr Eq _ lhs _ := target | throwError "not eq"
+        g.assign (← mkEqRefl lhs)
+      catch _ =&gt; pure ()
+  setGoals []  -- bug 在这里附近
+</pre><p>
+                提示：bug 1 与 <code>setGoals</code> 有关（参考 3.7 节），bug 2 与 <code>Eq</code> 的参数个数有关（<code>@Eq α a b</code> 有三个参数，不是两个）。</p>
+              </section>
+            <section>
+              <h2 id="Lean-4-_______________--_________-_____________________-Tactic--3___8-______--______-4_______________-split_iff">
+                4.9.4. 练习 4（综合）：<code>split_iff</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=Lean-4-_______________--_________-_____________________-Tactic--3___8-______--______-4_______________-split_iff" title="Permalink">🔗</a></span></h2>
+              <p>
+                编写一个 tactic <code>split_iff</code>，当目标是 <code>P ↔ Q</code> 时拆成两个子目标 <code>P → Q</code> 和 <code>Q → P</code>。</p>
+              <p>
+                提示：</p>
+              <ul>
+                <li>
+                  <p>
+                    <code>Iff.intro</code> 的签名是 <code>{a b : Prop} → (a → b) → (b → a) → (a ↔ b)</code></p>
+                  </li>
+                <li>
+                  <p>
+                    模仿 3.3 节的 <code>split_and</code>，但换成 <code>Iff</code> 和 <code>Iff.intro</code></p>
+                  </li>
+                <li>
+                  <p>
+                    两个子目标的类型分别是 <code>P → Q</code> 和 <code>Q → P</code>——你需要用 <code>mkArrow</code> 来构造箭头类型</p>
+                  </li>
+                <li>
+                  <p>
+                    不要忘记用 <code>(← getGoals).erase goal</code> 保留其他目标，或者用 <code>replaceMainGoal</code></p>
+                  </li>
+                </ul>
+              </section>
+            </section>
+          <nav class="prev-next-buttons">
+            <a class="local-button active" href="Ch03FirstTactic/3___7-_____________________-debug/#Lean-4-_______________--_________-_____________________-Tactic--3___7-_____________________-debug" rel="prev" title="4.8. 3.7 常见失败模式与 debug"><span class="arrow">←</span><span class="where">4.8. 3.7 常见失败模式与 debug</span></a><a class="local-button active" href="Ch03FirstTactic/3___9-______/#Lean-4-_______________--_________-_____________________-Tactic--3___9-______" rel="next" title="4.10. 3.9 小结"><span class="where">4.10. 3.9 小结</span><span class="arrow">→</span></a></nav>
+          </div>
+        </main></div>
+    </body>
+  </html>
+
