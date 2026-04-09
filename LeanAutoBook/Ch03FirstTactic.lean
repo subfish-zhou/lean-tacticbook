@@ -12,16 +12,16 @@ file := "Ch03FirstTactic"
 tag := "ch03-first-tactic"
 %%%
 
-*本章目标*：从零实现几个有实际用途的 tactic，掌握 {moduleTerm}`@TacticM` 的核心模式。
+*本章目标*：从零实现几个有实际用途的 tactic，掌握 `TacticM` 的核心模式。
 
 # 回顾：从 Expr 到 Tactic
 %%%
 tag := "recap-expr-to-tactic"
 %%%
 
-第二章中，你学习了 Lean 4 内部表示表达式的核心数据类型 {moduleTerm}`@Expr`。你已经知道 `Expr.app`、`Expr.const`、`Expr.mvar` 等构造子分别代表什么，也知道如何用 {moduleTerm}`mkApp`、{moduleTerm}`mkConst` 等辅助函数构造表达式。本章要做的事情是：*把 Expr 的知识用起来*。
+第二章中，你学习了 Lean 4 内部表示表达式的核心数据类型 `Expr`。你已经知道 `Expr.app`、`Expr.const`、`Expr.mvar` 等构造子分别代表什么，也知道如何用 {moduleTerm}`mkApp`、{moduleTerm}`mkConst` 等辅助函数构造表达式。本章要做的事情是：*把 Expr 的知识用起来*。
 
-Tactic 的本质是什么？它是一个接收当前证明状态、返回新证明状态的函数。而"证明状态"的核心就是一组尚未填充的元变量（metavariable），每个元变量对应一个待证目标。Tactic 的工作就是读取这些元变量的类型（即目标命题），构造出合适的 {moduleTerm}`@Expr` 来填充它们，或者把一个目标拆分成更小的子目标。
+Tactic 的本质是什么？它是一个接收当前证明状态、返回新证明状态的函数。而"证明状态"的核心就是一组尚未填充的元变量（metavariable），每个元变量对应一个待证目标。Tactic 的工作就是读取这些元变量的类型（即目标命题），构造出合适的 `Expr` 来填充它们，或者把一个目标拆分成更小的子目标。
 
 换句话说，第二章教你认识了积木的形状，本章教你用这些积木搭建证明。
 
@@ -32,13 +32,13 @@ tag := "tactic-lifecycle"
 
 回顾第一章：tactic 是一个 `Syntax → TacticM Unit` 函数。当 Lean 在证明模式中遇到你注册的 tactic 关键字时，就会调用这个函数。它的完整生命周期分为五步：
 
-1. *接收语法*：Lean 解析器根据你用 `syntax` 或 `elab` 注册的语法规则进行匹配，把解析出的 {moduleTerm}`@Syntax` 节点传给你的函数。如果你的 tactic 接受参数（比如一个假设名），参数也在这个 {moduleTerm}`@Syntax` 里。
+1. *接收语法*：Lean 解析器根据你用 `syntax` 或 `elab` 注册的语法规则进行匹配，把解析出的 `Syntax` 节点传给你的函数。如果你的 tactic 接受参数（比如一个假设名），参数也在这个 `Syntax` 里。
 
-2. *读取状态*：从 {moduleTerm}`@TacticM` monad 中获取当前目标列表。最常用的是 {moduleTerm}`getMainGoal`（取第一个目标）和 {moduleTerm}`getGoals`（取全部目标）。每个目标是一个 {moduleTerm}`@MVarId`——元变量的唯一标识符。
+2. *读取状态*：从 `TacticM` monad 中获取当前目标列表。最常用的是 {moduleTerm}`getMainGoal`（取第一个目标）和 {moduleTerm}`getGoals`（取全部目标）。每个目标是一个 `MVarId`——元变量的唯一标识符。
 
-3. *分析目标*：通过 `goal.getType` 拿到目标的类型（一个 {moduleTerm}`@Expr`），然后用第二章学到的模式匹配技术分析它的结构。比如判断它是否形如 `P ∧ Q`，或者是否是一个等式 `a = b`。
+3. *分析目标*：通过 `goal.getType` 拿到目标的类型（一个 `Expr`），然后用第二章学到的模式匹配技术分析它的结构。比如判断它是否形如 `P ∧ Q`，或者是否是一个等式 `a = b`。
 
-4. *构造证明项并更新状态*：这是最关键的一步。你需要构造一个 {moduleTerm}`@Expr` 来"回答"当前目标。如果证明项中还有未填充的部分（hole），那些 hole 就变成新的子目标。最后调用 `goal.assign proof` 关闭当前目标，调用 {moduleTerm}`setGoals` 设置新的目标列表。
+4. *构造证明项并更新状态*：这是最关键的一步。你需要构造一个 `Expr` 来"回答"当前目标。如果证明项中还有未填充的部分（hole），那些 hole 就变成新的子目标。最后调用 `goal.assign proof` 关闭当前目标，调用 {moduleTerm}`setGoals` 设置新的目标列表。
 
 5. *返回*：`TacticM Unit` 不需要显式返回值。剩余的目标留在目标列表中，由后续 tactic 继续处理。如果所有目标都被关闭了，证明就完成了。
 
@@ -67,15 +67,15 @@ elab "my_assumption" : tactic => do
 
 逐行解释这段代码：
 
-*`let goal ← getMainGoal`*：从当前证明状态中取出第一个未解决的目标。{moduleTerm}`getMainGoal` 返回 {moduleTerm}`@MVarId`，它是元变量的标识符。为什么叫"main goal"？因为 Lean 的目标列表是有序的，第一个目标就是用户在 Infoview 中看到的那个。
+*`let goal ← getMainGoal`*：从当前证明状态中取出第一个未解决的目标。{moduleTerm}`getMainGoal` 返回 `MVarId`，它是元变量的标识符。为什么叫"main goal"？因为 Lean 的目标列表是有序的，第一个目标就是用户在 Infoview 中看到的那个。
 
 *`goal.withContext do`*：这一步至关重要。每个目标都有自己的局部上下文（local context），包含该目标可见的所有局部变量和假设。不同目标的上下文可能不同——比如 `cases` 拆分出的两个子目标，各自有不同的假设。`withContext` 把 monad 的环境切换到该目标的上下文，这样后续的 {moduleTerm}`getLCtx` 才能拿到正确的假设列表。*忘记 `withContext` 是新手最常犯的错误之一*，后面 3.8 节会专门讨论。
 
-*`let target ← goal.getType`*：获取目标的类型，即待证命题。返回值是一个 {moduleTerm}`@Expr`。
+*`let target ← goal.getType`*：获取目标的类型，即待证命题。返回值是一个 `Expr`。
 
-*`let lctx ← getLCtx`*：获取当前局部上下文，它是一个 {moduleTerm}`@LocalContext`，包含所有局部声明（local declaration）。
+*`let lctx ← getLCtx`*：获取当前局部上下文，它是一个 `LocalContext`，包含所有局部声明（local declaration）。
 
-*`for decl in lctx do`*：遍历所有局部声明。每个 `decl` 是一个 {moduleTerm}`@LocalDecl`，包含 `.userName`（用户可见的名字）、`.type`（类型）、`.toExpr`（对应的自由变量表达式，即 `Expr.fvar`）等字段。
+*`for decl in lctx do`*：遍历所有局部声明。每个 `decl` 是一个 `LocalDecl`，包含 `.userName`（用户可见的名字）、`.type`（类型）、`.toExpr`（对应的自由变量表达式，即 `Expr.fvar`）等字段。
 
 *`if decl.isImplementationDetail then continue`*：跳过编译器内部生成的辅助变量。这些变量对用户不可见，不应该被 tactic 使用。
 
@@ -111,9 +111,9 @@ elab "split_and" : tactic => do
 
 逐行拆解：
 
-*`let_expr And P Q := target | ...`*：这是 Lean 提供的宏，专门用于对 {moduleTerm}`@Expr` 做模式匹配。它会检查 `target` 是否形如 `@And P Q`（即 `Expr.app (Expr.app (Expr.const And _) P) Q`），如果是则绑定 `P` 和 `Q`，否则执行 `|` 后面的分支。这比手写 `match` 简洁很多。
+*`let_expr And P Q := target | ...`*：这是 Lean 提供的宏，专门用于对 `Expr` 做模式匹配。它会检查 `target` 是否形如 `@And P Q`（即 `Expr.app (Expr.app (Expr.const And _) P) Q`），如果是则绑定 `P` 和 `Q`，否则执行 `|` 后面的分支。这比手写 `match` 简洁很多。
 
-*`let mvarP ← mkFreshExprMVar P`*：创建一个类型为 `P` 的新元变量。{moduleTerm}`mkFreshExprMVar` 返回 {moduleTerm}`@Expr`（具体来说是一个 `Expr.mvar`），这个表达式代表一个尚未填充的 hole。`.mvarId!` 可以取出它的 {moduleTerm}`@MVarId`。
+*`let mvarP ← mkFreshExprMVar P`*：创建一个类型为 `P` 的新元变量。{moduleTerm}`mkFreshExprMVar` 返回 `Expr`（具体来说是一个 `Expr.mvar`），这个表达式代表一个尚未填充的 hole。`.mvarId!` 可以取出它的 `MVarId`。
 
 *`let proof := mkApp4 (mkConst And.intro) P Q mvarP mvarQ`*：构造表达式 `@And.intro P Q ?mvarP ?mvarQ`。{moduleTerm}`mkApp4` 是 {moduleTerm}`mkApp` 的四参数版本。注意 `And.intro` 的完整签名是 `And.intro : {a b : Prop} → a → b → a ∧ b`，这里四个参数分别是 `a := P`、`b := Q`、以及两个证明。
 
@@ -137,7 +137,7 @@ elab "split_and" : tactic => do
 tag := "combining-tactics"
 %%%
 
-手动构造 {moduleTerm}`@Expr` 虽然灵活，但很多时候你不需要从头来——Lean 标准库已经提供了大量 tactic，你可以在自己的 tactic 中直接调用它们。这就是"组合式"tactic 的思路：把已有的自动化当作积木块来组合。
+手动构造 `Expr` 虽然灵活，但很多时候你不需要从头来——Lean 标准库已经提供了大量 tactic，你可以在自己的 tactic 中直接调用它们。这就是"组合式"tactic 的思路：把已有的自动化当作积木块来组合。
 
 ```anchor my_smart_close
 elab "my_smart_close" : tactic => do
@@ -157,7 +157,7 @@ elab "my_smart_close" : tactic => do
     throwTacticEx `my_smart_close goal "no hypothesis matches and rfl failed"
 ```
 
-核心 API 是 *{moduleTerm}`evalTactic`*：它接收一个 {moduleTerm}`@Syntax` 节点，执行对应的 tactic。`` ← `(tactic| ...) `` 是 Lean 的 quotation 语法，用于在代码中构造 {moduleTerm}`@Syntax`。
+核心 API 是 *{moduleTerm}`evalTactic`*：它接收一个 `Syntax` 节点，执行对应的 tactic。`` ← `(tactic| ...) `` 是 Lean 的 quotation 语法，用于在代码中构造 `Syntax`。
 
 这段代码的策略是*搜索 + 回退*：先试最简单的方法（直接在假设中找精确匹配），失败了再试 `rfl`（关闭 `a = a` 形式的等式目标）。`try ... catch _ => pure ()` 确保第二个策略失败时不会中断整个 tactic，而是回退到最后的 `throwTacticEx`。
 
@@ -168,7 +168,7 @@ elab "my_smart_close₂" : tactic => do
   evalTactic (← `(tactic| first | assumption | rfl))
 ```
 
-`first` 会依次尝试列出的 tactic，直到有一个成功。这种写法更简洁，但手动写搜索循环给你更多控制权——比如你可以过滤掉特定类型的假设，或者按照特定顺序搜索。直接操作 {moduleTerm}`@Expr` 也比通过 {moduleTerm}`evalTactic` 调用更高效，因为省去了语法解析和 tactic 调度的开销。在性能敏感的场景（比如要在大量目标上运行的自动化），这种混合风格很常见。
+`first` 会依次尝试列出的 tactic，直到有一个成功。这种写法更简洁，但手动写搜索循环给你更多控制权——比如你可以过滤掉特定类型的假设，或者按照特定顺序搜索。直接操作 `Expr` 也比通过 {moduleTerm}`evalTactic` 调用更高效，因为省去了语法解析和 tactic 调度的开销。在性能敏感的场景（比如要在大量目标上运行的自动化），这种混合风格很常见。
 
 # 对所有目标执行同一操作
 %%%
@@ -230,7 +230,7 @@ tag := "error-handling"
 -- trace[my_tactic] "trying hypothesis {decl.userName}"
 ```
 
-*`throwTacticEx` vs `throwError`*：`throwTacticEx` 接受一个 {moduleTerm}`@MVarId` 参数，抛出的错误信息会包含该目标的完整上下文（包括所有假设和目标类型）。这对用户来说非常有价值——他们不需要自己去翻 Infoview 就能看到出错时的状态。`throwError` 则是通用的错误抛出函数，不附带目标上下文，适合用于和特定目标无关的错误（比如参数解析失败）。
+*`throwTacticEx` vs `throwError`*：`throwTacticEx` 接受一个 `MVarId` 参数，抛出的错误信息会包含该目标的完整上下文（包括所有假设和目标类型）。这对用户来说非常有价值——他们不需要自己去翻 Infoview 就能看到出错时的状态。`throwError` 则是通用的错误抛出函数，不附带目标上下文，适合用于和特定目标无关的错误（比如参数解析失败）。
 
 *{moduleTerm}`logWarning`*：发出警告但不中断执行。适合用于"这个情况可能有问题但不确定"的场景。
 
@@ -380,9 +380,9 @@ tag := "exercise-3-2"
 编写一个 tactic `my_intro`，当目标是 `P → Q` 时引入假设。
 
 提示：
-- 目标 `P → Q` 在 {moduleTerm}`@Expr` 层面是 `Expr.forallE name P Q info`
+- 目标 `P → Q` 在 `Expr` 层面是 `Expr.forallE name P Q info`
 - 用 `goal.intro name` 来引入——它会自动创建新的局部假设并返回新目标
-- `goal.intro` 返回的是新目标的 {moduleTerm}`@MVarId`，你需要 `replaceMainGoal [newGoal]` 来更新
+- `goal.intro` 返回的是新目标的 `MVarId`，你需要 `replaceMainGoal [newGoal]` 来更新
 
 ## 练习 3（debug）：找出 bug
 %%%
@@ -437,6 +437,6 @@ tag := "ch03-summary"
 
 *核心原则*：tactic = 读目标 + 分析结构 + 构造证明项 + 更新目标列表。
 
-本章你学到了编写 tactic 的完整流程：从最简单的 `assumption` 到拆分目标的 `split_and`，从组合已有 tactic 到对多目标批量操作，再到错误处理和常见陷阱。每个 tactic 都遵循同一个模式——读取目标、分析 {moduleTerm}`@Expr` 结构、构造证明项、更新目标列表。
+本章你学到了编写 tactic 的完整流程：从最简单的 `assumption` 到拆分目标的 `split_and`，从组合已有 tactic 到对多目标批量操作，再到错误处理和常见陷阱。每个 tactic 都遵循同一个模式——读取目标、分析 `Expr` 结构、构造证明项、更新目标列表。
 
 下一章将深入目标管理的进阶技巧：如何用 `focus` 聚焦单个目标、如何用 `withMainContext` 简化上下文切换、如何实现回溯搜索（backtracking），以及 `MonadBacktrack` 的工作原理。
