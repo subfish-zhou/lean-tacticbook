@@ -1,6 +1,10 @@
 import VersoManual
 
 open Verso.Genre Manual
+open Verso Code External
+
+set_option verso.exampleProject "../examples"
+set_option verso.exampleModule "Examples.Ch03FirstTactic"
 
 #doc (Manual) "第三章 编写你的第一个 Tactic" =>
 %%%
@@ -47,14 +51,10 @@ tag := "assumption-search"
 
 `assumption` 是最经典的入门 tactic：在局部上下文中找一个类型匹配目标的假设，然后用它关闭目标。这个 tactic 虽然简单，但展示了 tactic 编写的基本骨架。
 
-```
--- [可运行]
-import Lean
-open Lean Elab Tactic Meta
-
+```anchor my_assumption
 elab "my_assumption" : tactic => do
   let goal ← getMainGoal
-  goal.withContext do           -- 进入目标的局部上下文
+  goal.withContext do
     let target ← goal.getType
     let lctx ← getLCtx
     for decl in lctx do
@@ -92,21 +92,16 @@ tag := "split-and"
 
 如果目标是 `P ∧ Q`，我们希望把它拆成两个子目标 `P` 和 `Q`。这个 tactic 展示了一个比 `assumption` 更复杂的模式：不是直接关闭目标，而是把目标"拆开"。
 
-```
--- [可运行]
+```anchor split_and
 elab "split_and" : tactic => do
   let goal ← getMainGoal
   goal.withContext do
     let target ← goal.getType
-    -- 检查目标是否是 And P Q
     let_expr And P Q := target | throwTacticEx `split_and goal "goal is not a conjunction"
-    -- 创建两个新元变量作为子目标
     let mvarP ← mkFreshExprMVar P
     let mvarQ ← mkFreshExprMVar Q
-    -- 构造 And.intro 证明项并赋值
     let proof := mkApp4 (mkConst ``And.intro) P Q mvarP mvarQ
     goal.assign proof
-    -- 设置新的目标列表
     let newGoals := [mvarP.mvarId!, mvarQ.mvarId!]
     let others := (← getGoals).erase goal
     setGoals (newGoals ++ others)
@@ -144,13 +139,10 @@ tag := "combining-tactics"
 
 手动构造 `Expr` 虽然灵活，但很多时候你不需要从头来——Lean 标准库已经提供了大量 tactic，你可以在自己的 tactic 中直接调用它们。这就是"组合式"tactic 的思路：把已有的自动化当作积木块来组合。
 
-```
--- [可运行]
-/-- 依次尝试 assumption 和 rfl，展示 tactic 组合的模式。 -/
+```anchor my_smart_close
 elab "my_smart_close" : tactic => do
   let goal ← getMainGoal
   goal.withContext do
-    -- 策略 1：直接在假设中搜索（和 3.2 的 my_assumption 一样）
     let target ← goal.getType
     let lctx ← getLCtx
     for decl in lctx do
@@ -158,7 +150,6 @@ elab "my_smart_close" : tactic => do
       if ← isDefEq decl.type target then
         goal.assign decl.toExpr
         return
-    -- 策略 2：调用已有 tactic
     try
       evalTactic (← `(tactic| rfl))
       return
@@ -172,9 +163,9 @@ elab "my_smart_close" : tactic => do
 
 你也可以用 `evalTactic` 一次性表达同样的逻辑：
 
-```
--- [示意]
-evalTactic (← `(tactic| first | assumption | rfl))
+```anchor my_smart_close_short
+elab "my_smart_close₂" : tactic => do
+  evalTactic (← `(tactic| first | assumption | rfl))
 ```
 
 `first` 会依次尝试列出的 tactic，直到有一个成功。这种写法更简洁，但手动写搜索循环给你更多控制权——比如你可以过滤掉特定类型的假设，或者按照特定顺序搜索。直接操作 `Expr` 也比通过 `evalTactic` 调用更高效，因为省去了语法解析和 tactic 调度的开销。在性能敏感的场景（比如要在大量目标上运行的自动化），这种混合风格很常见。
@@ -186,26 +177,23 @@ tag := "operate-all-goals"
 
 前面的 tactic 都只处理第一个目标（`getMainGoal`）。但有时你希望对所有未解决的目标执行同一操作——比如"把所有能用 `assumption` 关掉的目标都关掉"。
 
-```
--- [可运行]
--- 对所有目标执行同一个 tactic
+```anchor assumption_on_all
 elab "assumption_on_all" : tactic => do
   let goals ← getGoals
   let mut remaining : List MVarId := []
   for g in goals do
     if ← g.isAssigned then continue
-    g.withContext do
+    let closed ← g.withContext do
       let target ← g.getType
       let lctx ← getLCtx
-      let mut found := false
       for decl in lctx do
         if decl.isImplementationDetail then continue
         if ← isDefEq decl.type target then
           g.assign decl.toExpr
-          found := true
-          break
-      if !found then
-        remaining := remaining ++ [g]
+          return true
+      return false
+    if !closed then
+      remaining := remaining ++ [g]
   setGoals remaining
 ```
 
@@ -228,19 +216,18 @@ tag := "error-handling"
 
 好的 tactic 不仅要能成功，还要在失败时给出有用的信息。Lean 提供了多个层次的诊断工具：
 
-```
--- [示意]
+```anchor diagnostics
 -- throwTacticEx 会显示目标上下文
-throwTacticEx `my_tactic goal "expected an equality goal"
+-- throwTacticEx `my_tactic goal "expected an equality goal"
 
 -- throwError 是通用错误
-throwError "my_tactic: internal error"
+-- throwError "my_tactic: internal error"
 
 -- logWarning 不中断执行
-logWarning "this goal might not be provable by my_tactic"
+-- logWarning "this goal might not be provable by my_tactic"
 
--- trace 用于调试（需要 set_option trace.my_tactic true）
-trace[my_tactic] "trying hypothesis {decl.userName}"
+-- trace 用于调试
+-- trace[my_tactic] "trying hypothesis {decl.userName}"
 ```
 
 *`throwTacticEx` vs `throwError`*：`throwTacticEx` 接受一个 `MVarId` 参数，抛出的错误信息会包含该目标的完整上下文（包括所有假设和目标类型）。这对用户来说非常有价值——他们不需要自己去翻 Infoview 就能看到出错时的状态。`throwError` 则是通用的错误抛出函数，不附带目标上下文，适合用于和特定目标无关的错误（比如参数解析失败）。
@@ -251,8 +238,7 @@ trace[my_tactic] "trying hypothesis {decl.userName}"
 
 注册 trace option：
 
-```
--- [可运行]
+```anchor register_trace
 initialize registerTraceClass `my_tactic
 ```
 

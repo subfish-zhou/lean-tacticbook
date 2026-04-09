@@ -10,6 +10,13 @@ package «lean-auto-book» where
 
 require verso from git "https://github.com/leanprover/verso.git"@"v4.30.0-rc1"
 
+private def examplePath : System.FilePath := "../examples"
+
+input_dir examples where
+  path := examplePath
+  text := true
+  filter := .extension "lean"
+
 @[default_target]
 lean_lib LeanAutoBook where
   srcDir := "."
