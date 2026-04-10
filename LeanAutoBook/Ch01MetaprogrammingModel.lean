@@ -266,7 +266,7 @@ example (n : Nat) : n + 0 = n := by
 
 再写一个稍复杂的：`exact_if_rfl`，如果目标是 `a = a` 就用 {lean}`rfl` 关闭，否则报错。
 
-```
+```anchor exact_if_rfl
 elab "exact_if_rfl" : tactic => do
   let goal ← getMainGoal
   let goalType ← goal.getType
@@ -285,7 +285,7 @@ tag := "monad-lifting"
 
 有时你需要从 {lean}`TacticM` 调用 {lean}`MetaM` 的函数。由于 {lean}`TacticM` 包含了 {lean}`MetaM`，可以直接调用：
 
-```
+```anchor show_type
 elab "show_type" : tactic => do
   let goal ← getMainGoal
   -- inferType 是 MetaM 函数，可以直接在 TacticM 中调用
