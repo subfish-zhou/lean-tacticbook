@@ -487,3 +487,105 @@ def leanCmdBlock : CodeBlockExpander
         logErrorAt refStx e
         return #[← ``(sorry)]
       | e => throw e
+
+/-! ## Markdown-style table code block
+
+Write tables in verso using fenced code blocks:
+
+````
+```table
+| Header1 | Header2 | Header3 |
+|---------|---------|---------|
+| cell1   | cell2   | cell3   |
+| cell4   | cell5   | cell6   |
+```
+````
+-/
+
+private def parseTableRow (line : String) : Array String :=
+  let line := line.trimAscii.toString
+  let line := if line.startsWith "|" then (line.drop 1).trimAscii.toString else line
+  let line := if line.endsWith "|" then (line.dropRight 1).trimAscii.toString else line
+  (line.splitOn "|").toArray.map fun s => s.trimAscii.toString
+
+private def isSeparatorRow (line : String) : Bool :=
+  line.trimAscii.toString.toList.all fun c => c == '|' || c == '-' || c == ':' || c == ' '
+
+private def tableCss : String := r#"
+table.md-table {
+  border-collapse: collapse;
+  margin: 1em 0;
+  width: 100%;
+  font-size: 0.95em;
+}
+table.md-table th,
+table.md-table td {
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  text-align: left;
+}
+table.md-table thead th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+  border-bottom: 2px solid #ccc;
+}
+table.md-table tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+table.md-table tbody tr:hover {
+  background-color: #f0f0f0;
+}
+
+/* P1: Visual distinction for compiled vs uncompiled code blocks */
+/* Compiled code blocks (from SubVerso) have class hl.lean.block */
+code.hl.lean.block {
+  border-left: 3px solid #4caf50;
+  background-color: #f8fdf8;
+}
+
+/* Uncompiled code blocks are plain pre without .hl */
+pre:not(:has(code.hl)) {
+  border-left: 3px solid #ccc;
+}
+"#
+
+block_extension Block.mdTable (header : Array String) (rows : Array (Array String)) where
+  data := ToJson.toJson (header, rows)
+  traverse _ _ _ := pure none
+  toTeX := none
+  extraCss := [tableCss]
+  toHtml :=
+    open Verso.Output Html in
+    open Verso.Output.Html in
+    some <| fun _goI _goB _id data _content => do
+      match FromJson.fromJson? (α := Array String × Array (Array String)) data with
+      | .error _e =>
+        return .empty
+      | .ok (hdr, bodyRows) =>
+        let thCells : Array Html := hdr.map (fun cell => {{<th>{{Html.text true cell}}</th>}})
+        let tbodyRows : Array Html := bodyRows.map (fun row =>
+          let cells : Array Html := row.map (fun cell => {{<td>{{Html.text true cell}}</td>}})
+          {{<tr>{{cells}}</tr>}})
+        pure {{
+          <table class="md-table">
+            <thead><tr>{{thCells}}</tr></thead>
+            <tbody>{{tbodyRows}}</tbody>
+          </table>
+        }}
+
+/-- The `table` code block parses pipe-delimited markdown table syntax
+and renders it as an HTML table. -/
+@[code_block_expander table]
+def tableBlock : CodeBlockExpander
+  | args, code => do
+    ArgParse.done.run args
+    let lines := (code.getString.splitOn "\n").filter (·.trim != "")
+    match lines with
+    | [] => throwError "Empty table"
+    | [_] => throwError "Table needs at least a header and separator row"
+    | headerLine :: rest =>
+      let header := parseTableRow headerLine
+      let dataLines := if rest.length > 0 && isSeparatorRow rest[0]! then rest.drop 1 else rest
+      let rows := (dataLines.map parseTableRow).toArray
+      return #[← ``(Block.other (Block.mdTable $(quote header) $(quote rows)) #[])]
+

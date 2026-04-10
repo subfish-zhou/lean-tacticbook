@@ -893,4 +893,21 @@ main section li ol {
     font-family: var(--verso-code-font-family) !important;
 }
 
+/******** Code block visual distinction ********/
+
+/* Compiled Lean code blocks: green left border + light green background */
+pre.hl.lean.block, code.hl.lean.block {
+  border-left: 4px solid #4caf50;
+  background-color: #f1f8e9;
+  padding: 0.8em 1em;
+  border-radius: 4px;
+}
+
+/* Plain (non-compiled) code blocks: gray left border + default background */
+pre:not(.hl) {
+  border-left: 4px solid #bdbdbd;
+  background-color: #fafafa;
+  padding: 0.8em 1em;
+  border-radius: 4px;
+}
 
