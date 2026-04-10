@@ -52,17 +52,16 @@ tag := "push-neg-basic"
 `push_neg` 对目标或假设中的否定做 De Morgan 展开，
 直到否定落在原子公式上：
 
-```
--- [可运行]
+```anchor pushNegEpsilonDelta
 example (f : ℝ → ℝ) (a : ℝ) :
     ¬(∀ ε > 0, ∃ δ > 0, ∀ x, |x - a| < δ → |f x - f a| < ε) ↔
     ∃ ε > 0, ∀ δ > 0, ∃ x, |x - a| < δ ∧ ε ≤ |f x - f a| := by
   constructor
   · intro h
-    push_neg at h    -- ❶ 在假设 h 上下推否定
+    push_neg at h
     exact h
   · intro h
-    push_neg          -- ❷ 在目标上下推否定
+    push_neg
     exact h
 ```
 
@@ -106,13 +105,13 @@ tag := "contrapose"
 
 当目标形如 `P → Q` 时，`contrapose` 将其变为 `¬Q → ¬P`：
 
-```
--- [可运行]
+```anchor contraposeDvd
 example (a b : ℤ) : a ∣ b → b ≠ 0 → a ≠ 0 := by
   intro hdvd
-  contrapose         -- ❶ 目标变为 a = 0 → b = 0
+  contrapose
   intro ha
-  simp [ha] at hdvd ⊢
+  simp [ha] at hdvd
+  exact hdvd
 ```
 
 ## contrapose! 变体
@@ -123,11 +122,9 @@ tag := "contrapose-bang"
 `contrapose!` = `contrapose` + `push_neg`，
 否定中含 `≤`、`<`、量词时特别有用：
 
-```
--- [可运行]
+```anchor contraposeSquare
 example (n : ℕ) : n < 3 → n ^ 2 < 9 := by
-  contrapose!        -- ❶ 目标变为 9 ≤ n ^ 2 → 3 ≤ n
-                     --    push_neg 把 ¬(<) 变成 ≤
+  contrapose!
   intro h
   nlinarith
 ```
@@ -142,14 +139,12 @@ tag := "by-contra"
 
 `by_contra` 假设目标的否定，将目标变为 `False`：
 
-```
--- [可运行]
+```anchor byContraUnbounded
 example : ∀ n : ℕ, ∃ m, m > n := by
-  by_contra! h       -- ❶ h : ∃ n, ∀ m, m ≤ n
-                     --    by_contra! = by_contra + push_neg
+  by_contra! h
   obtain ⟨n, hn⟩ := h
-  have := hn (n + 1) -- ❷ n + 1 ≤ n
-  omega               -- ❸ 矛盾
+  have := hn (n + 1)
+  omega
 ```
 
 ## 与 Classical.em 的关系
@@ -178,12 +173,11 @@ tag := "logic-transforms-combinations"
 tag := "combination-push-neg-prefix"
 %%%
 
-```
--- [可运行]
+```anchor pushNegConvergence
 example (a : ℕ → ℝ) (L : ℝ)
     (h : ∀ ε > 0, ∃ N, ∀ n ≥ N, |a n - L| < ε) :
     ¬(∃ ε > 0, ∀ N, ∃ n ≥ N, ε ≤ |a n - L|) := by
-  push_neg             -- ❶ 目标 = h 的类型
+  push_neg
   exact h
 ```
 
@@ -192,11 +186,10 @@ example (a : ℕ → ℝ) (L : ℝ)
 tag := "combination-contrapose-arith"
 %%%
 
-```
--- [可运行]
+```anchor contraposeStrictMono
 example (f : ℝ → ℝ) (hf : StrictMono f) (a b : ℝ) :
     f a = f b → a = b := by
-  contrapose!          -- ❶ a ≠ b → f a ≠ f b
+  contrapose!
   exact fun h => hf.injective.ne h
 ```
 
@@ -205,13 +198,12 @@ example (f : ℝ → ℝ) (hf : StrictMono f) (a b : ℝ) :
 tag := "combination-by-contra-push-neg"
 %%%
 
-```
--- [可运行] 经典分析学论证
+```anchor byContraEpsilon
 example (a b : ℝ) (h : ∀ ε > 0, a ≤ b + ε) : a ≤ b := by
-  by_contra h'       -- ❶ h' : ¬(a ≤ b)
-  push_neg at h'     -- ❷ h' : b < a
-  have := h ((a - b) / 2) (by linarith)  -- ❸ 取 ε = (a-b)/2
-  linarith           -- ❹ 矛盾
+  by_contra h'
+  push_neg at h'
+  have := h ((a - b) / 2) (by linarith)
+  linarith
 ```
 
 ## 模式 D：`by_contra!` + obtain + omega
@@ -219,10 +211,9 @@ example (a b : ℝ) (h : ∀ ε > 0, a ≤ b + ε) : a ≤ b := by
 tag := "combination-by-contra-obtain"
 %%%
 
-```
--- [可运行]
+```anchor byContraNlinarith
 example (n : ℕ) (h : n ^ 2 < 2 * n) : n < 2 := by
-  by_contra! h'       -- ❶ h' : 2 ≤ n
+  by_contra! h'
   nlinarith [sq_nonneg (n - 2)]
 ```
 

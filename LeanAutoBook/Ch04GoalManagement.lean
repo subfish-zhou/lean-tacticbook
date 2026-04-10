@@ -5,7 +5,7 @@ open Verso.Genre Manual
 open Verso Code External
 
 set_option verso.exampleProject "../examples"
-set_option verso.exampleModule "Examples.Ch01MetaprogrammingModel"
+set_option verso.exampleModule "Examples.Ch04GoalManagement"
 
 #doc (Manual) "第四章 目标管理" =>
 %%%
@@ -454,8 +454,7 @@ tag := "warmup-exercises"
 
 实现一个 tactic `rotate_goals`，它把目标列表"旋转"一个位置：主目标移到列表末尾，第二个目标变成新的主目标。如果只有一个或零个目标，什么都不做。
 
-```
--- [可运行]
+```anchor rotateGoals
 elab "rotate_goals" : tactic => do
   sorry -- 你的实现
 ```
@@ -466,8 +465,7 @@ elab "rotate_goals" : tactic => do
 
 实现一个 tactic `count_goals`，它不改变任何状态，只在 InfoView 中打印当前未解决的目标数量。
 
-```
--- [可运行]
+```anchor countGoals
 elab "count_goals" : tactic => do
   sorry -- 你的实现
 ```
@@ -483,8 +481,7 @@ tag := "debug-exercises"
 
 下面的 tactic 试图对每个目标尝试 `assumption`，解决能解决的，保留不能解决的。但它有一个 bug——找出来并修复它。
 
-```
--- [可运行]
+```anchor tryAssumptionAll
 elab "try_assumption_all" : tactic => do
   let goals ← getGoals
   for g in goals do

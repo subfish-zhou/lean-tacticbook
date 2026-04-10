@@ -33,16 +33,12 @@ tag := "gcongr-what-it-solves"
 `gcongr` 证明形如 `f(a₁, ..., aₙ) ≤ f(b₁, ..., bₙ)` 的目标，
 其中 `f` 是某种关于每个参数单调的运算：
 
-```
--- [可运行] 三种典型场景
+```anchor gcongrBasic
 example (a b c : ℝ) (h : a ≤ b) (hc : 0 ≤ c) : a * c ≤ b * c := by gcongr
-  -- ▸ 右乘非负数保持不等式，引用 mul_le_mul_of_nonneg_right
 
 example (a b : ℝ) (h : a ≤ b) : a + 1 ≤ b + 1 := by gcongr
-  -- ▸ 两侧加相同常数，引用 add_le_add_right
 
 example (a b : ℝ) (ha : 0 ≤ a) (hab : a ≤ b) : a ^ 3 ≤ b ^ 3 := by gcongr
-  -- ▸ 非负底数的幂保持不等式，引用 pow_le_pow_left
 ```
 
 核心思想：*不手动引理，让 gcongr 搜索和分解*。它把目标两侧
@@ -87,13 +83,11 @@ tag := "gcongr-multi-position"
 
 当两侧有多个不同位置时，`gcongr` 逐一分解：
 
-```
--- [可运行] 两个位置同时变化
+```anchor gcongrTwoPositions
 example (a b c d : ℝ) (h1 : a ≤ b) (h2 : c ≤ d)
     (ha : 0 ≤ a) (hc : 0 ≤ c) : a * c ≤ b * d := by
-  gcongr             -- ❶ 拆为两个子目标
-  -- ▸ 子目标 1: a ≤ b  （由 h1 关闭）
-  -- ▸ 子目标 2: c ≤ d  （由 h2 关闭）
+  have hb : 0 ≤ b := le_trans ha h1
+  gcongr
 ```
 
 分解树：
@@ -128,16 +122,12 @@ tag := "gcongr-lemma-library"
 tag := "gcongr-arithmetic-operations"
 %%%
 
-```
--- [可运行] 加法——无条件单调
+```anchor gcongrArithmetic
 example (a b c d : ℝ) (h1 : a ≤ b) (h2 : c ≤ d) : a + c ≤ b + d := by gcongr
 
--- [可运行] 乘法——需要非负侧条件
 example (a b c : ℝ) (h : a ≤ b) (hc : 0 ≤ c) : a * c ≤ b * c := by gcongr
-example (a b c : ℝ) (h : a ≤ b) (ha : 0 ≤ a) : c * a ≤ c * b := by gcongr
-  -- ▸ 注意：左乘需要被乘数非负，不是乘数非负
+example (a b c : ℝ) (h : a ≤ b) (hc : 0 ≤ c) : c * a ≤ c * b := by gcongr
 
--- [可运行] 幂——需要底数非负
 example (a b : ℝ) (ha : 0 ≤ a) (h : a ≤ b) : a ^ 5 ≤ b ^ 5 := by gcongr
 ```
 
@@ -148,11 +138,9 @@ tag := "gcongr-other-operations"
 
 `gcongr` 还覆盖集合（`⊆`）、求和（`Finset.sum`）、积分等：
 
-```
--- [可运行] 集合包含的单调性
+```anchor gcongrSetsAndSums
 example (s t : Set ℝ) (h : s ⊆ t) (f : ℝ → ℝ) : f '' s ⊆ f '' t := by gcongr
 
--- [可运行] 求和的单调性
 example (s : Finset ℕ) (f g : ℕ → ℝ) (h : ∀ i ∈ s, f i ≤ g i) :
     s.sum f ≤ s.sum g := by gcongr; exact h _ ‹_›
 ```
@@ -179,19 +167,17 @@ tag := "gcongr-pattern-templates"
 有时 `gcongr` 无法自动对齐两侧结构。可以用*模式模板*显式指定，
 `?_` 标记变化位置，固定部分写具体表达式：
 
-```
--- [可运行] 两个位置都变化
-example (h1 : a ≤ b) (h2 : c ≤ d) (ha : 0 ≤ a) (hc : 0 ≤ c) :
+```anchor gcongrPatternTemplates
+example (a b c d : ℝ) (h1 : a ≤ b) (h2 : c ≤ d) (ha : 0 ≤ a) (hc : 0 ≤ c) :
     a * c ≤ b * d := by
-  gcongr ?_ * ?_    -- ❶ 两个 ?_ 标记变化位置
+  have hb : 0 ≤ b := le_trans ha h1
+  gcongr ?_ * ?_
 
--- [可运行] 只让第一个位置变化
-example (h : a ≤ b) (hc : 0 ≤ c) : a * c ≤ b * c := by
-  gcongr ?_ * c     -- ❷ c 固定，只分解第一个位置
+example (a b c : ℝ) (h : a ≤ b) (hc : 0 ≤ c) : a * c ≤ b * c := by
+  gcongr ?_ * c
 
--- [可运行] 嵌套结构
 example (a b : ℝ) (ha : 0 ≤ a) (hab : a ≤ b) : (a + 1) ^ 2 ≤ (b + 1) ^ 2 := by
-  gcongr (?_ + 1) ^ 2    -- ❸ 只有 ?_ 位置变化
+  gcongr (?_ + 1) ^ 2
 ```
 
 - *❶* 两个占位符，`gcongr` 对两个位置分别生成子目标。
@@ -209,13 +195,12 @@ tag := "gcongr-calc-chains"
 `gcongr` 与 `calc` 是天然搭档——`calc` 建立不等式链，
 `gcongr` 证明链中每一步的单调性推理：
 
-```
--- [可运行] 典型的 calc + gcongr 模式
+```anchor gcongrCalcTransitivity
 example (a b c : ℝ) (h1 : a ≤ b) (h2 : b ≤ c) (ha : 0 ≤ a) (hb : 0 ≤ b) :
     a ^ 2 ≤ c ^ 2 := by
   calc a ^ 2
-      ≤ b ^ 2 := by gcongr        -- ❶ a ≤ b, 0 ≤ a
-    _ ≤ c ^ 2 := by gcongr        -- ❷ b ≤ c, 0 ≤ b
+      ≤ b ^ 2 := by gcongr
+    _ ≤ c ^ 2 := by gcongr
 ```
 
 - *❶* `gcongr` 使用 `h1` 和 `ha`。*❷* 使用 `h2` 和 `hb`。
@@ -225,13 +210,12 @@ example (a b c : ℝ) (h1 : a ≤ b) (h2 : b ≤ c) (ha : 0 ≤ a) (hb : 0 ≤ b
 tag := "gcongr-mixed-relation-chain"
 %%%
 
-```
--- [可运行] calc 中混合 < 和 ≤
+```anchor gcongrCalcMixed
 example (a b c : ℝ) (h1 : a < b) (h2 : b ≤ c) (ha : 0 ≤ a) (hb : 0 ≤ b) :
     a ^ 2 < c ^ 2 := by
   calc a ^ 2
-      < b ^ 2 := by gcongr        -- ❶ a < b → a² < b²
-    _ ≤ c ^ 2 := by gcongr        -- ❷ b ≤ c → b² ≤ c²
+      < b ^ 2 := by gcongr
+    _ ≤ c ^ 2 := by gcongr
 ```
 
 `gcongr` 同时支持 `≤` 和 `<`，自动搜索严格/非严格版本的单调性引理。
@@ -244,22 +228,18 @@ tag := "gcongr-positivity-cooperation"
 `gcongr` 的单调性引理常常需要侧条件如 `0 ≤ a`，
 这正是 `positivity` 的专长——两者形成高效组合：
 
-```
--- [可运行] positivity 自动收尾侧条件
+```anchor gcongrSideConditions
 example (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) : x ^ 3 ≤ y ^ 3 := by
-  gcongr          -- ❶ 产生子目标: x ≤ y, 0 ≤ x
-  -- ▸ 两个子目标分别由 hxy 和 hx 自动关闭
+  gcongr
 ```
 
 当侧条件不是简单的假设时：
 
-```
--- [可运行] 显式用 positivity 处理侧条件
+```anchor gcongrExplicitSideConditions
 example (x y : ℝ) (hx : 0 < x) (hxy : x ≤ y) :
     x ^ 2 * (x + 1) ≤ y ^ 2 * (y + 1) := by
-  gcongr
-  · exact hxy                     -- ❶ x ≤ y
-  · linarith                      -- ❷ x + 1 ≤ y + 1
+  have hy : 0 < y := lt_of_lt_of_le hx hxy
+  gcongr <;> linarith
 ```
 
 侧条件关闭策略：上下文中有直接假设 → 自动关闭；结构化表达式 → `positivity`；
@@ -358,10 +338,9 @@ tag := "gcongr-debugging-tips"
 tag := "tip-gcongr-question-mark"
 %%%
 
-```
--- [可运行] gcongr? 展示具体使用的引理
-example (a b : ℝ) (h : a ≤ b) (ha : 0 ≤ a) : a ^ 2 ≤ b ^ 2 := by gcongr?
-  -- ▸ 建议：exact pow_le_pow_left ha h 2
+```anchor gcongrQuery
+example (a b : ℝ) (h : a ≤ b) (ha : 0 ≤ a) : a ^ 2 ≤ b ^ 2 := by
+  gcongr
 ```
 
 `gcongr?` 输出具体的引理调用，可用于理解分解过程或替换为显式证明。

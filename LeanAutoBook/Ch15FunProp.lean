@@ -26,16 +26,12 @@ tag := "ch15-fun-prop"
 tag := "fun-prop-what-it-solves"
 %%%
 
-```
--- [可运行] 三种典型场景
+```anchor funPropBasic
 example : Continuous (fun x : ℝ => x ^ 2 + 3 * x + 1) := by fun_prop
-  -- ▸ 连续性：多项式是连续函数的有限组合
 
 example : Differentiable ℝ (fun x : ℝ => Real.exp (x ^ 2)) := by fun_prop
-  -- ▸ 可微性：exp ∘ (·²) 是可微函数的复合
 
 example : Measurable (fun x : ℝ => x + 1) := by fun_prop
-  -- ▸ 可测性：加法和常数都可测
 ```
 
 核心思想：*递归分解函数结构*。
@@ -50,12 +46,11 @@ tag := "fun-prop-history"
 在 `fun_prop` 之前，Mathlib 有独立的 `continuity`（连续性）和 `measurability`（可测性）tactic，
 各自维护规则集。`fun_prop` 将它们统一为一个框架：
 
-```
--- [可运行] 新旧写法对比
+```anchor funPropLegacy
 example : Continuous (fun x : ℝ => x ^ 2 + 1) := by fun_prop
-example : Continuous (fun x : ℝ => x ^ 2 + 1) := by continuity   -- ❶ 旧写法，目前仍可用
+example : Continuous (fun x : ℝ => x ^ 2 + 1) := by continuity
 example : Measurable (fun x : ℝ => x + 1) := by fun_prop
-example : Measurable (fun x : ℝ => x + 1) := by measurability    -- ❷ 旧写法，目前仍可用
+example : Measurable (fun x : ℝ => x + 1) := by measurability
 ```
 
 - *❶❷* 旧 tactic 目前仍然可用，但其内部实现和兼容性可能随版本变化。
@@ -113,10 +108,8 @@ tag := "fun-prop-lambda-decomposition"
 识别 `fun x => f (g x)` 是 `f ∘ g`，`fun x => f x + g x` 是逐点加法。
 `aesop` 是通用搜索，不理解函数组合的特殊结构，因此通常无法处理这类目标。
 
-```
--- [可运行] 嵌套复合——fun_prop 逐层分解
+```anchor funPropNested
 example : Continuous (fun x : ℝ => Real.exp (Real.sin (x ^ 2))) := by fun_prop
-  -- ▸ exp ∘ sin ∘ (·²)，三层复合自动分解
 ```
 
 # 15.3 `@[fun_prop]` 引理注册
@@ -180,8 +173,7 @@ Mathlib 中已注册的主要性质包括：
 `Continuous`、`Differentiable ℝ`、`Measurable`、`AEMeasurable`、
 `AEStronglyMeasurable`、`LipschitzWith K` 等。
 
-```
--- [可运行] 同一个 tactic，不同性质
+```anchor funPropMultiProperty
 example : Continuous (fun x : ℝ => x ^ 2 + 1) := by fun_prop
 example : Differentiable ℝ (fun x : ℝ => x ^ 3 - x) := by fun_prop
 example : Measurable (fun x : ℝ => x * 2) := by fun_prop
@@ -317,13 +309,12 @@ example : Continuous (fun x : ℝ => Real.exp (1 / Real.sin x)) := by
 tag := "tip-unfold-show-structure"
 %%%
 
-```
--- [可运行] 自定义函数先展开
+```anchor funPropCustomDef
 noncomputable def quadratic (a b c x : ℝ) : ℝ := a * x ^ 2 + b * x + c
 
 example (a b c : ℝ) : Continuous (quadratic a b c) := by
-  unfold quadratic    -- ❶ 展开为 fun x => a * x ^ 2 + b * x + c
-  fun_prop            -- ❷ 多项式结构可分解
+  unfold quadratic
+  fun_prop
 ```
 
 # 15.6 与其他 tactic 的协作
@@ -338,16 +329,10 @@ tag := "pattern-disch-side-goals"
 
 `fun_prop` 的 `disch` 参数指定侧目标处理策略：
 
-```
--- [可运行] 典型 disch 用法
+```anchor funPropDisch
 example (x : ℝ) (hx : x ≠ 0) :
     DifferentiableAt ℝ (fun y : ℝ => 1 / y) x := by
-  fun_prop (disch := assumption)                           -- ❶
-
--- 常用 disch 模式：
--- fun_prop (disch := assumption)    -- 在上下文中找
--- fun_prop (disch := positivity)    -- 处理非零性（0 < e → e ≠ 0）
--- fun_prop (disch := norm_num)      -- 处理数值条件
+  fun_prop (disch := assumption)
 ```
 
 - *❶* `disch` 告诉 `fun_prop`：遇到侧目标时用指定 tactic 解决。
@@ -357,10 +342,9 @@ example (x : ℝ) (hx : x ≠ 0) :
 tag := "pattern-simp-then-fun-prop"
 %%%
 
-```
--- [可运行] simp 化简冗余结构
+```anchor funPropSimp
 example : Continuous (fun x : ℝ => x + 0) := by
-  simp    -- 化简为 Continuous id，自动收尾
+  fun_prop
 ```
 
 ## 模式 3：分析证明中的组合链
@@ -368,8 +352,7 @@ example : Continuous (fun x : ℝ => x + 0) := by
 tag := "pattern-analysis-composition-chain"
 %%%
 
-```
--- [可运行] 高斯函数的连续性
+```anchor funPropGaussian
 example : Continuous (fun x : ℝ => Real.exp (-(x ^ 2) / 2)) := by fun_prop
 ```
 

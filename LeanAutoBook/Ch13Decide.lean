@@ -45,11 +45,10 @@ Lean 核心库为大量命题注册了 `Decidable` 实例。
 `DecidableEq α` 是 `∀ (a b : α), Decidable (a = b)` 的缩写，
 大多数具体数据类型（`Nat`、`Int`、`String`、`List α`）都自动拥有此实例。
 
-```
--- [可运行] 内置实例示例
-#check (inferInstance : Decidable (3 = 5))       -- ▸ isFalse ...
-#check (inferInstance : Decidable (3 < 5))       -- ▸ isTrue ...
-#check (inferInstance : Decidable (5 ∈ [1,2,3])) -- ▸ isFalse ...
+```anchor decidableChecks
+#check (inferInstance : Decidable (3 = 5))
+#check (inferInstance : Decidable (3 < 5))
+#check (inferInstance : Decidable (5 ∈ [1,2,3]))
 ```
 
 ## Prop 与 Bool 的桥梁
@@ -81,19 +80,14 @@ tag := "decide-kernel-reduction"
 3. *内核规约*：Lean kernel 对该项执行 δ/ι/ζ reduction。
 4. *提取证明*：若结果为 `true`，构造 `of_decide_eq_true rfl` 作为证明项。
 
-```
--- [可运行] 四种典型用法
+```anchor decideBasic
 example : 2 + 2 = 4 := by decide
-  -- ▸ 内核算 2+2 → 4，等式两边相同，rfl 成立
 
 example : ¬ (3 ∈ [1, 2, 5]) := by decide
-  -- ▸ 展开 Membership，逐项比较 3≠1, 3≠2, 3≠5，返回 isFalse
 
--- example : Nat.Prime 7 := by decide
---   -- ▸ Decidable 实例通过试除法：7%2≠0, 7%3≠0... 确认质数
+example : Nat.Prime 7 := by decide
 
 example : ∀ b : Bool, b || !b = true := by decide
-  -- ▸ Bool 是有限类型，内核穷举 true 和 false 两种情况
 ```
 
 *绝对可信*：`decide` 的证明只依赖 Lean kernel——系统中最小的 trusted computing base，
@@ -181,16 +175,12 @@ tag := "native-decide-compilation"
 3. *执行*：运行编译后的代码，得到 `Bool` 结果。
 4. *桥接*：若结果为 `true`，通过 axiom `Lean.ofReduceBool` 构造证明。
 
-```
--- [可运行] 三种 decide 做不到但 native_decide 轻松搞定的场景
--- example : Nat.Prime 104729 := by native_decide
---   -- ▸ 编译后试除法以原生速度执行，几毫秒内完成
+```anchor nativeDecide
+example : Nat.Prime 104729 := by native_decide
 
 example : ∀ n : Fin 256, n.val < 256 := by native_decide
-  -- ▸ 穷举 256 个值，编译代码比内核快几个数量级
 
--- example : (List.range 100).filter Nat.Prime |>.length = 25 := by native_decide
---   -- ▸ 筛选、计数全部编译执行，内核只需验证最终布尔值
+example : ((List.range 100).filter Nat.Prime).length = 25 := by native_decide
 ```
 
 ## 可信度代价
@@ -240,14 +230,12 @@ tag := "writing-decidable-instances"
 tag := "instance-deriving"
 %%%
 
-```
--- [可运行] 枚举类型自动派生
+```anchor derivingDecidableEq
 inductive Color where
   | red | green | blue
-  deriving DecidableEq    -- ❶ 自动生成 ∀ a b : Color, Decidable (a = b)
+  deriving DecidableEq
 
 example : Color.red ≠ Color.blue := by decide
-  -- ▸ DecidableEq 实例比较构造子标签，red ≠ blue
 ```
 
 - *❶* 结构体、枚举、带参数的归纳类型都支持 `deriving DecidableEq`。
@@ -257,12 +245,11 @@ example : Color.red ≠ Color.blue := by decide
 tag := "instance-dependent-if"
 %%%
 
-```
--- [可运行] 为整除关系编写实例
+```anchor decidableDvd
 instance (n m : Nat) : Decidable (n ∣ m) :=
-  if h : m % n = 0                         -- ❶ dependent if：h 绑定条件或其否定
-  then .isTrue (Nat.dvd_of_mod_eq_zero h)  -- ❷ 正分支：m%n=0 → n∣m
-  else .isFalse fun ⟨k, hk⟩ =>            -- ❸ 负分支：假设 n∣m，推出矛盾
+  if h : m % n = 0
+  then .isTrue (Nat.dvd_of_mod_eq_zero h)
+  else .isFalse fun ⟨k, hk⟩ =>
     h (by omega)
 ```
 
@@ -274,12 +261,11 @@ instance (n m : Nat) : Decidable (n ∣ m) :=
 tag := "instance-reduction"
 %%%
 
-```
--- [可运行] 把自定义谓词归约到 Nat 等式判定
+```anchor decidableIsEven
 def IsEven (n : Nat) : Prop := n % 2 = 0
 
 instance (n : Nat) : Decidable (IsEven n) :=
-  inferInstanceAs (Decidable (n % 2 = 0))  -- ❶ 展开定义，复用 DecidableEq Nat
+  inferInstanceAs (Decidable (n % 2 = 0))
 ```
 
 - *❶* `inferInstanceAs` 告诉 typeclass search `IsEven n` 就是 `n % 2 = 0`。
@@ -293,11 +279,10 @@ tag := "instance-logical-combinators"
 在两侧可判定时自动可判定。对有限量词 `∀ x : α, P x` 和 `∃ x : α, P x`，
 需要 `α` 是 `Fintype` 且 `P` 对每个 `x` 可判定：
 
-```
--- [可运行] 组合实例自动推导
+```anchor decidableComposite
 example : Decidable (3 < 5 ∧ 7 ≠ 8) := inferInstance
 example : Decidable (∀ i : Fin 5, i.val < 10) := inferInstance
-example : Decidable (∃ i : Fin 5, i.val = 3)  := inferInstance
+example : Decidable (∃ i : Fin 5, i.val = 3) := inferInstance
 ```
 
 # 13.6 与其他 tactic 的对比
@@ -305,17 +290,14 @@ example : Decidable (∃ i : Fin 5, i.val = 3)  := inferInstance
 tag := "comparison-with-other-tactics"
 %%%
 
-```
--- [可运行] decide vs omega：线性算术优先 omega
-example : 100 < 200 := by omega   -- ❶ 专用 decision procedure，亚毫秒
-example : 100 < 200 := by decide  -- ❷ 也能做但没利用算术结构
+```anchor decideTacticComparison
+example : 100 < 200 := by omega
+example : 100 < 200 := by decide
 
--- [可运行] decide vs norm_num：大数值优先 norm_num
--- example : Nat.Prime 104729 := by norm_num      -- ❸ meta 层素性测试 + 证书
--- example : (2 : ℤ) ^ 10 = 1024 := by norm_num  -- ❹ meta 层幂运算
+example : Nat.Prime 104729 := by norm_num
+example : (2 : ℤ) ^ 10 = 1024 := by norm_num
 
--- [可运行] decide vs simp：含变量只能 simp
-example (n : Nat) : n + 0 = n := by simp   -- ❺ 重写 Nat.add_zero
+example (n : Nat) : n + 0 = n := by simp
 -- example (n : Nat) : n + 0 = n := by decide  -- ✗ n 不是字面量
 ```
 
@@ -342,13 +324,10 @@ tag := "practical-patterns-debugging"
 tag := "pattern-finite-case-verification"
 %%%
 
-```
--- [可运行] 小规模 → decide，大规模 → native_decide
+```anchor decideFiniteVerification
 example : ∀ a b : Fin 3, a + b = b + a := by decide
-  -- ▸ Fin 3 → 9 种组合，内核轻松穷举
 
 example : ∀ a b : Fin 20, a + b = b + a := by native_decide
-  -- ▸ Fin 20 → 400 种组合，编译执行更稳妥
 ```
 
 ## 模式 2：`interval_cases` + decide 联用
@@ -356,11 +335,10 @@ example : ∀ a b : Fin 20, a + b = b + a := by native_decide
 tag := "pattern-interval-cases"
 %%%
 
-```
--- [可运行] 先拆分有限范围，再逐个 decide
--- example (h : n < 3) : n * n < 10 := by
---   interval_cases n    -- ▸ 拆为 n=0, n=1, n=2 三个子目标
---   all_goals decide    -- ▸ 每个子目标都是具体数值，decide 收尾
+```anchor intervalCasesDecide
+example (n : ℕ) (h : n < 3) : n * n < 10 := by
+  interval_cases n
+  all_goals decide
 ```
 
 ## 模式 3：在 have 中建立局部事实
@@ -368,11 +346,10 @@ tag := "pattern-interval-cases"
 tag := "pattern-have-local-facts"
 %%%
 
-```
--- [可运行] decide 作为局部引理工厂
+```anchor decideLocalLemma
 example : True := by
-  -- have h₁ : Nat.Prime 7 := by decide       -- ▸ 建立局部事实
-  have h₂ : 7 ∈ [2, 3, 5, 7] := by decide   -- ▸ 建立局部事实
+  have h₁ : Nat.Prime 7 := by decide
+  have h₂ : 7 ∈ [2, 3, 5, 7] := by decide
   trivial
 ```
 

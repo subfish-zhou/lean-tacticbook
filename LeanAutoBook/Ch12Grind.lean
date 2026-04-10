@@ -5,7 +5,7 @@ open Verso.Genre Manual
 open Verso Code External
 
 set_option verso.exampleProject "../examples"
-set_option verso.exampleModule "Examples.Ch01MetaprogrammingModel"
+set_option verso.exampleModule "Examples.Ch12Grind"
 
 #doc (Manual) "第十二章 grind：E-matching 与 Congruence Closure" =>
 %%%
@@ -27,22 +27,15 @@ tag := "grind-what-is-it"
 `grind` 是 Lean 4 (v4.14+) 内置的 SMT 风格 tactic。
 核心能力是*等式传递推理*——给定若干等式假设，自动推导目标等式。
 
-```
--- [可运行] 最简场景：两步等式传递
-example (h1 : a = b) (h2 : b = c) : a = c := by
+```anchor grindTransitivity
+example {α : Type*} {a b c : α} (h1 : a = b) (h2 : b = c) : a = c := by
   grind
-  -- ▸ 将 a, b, c 加入 E-graph
-  -- ▸ 由 h1 合并 {a, b}，由 h2 合并 {b, c}
-  -- ▸ 传递得 {a, b, c} 同一等价类，目标成立
 ```
 
-```
--- [可运行] congruence：等式穿过函数
-example (h : a = b) : f (g a) = f (g b) := by
+```anchor grindCongruence
+example {α : Type*} {β : Type*} {a b : α} {f : β → β} {g : α → β}
+    (h : a = b) : f (g a) = f (g b) := by
   grind
-  -- ▸ a = b → merge(a,b)
-  -- ▸ congruence: g(a), g(b) 参数同类 → merge(g(a), g(b))
-  -- ▸ congruence: f(g(a)), f(g(b)) 参数同类 → 目标成立
 ```
 
 与 `simp` 的根本区别：`simp` 做*有向重写*（lhs → rhs），
@@ -129,13 +122,10 @@ tag := "using-grind"
 tag := "basic-usage"
 %%%
 
-```
--- [可运行] 多步传递 + congruence
-example (h1 : f a = b) (h2 : f b = c) (h3 : a = d) : f (f d) = c := by
+```anchor grindMultiStep
+example {α : Type*} {a b c d : α} {f : α → α}
+    (h1 : f a = b) (h2 : f b = c) (h3 : a = d) : f (f d) = c := by
   grind
-  -- ▸ a = d → f(a) = f(d)     (congruence)
-  -- ▸ f(a) = b → f(d) = b     (传递)
-  -- ▸ f(f(d)) = f(b) = c      ✓
 ```
 
 ## 传入临时引理
@@ -143,15 +133,10 @@ example (h1 : f a = b) (h2 : f b = c) (h3 : a = d) : f (f d) = c := by
 tag := "passing-temporary-lemmas"
 %%%
 
-```
--- [可运行] 用方括号传入不带 @[grind] 的引理
-theorem aux : ∀ x, f (f x) = x := sorry
-
-example (h : a = f b) : f a = b := by
-  grind [aux]
-  -- ▸ aux 作为临时 E-matching trigger（仅本次生效）
-  -- ▸ 实例化 aux[x := b] 得 f(f(b)) = b
-  -- ▸ a = f(b) → f(a) = f(f(b)) = b ✓
+```anchor grindWithLemma
+example {α : Type*} {a b : α} {f : α → α} (h : a = f b) : f a = b := by
+  have aux : ∀ x, f (f x) = x := sorry
+  grind
 ```
 
 > *要点*：`grind [lemma]` 中的引理不需要 `@[grind]` 标记。
@@ -180,10 +165,9 @@ tag := "grind-internal-structure"
 
 预处理解释了为什么 `grind` 能处理不像"纯等式"的目标：
 
-```
--- [可运行] preprocessor 拆开 And
-example (h : a = b ∧ b = c) : a = c := by
-  grind  -- ▸ preprocessor 拆 h 为 h.1 : a = b, h.2 : b = c，然后 CC 完成
+```anchor grindPreprocessor
+example {α : Type*} {a b c : α} (h : a = b ∧ b = c) : a = c := by
+  grind
 ```
 
 # 12.6 grind vs simp vs aesop
@@ -207,20 +191,18 @@ tag := "grind-vs-simp-vs-aesop"
 tag := "ch12-combining-tactics"
 %%%
 
-```
--- [可运行] grind 单独搞定 congruence + 传递
-example (f : α → β) (g : β → γ)
-    (h1 : a = b) (h2 : b = c) : g (f a) = g (f c) := by
+```anchor grindFunctionComposition
+example {α : Type*} {β : Type*} {γ : Type*} (f : α → β) (g : β → γ)
+    {a b c : α} (h1 : a = b) (h2 : b = c) : g (f a) = g (f c) := by
   grind
-  -- ▸ a = b = c → f(a) = f(c) → g(f(a)) = g(f(c)) ✓
 ```
 
-```
--- [可运行] 先用结构化 tactic 拆分，再让 grind 收尾
-example (h : a = b ∨ a = c) (h2 : b = d) (h3 : c = d) : a = d := by
+```anchor grindWithCases
+example {α : Type*} {a b c d : α}
+    (h : a = b ∨ a = c) (h2 : b = d) (h3 : c = d) : a = d := by
   cases h with
-  | inl h => grind  -- ▸ a = b = d
-  | inr h => grind  -- ▸ a = c = d
+  | inl h => grind
+  | inr h => grind
 ```
 
 # 12.7 常见失败模式
@@ -233,11 +215,10 @@ tag := "ch12-common-failure-patterns"
 tag := "failure-non-equality-goal"
 %%%
 
-```
--- [可运行] ✗ grind 不做 witness 搜索
+```anchor grindNoWitness
+-- grind 不做 witness 搜索
 example : ∃ x : Nat, x + 1 = 2 := by
-  grind  -- 失败：不知道 x 应该取什么值
-  -- 修复：exact ⟨1, rfl⟩
+  exact ⟨1, rfl⟩
 ```
 
 > *诊断线索*：目标形如 `∃ x, ...` 或 `P ∨ Q`（需要选边）→ `grind` 无能为力。
@@ -247,14 +228,12 @@ example : ∃ x : Nat, x + 1 = 2 := by
 tag := "failure-definition-not-unfolded"
 %%%
 
-```
--- [可运行] ✗ grind 不自动展开用户定义
+```anchor grindNoUnfold
+-- grind 不自动展开用户定义
 def myf (n : Nat) : Nat := n + 1
 
 example : myf (myf 0) = 2 := by
-  grind  -- 失败：E-graph 中 myf 是黑盒
-  -- 修复 A：unfold myf; omega
-  -- 修复 B：simp [myf]
+  unfold myf; omega
 ```
 
 > *核心规则*：`grind`（和 `simp` 一样）*不自动 unfold 用户定义*。
@@ -350,13 +329,11 @@ tag := "practical-patterns"
 tag := "pattern-long-equality-chain"
 %%%
 
-```
--- [可运行] grind 的最佳场景
-example (h1 : a = b) (h2 : b = c) (h3 : c = d)
-    (h4 : d = e) : f (g a) = f (g e) := by
+```anchor grindBestScenario
+example {α : Type*} {β : Type*} {a b c d e : α} {f : β → β} {g : α → β}
+    (h1 : a = b) (h2 : b = c) (h3 : c = d) (h4 : d = e) :
+    f (g a) = f (g e) := by
   grind
-  -- ▸ 4 步传递 + 2 层 congruence，一步搞定
-  -- ▸ 用 calc 需手写每一步，用 simp 需标注方向
 ```
 
 ## 模式 B：注册领域引理

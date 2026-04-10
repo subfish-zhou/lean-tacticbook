@@ -30,20 +30,16 @@ tag := "field-simp-what-it-solves"
 
 `field_simp` 证明含除法/分式的等式（或化简含分式的目标）：
 
-```
--- [可运行] 三种典型场景
+```anchor fieldSimpBasic
 example (x : ℝ) (hx : x ≠ 0) : 1 / x * x = 1 := by field_simp
-  -- ▸ 消除分母，直接关闭目标
 
 example (a b : ℝ) (ha : a ≠ 0) (hb : b ≠ 0) :
     1/a + 1/b = (a + b) / (a * b) := by
   field_simp
   ring
-  -- ▸ field_simp 消分母后留下多项式等式，ring 收尾
 
 example (x : ℝ) (hx : x ≠ 0) : (x ^ 2 - 1) / x = x - 1 / x := by
-  field_simp        -- ❶ 消分母：两侧乘以 x
-  ring              -- ❷ 多项式等式：x² - 1 = x² - 1
+  field_simp
 ```
 
 - *❶* `field_simp` 把含 `/x` 的等式化为不含除法的等式。
@@ -109,23 +105,18 @@ tag := "field-simp-nonzero-sources"
 
 `field_simp` 在消分母前必须确认分母非零。它从四类来源自动收集：
 
-```
--- [可运行] 来源 1：直接假设
+```anchor fieldSimpNonzeroSources
 example (x : ℝ) (hx : x ≠ 0) : 1 / x * x = 1 := by field_simp
-  -- ▸ hx 直接提供 x ≠ 0
 
--- [可运行] 来源 2：由 0 < x 推导 x ≠ 0
 example (x : ℝ) (hx : 0 < x) : 1 / x + 1 = (x + 1) / x := by
-  field_simp; ring   -- ❶ 从 hx : 0 < x 自动推出 x ≠ 0
+  field_simp; ring
 
--- [可运行] 来源 3：数值由 norm_num 判定
 example (x : ℝ) : x / 2 + x / 3 = 5 * x / 6 := by
-  field_simp; ring   -- ❷ (2 : ℝ) ≠ 0 和 (3 : ℝ) ≠ 0 自动判定
+  field_simp; ring
 
--- [可运行] 来源 4：显式传入复合表达式的非零性
 example (x y : ℝ) (h : x + y ≠ 0) :
     1 / (x + y) * (x + y) = 1 := by
-  field_simp [h]     -- ❸ 复合表达式需要显式传入
+  field_simp [h]
 ```
 
 - *❶* `field_simp` 内部从 `0 < x`、`x < 0` 等推出 `x ≠ 0`。
@@ -144,12 +135,10 @@ tag := "field-simp-then-ring"
 
 最常见的模式——`field_simp` 消分母，`ring` 处理多项式等式：
 
-```
--- [可运行]
+```anchor fieldSimpThenRing
 example (a b : ℝ) (ha : a ≠ 0) (hb : b ≠ 0) :
     1/a - 1/b = (b - a) / (a * b) := by
-  field_simp          -- ⊢ b - a = b - a（或等价的多项式等式）
-  ring
+  field_simp
 ```
 
 ## 情况 2：`field_simp` 直接关闭
@@ -159,10 +148,9 @@ tag := "field-simp-closes-directly"
 
 有时消分母后目标直接成立，不需要 `ring`：
 
-```
--- [可运行]
+```anchor fieldSimpDirect
 example (x : ℝ) (hx : x ≠ 0) : x / x = 1 := by
-  field_simp           -- ▸ 直接关闭，不要再写 ring
+  field_simp
 ```
 
 *注意*：如果 `field_simp` 已经关闭目标，再写 `ring` 会报 `no goals`。
@@ -173,10 +161,9 @@ example (x : ℝ) (hx : x ≠ 0) : x / x = 1 := by
 tag := "field-simp-supplement-nonzero"
 %%%
 
-```
--- [可运行]
+```anchor fieldSimpSupplementary
 example (a : ℝ) (ha : a ≠ 0) : (a + 1/a) ^ 2 = a ^ 2 + 2 + 1/a ^ 2 := by
-  have ha2 : a ^ 2 ≠ 0 := pow_ne_zero 2 ha   -- ❶ 手动补充
+  have ha2 : a ^ 2 ≠ 0 := pow_ne_zero 2 ha
   field_simp
   ring
 ```
@@ -294,11 +281,10 @@ tag := "field-simp-collaboration"
 tag := "ch17-field-simp-plus-ring"
 %%%
 
-```
--- [可运行] 三个分式通分
+```anchor fieldSimpThreeFractions
 example (a b c : ℝ) (ha : a ≠ 0) (hb : b ≠ 0) (hc : c ≠ 0) :
     1/a + 1/b + 1/c = (b*c + a*c + a*b) / (a*b*c) := by
-  field_simp; ring
+  field_simp
 ```
 
 ## 模式 2：不等式用 rw + 消分母引理
@@ -306,15 +292,13 @@ example (a b c : ℝ) (ha : a ≠ 0) (hb : b ≠ 0) (hc : c ≠ 0) :
 tag := "field-simp-inequality-rw"
 %%%
 
-```
--- [可运行] 对不等式，rw [div_lt_one h] 比 field_simp 更精确
+```anchor fieldSimpInequalities
 example (x : ℝ) (hx : 1 < x) : 1 / x < 1 := by
-  rw [div_lt_one (by linarith : (0 : ℝ) < x)]   -- ❶ 手动消分母
+  rw [div_lt_one (by linarith : (0 : ℝ) < x)]
   exact hx
 
--- [可运行] positivity 提供分母为正的侧条件
 example (x : ℝ) (hx : 0 < x) : x / (x ^ 2 + 1) ≤ 1 := by
-  rw [div_le_one (by positivity : (0 : ℝ) < x ^ 2 + 1)]  -- ❷
+  rw [div_le_one (by positivity : (0 : ℝ) < x ^ 2 + 1)]
   nlinarith [sq_nonneg (x - 1)]
 ```
 
@@ -326,12 +310,10 @@ example (x : ℝ) (hx : 0 < x) : x / (x ^ 2 + 1) ≤ 1 := by
 tag := "field-simp-push-cast"
 %%%
 
-```
--- [可运行] 类型转换 + 分式化简
+```anchor fieldSimpCast
 example (n : ℕ) (hn : (n : ℝ) ≠ 0) :
     (↑(n + 1) : ℝ) / ↑n = 1 + 1 / ↑n := by
-  push_cast; field_simp [hn]; ring
-  -- push_cast 展开 ↑(n+1) 为 ↑n + 1，field_simp 消分母，ring 收尾
+  push_cast; field_simp [hn]
 ```
 
 # 17.7 调试技巧
@@ -363,11 +345,10 @@ tag := "field-simp-debug-infoview"
 tag := "field-simp-debug-explicit-nonzero"
 %%%
 
-```
--- [可运行] field_simp [h] 传入复合表达式的非零性
+```anchor fieldSimpExplicitHyp
 example (a b : ℝ) (ha : a ≠ 0) (hb : b ≠ 0) (hab : a + b ≠ 0) :
     1 / (a + b) + 1 / a = (2 * a + b) / (a * (a + b)) := by
-  field_simp [hab]; ring   -- ❶ hab 必须显式传入
+  field_simp [hab]; ring
 ```
 
 - *❶* `field_simp` 无法自动推导 `a + b ≠ 0`，用 `[hab]` 显式提供。

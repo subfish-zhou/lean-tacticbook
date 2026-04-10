@@ -5,7 +5,7 @@ open Verso.Genre Manual
 open Verso Code External
 
 set_option verso.exampleProject "../examples"
-set_option verso.exampleModule "Examples.Ch01MetaprogrammingModel"
+set_option verso.exampleModule "Examples.Ch05TypeclassSynthesis"
 
 #doc (Manual) "第五章 Type Class Synthesis" =>
 %%%
@@ -136,14 +136,14 @@ tag := "instance-priority"
 
 每个实例有一个优先级数值（`@[instance N]`），N 越大越优先，默认 1000。
 
-```
--- [可运行]
-@[instance 2000]   -- 高优先级，最先尝试
-instance : ToString MyType where
+```anchor instancePriority
+inductive MyType where
+  | mk
+
+instance (priority := 2000) myTypeToStringHigh : ToString MyType where
   toString _ := "MyType(high)"
 
-@[instance 100]    -- 低优先级，最后尝试
-instance : ToString MyType where
+instance (priority := 100) myTypeToStringLow : ToString MyType where
   toString _ := "MyType(low)"
 ```
 
@@ -302,8 +302,13 @@ tag := "temporary-local-instance"
 tag := "user-side-control"
 %%%
 
-```
--- [可运行]
+```anchor synthInstanceMaxHeartbeats
+structure MyComplexType where
+  val : Nat
+
+instance : Add MyComplexType where
+  add a b := ⟨a.val + b.val⟩
+
 set_option synthInstance.maxHeartbeats 40000 in
 example : Add (MyComplexType × MyComplexType) := inferInstance
 ```
@@ -322,8 +327,7 @@ tag := "failure-no-instance-found"
 
 常见原因：忘记定义实例、没有 import 实例所在模块、类型参数含有未解决的 metavariable。
 
-```
--- [可运行]
+```anchor noInstanceFound
 structure Point where
   x : Nat
   y : Nat
@@ -356,8 +360,7 @@ class D (α : Type) extends B α, C α
 
 *诊断*：`set_option trace.Meta.synthInstance true` 查看完整搜索过程。
 
-```
--- [可运行]
+```anchor traceSynthInstance
 set_option trace.Meta.synthInstance true in
 #check (inferInstance : Add Nat)
 ```

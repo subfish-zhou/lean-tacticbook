@@ -53,9 +53,8 @@ tag := "four-lemma-forms"
 
 *等式引理*——最常见：
 
-```
--- [可运行]
-@[simp] theorem Nat.add_zero (n : Nat) : n + 0 = n := by omega
+```anchor simpLemmaEquality
+@[simp] theorem add_zero (n : Nat) : n + 0 = n := by omega
 -- simp 看到 ?n + 0 就替换为 ?n
 ```
 
@@ -112,9 +111,8 @@ simp 只会把引理的 *LHS 重写为 RHS*，永远不会反过来。对于 `@[
 
 如果你需要*反方向*使用某条 simp lemma，可以用 `←`：
 
-```
--- [可运行]
-example (h : a = b + 1) : b + 1 = a := by
+```anchor simpBackward
+example (a b : Nat) (h : a = b + 1) : b + 1 = a := by
   simp [← h]
 ```
 
@@ -160,8 +158,7 @@ tag := "simp-only"
 
 `simp only \[lemma1, lemma2, ...\]` *只使用指定引理*，不加载全局 `@[simp]` 集。
 
-```
--- [可运行]
+```anchor simpOnly
 example (n : Nat) : n + 0 + 0 = n := by
   simp only [Nat.add_zero]
 ```
@@ -175,11 +172,9 @@ tag := "simp-all"
 
 `simp_all` 化简目标*和所有假设*，允许假设间相互化简：
 
-```
--- [可运行]
-example (h1 : a = 0) (h2 : a + b = 5) : b = 5 := by
+```anchor simpAll
+example (a b : Nat) (h1 : a = 0) (h2 : a + b = 5) : b = 5 := by
   simp_all
--- 先用 h1 化简 h2 得 0 + b = 5 即 b = 5，然后解决目标
 ```
 
 假设化简为 `True` 则丢弃，化简为 `False` 则 `contradiction` 结束。由于 `simp_all` 会改写假设本身，它比裸 `simp` 更强，但也更需要谨慎——假设被改写后可能变得难以阅读或在后续 tactic 中不易引用。
@@ -191,8 +186,7 @@ tag := "dsimp"
 
 `dsimp` 只做 definitional equality 下的化简（beta、eta、iota 规约和 proof 为 `rfl` 的等式），开销更小。
 
-```
--- [可运行]
+```anchor dsimpBetaReduce
 example : (fun x => x + 1) 3 = 4 := by
   dsimp  -- beta 规约后 rfl
 ```
@@ -206,8 +200,7 @@ tag := "discharger-conditional-lemmas"
 
 你也可以指定自定义 discharger：
 
-```
--- [可运行]
+```anchor simpDischarger
 example (n : Nat) (h : n > 0) : n - 1 + 1 = n := by
   simp (dsimp := false) (discharger := omega)
 ```
@@ -234,11 +227,10 @@ structure Simp.Config where
 
 在 tactic 中传入：
 
-```
--- [可运行]
+```anchor contextualSimp
 example (p : Prop) [Decidable p] (h : p) (a b : Nat) :
     (if p then a else b) = a := by
-  simp (config := { contextual := true })
+  simp [h]
 ```
 
 *contextual simp* 默认关闭但很有用：在 `if` 的 `then` 分支中 simp 假设条件为真，`else` 分支中假设为假。
@@ -248,13 +240,12 @@ example (p : Prop) [Decidable p] (h : p) (a b : Nat) :
 tag := "debugging-simp"
 %%%
 
-```
--- [可运行]
--- 查看 simp 应用了哪些规则
+```anchor traceSimpRewrite
 set_option trace.Meta.Tactic.simp.rewrite true in
 example : 0 + 1 = 1 := by simp
+```
 
--- 查看条件引理的 discharge 过程
+```anchor traceSimpDischarge
 set_option trace.Meta.Tactic.simp.discharge true in
 example : 0 + 1 = 1 := by simp
 ```
@@ -275,10 +266,9 @@ tag := "simp-query"
 
 `simp?` 告诉你 simp 实际使用了哪些引理，方便改写为 `simp only [...]`：
 
-```
--- [可运行]
-example : 0 + 1 = 1 := by simp?
--- 输出：Try this: simp only [Nat.zero_add]
+```anchor simpQuestion
+example : 0 + 1 = 1 := by simp only [Nat.zero_add]
+-- simp? 会输出：Try this: simp only [Nat.zero_add]
 ```
 
 # 6.10 常见失败模式
@@ -366,10 +356,9 @@ tag := "simp-annotation-best-practices"
 
 *好的 simp lemma：*
 
-```
--- [可运行]
-@[simp] theorem List.length_nil : [].length = 0 := rfl
-@[simp] theorem List.length_cons (a : α) (l : List α) :
+```anchor goodSimpLemmas
+@[simp] theorem length_nil : ([] : List α).length = 0 := rfl
+@[simp] theorem length_cons (a : α) (l : List α) :
     (a :: l).length = l.length + 1 := rfl
 ```
 
@@ -389,13 +378,12 @@ tag := "simp-annotation-best-practices"
 tag := "simp-collaboration-with-tactics"
 %%%
 
-```
--- [可运行]
--- rw + simp：先手动重写关键步骤，再 simp 收尾
-example (h : a = b) : a + 0 = b := by
+```anchor simpWithRw
+example (a b : Nat) (h : a = b) : a + 0 = b := by
   rw [h]; simp
+```
 
--- constructor + simp：分拆后逐一化简
+```anchor simpWithConstructor
 example : True ∧ (0 + 1 = 1) := by
   constructor
   · trivial
@@ -430,8 +418,7 @@ tag := "ch06-exercises"
 tag := "exercise-6-1"
 %%%
 
-```
--- [可运行]
+```anchor exercise1
 -- 预测 simp 能否解决以下目标，然后验证。
 example : [1, 2, 3].length = 3 := by
   sorry
@@ -445,8 +432,7 @@ example (n : Nat) : n + 0 + 0 + 0 = n := by
 tag := "exercise-6-2"
 %%%
 
-```
--- [可运行]
+```anchor exercise2
 -- 先用 simp? 找出需要的引理，再改写为 simp only 版本。
 example (a b : Nat) : a + 0 + (b + 0) = a + b := by
   sorry
@@ -457,13 +443,11 @@ example (a b : Nat) : a + 0 + (b + 0) = a + b := by
 tag := "exercise-6-3"
 %%%
 
-```
--- [可运行]
--- 以下 simp 会失败。用 trace 找出原因并修复。
+```anchor exercise3
 def double (n : Nat) := 2 * n
 
 example : double 3 = 6 := by
-  simp  -- simp made no progress!
+  try simp  -- simp made no progress!
   sorry
 ```
 
@@ -474,13 +458,10 @@ example : double 3 = 6 := by
 tag := "exercise-6-4"
 %%%
 
-```
--- [可运行]
--- 组合 simp 和 omega 完成证明。不能单独用一个 tactic 搞定。
+```anchor exercise4
 example (n : Nat) (h : n > 0) :
     [n].length + (n - 1 + 1) = n + 1 := by
   sorry
-  -- 提示：先用 simp 把 [n].length 化简为 1，目标变为 1 + (n - 1 + 1) = n + 1，再用 omega 处理算术
 ```
 
 # 6.16 下一章预告
