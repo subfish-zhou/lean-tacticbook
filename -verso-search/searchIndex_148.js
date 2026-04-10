@@ -1,0 +1,1 @@
+window.docContents[148].resolve({"/Ch10NormNum/#core-architecture-plugin-registry":{"contents":"norm_num 的设计是一个可扩展的插件注册表。\n每个插件负责处理以特定 head symbol 开头的表达式。\n\n\n\n\n\n\n\n","context":"Lean 4 自动化内幕\u0009第十章  norm_num ：数值计算框架","header":"11.2. 核心架构：插件注册表","id":"/Ch10NormNum/#core-architecture-plugin-registry"}});

@@ -1,0 +1,1 @@
+window.docContents[147].resolve({"/Ch14Positivity/#positivity-failure-modes":{"contents":"\n\n\n\n\n\n\n\n\n\n","context":"Lean 4 自动化内幕\u0009第十四章 positivity：符号非负性推理","header":"15.6. 14.6 positivity 的六种失败模式","id":"/Ch14Positivity/#positivity-failure-modes"}});

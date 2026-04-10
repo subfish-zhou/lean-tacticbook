@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      (function(){
+  const {protocol:proto, host:hostName, pathname:path, search:srch, hash:hsh} = window.location;
+  if (!(path.endsWith("/") || path.endsWith(".html"))) {
+    window.location.replace(`${proto}//${hostName}${path}/${srch}${hsh}`);
+  }
+})()</script>
+    <base href="./../"><meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <title>第二十一章 性能工程</title><link rel="stylesheet" href="book.css">
+    <link rel="stylesheet" href="verso-vars.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js" integrity="sha384-zbcZAIxlvJtNE3Dp5nxLXdXtXyxwOdnILY1TDPVmKFhl4r4nSUG1r8bcFXGVa4Te" crossorigin="anonymous"></script>
+    <script src="-verso-search/elasticlunr.min.js"></script>
+    <script src="-verso-search/fuzzysort.min.js"></script>
+    <script src="-verso-search/searchIndex.js"></script>
+    <script type="module" src="-verso-search/search-init.js"></script>
+    <link rel="stylesheet" href="-verso-search/search-box.css">
+    <link rel="stylesheet" href="-verso-search/search-highlight.css">
+    <link rel="stylesheet" href="-verso-search/domain-display.css">
+    <script src="-verso-data/katex/katex.js"></script>
+    <script src="-verso-data/katex/math.js"></script>
+    <script src="-verso-data/popper.min.js"></script>
+    <script src="-verso-data/tippy-bundle.umd.min.js"></script>
+    <link rel="stylesheet" href="-verso-data/tippy-border.css">
+    <link rel="stylesheet" href="-verso-data/katex/katex.css">
+    <style>
+
+.hl.lean {
+  white-space: pre;
+  font-weight: normal;
+  font-style: normal;
+  font-size: inherit;
+}
+
+.hl.lean .keyword {
+  color: var(--verso-code-keyword-color,);
+  font-weight: var(--verso-code-keyword-weight, bold);
+  font-style: var(--verso-code-keyword-style, normal);
+  font-family: var(--verso-code-keyword-font-family,);
+}
+
+.hl.lean .const {
+  color: var(--verso-code-const-color,);
+  font-weight: var(--verso-code-const-weight, normal);
+  font-style: var(--verso-code-const-style, normal);
+  font-family: var(--verso-code-const-font-family,);
+}
+
+.hl.lean .var {
+  color: var(--verso-code-var-color,);
+  font-weight: var(--verso-code-var-weight, normal);
+  font-style: var(--verso-code-var-style, italic);
+  font-family: var(--verso-code-var-font-family,);
+
+  position: relative;
+}
+
+.hl.lean .literal, .hl.lean .unknown {
+  color: var(--verso-code-color,);
+  font-weight: normal;
+  font-style: normal;
+  font-family: var(--verso-code-font-family,);
+}
+
+.hover-container {
+  width: 0;
+  height: 0;
+  position: relative;
+  display: inline;
+}
+
+.hl.lean a {
+  color: inherit;
+  text-decoration: currentcolor underline dotted;
+}
+
+.hl.lean a:hover {
+  text-decoration: currentcolor underline solid;
+}
+
+.hl.lean .hover-info {
+  white-space: normal;
+}
+
+.hl.lean .token .hover-info {
+  display: none;
+  position: absolute;
+  background-color: #e5e5e5;
+  border: 1px solid black;
+  padding: 0.5rem;
+  z-index: 300;
+}
+
+.hl.lean .hover-info.messages {
+  max-height: 10rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  padding: 0 0.5rem 0 0;
+  display: block;
+}
+
+.hl.lean .hover-info code {
+  white-space: pre-wrap;
+  background: none;
+  color: black;
+}
+
+.hl.lean .hover-info.messages > code {
+  padding: 0.5rem;
+  display: block;
+  width: fit-content;
+}
+
+.hl.lean .hover-info.messages > code:only-child {
+  margin: 0;
+}
+
+.hl.lean .hover-info.messages > code {
+  margin: 0.1rem;
+}
+
+.hl.lean .hover-info.messages > code:not(:first-child) {
+  margin-top: 0rem;
+}
+
+.hl.lean {
+}
+
+.hl.lean.block {
+  display: block;
+}
+
+.hl.lean.inline {
+  display: inline;
+  white-space: pre-wrap;
+}
+
+.hl.lean * {
+}
+
+.hl.lean .token {
+  transition: all 0.25s; /* Slight fade for highlights */
+}
+
+@media (hover: hover) {
+  .hl.lean .token.binding-hl, .hl.lean .literal.string:hover, .hl.lean .token.typed:hover {
+    background-color: #eee;
+    border-radius: 2px;
+    transition: none;
+  }
+}
+
+
+.hl.lean .has-info .token:not(.tactic-state):not(.tactic-state *), .hl.lean .has-info .inter-text:not(.tactic-state):not(.tactic-state *) {
+  text-decoration-style: wavy;
+  text-decoration-line: underline;
+  text-decoration-thickness: from-font;
+  text-decoration-skip-ink: none;
+}
+
+.hl.lean .has-info .hover-info {
+  display: none;
+  position: absolute;
+  transform: translate(0.25rem, 0.3rem);
+  border: 1px solid black;
+  padding: 0.5rem;
+  z-index: 400;
+  text-align: left;
+}
+
+.hl.lean .has-info.error :not(.tactic-state):not(.tactic-state *){
+  text-decoration-color: red;
+}
+
+@media (hover: hover) {
+  .hl.lean .has-info.error:hover {
+    background-color: #ffb3b3;
+  }
+}
+
+.hl.lean .hover-info.messages > code.error {
+  background-color: #e5e5e5;
+  border-left: 0.2rem solid #ffb3b3;
+}
+
+.tippy-box[data-theme~='error'] .hl.lean .hover-info.messages > code.error {
+  background: none;
+  border: none;
+}
+
+.error .verso-message, .error .verso-message .token, .error .verso-message label {
+  color: var(--verso-error-color);
+}
+
+.error .verso-message .case-label:has(input[type="checkbox"])::before {
+  background-color: var(--verso-error-color) !important;
+}
+
+.hl.lean .has-info.warning :not(.tactic-state):not(.tactic-state *) {
+  text-decoration-color: var(--verso-warning-indicator-color);
+}
+
+@media (hover: hover) {
+  .hl.lean .has-info.warning:hover {
+    background-color:var(--verso-warning-color);
+  }
+}
+
+.hl.lean .hover-info.messages > code.warning {
+  background-color: var(--verso-warning-color);
+}
+
+.lean-output {
+  border-left: 0.2em solid transparent;
+  padding: 0 0 0 0.5em;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.lean-output.error {
+  border-color: var(--verso-error-indicator-color);
+}
+
+.lean-output.information {
+  border-color: var(--verso-info-indicator-color);
+}
+
+.lean-output.warning {
+  border-color: var(--verso-warning-indicator-color);
+}
+
+.hl.lean .hover-info.messages > code.error {
+  background-color: #e5e5e5;
+  border-left: 0.2rem solid var(--verso-warning-color);
+}
+
+.tippy-box[data-theme~='warning'] .hl.lean .hover-info.messages > code.warning {
+  background: none;
+  border: none;
+}
+
+
+.hl.lean .has-info.information :not(.tactic-state):not(.tactic-state *) {
+  text-decoration-color: var(--verso-info-indicator-color, blue);
+}
+
+@media (hover: hover) {
+  .hl.lean .has-info.information:hover {
+    background-color: #4777ff;
+  }
+}
+
+
+.hl.lean .hover-info.messages > code.information {
+  background-color: #e5e5e5;
+  border-left: 0.2rem solid #4777ff;
+}
+
+.tippy-box[data-theme~='info'] .hl.lean .hover-info.messages > code.information {
+  background: none;
+  border: none;
+}
+
+.hl.lean div.docstring {
+  font-family: var(--verso-text-font-family, sans-serif);
+  white-space: normal;
+  max-width: calc(min(40rem, 90vw));
+  width: max-content;
+}
+
+.hl.lean div.docstring > :last-child {
+  margin-bottom: 0;
+}
+
+.hl.lean div.docstring > :first-child {
+  margin-top: 0;
+}
+
+.hl.lean .hover-info .sep {
+  display: block;
+  width: auto;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0;
+  height: 1px;
+  border-top: 1px solid #ccc;
+}
+
+.hl.lean code {
+  font-family: var(--verso-code-font-family);
+}
+
+.hl.lean .tactic-state {
+  display: none;
+  position: relative;
+  width: fit-content;
+  border: 1px solid #888888;
+  border-radius: 0.1rem;
+  padding: 0.5rem;
+  font-family: sans-serif;
+  background-color: #ffffff;
+}
+
+.hl.lean.popup .tactic-state {
+  position: static;
+  display: block;
+  width: auto;
+  border: none;
+  padding: 0.5rem;
+  font-family: sans-serif;
+  background-color: #ffffff;
+}
+
+
+.hl.lean .tactic {
+  position: relative;
+  display: inline;
+  vertical-align: top;
+  /* Without these, mobile Safari will start making font sizes inconsistent when its text size adjustment feature is triggered.*/
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.hl.lean .tactic:has(.tactic-toggle:checked) {
+  display: inline-grid;
+  grid-template-columns: 1fr;
+}
+
+.hl.lean .tactic-toggle:checked ~ .tactic-state {
+  display: inline-block;
+  vertical-align: top;
+  grid-row: 2;
+  justify-self: start;
+}
+
+.hl.lean .tactic > label {
+  position: relative;
+  grid-row: 1;
+  display: inline;
+}
+
+@media (hover: hover) {
+  .hl.lean .tactic:has(.tactic-toggle:not(:checked)) > label:hover {
+    background-color: #eeeeee;
+  }
+}
+
+.hl.lean .tactic-toggle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  height: 0;
+  width: 0;
+  z-index: -10;
+}
+
+.hl.lean .tactic > label::after {
+  content: "";
+  border: 1px solid #bbbbbb;
+  /* These need to be em, not rem, to scale with the font */
+  border-radius: 1em;
+  height: 0.25em;
+  vertical-align: middle;
+  width: 0.6em;
+  margin-left: 0.1em;
+  margin-right: 0.1em;
+  display: inline-block;
+  transition: all 0.5s;
+}
+
+/*
+@media (hover: hover) {
+  .hl.lean .tactic > label:hover::after {
+    border: 1px solid #aaaaaa;
+    background-color: #aaaaaa;
+    transition: all 0.5s;
+  }
+}
+*/
+
+.hl.lean .tactic > label:has(+ .tactic-toggle:checked)::after {
+  border: 1px solid #999999;
+  background-color: #999999;
+  transition: all 0.5s;
+}
+
+.hl.lean .tactic-state .goal + .goal {
+  margin-top: 1.5em;
+}
+
+/*
+Some CSS frameworks customize details/summary in ways not compatible with Verso's output.
+*/
+
+.hl.lean details {
+  display: block !important;
+  margin: 0;
+}
+
+.hl.lean details summary {
+  display: list-item !important;
+  margin: 0;
+}
+
+.hl.lean details summary:focus {
+  outline: none;
+  outline-offset: none;
+  color: inherit;
+}
+
+.hl.lean ul > li {
+  margin-bottom: 0;
+}
+
+.hl.lean details summary::marker {
+  display: inline !important;
+}
+
+.hl.lean details > summary:first-of-type {
+  list-style-type: disclosure-closed;
+  list-style-position: inside;
+}
+
+.hl.lean details[open] > summary:first-of-type {
+  list-style-type: disclosure-open;
+}
+
+.hl.lean details summary::before, .hl.lean details summary::after {
+  content: "" !important;
+  background: none;
+  display: none;
+}
+
+.hl.lean .tactic-state summary {
+  /* These need to be em, not rem, to scale with the font */
+  margin-left: -0.5em;
+}
+
+.hl.lean .tactic-state details {
+  /* These need to be em, not rem, to scale with the font */
+  padding-left: 0.5em;
+}
+
+.hl.lean .case-label {
+  display: block;
+  position: relative;
+}
+
+.hl.lean .case-label input[type="checkbox"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  height: 0;
+  width: 0;
+  z-index: -10;
+}
+
+.hl.lean .case-label:has(input[type="checkbox"])::before {
+  display: inline-block;
+  background-color: black;
+  content: ' ';
+  transition: ease 0.2s;
+  margin-right: 0.7em;
+  clip-path: polygon(100% 0, 0 0, 50% 100%);
+  width: 0.6em;
+  height: 0.6em;
+  vertical-align: middle;
+}
+
+.hl.lean .case-label:has(input[type="checkbox"]:not(:checked))::before {
+  transform: rotate(-90deg);
+}
+
+.hl.lean .case-label:has(input[type="checkbox"]) {
+
+}
+
+.hl.lean .case-label:has(input[type="checkbox"]:checked) {
+
+}
+
+
+.hl.lean .labeled-case > :not(:first-child) {
+  max-height: 0px;
+  display: block;
+  overflow: hidden;
+  transition: max-height 0.1s ease-in;
+  /* These need to be em, not rem, to scale with the font */
+  margin-left: 0.5em;
+  margin-top: 0.1em;
+}
+
+.hl.lean .labeled-case:has(.case-label input[type="checkbox"]:checked) > :not(:first-child) {
+  max-height: 100%;
+}
+
+
+.hl.lean .goal-name::before {
+  font-style: normal;
+  content: "case ";
+}
+
+.hl.lean .goal-name {
+  font-style: italic;
+  font-family: var(--verso-code-font-family);
+  color: inherit;
+}
+
+.hl.lean .hypotheses {
+  display: table;
+}
+
+.hl.lean .hypothesis {
+  display: table-row;
+}
+
+.hl.lean .hypothesis > * {
+  display: table-cell;
+}
+
+
+.hl.lean .hypotheses .colon {
+  text-align: center;
+  /* This needs to be em, not rem, to scale with the font */
+  min-width: 1em;
+}
+
+.hl.lean .hypotheses .name {
+  text-align: right;
+}
+
+.hl.lean .hypotheses .name,
+.hl.lean .hypotheses .type,
+.hl.lean .conclusion .type {
+  font-family: var(--verso-code-font-family);
+}
+
+.tippy-box {
+  /* Without these, mobile Safari will start making font sizes inconsistent when its text size adjustment feature is triggered.*/
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.tippy-box[data-theme~='lean'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 1px solid black;
+}
+.tippy-box[data-theme~='lean'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: #e5e5e5;
+}
+.tippy-box[data-theme~='lean'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-bottom-color: #e5e5e5;
+}
+.tippy-box[data-theme~='lean'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: #e5e5e5;
+}
+.tippy-box[data-theme~='lean'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: #e5e5e5;
+}
+
+.tippy-box[data-theme~='message'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: #e5e5e5;
+  border-width: 11px 11px 0;
+}
+.tippy-box[data-theme~='message'][data-placement^='top'] > .tippy-arrow::after {
+  bottom: -11px;
+  border-width: 11px 11px 0;
+}
+.tippy-box[data-theme~='message'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-width: 0 11px 11px;
+}
+.tippy-box[data-theme~='message'][data-placement^='bottom'] > .tippy-arrow::after {
+  top: -11px;
+  border-width: 0 11px 11px;
+}
+.tippy-box[data-theme~='message'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: #e5e5e5;
+  border-width: 11px 0 11px 11px;
+}
+.tippy-box[data-theme~='message'][data-placement^='left'] > .tippy-arrow::after {
+  right: -11px;
+  border-width: 11px 0 11px 11px;
+}
+
+.tippy-box[data-theme~='message'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: #e5e5e5;
+  border-width: 11px 11px 11px 0;
+}
+.tippy-box[data-theme~='message'][data-placement^='right'] > .tippy-arrow::after {
+  left: -11px;
+  border-width: 11px 11px 11px 0;
+}
+
+
+
+.tippy-box[data-theme~='warning'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 3px solid var(--verso-warning-color);
+}
+
+.tippy-box[data-theme~='error'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 3px solid #f7a7af;
+}
+
+.tippy-box[data-theme~='info'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 3px solid #99b3c2;
+}
+
+.tippy-box[data-theme~='tactic'] {
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: white;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-bottom-color: white;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: white;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: white;
+}
+
+.extra-doc-links {
+  list-style-type: none;
+  margin-left: 0;
+  padding: 0;
+}
+
+.extra-doc-links > li {
+  display: inline-block;
+}
+
+.extra-doc-links > li:not(:last-child)::after {
+  content: '|';
+  display: inline-block;
+  margin: 0 0.25em;
+}
+
+.verso-message .trace {
+  display: block;
+}
+
+.verso-message .trace > summary::marker {
+  color: var(--verso-text-color);
+}
+
+.verso-message .trace-children {
+  margin: 0;
+  padding: 0;
+}
+
+.verso-message .trace-children > li {
+  list-style-type: none;
+  margin-left: 1.5em;
+}
+
+.verso-message .trace-children > li:not(:has(.trace)) {
+  margin-left: 0;
+}
+
+.verso-message .trace-class {
+  color: color-mix(in srgb, currentColor 70%, transparent);
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+}
+
+.verso-message .text {
+  white-space: pre-wrap;
+}
+
+</style><script>
+      
+window.onload = () => {
+
+    // Don't show hovers inside of closed tactic states
+    function blockedByTactic(elem) {
+      let parent = elem.parentNode;
+      while (parent && "classList" in parent) {
+        if (parent.classList.contains("tactic")) {
+          const toggle = parent.querySelector("input.tactic-toggle");
+          if (toggle) {
+            return !toggle.checked;
+          }
+        }
+        parent = parent.parentNode;
+      }
+      return false;
+    }
+
+    // Track whether any tippy is visible (O(1) check instead of DOM scan)
+    let visibleTippyCount = 0;
+    function blockedByTippy(elem) {
+      return visibleTippyCount > 0;
+    }
+
+    // Binding highlights via event delegation with cached lookups
+    const bindingCache = new Map(); // context+binding -> [token elements]
+    let highlightedTokens = [];
+    function getBindingTokens(context, binding) {
+      const key = context + "\0" + binding;
+      let tokens = bindingCache.get(key);
+      if (!tokens) {
+        tokens = [];
+        for (const example of document.querySelectorAll(".hl.lean")) {
+          if (example.dataset.leanContext == context) {
+            for (const tok of example.querySelectorAll(".token[data-binding=\"" + CSS.escape(binding) + "\"]")) {
+              tokens.push(tok);
+            }
+          }
+        }
+        bindingCache.set(key, tokens);
+      }
+      return tokens;
+    }
+    for (const container of document.querySelectorAll(".hl.lean")) {
+      container.addEventListener("mouseover", (event) => {
+        const c = event.target.closest(".token");
+        if (!c || !c.dataset.binding || c.dataset.binding === "" || !container.contains(c)) return;
+        if (blockedByTactic(c)) return;
+        const tokens = getBindingTokens(container.dataset.leanContext, c.dataset.binding);
+        for (const tok of tokens) {
+          tok.classList.add("binding-hl");
+        }
+        highlightedTokens = tokens;
+      });
+      container.addEventListener("mouseout", (event) => {
+        const c = event.target.closest(".token");
+        if (!c || !container.contains(c)) return;
+        for (const tok of highlightedTokens) {
+          tok.classList.remove("binding-hl");
+        }
+        highlightedTokens = [];
+      });
+    }
+    /* Render docstrings */
+    if ('undefined' !== typeof marked) {
+        for (const d of document.querySelectorAll("code.docstring, pre.docstring")) {
+            const str = d.innerText;
+            const html = marked.parse(str);
+            const rendered = document.createElement("div");
+            rendered.classList.add("docstring");
+            rendered.innerHTML = html;
+            d.parentNode.replaceChild(rendered, d);
+        }
+    }
+    // Add hovers
+    let docsJson = "-verso-docs.json";
+    fetch(docsJson).then((resp) => resp.json()).then((versoDocData) => {
+
+      function hideParentTooltips(element) {
+        let parent = element.parentElement;
+        while (parent) {
+          const tippyInstance = parent._tippy;
+          if (tippyInstance) {
+            tippyInstance.hide();
+          }
+          parent = parent.parentElement;
+        }
+      }
+
+
+
+      const defaultTippyProps = {
+        /* DEBUG -- remove the space: * /
+        onHide(any) { return false; },
+        trigger: "click",
+        // */
+        /* theme: "lean", */
+        maxWidth: "none",
+        appendTo: () => document.body,
+        interactive: true,
+        delay: [100, null],
+        /* ignoreAttributes: true, */
+        followCursor: 'initial',
+        onShow(inst) {
+          if (inst.reference.className == 'tactic') {
+            const toggle = inst.reference.querySelector("input.tactic-toggle");
+            if (toggle && toggle.checked) {
+              return false;
+            }
+            hideParentTooltips(inst.reference);
+            if (blockedByTippy(inst.reference)) { return false; }
+
+          } else if (inst.reference.querySelector(".hover-info") || "versoHover" in inst.reference.dataset) {
+            if (blockedByTactic(inst.reference)) { return false };
+            if (blockedByTippy(inst.reference)) { return false; }
+          } else { // Nothing to show here!
+            return false;
+          }
+        },
+        onShown(inst) { visibleTippyCount++; },
+        onHidden(inst) { visibleTippyCount = Math.max(0, visibleTippyCount - 1); },
+        content (tgt) {
+          const content = document.createElement("span");
+          if (tgt.className == 'tactic') {
+            const state = tgt.querySelector(".tactic-state").cloneNode(true);
+            state.style.display = "block";
+            content.appendChild(state);
+            content.style.display = "block";
+            content.className = "hl lean popup";
+          } else {
+            content.className = "hl lean";
+            content.style.display = "block";
+            content.style.maxHeight = "300px";
+            content.style.overflowY = "auto";
+            content.style.overflowX = "hidden";
+            const hoverId = tgt.dataset.versoHover;
+            const hoverInfo = tgt.querySelector(".hover-info");
+            if (hoverId) { // Docstrings from the table
+              // TODO stop doing an implicit conversion from string to number here
+              let data = versoDocData[hoverId];
+              if (data) {
+                const info = document.createElement("span");
+                info.className = "hover-info";
+                info.style.display = "block";
+                info.innerHTML = data;
+                content.appendChild(info);
+                /* Render docstrings - TODO server-side */
+                if ('undefined' !== typeof marked) {
+                    for (const d of content.querySelectorAll("code.docstring, pre.docstring")) {
+                        const str = d.innerText;
+                        const html = marked.parse(str);
+                        const rendered = document.createElement("div");
+                        rendered.classList.add("docstring");
+                        rendered.innerHTML = html;
+                        d.parentNode.replaceChild(rendered, d);
+                    }
+                }
+              } else {
+                content.innerHTML = "Failed to load doc ID: " + hoverId;
+              }
+            } else if (hoverInfo) { // The inline info, still used for compiler messages
+              content.appendChild(hoverInfo.cloneNode(true));
+            }
+            const extraLinks = tgt.parentElement.dataset['versoLinks'];
+            if (extraLinks) {
+              try {
+                const extras = JSON.parse(extraLinks);
+                const links = document.createElement('ul');
+                links.className = 'extra-doc-links';
+                extras.forEach((l) => {
+                  const li = document.createElement('li');
+                  li.innerHTML = "<a href=\"" + l['href'] + "\" title=\"" + l.long + "\">" + l.short + "</a>";
+                  links.appendChild(li);
+                });
+                content.appendChild(links);
+              } catch (error) {
+                console.error(error);
+              }
+            }
+          }
+          return content;
+        }
+      };
+
+
+      document.querySelectorAll('.hl.lean .const.token, .hl.lean .keyword.token, .hl.lean .literal.token, .hl.lean .option.token, .hl.lean .var.token, .hl.lean .typed.token, .hl.lean .level-var, .hl.lean .level-const, .hl.lean .level-op, .hl.lean .sort').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'lean');
+      });
+      document.querySelectorAll('.hl.lean .has-info.warning').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'warning message');
+      });
+      document.querySelectorAll('.hl.lean .has-info.information').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'info message');
+      });
+      document.querySelectorAll('.hl.lean .has-info.error').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'error message');
+      });
+      document.querySelectorAll('.hl.lean .tactic').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'tactic');
+      });
+      // Skip tokens inside closed tactics — they interfere with tactic tippys
+      const closedTactics = new Set();
+      document.querySelectorAll('.hl.lean .tactic').forEach(tactic => {
+        const toggle = tactic.querySelector('input.tactic-toggle');
+        if (toggle && !toggle.checked) closedTactics.add(tactic);
+      });
+      function isInsideClosedTactic(el) {
+        const tactic = el.closest('.tactic');
+        return tactic && tactic !== el && closedTactics.has(tactic);
+      }
+
+      const tokenSelector = '.hl.lean .const.token, .hl.lean .keyword.token, .hl.lean .literal.token, .hl.lean .option.token, .hl.lean .var.token, .hl.lean .typed.token, .hl.lean .has-info, .hl.lean .tactic, .hl.lean .level-var, .hl.lean .level-const, .hl.lean .level-op, .hl.lean .sort';
+      tippy(Array.from(document.querySelectorAll(tokenSelector)).filter(el => !isInsideClosedTactic(el)), defaultTippyProps);
+
+      // Create/destroy token tippys when tactic checkbox toggles
+      const tacticTippySelector = '.const.token, .keyword.token, .literal.token, .option.token, .var.token, .typed.token, .has-info, .level-var, .level-const, .level-op, .sort';
+      document.querySelectorAll('.hl.lean .tactic').forEach(tactic => {
+        const toggle = tactic.querySelector('input.tactic-toggle');
+        if (toggle) toggle.addEventListener('change', () => {
+          if (toggle.checked) {
+            closedTactics.delete(tactic);
+            tactic.querySelectorAll('.token').forEach(tok => {
+              if (!tok._tippy && tok.matches(tacticTippySelector)) {
+                tippy(tok, defaultTippyProps);
+              }
+            });
+          } else {
+            closedTactics.add(tactic);
+            tactic.querySelectorAll('.token').forEach(tok => {
+              if (tok._tippy) tok._tippy.destroy();
+            });
+          }
+        });
+      });
+  });
+}
+</script>
+    <script src="-verso-search/search-highlight.js" defer="defer"></script>
+    </head>
+  <body>
+    <header>
+      <div class="header-logo-wrapper"></div>
+      <div class="header-title-wrapper">
+        <a href="" class="header-title"><h1>
+            Lean 4 自动化内幕</h1>
+          </a></div>
+      </header>
+    <label for="toggle-toc" id="toggle-toc-click"><span class="line line1"></span><span class="line line2"></span><span class="line line3"></span></label><div class="with-toc">
+      <div class="toc-backdrop" onclick="document.getElementById('toggle-toc-click')?.click()"></div>
+      <nav id="toc">
+        <input type="checkbox" id="toggle-toc"><div class="first">
+          <a href="" class="toc-title"><h1>
+              Lean 4 自动化内幕</h1>
+            </a><div class="split-tocs">
+            <div class="split-toc book">
+              <div class="title">
+                <label for="--verso-manual-toc-----bookRoot" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-----bookRoot" checked="checked"></label><span class="">Table of Contents</span></div>
+              <table><tr class="numbered"><td class="num">1.</td><td><a href="Ch00Setup/#ch00-setup">第零章 环境与运行约定</a></td></tr><tr class="numbered"><td class="num">2.</td><td><a href="Ch01MetaprogrammingModel/#ch01-metaprogramming-model">第一章 Lean 4 元编程模型</a></td></tr><tr class="numbered"><td class="num">3.</td><td><a href="Ch02Expr/#ch02-expr">第二章 Expr：Lean 4 的内部表示</a></td></tr><tr class="numbered"><td class="num">4.</td><td><a href="Ch03FirstTactic/#ch03-first-tactic">第三章 编写你的第一个 Tactic</a></td></tr><tr class="numbered"><td class="num">5.</td><td><a href="Ch04GoalManagement/#ch04-goal-management">第四章 目标管理</a></td></tr><tr class="numbered"><td class="num">6.</td><td><a href="Ch05TypeclassSynthesis/#ch05-typeclass-synthesis">第五章 Type Class Synthesis</a></td></tr><tr class="numbered"><td class="num">7.</td><td><a href="Ch06Simp/#ch06-simp">第六章 simp：重写引擎</a></td></tr><tr class="numbered"><td class="num">8.</td><td><a href="Ch07Ring/#ch07-ring">第七章 ring 和 <code>ring_nf</code>：代数范式化</a></td></tr><tr class="numbered"><td class="num">9.</td><td><a href="Ch08Omega/#ch08-omega">第八章 omega：Presburger 算术决策过程</a></td></tr><tr class="numbered"><td class="num">10.</td><td><a href="Ch09Linarith/#ch09-linarith">第九章 linarith、nlinarith 与 polyrith</a></td></tr><tr class="numbered"><td class="num">11.</td><td><a href="Ch10NormNum/#ch10-norm-num">第十章 <code>norm_num</code>：数值计算框架</a></td></tr><tr class="numbered"><td class="num">12.</td><td><a href="Ch11Aesop/#ch11-aesop">第十一章 aesop：可配置的搜索引擎</a></td></tr><tr class="numbered"><td class="num">13.</td><td><a href="Ch12Grind/#ch12-grind">第十二章 grind：E-matching 与 Congruence Closure</a></td></tr><tr class="numbered"><td class="num">14.</td><td><a href="Ch13Decide/#ch13-decide">第十三章 decide 与 <code>native_decide</code>：有限计算判定</a></td></tr><tr class="numbered"><td class="num">15.</td><td><a href="Ch14Positivity/#ch14-positivity">第十四章 positivity：符号非负性推理</a></td></tr><tr class="numbered"><td class="num">16.</td><td><a href="Ch15FunProp/#ch15-fun-prop">第十五章 <code>fun_prop</code>：函数性质的自动证明</a></td></tr><tr class="numbered"><td class="num">17.</td><td><a href="Ch16Gcongr/#ch16-gcongr">第十六章 gcongr：广义合同性</a></td></tr><tr class="numbered"><td class="num">18.</td><td><a href="Ch17FieldSimp/#ch17-field-simp">第十七章 <code>field_simp</code>：分式化简</a></td></tr><tr class="numbered"><td class="num">19.</td><td><a href="Ch18LogicTransforms/#ch18-logic-transforms">第十八章 push<em>neg、contrapose、by</em>contra</a></td></tr><tr class="numbered"><td class="num">20.</td><td><a href="Ch19DesignYourOwn/#ch19-design-your-own">第十九章 设计你自己的领域自动化</a></td></tr><tr class="numbered"><td class="num">21.</td><td><a href="Ch20Reflection/#ch20-reflection">第二十章 反射证明模式</a></td></tr><tr class="current numbered"><td class="num">22.</td><td><a href="Ch21Performance/#ch21-performance">第二十一章 性能工程</a></td></tr><tr class="numbered"><td class="num">23.</td><td><a href="Ch22ExternalTools/#ch22-external-tools">第二十二章 对接外部工具</a></td></tr><tr class="numbered"><td class="num">24.</td><td><a href="Ch23Methodology/#ch23-methodology">第二十三章 从证明模式到自动化：方法论</a></td></tr><tr class="numbered"><td class="num">25.</td><td><a href="Ch24TowardsAnalysis/#ch24-towards-analysis">第二十四章 迈向分析自动化</a></td></tr></table></div>
+            <div class="split-toc">
+              <div class="title">
+                <label for="--verso-manual-toc-ch21-performance" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch21-performance" checked="checked"></label><span class="number">22.</span> <span class="current"><a href="Ch21Performance/#ch21-performance">第二十一章 性能工程</a></span></div>
+              <table><tr class="numbered"><td class="num">22.1.</td><td><a href="Ch21Performance/#tier1-user-troubleshooting">第一层：普通用户排障</a></td></tr><tr class="numbered"><td class="num">22.2.</td><td><a href="Ch21Performance/#performance-model">21.1 性能模型：时间花在哪里</a></td></tr><tr class="numbered"><td class="num">22.3.</td><td><a href="Ch21Performance/#heartbeats">21.2 Heartbeats：平台无关的计算量度量</a></td></tr><tr class="numbered"><td class="num">22.4.</td><td><a href="Ch21Performance/#diagnostic-toolbox">21.3 诊断工具箱</a></td></tr><tr class="numbered"><td class="num">22.5.</td><td><a href="Ch21Performance/#optimizing-simp">21.4 优化 simp</a></td></tr><tr class="numbered"><td class="num">22.6.</td><td><a href="Ch21Performance/#tier2-bottleneck-patterns">第二层：常见瓶颈模式</a></td></tr><tr class="numbered"><td class="num">22.7.</td><td><a href="Ch21Performance/#optimizing-unification">21.5 优化 Unification 和 Elaboration</a></td></tr><tr class="numbered"><td class="num">22.8.</td><td><a href="Ch21Performance/#tier3-tactic-authors">第三层：tactic 作者专属</a></td></tr><tr class="numbered"><td class="num">22.9.</td><td><a href="Ch21Performance/#optimizing-metam">21.6 优化 MetaM 端代码</a></td></tr><tr class="numbered"><td class="num">22.10.</td><td><a href="Ch21Performance/#compile-vs-runtime">21.7 编译时间 vs 运行时间</a></td></tr><tr class="numbered"><td class="num">22.11.</td><td><a href="Ch21Performance/#proof-term-size">21.8 证明项大小与增量编译</a></td></tr><tr class="numbered"><td class="num">22.12.</td><td><a href="Ch21Performance/#optimize-slow-proof">21.9 实战：优化一个慢证明</a></td></tr><tr class="numbered"><td class="num">22.13.</td><td><a href="Ch21Performance/#performance-failure-modes">21.10 失败模式汇总</a></td></tr><tr class="numbered"><td class="num">22.14.</td><td><a href="Ch21Performance/#performance-exercises">21.11 练习</a></td></tr><tr class="numbered"><td class="num">22.15.</td><td><a href="Ch21Performance/#performance-summary">21.12 小结</a></td></tr></table></div>
+            </div>
+          </div>
+        <div class="last">
+          <ul id="meta-links">
+            <li>
+              <a href="https://github.com/subfish-zhou/lean-tacticbook">Source Code</a></li>
+            <li>
+              <a href="https://github.com/subfish-zhou/lean-tacticbook/issues">Report Issues</a></li>
+            </ul>
+          </div>
+        </nav>
+      <main><div class="content-wrapper">
+          <nav class="prev-next-buttons">
+            <a class="local-button active" href="Ch20Reflection/#ch20-reflection" rel="prev" title="21. 第二十章 反射证明模式"><span class="arrow">←</span><span class="where">21. 第二十章 反射证明模式</span></a><a class="local-button active" href="Ch22ExternalTools/#ch22-external-tools" rel="next" title="23. 第二十二章 对接外部工具"><span class="where">23. 第二十二章 对接外部工具</span><span class="arrow">→</span></a></nav>
+          <section>
+            <h1>
+              22. 第二十一章 性能工程<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch21-performance" title="Permalink">🔗</a></span></h1>
+            <p>
+              <strong>本章目标</strong>：学会在 Lean 4 中诊断和解决常见的证明性能问题。</p>
+            <p>
+              当 <code>decide</code> 超时、<code>simp</code> 跑了几秒钟、或整个文件编译卡住时，
+你需要的不是换一个 tactic，而是<strong>找到瓶颈在哪里</strong>。
+本章提供从普通用户到 tactic 作者的分层诊断方法。</p>
+            <p>
+              不要过早优化。大部分证明不需要性能调优。
+只有当编译<strong>确实变慢</strong>（heartbeats 超限、IDE 卡顿）时才需要本章的工具。
+先写对，再写快。</p>
+            <p>
+              <strong>本章结构——三层递进</strong>：</p>
+            <ul>
+              <li>
+                <p>
+                  <strong>第一层（21.1–21.4）：普通用户排障</strong>——profiler 定位、<code>simp?</code> → <code>simp only</code>、避免暴力 <code>decide</code>。大部分读者只需要这一层。</p>
+                </li>
+              <li>
+                <p>
+                  <strong>第二层（21.5）：常见瓶颈模式</strong>——typeclass 爆炸、coercion 链、unification 超时。遇到深层性能问题时再来查阅。</p>
+                </li>
+              <li>
+                <p>
+                  <strong>第三层（21.6）：tactic 作者专属</strong>——MetaM 缓存、<code>isDefEq</code> 控制、proof term 体积。仅面向编写自定义 tactic 的开发者。</p>
+                </li>
+              </ul>
+            <section>
+              <h2 id="tier1-user-troubleshooting">
+                22.1. 第一层：普通用户排障<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=tier1-user-troubleshooting" title="Permalink">🔗</a></span></h2>
+              </section>
+            <section>
+              <h2 id="performance-model">
+                22.2. 21.1 性能模型：时间花在哪里<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=performance-model" title="Permalink">🔗</a></span></h2>
+              <p>
+                一个 <code>by ...</code> 证明从输入到内核接受，经历三个阶段：</p>
+              <pre>源码 ──→ ❶ elaboration ──→ ❷ tactic 执行 ──→ ❸ 内核验证 ──→ 通过
+         (语法 → Expr)     (Expr → 证明项)     (检查证明项)
+</pre><p>
+                | 阶段 | 主要开销 | 典型瓶颈 |
+|------|----------|----------|
+| ❶ elaboration | type class synthesis、unification | 深层 typeclass 层级、高阶 unification |
+| ❷ tactic 执行 | <code>simp</code> 重写、<code>aesop</code> 搜索 | 引理集过大、搜索空间爆炸 |
+| ❸ 内核验证 | 检查最终证明项 | 证明项过大（<code>decide</code> 展开、<code>simp</code> 冗长项） |</p>
+              <p>
+                <strong>关键认知</strong>：大部分"慢证明"的瓶颈在 ❷，
+但 ❸ 也可能成为瓶颈——尤其是反射证明生成的巨大证明项。</p>
+              </section>
+            <section>
+              <h2 id="heartbeats">
+                22.3. 21.2 Heartbeats：平台无关的计算量度量<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=heartbeats" title="Permalink">🔗</a></span></h2>
+              <p>
+                Lean 用 <strong>heartbeats</strong> 度量计算量——每次内核归约或 MetaM 操作消耗若干 heartbeats，
+与 CPU 速度无关，保证同一证明在不同机器上给出一致的度量。</p>
+              <pre>-- [可运行] 查看实际消耗
+set_option profiler true in
+theorem ex1 : (List.range 100).length = 100 := by decide
+-- ▸ profiler 输出中包含 heartbeats 消耗
+
+-- [示意] 加倍预算——应急手段，不是长期方案
+set_option maxHeartbeats 400000 in  -- 默认 200000
+theorem slow_thm : ... := by ...
+
+-- [示意] 无限制——**仅限短暂调试，绝对不能提交到代码库**
+set_option maxHeartbeats 0 in
+-- ▸ maxHeartbeats 0 关闭了所有超时保护
+-- ▸ 在 CI 中可能导致编译永远不结束
+-- ▸ 调试完毕后必须删除此行，然后优化证明本身
+</pre><p>
+                <strong>Mathlib 的 heartbeats 纪律</strong>：默认 200000（约 1-2 秒），
+PR 不应需要提高预算。如果 tactic 太慢，优化证明而非加预算。
+heartbeats 预算是<strong>质量门禁</strong>——迫使开发者写高效的证明。</p>
+              <p>
+                <strong>注意</strong>：<code>maxHeartbeats 0</code> 不是"让证明跑完"，而是"允许无限循环"。
+它只能用于<strong>调试时短暂开启</strong>，帮你看到完整的 profiler/trace 输出。
+找到瓶颈后，必须删除它并优化证明——它不是修复方案。</p>
+              </section>
+            <section>
+              <h2 id="diagnostic-toolbox">
+                22.4. 21.3 诊断工具箱<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=diagnostic-toolbox" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="profiler">
+                  22.4.1. profiler：整体耗时<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=profiler" title="Permalink">🔗</a></span></h3>
+                <pre>-- [可运行] 开启 profiler
+set_option profiler true in
+theorem my_thm : ∀ n : ℕ, n + 0 = n := by
+  intro n; simp
+-- ▸ 输出形如：
+-- elaboration of my_thm took 12.3ms
+-- typecheck of my_thm took 0.8ms
+</pre><p>
+                  <strong>第一步永远是 profiler</strong>——先定位是哪个声明慢，再深入分析。</p>
+                </section>
+              <section>
+                <h3 id="trace">
+                  22.4.2. trace：细粒度追踪<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=trace" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意] 追踪 simp 的每一步重写
+set_option trace.Meta.Tactic.simp.rewrite true in
+theorem ex2 : 0 + n = n := by simp
+-- ▸ [Meta.Tactic.simp.rewrite] Nat.zero_add:1000, 0 + n ==&gt; n
+
+-- [示意] 追踪 type class synthesis
+set_option trace.Meta.synthInstance true in
+-- ▸ 显示 typeclass 搜索树，包括尝试和回溯
+
+-- [示意] 追踪 unification
+set_option trace.Meta.isDefEq true in
+-- ▸ 显示每次 definitional equality 检查
+</pre><p>
+                  <strong>常用 trace 选项速查</strong>：</p>
+                <p>
+                  | trace 选项 | 用途 |
+|------------|------|
+| <code>trace.Meta.Tactic.simp.rewrite</code> | simp 应用了哪些引理 |
+| <code>trace.Meta.Tactic.simp.discharge</code> | simp 的 discharge 尝试 |
+| <code>trace.Meta.synthInstance</code> | typeclass synthesis 过程 |
+| <code>trace.Meta.isDefEq</code> | unification 过程（<strong>输出极大，慎用</strong>） |
+| <code>trace.profiler.threshold</code> | 只显示超过阈值的步骤 |</p>
+                <p>
+                  <strong>二分定位</strong>：profiler → 哪个 theorem 慢 → 逐行 sorry → 哪行 tactic 慢 → trace 深入。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="optimizing-simp">
+                22.5. 21.4 优化 simp<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=optimizing-simp" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code>simp</code> 是最常见的性能瓶颈来源——功能强大，也最容易被滥用。</p>
+              <section>
+                <h3 id="simp-vs-simp-only">
+                  22.5.1. 全局 simp vs simp only<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-vs-simp-only" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意] ❌ 全局 simp——加载所有 @[simp] 引理
+simp
+-- ▸ Mathlib 环境下 @[simp] 引理有数千条
+-- ▸ 复杂度 ≈ O(子表达式数 × 引理数 × 重写轮数)
+
+-- [示意] ✅ simp only——只用必要的引理
+simp only [Nat.add_zero, Nat.mul_one]
+-- ▸ 引理集从数千条缩减到 2 条
+</pre></section>
+              <section>
+                <h3 id="simp-question-workflow">
+                  22.5.2. simp? 工作流<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-question-workflow" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意] 开发时的最佳实践
+-- ❶ 先用 simp 探索（开发阶段）
+-- ❷ 用 simp? 获取实际使用的引理列表
+-- ❸ 替换为 simp only [...]（提交前）
+
+example : 0 + n + 0 = n := by
+  simp?
+  -- ▸ 建议: simp only [Nat.zero_add, Nat.add_zero]
+</pre></section>
+              <section>
+                <h3 id="simp-other-tuning">
+                  22.5.3. 其他 simp 调优<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-other-tuning" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意] 关闭 discharge（simp 不尝试放电侧条件）
+simp (config := { decide := false })
+
+-- ❌ @[simp] 同时标记 a = b 和 b = a → 无限循环
+-- ✓ @[simp] 引理应保证重写方向一致（左边"更复杂"）
+</pre></section>
+              </section>
+            <section>
+              <h2 id="tier2-bottleneck-patterns">
+                22.6. 第二层：常见瓶颈模式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=tier2-bottleneck-patterns" title="Permalink">🔗</a></span></h2>
+              <p>
+                以下内容面向遇到深层性能问题的用户。如果第一层的 <code>simp only</code> 和 profiler 已经解决了你的问题，可以跳过本节。</p>
+              </section>
+            <section>
+              <h2 id="optimizing-unification">
+                22.7. 21.5 优化 Unification 和 Elaboration<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=optimizing-unification" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="higher-order-unification">
+                  22.7.1. 高阶 unification<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=higher-order-unification" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意] ❌ 让 Lean 推断太多类型参数
+exact some_very_polymorphic_lemma
+-- ▸ 最坏情况下 unification 是不可判定的
+
+-- [示意] ✅ 显式提供关键类型参数
+exact @some_lemma ℝ _ _ a b
+-- ▸ @ 关闭隐式参数，_ 让 Lean 推断简单的 typeclass 参数
+</pre></section>
+              <section>
+                <h3 id="typeclass-explosion">
+                  22.7.2. typeclass synthesis 爆炸<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=typeclass-explosion" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+-- 深层实例链：Ring ℝ → AddCommMonoid ℝ → AddMonoid ℝ → ...
+-- ▸ 搜索树可能指数级增长
+
+-- ✅ 策略 1：提供局部实例
+have inst : Ring ℝ := inferInstance
+-- ▸ 后续 tactic 直接用 inst，不再搜索
+
+-- ✅ 策略 2：控制搜索深度
+set_option synthInstance.maxSize 256 in  -- 默认 128
+</pre><p>
+                  <strong>coercion 链</strong>：<code>ℕ → ℤ → ℚ → ℝ</code> 的隐式转换触发多层 synthesis。
+用 <code>(↑n : ℝ)</code> 显式标注最终类型，或在证明开头 <code>push_cast</code>。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="tier3-tactic-authors">
+                22.8. 第三层：tactic 作者专属<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=tier3-tactic-authors" title="Permalink">🔗</a></span></h2>
+              <p>
+                以下内容仅面向<strong>编写自定义 tactic 的开发者</strong>。普通证明用户可以跳过 21.6。</p>
+              </section>
+            <section>
+              <h2 id="optimizing-metam">
+                22.9. 21.6 优化 MetaM 端代码<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=optimizing-metam" title="Permalink">🔗</a></span></h2>
+              <p>
+                编写自定义 tactic 时，MetaM 端代码质量直接影响性能。</p>
+              <section>
+                <h3 id="caching-avoid-duplication">
+                  22.9.1. 缓存与避免重复<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=caching-avoid-duplication" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意] ❌ 重复调用
+let t1 ← goal.getType
+doSomething t1
+let t2 ← goal.getType        -- 浪费
+
+-- [示意] ✅ 缓存
+let target ← goal.getType
+doSomething target
+doSomethingElse target
+</pre></section>
+              <section>
+                <h3 id="avoid-unnecessary-whnf">
+                  22.9.2. 避免不必要的 whnf<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=avoid-unnecessary-whnf" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意] ❌ whnf 可能展开大量定义
+let t ← whnf (← goal.getType)
+-- ▸ whnf 递归展开直到头部是构造子——代价可能很高
+
+-- [示意] ✅ 用 matchApp? 等结构化匹配代替
+let target ← goal.getType
+if let some (f, args) ← matchApp? target then ...
+-- ▸ 只检查头部函数，不做深层展开
+</pre></section>
+              <section>
+                <h3 id="control-isdefeq">
+                  22.9.3. 控制 isDefEq<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=control-isdefeq" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意] isDefEq 是 MetaM 中最昂贵的操作之一
+-- ❌ 盲目尝试
+for lemma in lemmas do
+  if ← isDefEq lemmaConcl target then return lemma
+
+-- ✅ 廉价预筛选 + 精确匹配
+for lemma in lemmas do
+  if quickCheck lemma target then       -- 头符号匹配
+    if ← isDefEq lemmaConcl target then return lemma
+</pre><p>
+                  <strong>注意</strong>：<code>isDefEq</code> 有<strong>副作用</strong>——它会给 metavariable 赋值。
+即使最终不用该引理，赋值已经发生。
+用 <code>withoutModifyingState</code> 隔离探索性调用。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="compile-vs-runtime">
+                22.10. 21.7 编译时间 vs 运行时间<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=compile-vs-runtime" title="Permalink">🔗</a></span></h2>
+              <p>
+                Lean 同时承担<strong>证明检查器</strong>和<strong>编程语言</strong>双重角色，
+有两种完全不同的性能关注维度。</p>
+              <p>
+                | | 编译时间 | 运行时间 |
+|---|---|---|
+| 关注对象 | tactic 执行速度 | 编译后程序速度 |
+| 优化手段 | <code>simp only</code>、类型标注、缓存 | 算法选择、内联、尾递归 |
+| 度量工具 | heartbeats、profiler | 基准测试、<code>timeit</code> |
+| 主要场景 | 数学证明库（Mathlib） | 程序验证、可执行代码 |</p>
+              <pre>-- [示意] #eval vs #reduce 的区别
+#eval  (List.range 10000).length  -- 快：编译后执行
+#reduce (List.range 10000).length -- 极慢：内核归约（展开每一步）
+-- ▸ 除非需要看内核归约的中间步骤，否则永远用 #eval
+</pre></section>
+            <section>
+              <h2 id="proof-term-size">
+                22.11. 21.8 证明项大小与增量编译<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=proof-term-size" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="proof-term-bloat">
+                  22.11.1. 证明项膨胀<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=proof-term-bloat" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意] simp 生成的证明项可能非常大
+-- 每一步重写记录：应用的引理、类型参数实例化、局部变量
+-- 100 步重写可能生成数万个 Expr 节点
+-- decide 更严重：证明项包含完整的归约过程
+</pre><p>
+                  <strong>缓解策略</strong>：</p>
+                <ul>
+                  <li>
+                    <p>
+                      <code>native_decide</code> 生成更紧凑的证明项（不记录归约过程）</p>
+                    </li>
+                  <li>
+                    <p>
+                      拆分大证明为多个中间引理（每段 simp 链较短）</p>
+                    </li>
+                  <li>
+                    <p>
+                      用引理推理代替暴力计算（<code>simp [List.length_range]</code> 优于 <code>decide</code>）</p>
+                    </li>
+                  </ul>
+                <p>
+                  证明项大小影响 <code>.olean</code> 文件大小，
+进而影响所有下游文件的加载时间。</p>
+                </section>
+              <section>
+                <h3 id="incremental-compilation">
+                  22.11.2. 增量编译与文件组织<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=incremental-compilation" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意] ❌ 粗粒度 import
+import Mathlib               -- 加载整个 Mathlib
+
+-- [示意] ✅ 细粒度 import
+import Mathlib.Tactic.Ring   -- 只加载需要的模块
+import Mathlib.Data.Nat.Basic
+</pre><pre>文件依赖图：
+        A.lean
+       / \
+      B    C        ← B 和 C 可以并行编译
+       \ /
+        D.lean      ← D 必须等 B 和 C 都编译完
+</pre><p>
+                  <strong>优化原则</strong>：减少文件间依赖；把慢定义和快定义分开文件；
+用 <code>lake build +A +B</code> 并行编译无依赖模块。</p>
+                <p>
+                  Mathlib 在 CI 中对每个 PR 测量编译时间差异，
+显著增加编译时间的 PR 需要优化后再合并。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="optimize-slow-proof">
+                22.12. 21.9 实战：优化一个慢证明<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=optimize-slow-proof" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="slow-version">
+                  22.12.1. 原始版本（慢）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=slow-version" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+set_option maxHeartbeats 800000 in  -- 需要 4 倍预算
+theorem slow_example (a b c : ℕ) :
+    (a + b) * c + 0 = c * a + c * b := by
+  simp [Nat.add_mul, Nat.mul_comm, Nat.add_comm, Nat.add_zero]
+  ring
+</pre></section>
+              <section>
+                <h3 id="diagnosis-process">
+                  22.12.2. 诊断过程<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=diagnosis-process" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+-- ❶ profiler → simp 占 90% 时间
+-- ❷ trace.simp → Nat.mul_comm 导致循环（a*b → b*a → a*b）
+-- ❸ 分析 → 只需 Nat.add_zero 消除 + 0，剩下交给 ring
+</pre></section>
+              <section>
+                <h3 id="fast-version">
+                  22.12.3. 优化版本（快）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=fast-version" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意] 不需要额外 heartbeats
+theorem fast_example (a b c : ℕ) :
+    (a + b) * c + 0 = c * a + c * b := by
+  simp only [Nat.add_zero]   -- 只消除 + 0
+  ring                        -- ring 处理交换律和分配律
+</pre><p>
+                  heartbeats 从 ~600000 降到 ~5000（100x 改善）。</p>
+                <p>
+                  <strong>优化检查清单</strong>：</p>
+                <pre>□ profiler 定位瓶颈（simp？unification？typeclass？）
+□ simp 瓶颈 → simp? → simp only
+□ unification 瓶颈 → 添加类型标注
+□ typeclass 瓶颈 → 缓存实例或限制搜索
+□ decide 瓶颈 → native_decide 或引理推理
+□ 优化后 heartbeats ≤ 200000？
+</pre></section>
+              </section>
+            <section>
+              <h2 id="performance-failure-modes">
+                22.13. 21.10 失败模式汇总<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=performance-failure-modes" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="failure-heartbeats-arms-race">
+                  22.13.1. 失败 1：maxHeartbeats 军备竞赛<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-heartbeats-arms-race" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+-- ❌ 每次超时就加 maxHeartbeats
+set_option maxHeartbeats 400000 in   -- 第一次
+set_option maxHeartbeats 800000 in   -- Lean 升级后又超时
+set_option maxHeartbeats 1600000 in  -- 加了一条引理又超时
+-- ✓ 正确做法：优化证明本身
+</pre></section>
+              <section>
+                <h3 id="failure-trace-ide-hang">
+                  22.13.2. 失败 2：trace 输出导致 IDE 卡死<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-trace-ide-hang" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+-- ❌ 在大文件上开 trace.Meta.isDefEq → 输出几十万行
+-- ✓ 先用 sorry 缩小范围，只对单个 tactic 开 trace
+</pre></section>
+              <section>
+                <h3 id="failure-reduce-vs-eval">
+                  22.13.3. 失败 3：#reduce 代替 #eval<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-reduce-vs-eval" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+#reduce (List.range 1000).length  -- ❌ 极慢：内核归约
+#eval (List.range 1000).length    -- ✓ 瞬间：编译后执行
+</pre></section>
+              <section>
+                <h3 id="failure-blind-optimization">
+                  22.13.4. 失败 4：无数据支撑的优化<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-blind-optimization" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+-- ❌ "simp 可能慢，我全换成 simp only"
+-- ❌ "加类型标注总没错"
+-- ▸ 没有数据支撑的优化可能无效，还降低可读性
+-- ✓ 先 profiler，再 trace，最后优化——data-driven
+</pre></section>
+              </section>
+            <section>
+              <h2 id="performance-exercises">
+                22.14. 21.11 练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=performance-exercises" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="exercise-read-profiler">
+                  22.14.1. 练习 1（诊断）：读 profiler 输出<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-read-profiler" title="Permalink">🔗</a></span></h3>
+                <p>
+                  以下 profiler 输出说明了什么？应该优先优化什么？</p>
+                <pre>elaboration of slow_lemma took 3.2s
+  tactic execution took 2.8s
+    simp took 2.6s
+  typecheck took 0.3s
+</pre><p>
+                  <strong>提示</strong>：simp 占 81%——应优化 simp（<code>simp?</code> → <code>simp only</code>）。
+typecheck 0.3s 也较高——可能是证明项过大，但优先处理 simp。</p>
+                </section>
+              <section>
+                <h3 id="exercise-performance-tradeoffs">
+                  22.14.2. 练习 2（设计）：分析性能权衡<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-performance-tradeoffs" title="Permalink">🔗</a></span></h3>
+                <p>
+                  对以下场景，分析瓶颈在哪个阶段（elaboration / tactic / typecheck），
+并建议优化方向：</p>
+                <pre>(a) 用 decide 证明 100 以内所有素数的 Goldbach 猜想
+
+(b) 在深层 typeclass 层级上使用 15 步 simp 链
+
+(c) 自定义 tactic 在 MetaM 中对 200 个候选引理逐一尝试 isDefEq
+</pre><p>
+                  <strong>提示</strong>：
+(a) tactic（<code>decide</code> 穷举）+ typecheck（证明项大）→ <code>native_decide</code> 或拆引理。
+(b) elaboration（typeclass）+ tactic（simp）→ 缓存实例，<code>simp only</code>。
+(c) tactic（<code>isDefEq</code> 昂贵）→ 头符号预筛选，<code>withoutModifyingState</code> 隔离。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="performance-summary">
+                22.15. 21.12 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=performance-summary" title="Permalink">🔗</a></span></h2>
+              <p>
+                | 概念 | 关键点 |
+|------|--------|
+| 性能三阶段 | elaboration → tactic 执行 → 内核验证 |
+| heartbeats | 平台无关的计算量度量；默认 200000 |
+| profiler | 第一步永远是 profiler——先定位再优化 |
+| trace | 细粒度追踪 simp、typeclass、unification |
+| <code>simp only</code> | 最常见的优化——限制引理集 |
+| 类型标注 | 减少 unification 和 typeclass 搜索 |
+| 证明项大小 | 影响 typecheck 和 .olean 文件大小 |
+| 编译 vs 运行 | 证明库关注编译时间，程序验证两者都关注 |
+| 增量编译 | 细粒度 import、合理的文件依赖图 |
+| 优化原则 | data-driven：先度量，再优化 |
+| 主要陷阱 | heartbeats 军备竞赛、trace 卡 IDE、盲目优化 |</p>
+              <p>
+                <strong>一句话总结</strong>：性能优化的第一原则是<strong>先度量，再行动</strong>——
+profiler 告诉你在哪里花时间，trace 告诉你为什么，然后才是对症下药。</p>
+              <p>
+                <strong>落地行动清单——按层级递进</strong>：</p>
+              <ol start="1">
+                <li>
+                  <p>
+                    <strong>普通用户</strong>（80% 的情况在这里解决）：</p>
+                  <ul>
+                    <li>
+                      <p>
+                        证明慢了？开 <code>set_option profiler true</code>，找到最慢的那行。</p>
+                      </li>
+                    <li>
+                      <p>
+                        <code>simp</code> 慢？用 <code>simp?</code> 拿到引理列表，替换为 <code>simp only [...]</code>。</p>
+                      </li>
+                    <li>
+                      <p>
+                        <code>decide</code> 超时？换 <code>native_decide</code>，或用引理推理代替暴力穷举。</p>
+                      </li>
+                    <li>
+                      <p>
+                        <code>maxHeartbeats</code> 只加不减？停下来优化证明本身。</p>
+                      </li>
+                    </ul>
+                  </li>
+                <li>
+                  <p>
+                    <strong>进阶用户</strong>（typeclass / unification 瓶颈）：</p>
+                  <ul>
+                    <li>
+                      <p>
+                        开 <code>trace.Meta.synthInstance</code> 看 typeclass 搜索树。</p>
+                      </li>
+                    <li>
+                      <p>
+                        给多态引理加 <code>@</code> 和显式类型参数。</p>
+                      </li>
+                    <li>
+                      <p>
+                        coercion 链用 <code>push_cast</code> 或显式标注。</p>
+                      </li>
+                    </ul>
+                  </li>
+                <li>
+                  <p>
+                    <strong>tactic 作者</strong>：</p>
+                  <ul>
+                    <li>
+                      <p>
+                        缓存 <code>goal.getType</code> 结果、避免盲目 <code>whnf</code>。</p>
+                      </li>
+                    <li>
+                      <p>
+                        <code>isDefEq</code> 前做头符号预筛选，探索性调用用 <code>withoutModifyingState</code> 隔离。</p>
+                      </li>
+                    </ul>
+                  </li>
+                </ol>
+              <p>
+                下一章讨论对接外部工具——当 Lean 内部 tactic 不够用时，
+如何调用 SAT/SMT 求解器并安全地集成结果。
+</p>
+              </section>
+            </section>
+          <nav class="prev-next-buttons">
+            <a class="local-button active" href="Ch20Reflection/#ch20-reflection" rel="prev" title="21. 第二十章 反射证明模式"><span class="arrow">←</span><span class="where">21. 第二十章 反射证明模式</span></a><a class="local-button active" href="Ch22ExternalTools/#ch22-external-tools" rel="next" title="23. 第二十二章 对接外部工具"><span class="where">23. 第二十二章 对接外部工具</span><span class="arrow">→</span></a></nav>
+          </div>
+        </main></div>
+    </body>
+  </html>
+

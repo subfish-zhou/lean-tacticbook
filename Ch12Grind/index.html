@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      (function(){
+  const {protocol:proto, host:hostName, pathname:path, search:srch, hash:hsh} = window.location;
+  if (!(path.endsWith("/") || path.endsWith(".html"))) {
+    window.location.replace(`${proto}//${hostName}${path}/${srch}${hsh}`);
+  }
+})()</script>
+    <base href="./../"><meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <title>第十二章 grind：E-matching 与 Congruence Closure</title><link rel="stylesheet" href="book.css">
+    <link rel="stylesheet" href="verso-vars.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js" integrity="sha384-zbcZAIxlvJtNE3Dp5nxLXdXtXyxwOdnILY1TDPVmKFhl4r4nSUG1r8bcFXGVa4Te" crossorigin="anonymous"></script>
+    <script src="-verso-search/elasticlunr.min.js"></script>
+    <script src="-verso-search/fuzzysort.min.js"></script>
+    <script src="-verso-search/searchIndex.js"></script>
+    <script type="module" src="-verso-search/search-init.js"></script>
+    <link rel="stylesheet" href="-verso-search/search-box.css">
+    <link rel="stylesheet" href="-verso-search/search-highlight.css">
+    <link rel="stylesheet" href="-verso-search/domain-display.css">
+    <script src="-verso-data/katex/katex.js"></script>
+    <script src="-verso-data/katex/math.js"></script>
+    <script src="-verso-data/popper.min.js"></script>
+    <script src="-verso-data/tippy-bundle.umd.min.js"></script>
+    <link rel="stylesheet" href="-verso-data/tippy-border.css">
+    <link rel="stylesheet" href="-verso-data/katex/katex.css">
+    <style>
+
+.hl.lean {
+  white-space: pre;
+  font-weight: normal;
+  font-style: normal;
+  font-size: inherit;
+}
+
+.hl.lean .keyword {
+  color: var(--verso-code-keyword-color,);
+  font-weight: var(--verso-code-keyword-weight, bold);
+  font-style: var(--verso-code-keyword-style, normal);
+  font-family: var(--verso-code-keyword-font-family,);
+}
+
+.hl.lean .const {
+  color: var(--verso-code-const-color,);
+  font-weight: var(--verso-code-const-weight, normal);
+  font-style: var(--verso-code-const-style, normal);
+  font-family: var(--verso-code-const-font-family,);
+}
+
+.hl.lean .var {
+  color: var(--verso-code-var-color,);
+  font-weight: var(--verso-code-var-weight, normal);
+  font-style: var(--verso-code-var-style, italic);
+  font-family: var(--verso-code-var-font-family,);
+
+  position: relative;
+}
+
+.hl.lean .literal, .hl.lean .unknown {
+  color: var(--verso-code-color,);
+  font-weight: normal;
+  font-style: normal;
+  font-family: var(--verso-code-font-family,);
+}
+
+.hover-container {
+  width: 0;
+  height: 0;
+  position: relative;
+  display: inline;
+}
+
+.hl.lean a {
+  color: inherit;
+  text-decoration: currentcolor underline dotted;
+}
+
+.hl.lean a:hover {
+  text-decoration: currentcolor underline solid;
+}
+
+.hl.lean .hover-info {
+  white-space: normal;
+}
+
+.hl.lean .token .hover-info {
+  display: none;
+  position: absolute;
+  background-color: #e5e5e5;
+  border: 1px solid black;
+  padding: 0.5rem;
+  z-index: 300;
+}
+
+.hl.lean .hover-info.messages {
+  max-height: 10rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  padding: 0 0.5rem 0 0;
+  display: block;
+}
+
+.hl.lean .hover-info code {
+  white-space: pre-wrap;
+  background: none;
+  color: black;
+}
+
+.hl.lean .hover-info.messages > code {
+  padding: 0.5rem;
+  display: block;
+  width: fit-content;
+}
+
+.hl.lean .hover-info.messages > code:only-child {
+  margin: 0;
+}
+
+.hl.lean .hover-info.messages > code {
+  margin: 0.1rem;
+}
+
+.hl.lean .hover-info.messages > code:not(:first-child) {
+  margin-top: 0rem;
+}
+
+.hl.lean {
+}
+
+.hl.lean.block {
+  display: block;
+}
+
+.hl.lean.inline {
+  display: inline;
+  white-space: pre-wrap;
+}
+
+.hl.lean * {
+}
+
+.hl.lean .token {
+  transition: all 0.25s; /* Slight fade for highlights */
+}
+
+@media (hover: hover) {
+  .hl.lean .token.binding-hl, .hl.lean .literal.string:hover, .hl.lean .token.typed:hover {
+    background-color: #eee;
+    border-radius: 2px;
+    transition: none;
+  }
+}
+
+
+.hl.lean .has-info .token:not(.tactic-state):not(.tactic-state *), .hl.lean .has-info .inter-text:not(.tactic-state):not(.tactic-state *) {
+  text-decoration-style: wavy;
+  text-decoration-line: underline;
+  text-decoration-thickness: from-font;
+  text-decoration-skip-ink: none;
+}
+
+.hl.lean .has-info .hover-info {
+  display: none;
+  position: absolute;
+  transform: translate(0.25rem, 0.3rem);
+  border: 1px solid black;
+  padding: 0.5rem;
+  z-index: 400;
+  text-align: left;
+}
+
+.hl.lean .has-info.error :not(.tactic-state):not(.tactic-state *){
+  text-decoration-color: red;
+}
+
+@media (hover: hover) {
+  .hl.lean .has-info.error:hover {
+    background-color: #ffb3b3;
+  }
+}
+
+.hl.lean .hover-info.messages > code.error {
+  background-color: #e5e5e5;
+  border-left: 0.2rem solid #ffb3b3;
+}
+
+.tippy-box[data-theme~='error'] .hl.lean .hover-info.messages > code.error {
+  background: none;
+  border: none;
+}
+
+.error .verso-message, .error .verso-message .token, .error .verso-message label {
+  color: var(--verso-error-color);
+}
+
+.error .verso-message .case-label:has(input[type="checkbox"])::before {
+  background-color: var(--verso-error-color) !important;
+}
+
+.hl.lean .has-info.warning :not(.tactic-state):not(.tactic-state *) {
+  text-decoration-color: var(--verso-warning-indicator-color);
+}
+
+@media (hover: hover) {
+  .hl.lean .has-info.warning:hover {
+    background-color:var(--verso-warning-color);
+  }
+}
+
+.hl.lean .hover-info.messages > code.warning {
+  background-color: var(--verso-warning-color);
+}
+
+.lean-output {
+  border-left: 0.2em solid transparent;
+  padding: 0 0 0 0.5em;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.lean-output.error {
+  border-color: var(--verso-error-indicator-color);
+}
+
+.lean-output.information {
+  border-color: var(--verso-info-indicator-color);
+}
+
+.lean-output.warning {
+  border-color: var(--verso-warning-indicator-color);
+}
+
+.hl.lean .hover-info.messages > code.error {
+  background-color: #e5e5e5;
+  border-left: 0.2rem solid var(--verso-warning-color);
+}
+
+.tippy-box[data-theme~='warning'] .hl.lean .hover-info.messages > code.warning {
+  background: none;
+  border: none;
+}
+
+
+.hl.lean .has-info.information :not(.tactic-state):not(.tactic-state *) {
+  text-decoration-color: var(--verso-info-indicator-color, blue);
+}
+
+@media (hover: hover) {
+  .hl.lean .has-info.information:hover {
+    background-color: #4777ff;
+  }
+}
+
+
+.hl.lean .hover-info.messages > code.information {
+  background-color: #e5e5e5;
+  border-left: 0.2rem solid #4777ff;
+}
+
+.tippy-box[data-theme~='info'] .hl.lean .hover-info.messages > code.information {
+  background: none;
+  border: none;
+}
+
+.hl.lean div.docstring {
+  font-family: var(--verso-text-font-family, sans-serif);
+  white-space: normal;
+  max-width: calc(min(40rem, 90vw));
+  width: max-content;
+}
+
+.hl.lean div.docstring > :last-child {
+  margin-bottom: 0;
+}
+
+.hl.lean div.docstring > :first-child {
+  margin-top: 0;
+}
+
+.hl.lean .hover-info .sep {
+  display: block;
+  width: auto;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0;
+  height: 1px;
+  border-top: 1px solid #ccc;
+}
+
+.hl.lean code {
+  font-family: var(--verso-code-font-family);
+}
+
+.hl.lean .tactic-state {
+  display: none;
+  position: relative;
+  width: fit-content;
+  border: 1px solid #888888;
+  border-radius: 0.1rem;
+  padding: 0.5rem;
+  font-family: sans-serif;
+  background-color: #ffffff;
+}
+
+.hl.lean.popup .tactic-state {
+  position: static;
+  display: block;
+  width: auto;
+  border: none;
+  padding: 0.5rem;
+  font-family: sans-serif;
+  background-color: #ffffff;
+}
+
+
+.hl.lean .tactic {
+  position: relative;
+  display: inline;
+  vertical-align: top;
+  /* Without these, mobile Safari will start making font sizes inconsistent when its text size adjustment feature is triggered.*/
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.hl.lean .tactic:has(.tactic-toggle:checked) {
+  display: inline-grid;
+  grid-template-columns: 1fr;
+}
+
+.hl.lean .tactic-toggle:checked ~ .tactic-state {
+  display: inline-block;
+  vertical-align: top;
+  grid-row: 2;
+  justify-self: start;
+}
+
+.hl.lean .tactic > label {
+  position: relative;
+  grid-row: 1;
+  display: inline;
+}
+
+@media (hover: hover) {
+  .hl.lean .tactic:has(.tactic-toggle:not(:checked)) > label:hover {
+    background-color: #eeeeee;
+  }
+}
+
+.hl.lean .tactic-toggle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  height: 0;
+  width: 0;
+  z-index: -10;
+}
+
+.hl.lean .tactic > label::after {
+  content: "";
+  border: 1px solid #bbbbbb;
+  /* These need to be em, not rem, to scale with the font */
+  border-radius: 1em;
+  height: 0.25em;
+  vertical-align: middle;
+  width: 0.6em;
+  margin-left: 0.1em;
+  margin-right: 0.1em;
+  display: inline-block;
+  transition: all 0.5s;
+}
+
+/*
+@media (hover: hover) {
+  .hl.lean .tactic > label:hover::after {
+    border: 1px solid #aaaaaa;
+    background-color: #aaaaaa;
+    transition: all 0.5s;
+  }
+}
+*/
+
+.hl.lean .tactic > label:has(+ .tactic-toggle:checked)::after {
+  border: 1px solid #999999;
+  background-color: #999999;
+  transition: all 0.5s;
+}
+
+.hl.lean .tactic-state .goal + .goal {
+  margin-top: 1.5em;
+}
+
+/*
+Some CSS frameworks customize details/summary in ways not compatible with Verso's output.
+*/
+
+.hl.lean details {
+  display: block !important;
+  margin: 0;
+}
+
+.hl.lean details summary {
+  display: list-item !important;
+  margin: 0;
+}
+
+.hl.lean details summary:focus {
+  outline: none;
+  outline-offset: none;
+  color: inherit;
+}
+
+.hl.lean ul > li {
+  margin-bottom: 0;
+}
+
+.hl.lean details summary::marker {
+  display: inline !important;
+}
+
+.hl.lean details > summary:first-of-type {
+  list-style-type: disclosure-closed;
+  list-style-position: inside;
+}
+
+.hl.lean details[open] > summary:first-of-type {
+  list-style-type: disclosure-open;
+}
+
+.hl.lean details summary::before, .hl.lean details summary::after {
+  content: "" !important;
+  background: none;
+  display: none;
+}
+
+.hl.lean .tactic-state summary {
+  /* These need to be em, not rem, to scale with the font */
+  margin-left: -0.5em;
+}
+
+.hl.lean .tactic-state details {
+  /* These need to be em, not rem, to scale with the font */
+  padding-left: 0.5em;
+}
+
+.hl.lean .case-label {
+  display: block;
+  position: relative;
+}
+
+.hl.lean .case-label input[type="checkbox"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  height: 0;
+  width: 0;
+  z-index: -10;
+}
+
+.hl.lean .case-label:has(input[type="checkbox"])::before {
+  display: inline-block;
+  background-color: black;
+  content: ' ';
+  transition: ease 0.2s;
+  margin-right: 0.7em;
+  clip-path: polygon(100% 0, 0 0, 50% 100%);
+  width: 0.6em;
+  height: 0.6em;
+  vertical-align: middle;
+}
+
+.hl.lean .case-label:has(input[type="checkbox"]:not(:checked))::before {
+  transform: rotate(-90deg);
+}
+
+.hl.lean .case-label:has(input[type="checkbox"]) {
+
+}
+
+.hl.lean .case-label:has(input[type="checkbox"]:checked) {
+
+}
+
+
+.hl.lean .labeled-case > :not(:first-child) {
+  max-height: 0px;
+  display: block;
+  overflow: hidden;
+  transition: max-height 0.1s ease-in;
+  /* These need to be em, not rem, to scale with the font */
+  margin-left: 0.5em;
+  margin-top: 0.1em;
+}
+
+.hl.lean .labeled-case:has(.case-label input[type="checkbox"]:checked) > :not(:first-child) {
+  max-height: 100%;
+}
+
+
+.hl.lean .goal-name::before {
+  font-style: normal;
+  content: "case ";
+}
+
+.hl.lean .goal-name {
+  font-style: italic;
+  font-family: var(--verso-code-font-family);
+  color: inherit;
+}
+
+.hl.lean .hypotheses {
+  display: table;
+}
+
+.hl.lean .hypothesis {
+  display: table-row;
+}
+
+.hl.lean .hypothesis > * {
+  display: table-cell;
+}
+
+
+.hl.lean .hypotheses .colon {
+  text-align: center;
+  /* This needs to be em, not rem, to scale with the font */
+  min-width: 1em;
+}
+
+.hl.lean .hypotheses .name {
+  text-align: right;
+}
+
+.hl.lean .hypotheses .name,
+.hl.lean .hypotheses .type,
+.hl.lean .conclusion .type {
+  font-family: var(--verso-code-font-family);
+}
+
+.tippy-box {
+  /* Without these, mobile Safari will start making font sizes inconsistent when its text size adjustment feature is triggered.*/
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.tippy-box[data-theme~='lean'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 1px solid black;
+}
+.tippy-box[data-theme~='lean'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: #e5e5e5;
+}
+.tippy-box[data-theme~='lean'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-bottom-color: #e5e5e5;
+}
+.tippy-box[data-theme~='lean'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: #e5e5e5;
+}
+.tippy-box[data-theme~='lean'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: #e5e5e5;
+}
+
+.tippy-box[data-theme~='message'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: #e5e5e5;
+  border-width: 11px 11px 0;
+}
+.tippy-box[data-theme~='message'][data-placement^='top'] > .tippy-arrow::after {
+  bottom: -11px;
+  border-width: 11px 11px 0;
+}
+.tippy-box[data-theme~='message'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-width: 0 11px 11px;
+}
+.tippy-box[data-theme~='message'][data-placement^='bottom'] > .tippy-arrow::after {
+  top: -11px;
+  border-width: 0 11px 11px;
+}
+.tippy-box[data-theme~='message'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: #e5e5e5;
+  border-width: 11px 0 11px 11px;
+}
+.tippy-box[data-theme~='message'][data-placement^='left'] > .tippy-arrow::after {
+  right: -11px;
+  border-width: 11px 0 11px 11px;
+}
+
+.tippy-box[data-theme~='message'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: #e5e5e5;
+  border-width: 11px 11px 11px 0;
+}
+.tippy-box[data-theme~='message'][data-placement^='right'] > .tippy-arrow::after {
+  left: -11px;
+  border-width: 11px 11px 11px 0;
+}
+
+
+
+.tippy-box[data-theme~='warning'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 3px solid var(--verso-warning-color);
+}
+
+.tippy-box[data-theme~='error'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 3px solid #f7a7af;
+}
+
+.tippy-box[data-theme~='info'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 3px solid #99b3c2;
+}
+
+.tippy-box[data-theme~='tactic'] {
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: white;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-bottom-color: white;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: white;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: white;
+}
+
+.extra-doc-links {
+  list-style-type: none;
+  margin-left: 0;
+  padding: 0;
+}
+
+.extra-doc-links > li {
+  display: inline-block;
+}
+
+.extra-doc-links > li:not(:last-child)::after {
+  content: '|';
+  display: inline-block;
+  margin: 0 0.25em;
+}
+
+.verso-message .trace {
+  display: block;
+}
+
+.verso-message .trace > summary::marker {
+  color: var(--verso-text-color);
+}
+
+.verso-message .trace-children {
+  margin: 0;
+  padding: 0;
+}
+
+.verso-message .trace-children > li {
+  list-style-type: none;
+  margin-left: 1.5em;
+}
+
+.verso-message .trace-children > li:not(:has(.trace)) {
+  margin-left: 0;
+}
+
+.verso-message .trace-class {
+  color: color-mix(in srgb, currentColor 70%, transparent);
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+}
+
+.verso-message .text {
+  white-space: pre-wrap;
+}
+
+</style><script>
+      
+window.onload = () => {
+
+    // Don't show hovers inside of closed tactic states
+    function blockedByTactic(elem) {
+      let parent = elem.parentNode;
+      while (parent && "classList" in parent) {
+        if (parent.classList.contains("tactic")) {
+          const toggle = parent.querySelector("input.tactic-toggle");
+          if (toggle) {
+            return !toggle.checked;
+          }
+        }
+        parent = parent.parentNode;
+      }
+      return false;
+    }
+
+    // Track whether any tippy is visible (O(1) check instead of DOM scan)
+    let visibleTippyCount = 0;
+    function blockedByTippy(elem) {
+      return visibleTippyCount > 0;
+    }
+
+    // Binding highlights via event delegation with cached lookups
+    const bindingCache = new Map(); // context+binding -> [token elements]
+    let highlightedTokens = [];
+    function getBindingTokens(context, binding) {
+      const key = context + "\0" + binding;
+      let tokens = bindingCache.get(key);
+      if (!tokens) {
+        tokens = [];
+        for (const example of document.querySelectorAll(".hl.lean")) {
+          if (example.dataset.leanContext == context) {
+            for (const tok of example.querySelectorAll(".token[data-binding=\"" + CSS.escape(binding) + "\"]")) {
+              tokens.push(tok);
+            }
+          }
+        }
+        bindingCache.set(key, tokens);
+      }
+      return tokens;
+    }
+    for (const container of document.querySelectorAll(".hl.lean")) {
+      container.addEventListener("mouseover", (event) => {
+        const c = event.target.closest(".token");
+        if (!c || !c.dataset.binding || c.dataset.binding === "" || !container.contains(c)) return;
+        if (blockedByTactic(c)) return;
+        const tokens = getBindingTokens(container.dataset.leanContext, c.dataset.binding);
+        for (const tok of tokens) {
+          tok.classList.add("binding-hl");
+        }
+        highlightedTokens = tokens;
+      });
+      container.addEventListener("mouseout", (event) => {
+        const c = event.target.closest(".token");
+        if (!c || !container.contains(c)) return;
+        for (const tok of highlightedTokens) {
+          tok.classList.remove("binding-hl");
+        }
+        highlightedTokens = [];
+      });
+    }
+    /* Render docstrings */
+    if ('undefined' !== typeof marked) {
+        for (const d of document.querySelectorAll("code.docstring, pre.docstring")) {
+            const str = d.innerText;
+            const html = marked.parse(str);
+            const rendered = document.createElement("div");
+            rendered.classList.add("docstring");
+            rendered.innerHTML = html;
+            d.parentNode.replaceChild(rendered, d);
+        }
+    }
+    // Add hovers
+    let docsJson = "-verso-docs.json";
+    fetch(docsJson).then((resp) => resp.json()).then((versoDocData) => {
+
+      function hideParentTooltips(element) {
+        let parent = element.parentElement;
+        while (parent) {
+          const tippyInstance = parent._tippy;
+          if (tippyInstance) {
+            tippyInstance.hide();
+          }
+          parent = parent.parentElement;
+        }
+      }
+
+
+
+      const defaultTippyProps = {
+        /* DEBUG -- remove the space: * /
+        onHide(any) { return false; },
+        trigger: "click",
+        // */
+        /* theme: "lean", */
+        maxWidth: "none",
+        appendTo: () => document.body,
+        interactive: true,
+        delay: [100, null],
+        /* ignoreAttributes: true, */
+        followCursor: 'initial',
+        onShow(inst) {
+          if (inst.reference.className == 'tactic') {
+            const toggle = inst.reference.querySelector("input.tactic-toggle");
+            if (toggle && toggle.checked) {
+              return false;
+            }
+            hideParentTooltips(inst.reference);
+            if (blockedByTippy(inst.reference)) { return false; }
+
+          } else if (inst.reference.querySelector(".hover-info") || "versoHover" in inst.reference.dataset) {
+            if (blockedByTactic(inst.reference)) { return false };
+            if (blockedByTippy(inst.reference)) { return false; }
+          } else { // Nothing to show here!
+            return false;
+          }
+        },
+        onShown(inst) { visibleTippyCount++; },
+        onHidden(inst) { visibleTippyCount = Math.max(0, visibleTippyCount - 1); },
+        content (tgt) {
+          const content = document.createElement("span");
+          if (tgt.className == 'tactic') {
+            const state = tgt.querySelector(".tactic-state").cloneNode(true);
+            state.style.display = "block";
+            content.appendChild(state);
+            content.style.display = "block";
+            content.className = "hl lean popup";
+          } else {
+            content.className = "hl lean";
+            content.style.display = "block";
+            content.style.maxHeight = "300px";
+            content.style.overflowY = "auto";
+            content.style.overflowX = "hidden";
+            const hoverId = tgt.dataset.versoHover;
+            const hoverInfo = tgt.querySelector(".hover-info");
+            if (hoverId) { // Docstrings from the table
+              // TODO stop doing an implicit conversion from string to number here
+              let data = versoDocData[hoverId];
+              if (data) {
+                const info = document.createElement("span");
+                info.className = "hover-info";
+                info.style.display = "block";
+                info.innerHTML = data;
+                content.appendChild(info);
+                /* Render docstrings - TODO server-side */
+                if ('undefined' !== typeof marked) {
+                    for (const d of content.querySelectorAll("code.docstring, pre.docstring")) {
+                        const str = d.innerText;
+                        const html = marked.parse(str);
+                        const rendered = document.createElement("div");
+                        rendered.classList.add("docstring");
+                        rendered.innerHTML = html;
+                        d.parentNode.replaceChild(rendered, d);
+                    }
+                }
+              } else {
+                content.innerHTML = "Failed to load doc ID: " + hoverId;
+              }
+            } else if (hoverInfo) { // The inline info, still used for compiler messages
+              content.appendChild(hoverInfo.cloneNode(true));
+            }
+            const extraLinks = tgt.parentElement.dataset['versoLinks'];
+            if (extraLinks) {
+              try {
+                const extras = JSON.parse(extraLinks);
+                const links = document.createElement('ul');
+                links.className = 'extra-doc-links';
+                extras.forEach((l) => {
+                  const li = document.createElement('li');
+                  li.innerHTML = "<a href=\"" + l['href'] + "\" title=\"" + l.long + "\">" + l.short + "</a>";
+                  links.appendChild(li);
+                });
+                content.appendChild(links);
+              } catch (error) {
+                console.error(error);
+              }
+            }
+          }
+          return content;
+        }
+      };
+
+
+      document.querySelectorAll('.hl.lean .const.token, .hl.lean .keyword.token, .hl.lean .literal.token, .hl.lean .option.token, .hl.lean .var.token, .hl.lean .typed.token, .hl.lean .level-var, .hl.lean .level-const, .hl.lean .level-op, .hl.lean .sort').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'lean');
+      });
+      document.querySelectorAll('.hl.lean .has-info.warning').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'warning message');
+      });
+      document.querySelectorAll('.hl.lean .has-info.information').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'info message');
+      });
+      document.querySelectorAll('.hl.lean .has-info.error').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'error message');
+      });
+      document.querySelectorAll('.hl.lean .tactic').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'tactic');
+      });
+      // Skip tokens inside closed tactics — they interfere with tactic tippys
+      const closedTactics = new Set();
+      document.querySelectorAll('.hl.lean .tactic').forEach(tactic => {
+        const toggle = tactic.querySelector('input.tactic-toggle');
+        if (toggle && !toggle.checked) closedTactics.add(tactic);
+      });
+      function isInsideClosedTactic(el) {
+        const tactic = el.closest('.tactic');
+        return tactic && tactic !== el && closedTactics.has(tactic);
+      }
+
+      const tokenSelector = '.hl.lean .const.token, .hl.lean .keyword.token, .hl.lean .literal.token, .hl.lean .option.token, .hl.lean .var.token, .hl.lean .typed.token, .hl.lean .has-info, .hl.lean .tactic, .hl.lean .level-var, .hl.lean .level-const, .hl.lean .level-op, .hl.lean .sort';
+      tippy(Array.from(document.querySelectorAll(tokenSelector)).filter(el => !isInsideClosedTactic(el)), defaultTippyProps);
+
+      // Create/destroy token tippys when tactic checkbox toggles
+      const tacticTippySelector = '.const.token, .keyword.token, .literal.token, .option.token, .var.token, .typed.token, .has-info, .level-var, .level-const, .level-op, .sort';
+      document.querySelectorAll('.hl.lean .tactic').forEach(tactic => {
+        const toggle = tactic.querySelector('input.tactic-toggle');
+        if (toggle) toggle.addEventListener('change', () => {
+          if (toggle.checked) {
+            closedTactics.delete(tactic);
+            tactic.querySelectorAll('.token').forEach(tok => {
+              if (!tok._tippy && tok.matches(tacticTippySelector)) {
+                tippy(tok, defaultTippyProps);
+              }
+            });
+          } else {
+            closedTactics.add(tactic);
+            tactic.querySelectorAll('.token').forEach(tok => {
+              if (tok._tippy) tok._tippy.destroy();
+            });
+          }
+        });
+      });
+  });
+}
+</script>
+    <script src="-verso-search/search-highlight.js" defer="defer"></script>
+    </head>
+  <body>
+    <header>
+      <div class="header-logo-wrapper"></div>
+      <div class="header-title-wrapper">
+        <a href="" class="header-title"><h1>
+            Lean 4 自动化内幕</h1>
+          </a></div>
+      </header>
+    <label for="toggle-toc" id="toggle-toc-click"><span class="line line1"></span><span class="line line2"></span><span class="line line3"></span></label><div class="with-toc">
+      <div class="toc-backdrop" onclick="document.getElementById('toggle-toc-click')?.click()"></div>
+      <nav id="toc">
+        <input type="checkbox" id="toggle-toc"><div class="first">
+          <a href="" class="toc-title"><h1>
+              Lean 4 自动化内幕</h1>
+            </a><div class="split-tocs">
+            <div class="split-toc book">
+              <div class="title">
+                <label for="--verso-manual-toc-----bookRoot" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-----bookRoot" checked="checked"></label><span class="">Table of Contents</span></div>
+              <table><tr class="numbered"><td class="num">1.</td><td><a href="Ch00Setup/#ch00-setup">第零章 环境与运行约定</a></td></tr><tr class="numbered"><td class="num">2.</td><td><a href="Ch01MetaprogrammingModel/#ch01-metaprogramming-model">第一章 Lean 4 元编程模型</a></td></tr><tr class="numbered"><td class="num">3.</td><td><a href="Ch02Expr/#ch02-expr">第二章 Expr：Lean 4 的内部表示</a></td></tr><tr class="numbered"><td class="num">4.</td><td><a href="Ch03FirstTactic/#ch03-first-tactic">第三章 编写你的第一个 Tactic</a></td></tr><tr class="numbered"><td class="num">5.</td><td><a href="Ch04GoalManagement/#ch04-goal-management">第四章 目标管理</a></td></tr><tr class="numbered"><td class="num">6.</td><td><a href="Ch05TypeclassSynthesis/#ch05-typeclass-synthesis">第五章 Type Class Synthesis</a></td></tr><tr class="numbered"><td class="num">7.</td><td><a href="Ch06Simp/#ch06-simp">第六章 simp：重写引擎</a></td></tr><tr class="numbered"><td class="num">8.</td><td><a href="Ch07Ring/#ch07-ring">第七章 ring 和 <code>ring_nf</code>：代数范式化</a></td></tr><tr class="numbered"><td class="num">9.</td><td><a href="Ch08Omega/#ch08-omega">第八章 omega：Presburger 算术决策过程</a></td></tr><tr class="numbered"><td class="num">10.</td><td><a href="Ch09Linarith/#ch09-linarith">第九章 linarith、nlinarith 与 polyrith</a></td></tr><tr class="numbered"><td class="num">11.</td><td><a href="Ch10NormNum/#ch10-norm-num">第十章 <code>norm_num</code>：数值计算框架</a></td></tr><tr class="numbered"><td class="num">12.</td><td><a href="Ch11Aesop/#ch11-aesop">第十一章 aesop：可配置的搜索引擎</a></td></tr><tr class="current numbered"><td class="num">13.</td><td><a href="Ch12Grind/#ch12-grind">第十二章 grind：E-matching 与 Congruence Closure</a></td></tr><tr class="numbered"><td class="num">14.</td><td><a href="Ch13Decide/#ch13-decide">第十三章 decide 与 <code>native_decide</code>：有限计算判定</a></td></tr><tr class="numbered"><td class="num">15.</td><td><a href="Ch14Positivity/#ch14-positivity">第十四章 positivity：符号非负性推理</a></td></tr><tr class="numbered"><td class="num">16.</td><td><a href="Ch15FunProp/#ch15-fun-prop">第十五章 <code>fun_prop</code>：函数性质的自动证明</a></td></tr><tr class="numbered"><td class="num">17.</td><td><a href="Ch16Gcongr/#ch16-gcongr">第十六章 gcongr：广义合同性</a></td></tr><tr class="numbered"><td class="num">18.</td><td><a href="Ch17FieldSimp/#ch17-field-simp">第十七章 <code>field_simp</code>：分式化简</a></td></tr><tr class="numbered"><td class="num">19.</td><td><a href="Ch18LogicTransforms/#ch18-logic-transforms">第十八章 push<em>neg、contrapose、by</em>contra</a></td></tr><tr class="numbered"><td class="num">20.</td><td><a href="Ch19DesignYourOwn/#ch19-design-your-own">第十九章 设计你自己的领域自动化</a></td></tr><tr class="numbered"><td class="num">21.</td><td><a href="Ch20Reflection/#ch20-reflection">第二十章 反射证明模式</a></td></tr><tr class="numbered"><td class="num">22.</td><td><a href="Ch21Performance/#ch21-performance">第二十一章 性能工程</a></td></tr><tr class="numbered"><td class="num">23.</td><td><a href="Ch22ExternalTools/#ch22-external-tools">第二十二章 对接外部工具</a></td></tr><tr class="numbered"><td class="num">24.</td><td><a href="Ch23Methodology/#ch23-methodology">第二十三章 从证明模式到自动化：方法论</a></td></tr><tr class="numbered"><td class="num">25.</td><td><a href="Ch24TowardsAnalysis/#ch24-towards-analysis">第二十四章 迈向分析自动化</a></td></tr></table></div>
+            <div class="split-toc">
+              <div class="title">
+                <label for="--verso-manual-toc-ch12-grind" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch12-grind" checked="checked"></label><span class="number">13.</span> <span class="current"><a href="Ch12Grind/#ch12-grind">第十二章 grind：E-matching 与 Congruence Closure</a></span></div>
+              <table><tr class="numbered"><td class="num">13.1.</td><td><a href="Ch12Grind/#grind-what-is-it">12.1 grind 是什么</a></td></tr><tr class="numbered"><td class="num">13.2.</td><td><a href="Ch12Grind/#congruence-closure-algorithm">12.2 核心算法：Congruence Closure</a></td></tr><tr class="numbered"><td class="num">13.3.</td><td><a href="Ch12Grind/#e-matching-quantified-lemmas">12.3 E-matching：量化引理的实例化</a></td></tr><tr class="numbered"><td class="num">13.4.</td><td><a href="Ch12Grind/#using-grind">12.4 使用 grind</a></td></tr><tr class="numbered"><td class="num">13.5.</td><td><a href="Ch12Grind/#grind-internal-structure">12.5 grind 的内部结构概览</a></td></tr><tr class="numbered"><td class="num">13.6.</td><td><a href="Ch12Grind/#grind-vs-simp-vs-aesop">12.6 grind vs simp vs aesop</a></td></tr><tr class="numbered"><td class="num">13.7.</td><td><a href="Ch12Grind/#ch12-common-failure-patterns">12.7 常见失败模式</a></td></tr><tr class="numbered"><td class="num">13.8.</td><td><a href="Ch12Grind/#debugging-grind">12.8 调试 grind</a></td></tr><tr class="numbered"><td class="num">13.9.</td><td><a href="Ch12Grind/#practical-patterns">12.9 实用模式</a></td></tr><tr class="numbered"><td class="num">13.10.</td><td><a href="Ch12Grind/#ch12-exercises">12.10 练习</a></td></tr><tr class="numbered"><td class="num">13.11.</td><td><a href="Ch12Grind/#ch12-summary">12.11 小结</a></td></tr></table></div>
+            </div>
+          </div>
+        <div class="last">
+          <ul id="meta-links">
+            <li>
+              <a href="https://github.com/subfish-zhou/lean-tacticbook">Source Code</a></li>
+            <li>
+              <a href="https://github.com/subfish-zhou/lean-tacticbook/issues">Report Issues</a></li>
+            </ul>
+          </div>
+        </nav>
+      <main><div class="content-wrapper">
+          <nav class="prev-next-buttons">
+            <a class="local-button active" href="Ch11Aesop/#ch11-aesop" rel="prev" title="12. 第十一章 aesop：可配置的搜索引擎"><span class="arrow">←</span><span class="where">12. 第十一章 aesop：可配置的搜索引擎</span></a><a class="local-button active" href="Ch13Decide/#ch13-decide" rel="next" title="14. 第十三章 decide 与 native_decide：有限计算判定"><span class="where">14. 第十三章 decide 与 native_decide：有限计算判定</span><span class="arrow">→</span></a></nav>
+          <section>
+            <h1>
+              13. 第十二章 grind：E-matching 与 Congruence Closure<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch12-grind" title="Permalink">🔗</a></span></h1>
+            <p>
+              <strong>本章目标</strong>：掌握 <code>grind</code> 的 E-graph 架构、<code>@[grind]</code> 引理注册机制、
+常见失败模式及调试方法。</p>
+            <p>
+              <code>aesop</code> 擅长搜索，但面对散落在上下文中的等式假设时力不从心。
+<code>grind</code> 把所有等式丢进一个共享的 <strong>E-graph</strong>，让 congruence closure 自动发现隐含关系。</p>
+            <section>
+              <h2 id="grind-what-is-it">
+                13.1. 12.1 grind 是什么<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=grind-what-is-it" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code>grind</code> 是 Lean 4 (v4.14+) 内置的 SMT 风格 tactic。
+核心能力是<strong>等式传递推理</strong>——给定若干等式假设，自动推导目标等式。</p>
+              <pre>-- [可运行] 最简场景：两步等式传递
+example (h1 : a = b) (h2 : b = c) : a = c := by
+  grind
+  -- ▸ 将 a, b, c 加入 E-graph
+  -- ▸ 由 h1 合并 {a, b}，由 h2 合并 {b, c}
+  -- ▸ 传递得 {a, b, c} 同一等价类，目标成立
+</pre><pre>-- [可运行] congruence：等式穿过函数
+example (h : a = b) : f (g a) = f (g b) := by
+  grind
+  -- ▸ a = b → merge(a,b)
+  -- ▸ congruence: g(a), g(b) 参数同类 → merge(g(a), g(b))
+  -- ▸ congruence: f(g(a)), f(g(b)) 参数同类 → 目标成立
+</pre><p>
+                与 <code>simp</code> 的根本区别：<code>simp</code> 做<strong>有向重写</strong>（lhs → rhs），
+<code>grind</code> 做<strong>无向等式合并</strong>（把两个项放进同一等价类）。
+<code>a = b</code> 和 <code>b = a</code> 对 <code>grind</code> 完全等价。</p>
+              </section>
+            <section>
+              <h2 id="congruence-closure-algorithm">
+                13.2. 12.2 核心算法：Congruence Closure<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=congruence-closure-algorithm" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="e-graph-data-structure">
+                  13.2.1. E-graph 数据结构<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=e-graph-data-structure" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>grind</code> 内部维护一个 <strong>E-graph</strong>（equality graph），由两部分组成：</p>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>Union-Find</strong>：维护等价类，支持 <code>merge(a, b)</code> 和 <code>find(a)</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>Term DAG</strong>：记录项的结构，如 <code>f(a)</code> 是 <code>f</code> applied to <code>a</code></p>
+                    </li>
+                  </ul>
+                <p>
+                  关键不变量：<strong>congruence rule</strong>——若 <code>find(a₁) = find(b₁)</code>，
+则 <code>merge(f(a₁), f(b₁))</code>。每次 merge 后都检查此条件并传播。</p>
+                </section>
+              <section>
+                <h3 id="reasoning-example">
+                  13.2.2. 推理示例<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=reasoning-example" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意] 假设: {a = b, g(f(a)) = c}，目标: g(f(b)) = c
+
+Step 1 — 初始化：每个子项各自一个等价类
+Step 2 — merge(a, b)
+  → congruence: f(a) vs f(b) → merge(f(a), f(b))
+    → congruence: g(f(a)) vs g(f(b)) → merge(g(f(a)), g(f(b)))
+Step 3 — merge(g(f(a)), c) → find(g(f(b))) = find(c) ✓
+</pre><p>
+                  复杂度 <strong>O(n log n)</strong>（n = 项数量），依赖路径压缩 union-find。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="e-matching-quantified-lemmas">
+                13.3. 12.3 E-matching：量化引理的实例化<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=e-matching-quantified-lemmas" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code>grind</code> 的第二项能力是<strong>自动实例化量化引理</strong>——让外部知识参与 E-graph 推理。</p>
+              <p>
+                用 <code>@[grind]</code> 标记引理后，<code>grind</code> 提取其<strong>模式</strong>（如 <code>f (g ?x)</code>），
+运行时在 E-graph 中搜索匹配项，找到则实例化引理、加入新等式。
+新等式可能触发更多 congruence 和 E-matching，直到 fixpoint。</p>
+              <pre>-- [示意型工作流] 注册一条 E-matching 引理（具体行为可能随版本变化）
+@[grind] theorem fg_inv : ∀ x, f (g x) = x := sorry
+
+example (h : y = g a) : f y = a := by
+  grind
+  -- ▸ 由 h: merge(y, g(a)) → congruence: merge(f(y), f(g(a)))
+  -- ▸ E-match: f(g(a)) 匹配 f(g(?x))，x := a
+  -- ▸ 实例化 fg_inv: merge(f(g(a)), a)
+  -- ▸ f(y) ~ f(g(a)) ~ a → 目标成立 ✓
+</pre><section>
+                <h3 id="grind-vs-simp-attributes">
+                  13.3.1. <code>@[grind]</code> vs <code>@[simp]</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=grind-vs-simp-attributes" title="Permalink">🔗</a></span></h3>
+                <p>
+                  | 属性 | 引理用法 | 方向性 |
+|------|----------|--------|
+| <code>@[simp]</code> | 有向重写 lhs → rhs | 单向，lhs 必须是"大"的 |
+| <code>@[grind]</code> | E-matching pattern trigger | 无向，按模式匹配 |</p>
+                <p>
+                  一条引理可同时标记 <code>@[simp, grind]</code>，各在各的引擎中生效。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="using-grind">
+                13.4. 12.4 使用 grind<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=using-grind" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="basic-usage">
+                  13.4.1. 基本调用<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=basic-usage" title="Permalink">🔗</a></span></h3>
+                <pre>-- [可运行] 多步传递 + congruence
+example (h1 : f a = b) (h2 : f b = c) (h3 : a = d) : f (f d) = c := by
+  grind
+  -- ▸ a = d → f(a) = f(d)     (congruence)
+  -- ▸ f(a) = b → f(d) = b     (传递)
+  -- ▸ f(f(d)) = f(b) = c      ✓
+</pre></section>
+              <section>
+                <h3 id="passing-temporary-lemmas">
+                  13.4.2. 传入临时引理<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=passing-temporary-lemmas" title="Permalink">🔗</a></span></h3>
+                <pre>-- [可运行] 用方括号传入不带 @[grind] 的引理
+theorem aux : ∀ x, f (f x) = x := sorry
+
+example (h : a = f b) : f a = b := by
+  grind [aux]
+  -- ▸ aux 作为临时 E-matching trigger（仅本次生效）
+  -- ▸ 实例化 aux[x := b] 得 f(f(b)) = b
+  -- ▸ a = f(b) → f(a) = f(f(b)) = b ✓
+</pre><blockquote><p>
+                    <strong>要点</strong>：<code>grind [lemma]</code> 中的引理不需要 <code>@[grind]</code> 标记。</p>
+                  </blockquote><blockquote><p>
+                    这是控制 E-matching 作用域的推荐方式——避免全局注册带来的爆炸风险。</p>
+                  </blockquote></section>
+              <section>
+                <h3 id="configuration-options">
+                  13.4.3. 配置参数<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=configuration-options" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+set_option grind.maxSteps 20000 in   -- 步数上限
+set_option grind.maxEmatch 2000 in   -- E-matching 实例化上限
+example : ... := by grind
+</pre><blockquote><p>
+                    <strong>经验法则</strong>：需要 <code>maxSteps</code> &gt; 50000 时，通常意味着目标不适合 <code>grind</code>。</p>
+                  </blockquote></section>
+              </section>
+            <section>
+              <h2 id="grind-internal-structure">
+                13.5. 12.5 grind 的内部结构概览<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=grind-internal-structure" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code>grind</code> 大致由三个阶段组成：<strong>预处理</strong>（拆分 <code>And</code>/<code>Or</code>、展开 <code>match</code>、β/η 规范化）→ <strong>E-graph + congruence closure</strong> → <strong>E-matching 实例化</strong>。此外还集成了简化版线性算术（类似 <code>omega</code>）处理偏移量子目标。</p>
+              <p>
+                预处理解释了为什么 <code>grind</code> 能处理不像"纯等式"的目标：</p>
+              <pre>-- [可运行] preprocessor 拆开 And
+example (h : a = b ∧ b = c) : a = c := by
+  grind  -- ▸ preprocessor 拆 h 为 h.1 : a = b, h.2 : b = c，然后 CC 完成
+</pre></section>
+            <section>
+              <h2 id="grind-vs-simp-vs-aesop">
+                13.6. 12.6 grind vs simp vs aesop<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=grind-vs-simp-vs-aesop" title="Permalink">🔗</a></span></h2>
+              <p>
+                | 维度 | grind | simp | aesop |
+|------|-------|------|-------|
+| 核心算法 | congruence closure + E-matching | term rewriting | best-first search |
+| 擅长 | 等式传递链、congruence | 化简到 normal form | forward/backward 搜索 |
+| 引理方向 | 无向 | 有向 (lhs → rhs) | 按规则类型 |
+| 量化引理 | E-matching 实例化 | conditional rewrite | <code>apply</code> / <code>intro</code> |
+| 终止机制 | 步数上限 | fixpoint | 深度上限 |</p>
+              <p>
+                <strong>用 grind</strong>：等式目标 + 多步等式链；congruence 穿透；自动实例化 <code>∀</code> 引理。
+<strong>不用 grind</strong>：化简 → <code>simp</code>；结构操作 → <code>aesop</code>；纯算术 → <code>omega</code>；命题逻辑 → <code>tauto</code>。</p>
+              <section>
+                <h3 id="ch12-combining-tactics">
+                  13.6.1. 组合使用<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch12-combining-tactics" title="Permalink">🔗</a></span></h3>
+                <pre>-- [可运行] grind 单独搞定 congruence + 传递
+example (f : α → β) (g : β → γ)
+    (h1 : a = b) (h2 : b = c) : g (f a) = g (f c) := by
+  grind
+  -- ▸ a = b = c → f(a) = f(c) → g(f(a)) = g(f(c)) ✓
+</pre><pre>-- [可运行] 先用结构化 tactic 拆分，再让 grind 收尾
+example (h : a = b ∨ a = c) (h2 : b = d) (h3 : c = d) : a = d := by
+  cases h with
+  | inl h =&gt; grind  -- ▸ a = b = d
+  | inr h =&gt; grind  -- ▸ a = c = d
+</pre></section>
+              </section>
+            <section>
+              <h2 id="ch12-common-failure-patterns">
+                13.7. 12.7 常见失败模式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch12-common-failure-patterns" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="failure-non-equality-goal">
+                  13.7.1. 失败 1：目标不是等式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-non-equality-goal" title="Permalink">🔗</a></span></h3>
+                <pre>-- [可运行] ✗ grind 不做 witness 搜索
+example : ∃ x : Nat, x + 1 = 2 := by
+  grind  -- 失败：不知道 x 应该取什么值
+  -- 修复：exact ⟨1, rfl⟩
+</pre><blockquote><p>
+                    <strong>诊断线索</strong>：目标形如 <code>∃ x, ...</code> 或 <code>P ∨ Q</code>（需要选边）→ <code>grind</code> 无能为力。</p>
+                  </blockquote></section>
+              <section>
+                <h3 id="failure-definition-not-unfolded">
+                  13.7.2. 失败 2：定义未展开<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-definition-not-unfolded" title="Permalink">🔗</a></span></h3>
+                <pre>-- [可运行] ✗ grind 不自动展开用户定义
+def myf (n : Nat) : Nat := n + 1
+
+example : myf (myf 0) = 2 := by
+  grind  -- 失败：E-graph 中 myf 是黑盒
+  -- 修复 A：unfold myf; omega
+  -- 修复 B：simp [myf]
+</pre><blockquote><p>
+                    <strong>核心规则</strong>：<code>grind</code>（和 <code>simp</code> 一样）<strong>不自动 unfold 用户定义</strong>。</p>
+                  </blockquote><blockquote><p>
+                    要么 <code>@[grind]</code> 注册等式引理，要么手动 <code>unfold</code>，要么 <code>simp [f]</code> 先化简。</p>
+                  </blockquote></section>
+              <section>
+                <h3 id="failure-e-matching-explosion">
+                  13.7.3. 失败 3：E-matching 爆炸<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-e-matching-explosion" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意] ✗ 宽泛的 trigger 导致组合爆炸
+@[grind] theorem bad_trigger : ∀ x y, f x = g y → h x y = 0 := sorry
+-- n 个 f 项 × m 个 g 项 → n×m 次实例化 → 超时
+</pre><p>
+                  <strong>诊断</strong>：<code>set_option trace.grind.ematch true</code> 看实例化次数——同一引理上百次 = 太宽泛。
+<strong>修复</strong>：移除 <code>@[grind]</code>，改用 <code>grind [specific_instance]</code> 手动传入；或缩窄模式。</p>
+                </section>
+              <section>
+                <h3 id="failure-needs-case-split">
+                  13.7.4. 失败 4：需要 case split<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-needs-case-split" title="Permalink">🔗</a></span></h3>
+                <pre>-- [可运行] ✗ grind 对 if/match 的 case split 有限
+example (h : if b then a = 1 else a = 2) : a = 1 ∨ a = 2 := by
+  grind  -- 可能失败
+  -- 修复：cases b &lt;;&gt; simp_all
+</pre><blockquote><p>
+                    涉及 <code>if</code>/<code>match</code> 分支时，先 <code>split_ifs</code> 或 <code>cases</code> 拆开再让 <code>grind</code> 收尾。</p>
+                  </blockquote></section>
+              <section>
+                <h3 id="failure-higher-order-dependent-types">
+                  13.7.5. 失败 5：高阶 / dependent types<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-higher-order-dependent-types" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意] ✗ E-graph 是一阶数据结构
+example (h : ∀ f : Nat → Nat, f 0 = 0) : id 0 = 0 := by
+  grind  -- 可能失败：量化变量是函数类型
+  -- 修复：exact h id
+</pre><p>
+                  E-graph 是一阶结构，量化变量本身是函数时 E-matching 可能找不到合适实例。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="debugging-grind">
+                13.8. 12.8 调试 grind<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=debugging-grind" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="ch12-trace-options">
+                  13.8.1. Trace 选项<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch12-trace-options" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+set_option trace.grind true in        -- 全部推理过程
+set_option trace.grind.ematch true in  -- 只看 E-matching 实例化
+set_option trace.grind.eqc true in     -- 只看等价类合并
+set_option trace.grind.split true in   -- 只看 case split
+example : ... := by grind
+</pre></section>
+              <section>
+                <h3 id="debugging-workflow">
+                  13.8.2. 调试流程<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=debugging-workflow" title="Permalink">🔗</a></span></h3>
+                <pre> grind 失败
+   │
+   ├─ 开 trace.grind true
+   │   ├─ E-graph 缺关键项？ → 补引理 grind [lemma] 或 unfold
+   │   ├─ 关键等式未合并？   → 检查是否缺中间等式假设
+   │   ├─ E-matching 未触发？ → 检查 @[grind] 注册和模式
+   │   └─ 实例化爆炸？       → 移除 @[grind]，改手动传入
+   │
+   └─ 修复后关闭 trace（显著拖慢编译）
+</pre><blockquote><p>
+                    <strong>技巧</strong>：先用 <code>trace.grind.ematch</code> 单独看，输出比 <code>trace.grind</code> 小得多。</p>
+                  </blockquote></section>
+              </section>
+            <section>
+              <h2 id="practical-patterns">
+                13.9. 12.9 实用模式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=practical-patterns" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="pattern-long-equality-chain">
+                  13.9.1. 模式 A：长等式链 + 深 congruence<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=pattern-long-equality-chain" title="Permalink">🔗</a></span></h3>
+                <pre>-- [可运行] grind 的最佳场景
+example (h1 : a = b) (h2 : b = c) (h3 : c = d)
+    (h4 : d = e) : f (g a) = f (g e) := by
+  grind
+  -- ▸ 4 步传递 + 2 层 congruence，一步搞定
+  -- ▸ 用 calc 需手写每一步，用 simp 需标注方向
+</pre></section>
+              <section>
+                <h3 id="pattern-domain-lemma-registration">
+                  13.9.2. 模式 B：注册领域引理<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=pattern-domain-lemma-registration" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意] 为代数结构注册引理
+@[grind] theorem mul_comm_ab : ∀ (a b : MyGroup), a * b = b * a := sorry
+@[grind] theorem mul_assoc_ab : ∀ (a b c : MyGroup),
+    a * b * c = a * (b * c) := sorry
+
+example (a b c : MyGroup) : a * b * c = c * (b * a) := by
+  grind  -- ▸ E-matching 实例化交换律和结合律
+</pre><blockquote><p>
+                    <strong>警告</strong>：交换律 + 结合律是 E-matching 爆炸经典诱因，实践中改用 <code>ring</code>/<code>group</code>。</p>
+                  </blockquote></section>
+              <section>
+                <h3 id="pattern-manual-split-then-grind">
+                  13.9.3. 模式 C：手动拆分 + grind 收尾<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=pattern-manual-split-then-grind" title="Permalink">🔗</a></span></h3>
+                <p>
+                  手动处理分支逻辑（<code>Or</code>/<code>if</code>/<code>match</code>），每个分支内让 <code>grind</code> 完成等式推理。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch12-exercises">
+                13.10. 12.10 练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch12-exercises" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="exercise-12-1">
+                  13.10.1. 练习 1：基础等式链 ★<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-12-1" title="Permalink">🔗</a></span></h3>
+                <pre>-- 用一个 tactic 关闭目标
+example (h1 : a = b) (h2 : b = c) (h3 : c = d) : f a = f d := by
+  sorry
+</pre><p>
+                  等式链 + congruence 是 <code>grind</code> 的标准场景。</p>
+                </section>
+              <section>
+                <h3 id="exercise-12-2">
+                  13.10.2. 练习 2：传入临时引理 ★★<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-12-2" title="Permalink">🔗</a></span></h3>
+                <pre>-- 定义引理并传入 grind 使 example 通过
+-- theorem my_lemma : ∀ x, f (g x) = x := sorry
+
+example (h : y = g (g a)) : f y = g a := by
+  sorry  -- 用 grind [...]
+</pre><p>
+                  需要 <code>f (g ?x) = ?x</code>。E-matching 实例化 <code>x := g(a)</code> 得 <code>f(g(g(a))) = g(a)</code>，
+配合 <code>h</code> 的 congruence 完成。</p>
+                </section>
+              <section>
+                <h3 id="exercise-12-3">
+                  13.10.3. 练习 3：诊断并修复失败 ★★<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-12-3" title="Permalink">🔗</a></span></h3>
+                <pre>-- 以下 grind 调用会失败，解释原因并修复
+def double (n : Nat) : Nat := n + n
+
+example : double 3 = 6 := by
+  grind  -- 失败！
+</pre><p>
+                  <code>grind</code> 不展开 <code>double</code>。修复：<code>unfold double; omega</code> 或 <code>simp [double]</code>。
+展开后是纯算术 <code>3 + 3 = 6</code>，<code>omega</code> 比 <code>grind</code> 更合适。</p>
+                </section>
+              <section>
+                <h3 id="exercise-12-4">
+                  13.10.4. 练习 4：控制 E-matching 爆炸 ★★★<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-12-4" title="Permalink">🔗</a></span></h3>
+                <pre>-- 以下代码可能导致 grind 超时，分析原因并修复
+@[grind] theorem inj_f : ∀ x y, f x = f y → x = y := sorry
+@[grind] theorem expand_f : ∀ x, f x = g (h x) := sorry
+
+example (h1 : a = b) (h2 : g (h a) = c) : f b = c := by
+  grind  -- 可能超时
+</pre><p>
+                  <code>inj_f</code> 的 trigger <code>f ?x = f ?y</code> 在 <code>expand_f</code> 引入新 <code>f</code> 项后被反复触发。
+修复：移除 <code>inj_f</code> 的 <code>@[grind]</code>，只保留 <code>expand_f</code>：</p>
+                <pre>attribute [-grind] inj_f
+example (h1 : a = b) (h2 : g (h a) = c) : f b = c := by
+  grind [expand_f]
+</pre><blockquote><p>
+                    <strong>教训</strong>：全局 <code>@[grind]</code> 注册的引理会影响所有 <code>grind</code> 调用点，爆炸风险远高于局部 <code>grind [lemma]</code>。</p>
+                  </blockquote><blockquote><p>
+                    除非确认引理的 trigger 足够窄，否则优先使用 <code>grind [lemma]</code> 按需传入。</p>
+                  </blockquote></section>
+              <section>
+                <h3 id="exercise-12-5">
+                  13.10.5. 练习 5：组合 tactic ★★★<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-12-5" title="Permalink">🔗</a></span></h3>
+                <pre>-- 用 cases + grind 的组合关闭目标
+example (h : (a = b ∧ c = d) ∨ (a = d ∧ c = b))
+    : f a c = f b d ∨ f a c = f d b := by
+  sorry
+</pre><p>
+                  <code>cases h</code> 拆 <code>Or</code>，每个分支 <code>obtain ⟨h1, h2⟩ := h</code> 拆 <code>And</code>，
+然后 <code>left; grind</code> 或 <code>right; grind</code>。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch12-summary">
+                13.11. 12.11 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch12-summary" title="Permalink">🔗</a></span></h2>
+              <p>
+                | 概念 | 要点 |
+|------|------|
+| grind 定位 | SMT 风格 tactic，擅长等式传递推理 |
+| E-graph | union-find + term DAG，O(n log n) congruence closure |
+| congruence | <code>a = b → f(a) = f(b)</code>，自动穿透任意深度嵌套 |
+| E-matching | 在 E-graph 中搜索量化引理的 pattern 并实例化 |
+| <code>@[grind]</code> | 注册 E-matching trigger，无向（区别于 <code>@[simp]</code>） |
+| <code>grind [l]</code> | 临时传入引理，不污染全局注册，推荐用法 |
+| 配置 | <code>maxSteps</code>、<code>maxEmatch</code>，超限说明目标可能不适合 grind |
+| 主要失败 | 非等式目标、缺引理/展开、E-matching 爆炸、case split、高阶项 |
+| 调试 | <code>trace.grind</code>、<code>trace.grind.ematch</code>、<code>trace.grind.eqc</code> |
+| 组合策略 | 手动拆分分支 + 每分支内 grind 收尾 |</p>
+              <p>
+                <strong>下一章</strong>：<code>decide</code> / <code>native_decide</code>——可判定性与内核计算。
+</p>
+              </section>
+            </section>
+          <nav class="prev-next-buttons">
+            <a class="local-button active" href="Ch11Aesop/#ch11-aesop" rel="prev" title="12. 第十一章 aesop：可配置的搜索引擎"><span class="arrow">←</span><span class="where">12. 第十一章 aesop：可配置的搜索引擎</span></a><a class="local-button active" href="Ch13Decide/#ch13-decide" rel="next" title="14. 第十三章 decide 与 native_decide：有限计算判定"><span class="where">14. 第十三章 decide 与 native_decide：有限计算判定</span><span class="arrow">→</span></a></nav>
+          </div>
+        </main></div>
+    </body>
+  </html>
+

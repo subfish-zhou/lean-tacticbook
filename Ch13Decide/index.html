@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      (function(){
+  const {protocol:proto, host:hostName, pathname:path, search:srch, hash:hsh} = window.location;
+  if (!(path.endsWith("/") || path.endsWith(".html"))) {
+    window.location.replace(`${proto}//${hostName}${path}/${srch}${hsh}`);
+  }
+})()</script>
+    <base href="./../"><meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <title>第十三章 decide 与  native_decide ：有限计算判定</title><link rel="stylesheet" href="book.css">
+    <link rel="stylesheet" href="verso-vars.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js" integrity="sha384-zbcZAIxlvJtNE3Dp5nxLXdXtXyxwOdnILY1TDPVmKFhl4r4nSUG1r8bcFXGVa4Te" crossorigin="anonymous"></script>
+    <script src="-verso-search/elasticlunr.min.js"></script>
+    <script src="-verso-search/fuzzysort.min.js"></script>
+    <script src="-verso-search/searchIndex.js"></script>
+    <script type="module" src="-verso-search/search-init.js"></script>
+    <link rel="stylesheet" href="-verso-search/search-box.css">
+    <link rel="stylesheet" href="-verso-search/search-highlight.css">
+    <link rel="stylesheet" href="-verso-search/domain-display.css">
+    <script src="-verso-data/katex/katex.js"></script>
+    <script src="-verso-data/katex/math.js"></script>
+    <script src="-verso-data/popper.min.js"></script>
+    <script src="-verso-data/tippy-bundle.umd.min.js"></script>
+    <link rel="stylesheet" href="-verso-data/tippy-border.css">
+    <link rel="stylesheet" href="-verso-data/katex/katex.css">
+    <style>
+
+.hl.lean {
+  white-space: pre;
+  font-weight: normal;
+  font-style: normal;
+  font-size: inherit;
+}
+
+.hl.lean .keyword {
+  color: var(--verso-code-keyword-color,);
+  font-weight: var(--verso-code-keyword-weight, bold);
+  font-style: var(--verso-code-keyword-style, normal);
+  font-family: var(--verso-code-keyword-font-family,);
+}
+
+.hl.lean .const {
+  color: var(--verso-code-const-color,);
+  font-weight: var(--verso-code-const-weight, normal);
+  font-style: var(--verso-code-const-style, normal);
+  font-family: var(--verso-code-const-font-family,);
+}
+
+.hl.lean .var {
+  color: var(--verso-code-var-color,);
+  font-weight: var(--verso-code-var-weight, normal);
+  font-style: var(--verso-code-var-style, italic);
+  font-family: var(--verso-code-var-font-family,);
+
+  position: relative;
+}
+
+.hl.lean .literal, .hl.lean .unknown {
+  color: var(--verso-code-color,);
+  font-weight: normal;
+  font-style: normal;
+  font-family: var(--verso-code-font-family,);
+}
+
+.hover-container {
+  width: 0;
+  height: 0;
+  position: relative;
+  display: inline;
+}
+
+.hl.lean a {
+  color: inherit;
+  text-decoration: currentcolor underline dotted;
+}
+
+.hl.lean a:hover {
+  text-decoration: currentcolor underline solid;
+}
+
+.hl.lean .hover-info {
+  white-space: normal;
+}
+
+.hl.lean .token .hover-info {
+  display: none;
+  position: absolute;
+  background-color: #e5e5e5;
+  border: 1px solid black;
+  padding: 0.5rem;
+  z-index: 300;
+}
+
+.hl.lean .hover-info.messages {
+  max-height: 10rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  padding: 0 0.5rem 0 0;
+  display: block;
+}
+
+.hl.lean .hover-info code {
+  white-space: pre-wrap;
+  background: none;
+  color: black;
+}
+
+.hl.lean .hover-info.messages > code {
+  padding: 0.5rem;
+  display: block;
+  width: fit-content;
+}
+
+.hl.lean .hover-info.messages > code:only-child {
+  margin: 0;
+}
+
+.hl.lean .hover-info.messages > code {
+  margin: 0.1rem;
+}
+
+.hl.lean .hover-info.messages > code:not(:first-child) {
+  margin-top: 0rem;
+}
+
+.hl.lean {
+}
+
+.hl.lean.block {
+  display: block;
+}
+
+.hl.lean.inline {
+  display: inline;
+  white-space: pre-wrap;
+}
+
+.hl.lean * {
+}
+
+.hl.lean .token {
+  transition: all 0.25s; /* Slight fade for highlights */
+}
+
+@media (hover: hover) {
+  .hl.lean .token.binding-hl, .hl.lean .literal.string:hover, .hl.lean .token.typed:hover {
+    background-color: #eee;
+    border-radius: 2px;
+    transition: none;
+  }
+}
+
+
+.hl.lean .has-info .token:not(.tactic-state):not(.tactic-state *), .hl.lean .has-info .inter-text:not(.tactic-state):not(.tactic-state *) {
+  text-decoration-style: wavy;
+  text-decoration-line: underline;
+  text-decoration-thickness: from-font;
+  text-decoration-skip-ink: none;
+}
+
+.hl.lean .has-info .hover-info {
+  display: none;
+  position: absolute;
+  transform: translate(0.25rem, 0.3rem);
+  border: 1px solid black;
+  padding: 0.5rem;
+  z-index: 400;
+  text-align: left;
+}
+
+.hl.lean .has-info.error :not(.tactic-state):not(.tactic-state *){
+  text-decoration-color: red;
+}
+
+@media (hover: hover) {
+  .hl.lean .has-info.error:hover {
+    background-color: #ffb3b3;
+  }
+}
+
+.hl.lean .hover-info.messages > code.error {
+  background-color: #e5e5e5;
+  border-left: 0.2rem solid #ffb3b3;
+}
+
+.tippy-box[data-theme~='error'] .hl.lean .hover-info.messages > code.error {
+  background: none;
+  border: none;
+}
+
+.error .verso-message, .error .verso-message .token, .error .verso-message label {
+  color: var(--verso-error-color);
+}
+
+.error .verso-message .case-label:has(input[type="checkbox"])::before {
+  background-color: var(--verso-error-color) !important;
+}
+
+.hl.lean .has-info.warning :not(.tactic-state):not(.tactic-state *) {
+  text-decoration-color: var(--verso-warning-indicator-color);
+}
+
+@media (hover: hover) {
+  .hl.lean .has-info.warning:hover {
+    background-color:var(--verso-warning-color);
+  }
+}
+
+.hl.lean .hover-info.messages > code.warning {
+  background-color: var(--verso-warning-color);
+}
+
+.lean-output {
+  border-left: 0.2em solid transparent;
+  padding: 0 0 0 0.5em;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.lean-output.error {
+  border-color: var(--verso-error-indicator-color);
+}
+
+.lean-output.information {
+  border-color: var(--verso-info-indicator-color);
+}
+
+.lean-output.warning {
+  border-color: var(--verso-warning-indicator-color);
+}
+
+.hl.lean .hover-info.messages > code.error {
+  background-color: #e5e5e5;
+  border-left: 0.2rem solid var(--verso-warning-color);
+}
+
+.tippy-box[data-theme~='warning'] .hl.lean .hover-info.messages > code.warning {
+  background: none;
+  border: none;
+}
+
+
+.hl.lean .has-info.information :not(.tactic-state):not(.tactic-state *) {
+  text-decoration-color: var(--verso-info-indicator-color, blue);
+}
+
+@media (hover: hover) {
+  .hl.lean .has-info.information:hover {
+    background-color: #4777ff;
+  }
+}
+
+
+.hl.lean .hover-info.messages > code.information {
+  background-color: #e5e5e5;
+  border-left: 0.2rem solid #4777ff;
+}
+
+.tippy-box[data-theme~='info'] .hl.lean .hover-info.messages > code.information {
+  background: none;
+  border: none;
+}
+
+.hl.lean div.docstring {
+  font-family: var(--verso-text-font-family, sans-serif);
+  white-space: normal;
+  max-width: calc(min(40rem, 90vw));
+  width: max-content;
+}
+
+.hl.lean div.docstring > :last-child {
+  margin-bottom: 0;
+}
+
+.hl.lean div.docstring > :first-child {
+  margin-top: 0;
+}
+
+.hl.lean .hover-info .sep {
+  display: block;
+  width: auto;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0;
+  height: 1px;
+  border-top: 1px solid #ccc;
+}
+
+.hl.lean code {
+  font-family: var(--verso-code-font-family);
+}
+
+.hl.lean .tactic-state {
+  display: none;
+  position: relative;
+  width: fit-content;
+  border: 1px solid #888888;
+  border-radius: 0.1rem;
+  padding: 0.5rem;
+  font-family: sans-serif;
+  background-color: #ffffff;
+}
+
+.hl.lean.popup .tactic-state {
+  position: static;
+  display: block;
+  width: auto;
+  border: none;
+  padding: 0.5rem;
+  font-family: sans-serif;
+  background-color: #ffffff;
+}
+
+
+.hl.lean .tactic {
+  position: relative;
+  display: inline;
+  vertical-align: top;
+  /* Without these, mobile Safari will start making font sizes inconsistent when its text size adjustment feature is triggered.*/
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.hl.lean .tactic:has(.tactic-toggle:checked) {
+  display: inline-grid;
+  grid-template-columns: 1fr;
+}
+
+.hl.lean .tactic-toggle:checked ~ .tactic-state {
+  display: inline-block;
+  vertical-align: top;
+  grid-row: 2;
+  justify-self: start;
+}
+
+.hl.lean .tactic > label {
+  position: relative;
+  grid-row: 1;
+  display: inline;
+}
+
+@media (hover: hover) {
+  .hl.lean .tactic:has(.tactic-toggle:not(:checked)) > label:hover {
+    background-color: #eeeeee;
+  }
+}
+
+.hl.lean .tactic-toggle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  height: 0;
+  width: 0;
+  z-index: -10;
+}
+
+.hl.lean .tactic > label::after {
+  content: "";
+  border: 1px solid #bbbbbb;
+  /* These need to be em, not rem, to scale with the font */
+  border-radius: 1em;
+  height: 0.25em;
+  vertical-align: middle;
+  width: 0.6em;
+  margin-left: 0.1em;
+  margin-right: 0.1em;
+  display: inline-block;
+  transition: all 0.5s;
+}
+
+/*
+@media (hover: hover) {
+  .hl.lean .tactic > label:hover::after {
+    border: 1px solid #aaaaaa;
+    background-color: #aaaaaa;
+    transition: all 0.5s;
+  }
+}
+*/
+
+.hl.lean .tactic > label:has(+ .tactic-toggle:checked)::after {
+  border: 1px solid #999999;
+  background-color: #999999;
+  transition: all 0.5s;
+}
+
+.hl.lean .tactic-state .goal + .goal {
+  margin-top: 1.5em;
+}
+
+/*
+Some CSS frameworks customize details/summary in ways not compatible with Verso's output.
+*/
+
+.hl.lean details {
+  display: block !important;
+  margin: 0;
+}
+
+.hl.lean details summary {
+  display: list-item !important;
+  margin: 0;
+}
+
+.hl.lean details summary:focus {
+  outline: none;
+  outline-offset: none;
+  color: inherit;
+}
+
+.hl.lean ul > li {
+  margin-bottom: 0;
+}
+
+.hl.lean details summary::marker {
+  display: inline !important;
+}
+
+.hl.lean details > summary:first-of-type {
+  list-style-type: disclosure-closed;
+  list-style-position: inside;
+}
+
+.hl.lean details[open] > summary:first-of-type {
+  list-style-type: disclosure-open;
+}
+
+.hl.lean details summary::before, .hl.lean details summary::after {
+  content: "" !important;
+  background: none;
+  display: none;
+}
+
+.hl.lean .tactic-state summary {
+  /* These need to be em, not rem, to scale with the font */
+  margin-left: -0.5em;
+}
+
+.hl.lean .tactic-state details {
+  /* These need to be em, not rem, to scale with the font */
+  padding-left: 0.5em;
+}
+
+.hl.lean .case-label {
+  display: block;
+  position: relative;
+}
+
+.hl.lean .case-label input[type="checkbox"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  height: 0;
+  width: 0;
+  z-index: -10;
+}
+
+.hl.lean .case-label:has(input[type="checkbox"])::before {
+  display: inline-block;
+  background-color: black;
+  content: ' ';
+  transition: ease 0.2s;
+  margin-right: 0.7em;
+  clip-path: polygon(100% 0, 0 0, 50% 100%);
+  width: 0.6em;
+  height: 0.6em;
+  vertical-align: middle;
+}
+
+.hl.lean .case-label:has(input[type="checkbox"]:not(:checked))::before {
+  transform: rotate(-90deg);
+}
+
+.hl.lean .case-label:has(input[type="checkbox"]) {
+
+}
+
+.hl.lean .case-label:has(input[type="checkbox"]:checked) {
+
+}
+
+
+.hl.lean .labeled-case > :not(:first-child) {
+  max-height: 0px;
+  display: block;
+  overflow: hidden;
+  transition: max-height 0.1s ease-in;
+  /* These need to be em, not rem, to scale with the font */
+  margin-left: 0.5em;
+  margin-top: 0.1em;
+}
+
+.hl.lean .labeled-case:has(.case-label input[type="checkbox"]:checked) > :not(:first-child) {
+  max-height: 100%;
+}
+
+
+.hl.lean .goal-name::before {
+  font-style: normal;
+  content: "case ";
+}
+
+.hl.lean .goal-name {
+  font-style: italic;
+  font-family: var(--verso-code-font-family);
+  color: inherit;
+}
+
+.hl.lean .hypotheses {
+  display: table;
+}
+
+.hl.lean .hypothesis {
+  display: table-row;
+}
+
+.hl.lean .hypothesis > * {
+  display: table-cell;
+}
+
+
+.hl.lean .hypotheses .colon {
+  text-align: center;
+  /* This needs to be em, not rem, to scale with the font */
+  min-width: 1em;
+}
+
+.hl.lean .hypotheses .name {
+  text-align: right;
+}
+
+.hl.lean .hypotheses .name,
+.hl.lean .hypotheses .type,
+.hl.lean .conclusion .type {
+  font-family: var(--verso-code-font-family);
+}
+
+.tippy-box {
+  /* Without these, mobile Safari will start making font sizes inconsistent when its text size adjustment feature is triggered.*/
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.tippy-box[data-theme~='lean'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 1px solid black;
+}
+.tippy-box[data-theme~='lean'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: #e5e5e5;
+}
+.tippy-box[data-theme~='lean'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-bottom-color: #e5e5e5;
+}
+.tippy-box[data-theme~='lean'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: #e5e5e5;
+}
+.tippy-box[data-theme~='lean'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: #e5e5e5;
+}
+
+.tippy-box[data-theme~='message'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: #e5e5e5;
+  border-width: 11px 11px 0;
+}
+.tippy-box[data-theme~='message'][data-placement^='top'] > .tippy-arrow::after {
+  bottom: -11px;
+  border-width: 11px 11px 0;
+}
+.tippy-box[data-theme~='message'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-width: 0 11px 11px;
+}
+.tippy-box[data-theme~='message'][data-placement^='bottom'] > .tippy-arrow::after {
+  top: -11px;
+  border-width: 0 11px 11px;
+}
+.tippy-box[data-theme~='message'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: #e5e5e5;
+  border-width: 11px 0 11px 11px;
+}
+.tippy-box[data-theme~='message'][data-placement^='left'] > .tippy-arrow::after {
+  right: -11px;
+  border-width: 11px 0 11px 11px;
+}
+
+.tippy-box[data-theme~='message'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: #e5e5e5;
+  border-width: 11px 11px 11px 0;
+}
+.tippy-box[data-theme~='message'][data-placement^='right'] > .tippy-arrow::after {
+  left: -11px;
+  border-width: 11px 11px 11px 0;
+}
+
+
+
+.tippy-box[data-theme~='warning'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 3px solid var(--verso-warning-color);
+}
+
+.tippy-box[data-theme~='error'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 3px solid #f7a7af;
+}
+
+.tippy-box[data-theme~='info'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 3px solid #99b3c2;
+}
+
+.tippy-box[data-theme~='tactic'] {
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: white;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-bottom-color: white;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: white;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: white;
+}
+
+.extra-doc-links {
+  list-style-type: none;
+  margin-left: 0;
+  padding: 0;
+}
+
+.extra-doc-links > li {
+  display: inline-block;
+}
+
+.extra-doc-links > li:not(:last-child)::after {
+  content: '|';
+  display: inline-block;
+  margin: 0 0.25em;
+}
+
+.verso-message .trace {
+  display: block;
+}
+
+.verso-message .trace > summary::marker {
+  color: var(--verso-text-color);
+}
+
+.verso-message .trace-children {
+  margin: 0;
+  padding: 0;
+}
+
+.verso-message .trace-children > li {
+  list-style-type: none;
+  margin-left: 1.5em;
+}
+
+.verso-message .trace-children > li:not(:has(.trace)) {
+  margin-left: 0;
+}
+
+.verso-message .trace-class {
+  color: color-mix(in srgb, currentColor 70%, transparent);
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+}
+
+.verso-message .text {
+  white-space: pre-wrap;
+}
+
+</style><script>
+      
+window.onload = () => {
+
+    // Don't show hovers inside of closed tactic states
+    function blockedByTactic(elem) {
+      let parent = elem.parentNode;
+      while (parent && "classList" in parent) {
+        if (parent.classList.contains("tactic")) {
+          const toggle = parent.querySelector("input.tactic-toggle");
+          if (toggle) {
+            return !toggle.checked;
+          }
+        }
+        parent = parent.parentNode;
+      }
+      return false;
+    }
+
+    // Track whether any tippy is visible (O(1) check instead of DOM scan)
+    let visibleTippyCount = 0;
+    function blockedByTippy(elem) {
+      return visibleTippyCount > 0;
+    }
+
+    // Binding highlights via event delegation with cached lookups
+    const bindingCache = new Map(); // context+binding -> [token elements]
+    let highlightedTokens = [];
+    function getBindingTokens(context, binding) {
+      const key = context + "\0" + binding;
+      let tokens = bindingCache.get(key);
+      if (!tokens) {
+        tokens = [];
+        for (const example of document.querySelectorAll(".hl.lean")) {
+          if (example.dataset.leanContext == context) {
+            for (const tok of example.querySelectorAll(".token[data-binding=\"" + CSS.escape(binding) + "\"]")) {
+              tokens.push(tok);
+            }
+          }
+        }
+        bindingCache.set(key, tokens);
+      }
+      return tokens;
+    }
+    for (const container of document.querySelectorAll(".hl.lean")) {
+      container.addEventListener("mouseover", (event) => {
+        const c = event.target.closest(".token");
+        if (!c || !c.dataset.binding || c.dataset.binding === "" || !container.contains(c)) return;
+        if (blockedByTactic(c)) return;
+        const tokens = getBindingTokens(container.dataset.leanContext, c.dataset.binding);
+        for (const tok of tokens) {
+          tok.classList.add("binding-hl");
+        }
+        highlightedTokens = tokens;
+      });
+      container.addEventListener("mouseout", (event) => {
+        const c = event.target.closest(".token");
+        if (!c || !container.contains(c)) return;
+        for (const tok of highlightedTokens) {
+          tok.classList.remove("binding-hl");
+        }
+        highlightedTokens = [];
+      });
+    }
+    /* Render docstrings */
+    if ('undefined' !== typeof marked) {
+        for (const d of document.querySelectorAll("code.docstring, pre.docstring")) {
+            const str = d.innerText;
+            const html = marked.parse(str);
+            const rendered = document.createElement("div");
+            rendered.classList.add("docstring");
+            rendered.innerHTML = html;
+            d.parentNode.replaceChild(rendered, d);
+        }
+    }
+    // Add hovers
+    let docsJson = "-verso-docs.json";
+    fetch(docsJson).then((resp) => resp.json()).then((versoDocData) => {
+
+      function hideParentTooltips(element) {
+        let parent = element.parentElement;
+        while (parent) {
+          const tippyInstance = parent._tippy;
+          if (tippyInstance) {
+            tippyInstance.hide();
+          }
+          parent = parent.parentElement;
+        }
+      }
+
+
+
+      const defaultTippyProps = {
+        /* DEBUG -- remove the space: * /
+        onHide(any) { return false; },
+        trigger: "click",
+        // */
+        /* theme: "lean", */
+        maxWidth: "none",
+        appendTo: () => document.body,
+        interactive: true,
+        delay: [100, null],
+        /* ignoreAttributes: true, */
+        followCursor: 'initial',
+        onShow(inst) {
+          if (inst.reference.className == 'tactic') {
+            const toggle = inst.reference.querySelector("input.tactic-toggle");
+            if (toggle && toggle.checked) {
+              return false;
+            }
+            hideParentTooltips(inst.reference);
+            if (blockedByTippy(inst.reference)) { return false; }
+
+          } else if (inst.reference.querySelector(".hover-info") || "versoHover" in inst.reference.dataset) {
+            if (blockedByTactic(inst.reference)) { return false };
+            if (blockedByTippy(inst.reference)) { return false; }
+          } else { // Nothing to show here!
+            return false;
+          }
+        },
+        onShown(inst) { visibleTippyCount++; },
+        onHidden(inst) { visibleTippyCount = Math.max(0, visibleTippyCount - 1); },
+        content (tgt) {
+          const content = document.createElement("span");
+          if (tgt.className == 'tactic') {
+            const state = tgt.querySelector(".tactic-state").cloneNode(true);
+            state.style.display = "block";
+            content.appendChild(state);
+            content.style.display = "block";
+            content.className = "hl lean popup";
+          } else {
+            content.className = "hl lean";
+            content.style.display = "block";
+            content.style.maxHeight = "300px";
+            content.style.overflowY = "auto";
+            content.style.overflowX = "hidden";
+            const hoverId = tgt.dataset.versoHover;
+            const hoverInfo = tgt.querySelector(".hover-info");
+            if (hoverId) { // Docstrings from the table
+              // TODO stop doing an implicit conversion from string to number here
+              let data = versoDocData[hoverId];
+              if (data) {
+                const info = document.createElement("span");
+                info.className = "hover-info";
+                info.style.display = "block";
+                info.innerHTML = data;
+                content.appendChild(info);
+                /* Render docstrings - TODO server-side */
+                if ('undefined' !== typeof marked) {
+                    for (const d of content.querySelectorAll("code.docstring, pre.docstring")) {
+                        const str = d.innerText;
+                        const html = marked.parse(str);
+                        const rendered = document.createElement("div");
+                        rendered.classList.add("docstring");
+                        rendered.innerHTML = html;
+                        d.parentNode.replaceChild(rendered, d);
+                    }
+                }
+              } else {
+                content.innerHTML = "Failed to load doc ID: " + hoverId;
+              }
+            } else if (hoverInfo) { // The inline info, still used for compiler messages
+              content.appendChild(hoverInfo.cloneNode(true));
+            }
+            const extraLinks = tgt.parentElement.dataset['versoLinks'];
+            if (extraLinks) {
+              try {
+                const extras = JSON.parse(extraLinks);
+                const links = document.createElement('ul');
+                links.className = 'extra-doc-links';
+                extras.forEach((l) => {
+                  const li = document.createElement('li');
+                  li.innerHTML = "<a href=\"" + l['href'] + "\" title=\"" + l.long + "\">" + l.short + "</a>";
+                  links.appendChild(li);
+                });
+                content.appendChild(links);
+              } catch (error) {
+                console.error(error);
+              }
+            }
+          }
+          return content;
+        }
+      };
+
+
+      document.querySelectorAll('.hl.lean .const.token, .hl.lean .keyword.token, .hl.lean .literal.token, .hl.lean .option.token, .hl.lean .var.token, .hl.lean .typed.token, .hl.lean .level-var, .hl.lean .level-const, .hl.lean .level-op, .hl.lean .sort').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'lean');
+      });
+      document.querySelectorAll('.hl.lean .has-info.warning').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'warning message');
+      });
+      document.querySelectorAll('.hl.lean .has-info.information').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'info message');
+      });
+      document.querySelectorAll('.hl.lean .has-info.error').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'error message');
+      });
+      document.querySelectorAll('.hl.lean .tactic').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'tactic');
+      });
+      // Skip tokens inside closed tactics — they interfere with tactic tippys
+      const closedTactics = new Set();
+      document.querySelectorAll('.hl.lean .tactic').forEach(tactic => {
+        const toggle = tactic.querySelector('input.tactic-toggle');
+        if (toggle && !toggle.checked) closedTactics.add(tactic);
+      });
+      function isInsideClosedTactic(el) {
+        const tactic = el.closest('.tactic');
+        return tactic && tactic !== el && closedTactics.has(tactic);
+      }
+
+      const tokenSelector = '.hl.lean .const.token, .hl.lean .keyword.token, .hl.lean .literal.token, .hl.lean .option.token, .hl.lean .var.token, .hl.lean .typed.token, .hl.lean .has-info, .hl.lean .tactic, .hl.lean .level-var, .hl.lean .level-const, .hl.lean .level-op, .hl.lean .sort';
+      tippy(Array.from(document.querySelectorAll(tokenSelector)).filter(el => !isInsideClosedTactic(el)), defaultTippyProps);
+
+      // Create/destroy token tippys when tactic checkbox toggles
+      const tacticTippySelector = '.const.token, .keyword.token, .literal.token, .option.token, .var.token, .typed.token, .has-info, .level-var, .level-const, .level-op, .sort';
+      document.querySelectorAll('.hl.lean .tactic').forEach(tactic => {
+        const toggle = tactic.querySelector('input.tactic-toggle');
+        if (toggle) toggle.addEventListener('change', () => {
+          if (toggle.checked) {
+            closedTactics.delete(tactic);
+            tactic.querySelectorAll('.token').forEach(tok => {
+              if (!tok._tippy && tok.matches(tacticTippySelector)) {
+                tippy(tok, defaultTippyProps);
+              }
+            });
+          } else {
+            closedTactics.add(tactic);
+            tactic.querySelectorAll('.token').forEach(tok => {
+              if (tok._tippy) tok._tippy.destroy();
+            });
+          }
+        });
+      });
+  });
+}
+</script>
+    <script src="-verso-search/search-highlight.js" defer="defer"></script>
+    </head>
+  <body>
+    <header>
+      <div class="header-logo-wrapper"></div>
+      <div class="header-title-wrapper">
+        <a href="" class="header-title"><h1>
+            Lean 4 自动化内幕</h1>
+          </a></div>
+      </header>
+    <label for="toggle-toc" id="toggle-toc-click"><span class="line line1"></span><span class="line line2"></span><span class="line line3"></span></label><div class="with-toc">
+      <div class="toc-backdrop" onclick="document.getElementById('toggle-toc-click')?.click()"></div>
+      <nav id="toc">
+        <input type="checkbox" id="toggle-toc"><div class="first">
+          <a href="" class="toc-title"><h1>
+              Lean 4 自动化内幕</h1>
+            </a><div class="split-tocs">
+            <div class="split-toc book">
+              <div class="title">
+                <label for="--verso-manual-toc-----bookRoot" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-----bookRoot" checked="checked"></label><span class="">Table of Contents</span></div>
+              <table><tr class="numbered"><td class="num">1.</td><td><a href="Ch00Setup/#ch00-setup">第零章 环境与运行约定</a></td></tr><tr class="numbered"><td class="num">2.</td><td><a href="Ch01MetaprogrammingModel/#ch01-metaprogramming-model">第一章 Lean 4 元编程模型</a></td></tr><tr class="numbered"><td class="num">3.</td><td><a href="Ch02Expr/#ch02-expr">第二章 Expr：Lean 4 的内部表示</a></td></tr><tr class="numbered"><td class="num">4.</td><td><a href="Ch03FirstTactic/#ch03-first-tactic">第三章 编写你的第一个 Tactic</a></td></tr><tr class="numbered"><td class="num">5.</td><td><a href="Ch04GoalManagement/#ch04-goal-management">第四章 目标管理</a></td></tr><tr class="numbered"><td class="num">6.</td><td><a href="Ch05TypeclassSynthesis/#ch05-typeclass-synthesis">第五章 Type Class Synthesis</a></td></tr><tr class="numbered"><td class="num">7.</td><td><a href="Ch06Simp/#ch06-simp">第六章 simp：重写引擎</a></td></tr><tr class="numbered"><td class="num">8.</td><td><a href="Ch07Ring/#ch07-ring">第七章 ring 和 <code>ring_nf</code>：代数范式化</a></td></tr><tr class="numbered"><td class="num">9.</td><td><a href="Ch08Omega/#ch08-omega">第八章 omega：Presburger 算术决策过程</a></td></tr><tr class="numbered"><td class="num">10.</td><td><a href="Ch09Linarith/#ch09-linarith">第九章 linarith、nlinarith 与 polyrith</a></td></tr><tr class="numbered"><td class="num">11.</td><td><a href="Ch10NormNum/#ch10-norm-num">第十章 <code>norm_num</code>：数值计算框架</a></td></tr><tr class="numbered"><td class="num">12.</td><td><a href="Ch11Aesop/#ch11-aesop">第十一章 aesop：可配置的搜索引擎</a></td></tr><tr class="numbered"><td class="num">13.</td><td><a href="Ch12Grind/#ch12-grind">第十二章 grind：E-matching 与 Congruence Closure</a></td></tr><tr class="current numbered"><td class="num">14.</td><td><a href="Ch13Decide/#ch13-decide">第十三章 decide 与 <code>native_decide</code>：有限计算判定</a></td></tr><tr class="numbered"><td class="num">15.</td><td><a href="Ch14Positivity/#ch14-positivity">第十四章 positivity：符号非负性推理</a></td></tr><tr class="numbered"><td class="num">16.</td><td><a href="Ch15FunProp/#ch15-fun-prop">第十五章 <code>fun_prop</code>：函数性质的自动证明</a></td></tr><tr class="numbered"><td class="num">17.</td><td><a href="Ch16Gcongr/#ch16-gcongr">第十六章 gcongr：广义合同性</a></td></tr><tr class="numbered"><td class="num">18.</td><td><a href="Ch17FieldSimp/#ch17-field-simp">第十七章 <code>field_simp</code>：分式化简</a></td></tr><tr class="numbered"><td class="num">19.</td><td><a href="Ch18LogicTransforms/#ch18-logic-transforms">第十八章 push<em>neg、contrapose、by</em>contra</a></td></tr><tr class="numbered"><td class="num">20.</td><td><a href="Ch19DesignYourOwn/#ch19-design-your-own">第十九章 设计你自己的领域自动化</a></td></tr><tr class="numbered"><td class="num">21.</td><td><a href="Ch20Reflection/#ch20-reflection">第二十章 反射证明模式</a></td></tr><tr class="numbered"><td class="num">22.</td><td><a href="Ch21Performance/#ch21-performance">第二十一章 性能工程</a></td></tr><tr class="numbered"><td class="num">23.</td><td><a href="Ch22ExternalTools/#ch22-external-tools">第二十二章 对接外部工具</a></td></tr><tr class="numbered"><td class="num">24.</td><td><a href="Ch23Methodology/#ch23-methodology">第二十三章 从证明模式到自动化：方法论</a></td></tr><tr class="numbered"><td class="num">25.</td><td><a href="Ch24TowardsAnalysis/#ch24-towards-analysis">第二十四章 迈向分析自动化</a></td></tr></table></div>
+            <div class="split-toc">
+              <div class="title">
+                <label for="--verso-manual-toc-ch13-decide" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch13-decide" checked="checked"></label><span class="number">14.</span> <span class="current"><a href="Ch13Decide/#ch13-decide">第十三章 decide 与 <code>native_decide</code>：有限计算判定</a></span></div>
+              <table><tr class="numbered"><td class="num">14.1.</td><td><a href="Ch13Decide/#decidable-typeclass">13.1 Decidable 类型类</a></td></tr><tr class="numbered"><td class="num">14.2.</td><td><a href="Ch13Decide/#decide-kernel-reduction">13.2 decide：内核规约证明</a></td></tr><tr class="numbered"><td class="num">14.3.</td><td><a href="Ch13Decide/#decide-failure-modes">13.3 decide 的五种失败模式</a></td></tr><tr class="numbered"><td class="num">14.4.</td><td><a href="Ch13Decide/#native-decide-compilation">13.4 <code>native_decide</code>：编译到原生代码</a></td></tr><tr class="numbered"><td class="num">14.5.</td><td><a href="Ch13Decide/#writing-decidable-instances">13.5 编写 Decidable 实例</a></td></tr><tr class="numbered"><td class="num">14.6.</td><td><a href="Ch13Decide/#comparison-with-other-tactics">13.6 与其他 tactic 的对比</a></td></tr><tr class="numbered"><td class="num">14.7.</td><td><a href="Ch13Decide/#practical-patterns-debugging">13.7 实战模式与调试</a></td></tr><tr class="numbered"><td class="num">14.8.</td><td><a href="Ch13Decide/#ch13-exercises">13.8 练习</a></td></tr><tr class="numbered"><td class="num">14.9.</td><td><a href="Ch13Decide/#ch13-summary">13.9 小结</a></td></tr></table></div>
+            </div>
+          </div>
+        <div class="last">
+          <ul id="meta-links">
+            <li>
+              <a href="https://github.com/subfish-zhou/lean-tacticbook">Source Code</a></li>
+            <li>
+              <a href="https://github.com/subfish-zhou/lean-tacticbook/issues">Report Issues</a></li>
+            </ul>
+          </div>
+        </nav>
+      <main><div class="content-wrapper">
+          <nav class="prev-next-buttons">
+            <a class="local-button active" href="Ch12Grind/#ch12-grind" rel="prev" title="13. 第十二章 grind：E-matching 与 Congruence Closure"><span class="arrow">←</span><span class="where">13. 第十二章 grind：E-matching 与 Congruence Closure</span></a><a class="local-button active" href="Ch14Positivity/#ch14-positivity" rel="next" title="15. 第十四章 positivity：符号非负性推理"><span class="where">15. 第十四章 positivity：符号非负性推理</span><span class="arrow">→</span></a></nav>
+          <section>
+            <h1>
+              14. 第十三章 decide 与 <code>native_decide</code>：有限计算判定<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch13-decide" title="Permalink">🔗</a></span></h1>
+            <p>
+              <strong>本章目标</strong>：理解 <code>Decidable</code> 类型类如何同时携带判定结果与证据，
+掌握 <code>decide</code> 与 <code>native_decide</code> 的执行路径、可信度差异与失败模式，
+学会为自定义命题编写 <code>Decidable</code> 实例，在实际证明中做出合理选择。</p>
+            <p>
+              <code>simp</code> 做符号重写，<code>omega</code> 解线性算术，<code>norm_num</code> 算大数——
+当问题可以归约为<strong>有限计算</strong>时，<code>decide</code> 和 <code>native_decide</code> 是最直接的武器：
+把命题变成布尔值，算出 <code>true</code>，证明完毕。</p>
+            <section>
+              <h2 id="decidable-typeclass">
+                14.1. 13.1 Decidable 类型类<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=decidable-typeclass" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code>decide</code> 系列 tactic 的根基是核心库中的 <code>Decidable</code>：</p>
+              <pre>-- [定义] 来自 Init.Prelude
+-- class inductive Decidable (p : Prop) where
+--   | isFalse (h : ¬p) : Decidable p   -- ❶ 判定为假，携带反证
+--   | isTrue  (h : p)  : Decidable p   -- ❷ 判定为真，携带正证
+</pre><ul>
+                <li>
+                  <p>
+                    <strong>❶</strong> 不只说"假"，还给出 <code>¬p</code> 的构造性证明。</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>❷</strong> 不只说"真"，还给出 <code>p</code> 的构造性证明。</p>
+                  </li>
+                </ul>
+              <p>
+                与 <code>Bool</code> 的本质区别：<code>Bool</code> 只记录结果，<code>Decidable</code> 同时记录<strong>结果与证据</strong>。
+这使得判定结果可以被内核直接用作证明项。</p>
+              <p>
+                Lean 核心库为大量命题注册了 <code>Decidable</code> 实例。
+<code>DecidableEq α</code> 是 <code>∀ (a b : α), Decidable (a = b)</code> 的缩写，
+大多数具体数据类型（<code>Nat</code>、<code>Int</code>、<code>String</code>、<code>List α</code>）都自动拥有此实例。</p>
+              <pre>-- [可运行] 内置实例示例
+#check (inferInstance : Decidable (3 = 5))       -- ▸ isFalse ...
+#check (inferInstance : Decidable (3 &lt; 5))       -- ▸ isTrue ...
+#check (inferInstance : Decidable (5 ∈ [1,2,3])) -- ▸ isFalse ...
+</pre><section>
+                <h3 id="prop-bool-bridge">
+                  14.1.1. Prop 与 Bool 的桥梁<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=prop-bool-bridge" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>Decidable</code> 连接 <code>Prop</code> 世界和 <code>Bool</code> 世界：</p>
+                <pre>-- [签名] 核心库关键定义
+#check @Decidable.decide  -- {p : Prop} → [Decidable p] → Bool  -- ❶ 命题 → 布尔
+-- of_decide_eq_true : decide p = true → p               -- ❷ 布尔真 → 命题真
+</pre><ul>
+                  <li>
+                    <p>
+                      <strong>❶</strong> 把命题"降级"为布尔值，供 <code>if</code> / <code>match</code> 使用。</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>❷</strong> 若内核规约 <code>decide p</code> 到 <code>true</code>，<code>rfl</code> 即证 <code>decide p = true</code>，
+  再经 <code>of_decide_eq_true rfl</code> 得到 <code>p</code> 的证明——这正是 <code>decide</code> tactic 的核心。</p>
+                    </li>
+                  </ul>
+                </section>
+              </section>
+            <section>
+              <h2 id="decide-kernel-reduction">
+                14.2. 13.2 decide：内核规约证明<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=decide-kernel-reduction" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code>decide</code> tactic 的执行路径分四步：</p>
+              <ol start="1">
+                <li>
+                  <p>
+                    <strong>查找实例</strong>：对目标 <code>P</code>，typeclass search 搜索 <code>Decidable P</code>。</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>构造项</strong>：生成 <code>@Decidable.decide P inst</code>。</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>内核规约</strong>：Lean kernel 对该项执行 δ/ι/ζ reduction。</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>提取证明</strong>：若结果为 <code>true</code>，构造 <code>of_decide_eq_true rfl</code> 作为证明项。</p>
+                  </li>
+                </ol>
+              <pre>-- [可运行] 四种典型用法
+example : 2 + 2 = 4 := by decide
+  -- ▸ 内核算 2+2 → 4，等式两边相同，rfl 成立
+
+example : ¬ (3 ∈ [1, 2, 5]) := by decide
+  -- ▸ 展开 Membership，逐项比较 3≠1, 3≠2, 3≠5，返回 isFalse
+
+-- example : Nat.Prime 7 := by decide
+--   -- ▸ Decidable 实例通过试除法：7%2≠0, 7%3≠0... 确认质数
+
+example : ∀ b : Bool, b || !b = true := by decide
+  -- ▸ Bool 是有限类型，内核穷举 true 和 false 两种情况
+</pre><p>
+                <strong>绝对可信</strong>：<code>decide</code> 的证明只依赖 Lean kernel——系统中最小的 trusted computing base，
+不涉及编译器、运行时或任何外部 axiom。</p>
+              </section>
+            <section>
+              <h2 id="decide-failure-modes">
+                14.3. 13.3 decide 的五种失败模式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=decide-failure-modes" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="failure-missing-instance">
+                  14.3.1. 失败 1：缺少 Decidable 实例<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-missing-instance" title="Permalink">🔗</a></span></h3>
+                <pre>-- [会报错] p 是任意命题，无法合成实例
+-- example (p : Prop) : p ∨ ¬p := by decide
+--   -- ▸ failed to synthesize Decidable (p ∨ ¬p)
+--   -- ▸ 修复：用 Classical.em p，或为 p 提供 Decidable 实例
+</pre><p>
+                  <code>p ∨ ¬p</code> 在经典逻辑中成立（<code>Classical.em</code>），但 <code>decide</code> 只处理<strong>构造性可判定</strong>的命题。</p>
+                </section>
+              <section>
+                <h3 id="failure-kernel-timeout">
+                  14.3.2. 失败 2：内核超时（计算量过大）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-kernel-timeout" title="Permalink">🔗</a></span></h3>
+                <pre>-- [会超时] 内核解释器需要试除到 √1000003 ≈ 1000
+-- example : Nat.Prime 1000003 := by decide
+--   -- ▸ 修复：改用 native_decide 或 norm_num
+</pre><p>
+                  <strong>经验法则</strong>：<code>decide</code> 不宜超过几万步 reduction，超过应换 tactic。</p>
+                </section>
+              <section>
+                <h3 id="failure-false-proposition">
+                  14.3.3. 失败 3：命题为假<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-false-proposition" title="Permalink">🔗</a></span></h3>
+                <pre>-- [会报错] 4 不是质数
+-- example : Nat.Prime 4 := by decide
+--   -- ▸ decide evaluated to false
+--   -- ▸ 这不是 tactic 的问题，而是命题本身不成立
+</pre><p>
+                  <code>decide</code> 只能证明<strong>为真</strong>的可判定命题。报告 <code>evaluated to false</code> 本身是有用的诊断。</p>
+                </section>
+              <section>
+                <h3 id="failure-free-variables">
+                  14.3.4. 失败 4：目标含自由变量<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-free-variables" title="Permalink">🔗</a></span></h3>
+                <pre>-- [会报错] n 不是字面量，无法规约
+-- example (h : n = 3) : n + 1 = 4 := by decide
+--   -- ▸ decide 只做封闭项（closed term）的计算
+--   -- ▸ 修复：先 subst h 消除 n，再 decide
+-- example (h : n = 3) : n + 1 = 4 := by subst h; decide  -- ✓
+</pre></section>
+              <section>
+                <h3 id="failure-infeasible-computation">
+                  14.3.5. 失败 5：实例存在但计算量不可行<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-infeasible-computation" title="Permalink">🔗</a></span></h3>
+                <pre>-- [会超时] 实例存在 ≠ 计算可行
+-- example : (Finset.range 10000).card = 10000 := by decide
+--   -- ▸ 修复：native_decide 或 simp [Finset.card_range]
+</pre></section>
+              </section>
+            <section>
+              <h2 id="native-decide-compilation">
+                14.4. 13.4 <code>native_decide</code>：编译到原生代码<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=native-decide-compilation" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code>native_decide</code> 解决 <code>decide</code> 的性能瓶颈，但执行路径完全不同：</p>
+              <ol start="1">
+                <li>
+                  <p>
+                    <strong>查找实例</strong>：同 <code>decide</code>，搜索 <code>Decidable P</code> 实例。</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>编译</strong>：将判定过程通过 Lean 编译器编译为<strong>原生机器码</strong>。</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>执行</strong>：运行编译后的代码，得到 <code>Bool</code> 结果。</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>桥接</strong>：若结果为 <code>true</code>，通过 axiom <code>Lean.ofReduceBool</code> 构造证明。</p>
+                  </li>
+                </ol>
+              <pre>-- [可运行] 三种 decide 做不到但 native_decide 轻松搞定的场景
+-- example : Nat.Prime 104729 := by native_decide
+--   -- ▸ 编译后试除法以原生速度执行，几毫秒内完成
+
+example : ∀ n : Fin 256, n.val &lt; 256 := by native_decide
+  -- ▸ 穷举 256 个值，编译代码比内核快几个数量级
+
+-- example : (List.range 100).filter Nat.Prime |&gt;.length = 25 := by native_decide
+--   -- ▸ 筛选、计数全部编译执行，内核只需验证最终布尔值
+</pre><section>
+                <h3 id="native-decide-trust">
+                  14.4.1. 可信度代价<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=native-decide-trust" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>decide</code> 的证明完全在内核中完成，可信边界仅限于 Lean kernel 本身。
+<code>native_decide</code> 则依赖编译器将判定过程编译为原生代码再执行——
+如果编译器存在 bug（错误优化、代码生成缺陷），理论上可能把
+实际为 <code>false</code> 的计算"证明"为 <code>true</code>。因此 <code>native_decide</code> 的可信边界
+比 <code>decide</code> 更宽：它信任的不仅是内核，还有编译执行路径。</p>
+                <p>
+                  <strong>Mathlib 策略</strong>：能用 <code>decide</code> 就不用 <code>native_decide</code>，
+能用 <code>norm_num</code> / <code>omega</code> 等专用 tactic 就优先使用。</p>
+                </section>
+              <section>
+                <h3 id="native-decide-failure-modes">
+                  14.4.2. <code>native_decide</code> 的失败模式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=native-decide-failure-modes" title="Permalink">🔗</a></span></h3>
+                <pre>-- [会报错] 同样需要 Decidable 实例
+-- example (p : Prop) : p ∨ ¬p := by native_decide
+--   -- ▸ failed to synthesize Decidable (p ∨ ¬p)
+
+-- [会报错] 命题为假
+-- example : Nat.Prime 4 := by native_decide
+--   -- ▸ native_decide evaluated to false
+
+-- [会报错] 代码链中含 sorry 或 partial 导致编译失败
+-- partial def foo : Nat → Bool := fun _ =&gt; true
+-- instance : Decidable P := if foo 0 then .isTrue sorry else .isFalse sorry
+-- example : P := by native_decide  -- failed to compile
+</pre><p>
+                  <code>native_decide</code> 不能绕过 <code>Decidable</code> 的要求，也不能证明假命题。
+包含 <code>sorry</code> 或 <code>partial</code> 的代码链会导致编译失败。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="writing-decidable-instances">
+                14.5. 13.5 编写 Decidable 实例<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=writing-decidable-instances" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="instance-deriving">
+                  14.5.1. 方式 1：deriving 自动派生<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=instance-deriving" title="Permalink">🔗</a></span></h3>
+                <pre>-- [可运行] 枚举类型自动派生
+inductive Color where
+  | red | green | blue
+  deriving DecidableEq    -- ❶ 自动生成 ∀ a b : Color, Decidable (a = b)
+
+example : Color.red ≠ Color.blue := by decide
+  -- ▸ DecidableEq 实例比较构造子标签，red ≠ blue
+</pre><ul>
+                  <li>
+                    <p>
+                      <strong>❶</strong> 结构体、枚举、带参数的归纳类型都支持 <code>deriving DecidableEq</code>。</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="instance-dependent-if">
+                  14.5.2. 方式 2：dependent if 手动构造<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=instance-dependent-if" title="Permalink">🔗</a></span></h3>
+                <pre>-- [可运行] 为整除关系编写实例
+instance (n m : Nat) : Decidable (n ∣ m) :=
+  if h : m % n = 0                         -- ❶ dependent if：h 绑定条件或其否定
+  then .isTrue (Nat.dvd_of_mod_eq_zero h)  -- ❷ 正分支：m%n=0 → n∣m
+  else .isFalse fun ⟨k, hk⟩ =&gt;            -- ❸ 负分支：假设 n∣m，推出矛盾
+    h (by omega)
+</pre><ul>
+                  <li>
+                    <p>
+                      <strong>❶</strong> <code>if h : cond</code> 是 dependent if——分支中 <code>h</code> 分别绑定 <code>cond</code> 和 <code>¬cond</code>。</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>❷</strong> 正分支利用库引理构造整除证明。<strong>❸</strong> 负分支推出矛盾。</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="instance-reduction">
+                  14.5.3. 方式 3：归约到已有可判定命题<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=instance-reduction" title="Permalink">🔗</a></span></h3>
+                <pre>-- [可运行] 把自定义谓词归约到 Nat 等式判定
+def IsEven (n : Nat) : Prop := n % 2 = 0
+
+instance (n : Nat) : Decidable (IsEven n) :=
+  inferInstanceAs (Decidable (n % 2 = 0))  -- ❶ 展开定义，复用 DecidableEq Nat
+</pre><ul>
+                  <li>
+                    <p>
+                      <strong>❶</strong> <code>inferInstanceAs</code> 告诉 typeclass search <code>IsEven n</code> 就是 <code>n % 2 = 0</code>。</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="instance-logical-combinators">
+                  14.5.4. 方式 4：组合逻辑连接词<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=instance-logical-combinators" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>Decidable</code> 对逻辑连接词封闭——<code>p ∧ q</code>、<code>p ∨ q</code>、<code>¬p</code>、<code>p → q</code>
+在两侧可判定时自动可判定。对有限量词 <code>∀ x : α, P x</code> 和 <code>∃ x : α, P x</code>，
+需要 <code>α</code> 是 <code>Fintype</code> 且 <code>P</code> 对每个 <code>x</code> 可判定：</p>
+                <pre>-- [可运行] 组合实例自动推导
+example : Decidable (3 &lt; 5 ∧ 7 ≠ 8) := inferInstance
+example : Decidable (∀ i : Fin 5, i.val &lt; 10) := inferInstance
+example : Decidable (∃ i : Fin 5, i.val = 3)  := inferInstance
+</pre></section>
+              </section>
+            <section>
+              <h2 id="comparison-with-other-tactics">
+                14.6. 13.6 与其他 tactic 的对比<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=comparison-with-other-tactics" title="Permalink">🔗</a></span></h2>
+              <pre>-- [可运行] decide vs omega：线性算术优先 omega
+example : 100 &lt; 200 := by omega   -- ❶ 专用 decision procedure，亚毫秒
+example : 100 &lt; 200 := by decide  -- ❷ 也能做但没利用算术结构
+
+-- [可运行] decide vs norm_num：大数值优先 norm_num
+-- example : Nat.Prime 104729 := by norm_num      -- ❸ meta 层素性测试 + 证书
+-- example : (2 : ℤ) ^ 10 = 1024 := by norm_num  -- ❹ meta 层幂运算
+
+-- [可运行] decide vs simp：含变量只能 simp
+example (n : Nat) : n + 0 = n := by simp   -- ❺ 重写 Nat.add_zero
+-- example (n : Nat) : n + 0 = n := by decide  -- ✗ n 不是字面量
+</pre><section>
+                <h3 id="tactic-selection-table">
+                  14.6.1. 选择速查表<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=tactic-selection-table" title="Permalink">🔗</a></span></h3>
+                <p>
+                  | 场景 | 推荐 tactic | 原因 |
+|------|-------------|------|
+| 小规模有限穷举（&lt; 100 种） | <code>decide</code> | 内核可信，无额外假设 |
+| 大规模有限穷举（&gt; 100 种） | <code>native_decide</code> | 编译执行，快几个数量级 |
+| <code>Nat</code>/<code>Int</code> 线性算术 | <code>omega</code> | 专用 decision procedure |
+| 具体数值计算、素性、整除 | <code>norm_num</code> | meta 层高效归约 + 证书 |
+| 含变量的等式 / 不等式 | <code>simp</code> / <code>ring</code> / <code>linarith</code> | 符号化简 |</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="practical-patterns-debugging">
+                14.7. 13.7 实战模式与调试<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=practical-patterns-debugging" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="pattern-finite-case-verification">
+                  14.7.1. 模式 1：有限案例验证<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=pattern-finite-case-verification" title="Permalink">🔗</a></span></h3>
+                <pre>-- [可运行] 小规模 → decide，大规模 → native_decide
+example : ∀ a b : Fin 3, a + b = b + a := by decide
+  -- ▸ Fin 3 → 9 种组合，内核轻松穷举
+
+example : ∀ a b : Fin 20, a + b = b + a := by native_decide
+  -- ▸ Fin 20 → 400 种组合，编译执行更稳妥
+</pre></section>
+              <section>
+                <h3 id="pattern-interval-cases">
+                  14.7.2. 模式 2：<code>interval_cases</code> + decide 联用<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=pattern-interval-cases" title="Permalink">🔗</a></span></h3>
+                <pre>-- [可运行] 先拆分有限范围，再逐个 decide
+-- example (h : n &lt; 3) : n * n &lt; 10 := by
+--   interval_cases n    -- ▸ 拆为 n=0, n=1, n=2 三个子目标
+--   all_goals decide    -- ▸ 每个子目标都是具体数值，decide 收尾
+</pre></section>
+              <section>
+                <h3 id="pattern-have-local-facts">
+                  14.7.3. 模式 3：在 have 中建立局部事实<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=pattern-have-local-facts" title="Permalink">🔗</a></span></h3>
+                <pre>-- [可运行] decide 作为局部引理工厂
+example : True := by
+  -- have h₁ : Nat.Prime 7 := by decide       -- ▸ 建立局部事实
+  have h₂ : 7 ∈ [2, 3, 5, 7] := by decide   -- ▸ 建立局部事实
+  trivial
+</pre></section>
+              <section>
+                <h3 id="debug-eval-preview">
+                  14.7.4. 调试技巧 1：用 #eval 预判<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=debug-eval-preview" title="Permalink">🔗</a></span></h3>
+                <pre>-- #eval Nat.Prime 7          -- true  → decide 应能证明
+-- #eval Nat.Prime 1000003    -- true  → 但 decide 会超时，用 native_decide
+#eval (4 : Nat) ∣ 6        -- false → decide 会失败（命题为假）
+</pre><p>
+                  先 <code>#eval</code> 确认真假和计算量，再选 tactic。</p>
+                </section>
+              <section>
+                <h3 id="debug-instance-check-heartbeats">
+                  14.7.5. 调试技巧 2：检查实例 + 调整心跳<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=debug-instance-check-heartbeats" title="Permalink">🔗</a></span></h3>
+                <pre>#check (inferInstance : Decidable (3 &lt; 5))      -- OK
+#check (inferInstance : DecidableEq Color)      -- 报错则需 deriving 或手写
+
+-- set_option maxHeartbeats 400000 in
+-- example : Nat.Prime 997 := by decide
+--   -- ▸ 默认 200000，可临时提高；若需大幅增加，应换 tactic
+</pre></section>
+              </section>
+            <section>
+              <h2 id="ch13-exercises">
+                14.8. 13.8 练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch13-exercises" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="exercise-13-1">
+                  14.8.1. 练习 1（基础）：decide 能证什么<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-13-1" title="Permalink">🔗</a></span></h3>
+                <p>
+                  判断以下哪些能用 <code>decide</code> 证明，不能的说明原因并给出替代方案：</p>
+                <pre>example : 10 * 10 = 100 := by sorry              -- (a) 基础算术
+-- example : ¬ Nat.Prime 15 := by sorry              -- (b) 否定命题
+example (n : Nat) : n + 0 = n := by sorry         -- (c) 含自由变量
+example : ∀ b : Bool, b && true = b := by sorry   -- (d) Bool 穷举
+-- example : Nat.Prime 104729 := by sorry             -- (e) 大素数
+</pre><blockquote><p>
+                    <strong>提示</strong>：(a)(b)(d) 直接 <code>decide</code>；(c) 含变量用 <code>simp</code>；(e) 超时用 <code>native_decide</code> 或 <code>norm_num</code>。</p>
+                  </blockquote></section>
+              <section>
+                <h3 id="exercise-13-2">
+                  14.8.2. 练习 2（编写实例）：自定义 Decidable<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-13-2" title="Permalink">🔗</a></span></h3>
+                <pre>def IsPalindrome (l : List Char) : Prop := l = l.reverse
+instance (l : List Char) : Decidable (IsPalindrome l) := sorry
+-- 验证
+-- example : IsPalindrome ['a', 'b', 'a'] := by decide
+-- example : ¬ IsPalindrome ['a', 'b', 'c'] := by decide
+</pre><blockquote><p>
+                    <strong>提示</strong>：用 <code>inferInstanceAs (Decidable (l = l.reverse))</code> 归约到 <code>DecidableEq</code>。</p>
+                  </blockquote></section>
+              <section>
+                <h3 id="exercise-13-3">
+                  14.8.3. 练习 3（性能选择）：为每题选择最合适的 tactic<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-13-3" title="Permalink">🔗</a></span></h3>
+                <pre>-- example : Nat.Prime 10007 := by sorry             -- (a) 大素数
+example : ∀ n : Nat, n &lt; n + 1 := by sorry        -- (b) 全称线性不等式
+example : ∀ a b : Fin 4, a * b = b * a := by sorry -- (c) 有限穷举
+example : (3 : ℤ) ^ 5 = 243 := by sorry           -- (d) 数值幂运算
+</pre><blockquote><p>
+                    <strong>提示</strong>：(a) <code>norm_num</code>；(b) <code>omega</code>；(c) <code>decide</code>；(d) <code>norm_num</code>。</p>
+                  </blockquote></section>
+              <section>
+                <h3 id="exercise-13-4">
+                  14.8.4. 练习 4（调试）：修复失败的 decide<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-13-4" title="Permalink">🔗</a></span></h3>
+                <pre>-- (a) 为什么超时？给出两种修复方案。
+-- example : Nat.Prime 1000003 := by decide
+-- (b) 为什么失败？只改 tactic 前面的代码。
+-- example (h : n = 5) : n + 1 = 6 := by decide
+</pre><blockquote><p>
+                    <strong>提示</strong>：(a) 换 <code>native_decide</code> 或 <code>norm_num</code>；(b) 在 <code>decide</code> 前加 <code>subst h;</code>。</p>
+                  </blockquote></section>
+              <section>
+                <h3 id="exercise-13-5">
+                  14.8.5. 练习 5（进阶）：组合判定实例<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-13-5" title="Permalink">🔗</a></span></h3>
+                <pre>def InRange (lo hi n : Nat) : Prop := lo ≤ n ∧ n &lt; hi
+instance (lo hi n : Nat) : Decidable (InRange lo hi n) := sorry
+-- 验证
+-- example : InRange 3 10 5 := by decide
+-- example : ¬ InRange 3 10 2 := by decide
+</pre><blockquote><p>
+                    <strong>提示</strong>：展开后是 <code>lo ≤ n ∧ n &lt; hi</code>，用 <code>inferInstanceAs</code> 归约到 <code>And</code> 的组合实例。</p>
+                  </blockquote></section>
+              </section>
+            <section>
+              <h2 id="ch13-summary">
+                14.9. 13.9 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch13-summary" title="Permalink">🔗</a></span></h2>
+              <p>
+                | 概念 | 关键点 |
+|------|--------|
+| <code>Decidable</code> | 类型类，编码"可计算的真假判定 + 证据"，是 <code>Prop</code>/<code>Bool</code> 的桥梁 |
+| <code>decide</code> | 内核规约，绝对可信（仅依赖 kernel），但速度受限于解释执行 |
+| <code>native_decide</code> | 编译到原生代码，快几个数量级，但引入 <code>ofReduceBool</code> 公理 |
+| 失败诊断 | 缺实例 → 检查 <code>Decidable</code>；超时 → 换 tactic；含变量 → 先化简；假命题 → 检查逻辑 |
+| 编写实例 | <code>deriving</code>、dependent if、<code>inferInstanceAs</code> 归约、逻辑组合 |
+| 选择原则 | 小穷举 <code>decide</code>，大穷举 <code>native_decide</code>，算术 <code>omega</code>/<code>norm_num</code> |</p>
+              <p>
+                <code>decide</code> 和 <code>native_decide</code> 是 Lean 自动化的"兜底手段"——
+当问题可以归约为有限计算时，它们总能给出答案。
+理解它们的能力边界与失败模式，才能在实战中高效组合各种 tactic。
+</p>
+              </section>
+            </section>
+          <nav class="prev-next-buttons">
+            <a class="local-button active" href="Ch12Grind/#ch12-grind" rel="prev" title="13. 第十二章 grind：E-matching 与 Congruence Closure"><span class="arrow">←</span><span class="where">13. 第十二章 grind：E-matching 与 Congruence Closure</span></a><a class="local-button active" href="Ch14Positivity/#ch14-positivity" rel="next" title="15. 第十四章 positivity：符号非负性推理"><span class="where">15. 第十四章 positivity：符号非负性推理</span><span class="arrow">→</span></a></nav>
+          </div>
+        </main></div>
+    </body>
+  </html>
+

@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      (function(){
+  const {protocol:proto, host:hostName, pathname:path, search:srch, hash:hsh} = window.location;
+  if (!(path.endsWith("/") || path.endsWith(".html"))) {
+    window.location.replace(`${proto}//${hostName}${path}/${srch}${hsh}`);
+  }
+})()</script>
+    <base href="./../"><meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <title>第八章 omega：Presburger 算术决策过程</title><link rel="stylesheet" href="book.css">
+    <link rel="stylesheet" href="verso-vars.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js" integrity="sha384-zbcZAIxlvJtNE3Dp5nxLXdXtXyxwOdnILY1TDPVmKFhl4r4nSUG1r8bcFXGVa4Te" crossorigin="anonymous"></script>
+    <script src="-verso-search/elasticlunr.min.js"></script>
+    <script src="-verso-search/fuzzysort.min.js"></script>
+    <script src="-verso-search/searchIndex.js"></script>
+    <script type="module" src="-verso-search/search-init.js"></script>
+    <link rel="stylesheet" href="-verso-search/search-box.css">
+    <link rel="stylesheet" href="-verso-search/search-highlight.css">
+    <link rel="stylesheet" href="-verso-search/domain-display.css">
+    <script src="-verso-data/katex/katex.js"></script>
+    <script src="-verso-data/katex/math.js"></script>
+    <script src="-verso-data/popper.min.js"></script>
+    <script src="-verso-data/tippy-bundle.umd.min.js"></script>
+    <link rel="stylesheet" href="-verso-data/tippy-border.css">
+    <link rel="stylesheet" href="-verso-data/katex/katex.css">
+    <style>
+
+.hl.lean {
+  white-space: pre;
+  font-weight: normal;
+  font-style: normal;
+  font-size: inherit;
+}
+
+.hl.lean .keyword {
+  color: var(--verso-code-keyword-color,);
+  font-weight: var(--verso-code-keyword-weight, bold);
+  font-style: var(--verso-code-keyword-style, normal);
+  font-family: var(--verso-code-keyword-font-family,);
+}
+
+.hl.lean .const {
+  color: var(--verso-code-const-color,);
+  font-weight: var(--verso-code-const-weight, normal);
+  font-style: var(--verso-code-const-style, normal);
+  font-family: var(--verso-code-const-font-family,);
+}
+
+.hl.lean .var {
+  color: var(--verso-code-var-color,);
+  font-weight: var(--verso-code-var-weight, normal);
+  font-style: var(--verso-code-var-style, italic);
+  font-family: var(--verso-code-var-font-family,);
+
+  position: relative;
+}
+
+.hl.lean .literal, .hl.lean .unknown {
+  color: var(--verso-code-color,);
+  font-weight: normal;
+  font-style: normal;
+  font-family: var(--verso-code-font-family,);
+}
+
+.hover-container {
+  width: 0;
+  height: 0;
+  position: relative;
+  display: inline;
+}
+
+.hl.lean a {
+  color: inherit;
+  text-decoration: currentcolor underline dotted;
+}
+
+.hl.lean a:hover {
+  text-decoration: currentcolor underline solid;
+}
+
+.hl.lean .hover-info {
+  white-space: normal;
+}
+
+.hl.lean .token .hover-info {
+  display: none;
+  position: absolute;
+  background-color: #e5e5e5;
+  border: 1px solid black;
+  padding: 0.5rem;
+  z-index: 300;
+}
+
+.hl.lean .hover-info.messages {
+  max-height: 10rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  padding: 0 0.5rem 0 0;
+  display: block;
+}
+
+.hl.lean .hover-info code {
+  white-space: pre-wrap;
+  background: none;
+  color: black;
+}
+
+.hl.lean .hover-info.messages > code {
+  padding: 0.5rem;
+  display: block;
+  width: fit-content;
+}
+
+.hl.lean .hover-info.messages > code:only-child {
+  margin: 0;
+}
+
+.hl.lean .hover-info.messages > code {
+  margin: 0.1rem;
+}
+
+.hl.lean .hover-info.messages > code:not(:first-child) {
+  margin-top: 0rem;
+}
+
+.hl.lean {
+}
+
+.hl.lean.block {
+  display: block;
+}
+
+.hl.lean.inline {
+  display: inline;
+  white-space: pre-wrap;
+}
+
+.hl.lean * {
+}
+
+.hl.lean .token {
+  transition: all 0.25s; /* Slight fade for highlights */
+}
+
+@media (hover: hover) {
+  .hl.lean .token.binding-hl, .hl.lean .literal.string:hover, .hl.lean .token.typed:hover {
+    background-color: #eee;
+    border-radius: 2px;
+    transition: none;
+  }
+}
+
+
+.hl.lean .has-info .token:not(.tactic-state):not(.tactic-state *), .hl.lean .has-info .inter-text:not(.tactic-state):not(.tactic-state *) {
+  text-decoration-style: wavy;
+  text-decoration-line: underline;
+  text-decoration-thickness: from-font;
+  text-decoration-skip-ink: none;
+}
+
+.hl.lean .has-info .hover-info {
+  display: none;
+  position: absolute;
+  transform: translate(0.25rem, 0.3rem);
+  border: 1px solid black;
+  padding: 0.5rem;
+  z-index: 400;
+  text-align: left;
+}
+
+.hl.lean .has-info.error :not(.tactic-state):not(.tactic-state *){
+  text-decoration-color: red;
+}
+
+@media (hover: hover) {
+  .hl.lean .has-info.error:hover {
+    background-color: #ffb3b3;
+  }
+}
+
+.hl.lean .hover-info.messages > code.error {
+  background-color: #e5e5e5;
+  border-left: 0.2rem solid #ffb3b3;
+}
+
+.tippy-box[data-theme~='error'] .hl.lean .hover-info.messages > code.error {
+  background: none;
+  border: none;
+}
+
+.error .verso-message, .error .verso-message .token, .error .verso-message label {
+  color: var(--verso-error-color);
+}
+
+.error .verso-message .case-label:has(input[type="checkbox"])::before {
+  background-color: var(--verso-error-color) !important;
+}
+
+.hl.lean .has-info.warning :not(.tactic-state):not(.tactic-state *) {
+  text-decoration-color: var(--verso-warning-indicator-color);
+}
+
+@media (hover: hover) {
+  .hl.lean .has-info.warning:hover {
+    background-color:var(--verso-warning-color);
+  }
+}
+
+.hl.lean .hover-info.messages > code.warning {
+  background-color: var(--verso-warning-color);
+}
+
+.lean-output {
+  border-left: 0.2em solid transparent;
+  padding: 0 0 0 0.5em;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.lean-output.error {
+  border-color: var(--verso-error-indicator-color);
+}
+
+.lean-output.information {
+  border-color: var(--verso-info-indicator-color);
+}
+
+.lean-output.warning {
+  border-color: var(--verso-warning-indicator-color);
+}
+
+.hl.lean .hover-info.messages > code.error {
+  background-color: #e5e5e5;
+  border-left: 0.2rem solid var(--verso-warning-color);
+}
+
+.tippy-box[data-theme~='warning'] .hl.lean .hover-info.messages > code.warning {
+  background: none;
+  border: none;
+}
+
+
+.hl.lean .has-info.information :not(.tactic-state):not(.tactic-state *) {
+  text-decoration-color: var(--verso-info-indicator-color, blue);
+}
+
+@media (hover: hover) {
+  .hl.lean .has-info.information:hover {
+    background-color: #4777ff;
+  }
+}
+
+
+.hl.lean .hover-info.messages > code.information {
+  background-color: #e5e5e5;
+  border-left: 0.2rem solid #4777ff;
+}
+
+.tippy-box[data-theme~='info'] .hl.lean .hover-info.messages > code.information {
+  background: none;
+  border: none;
+}
+
+.hl.lean div.docstring {
+  font-family: var(--verso-text-font-family, sans-serif);
+  white-space: normal;
+  max-width: calc(min(40rem, 90vw));
+  width: max-content;
+}
+
+.hl.lean div.docstring > :last-child {
+  margin-bottom: 0;
+}
+
+.hl.lean div.docstring > :first-child {
+  margin-top: 0;
+}
+
+.hl.lean .hover-info .sep {
+  display: block;
+  width: auto;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0;
+  height: 1px;
+  border-top: 1px solid #ccc;
+}
+
+.hl.lean code {
+  font-family: var(--verso-code-font-family);
+}
+
+.hl.lean .tactic-state {
+  display: none;
+  position: relative;
+  width: fit-content;
+  border: 1px solid #888888;
+  border-radius: 0.1rem;
+  padding: 0.5rem;
+  font-family: sans-serif;
+  background-color: #ffffff;
+}
+
+.hl.lean.popup .tactic-state {
+  position: static;
+  display: block;
+  width: auto;
+  border: none;
+  padding: 0.5rem;
+  font-family: sans-serif;
+  background-color: #ffffff;
+}
+
+
+.hl.lean .tactic {
+  position: relative;
+  display: inline;
+  vertical-align: top;
+  /* Without these, mobile Safari will start making font sizes inconsistent when its text size adjustment feature is triggered.*/
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.hl.lean .tactic:has(.tactic-toggle:checked) {
+  display: inline-grid;
+  grid-template-columns: 1fr;
+}
+
+.hl.lean .tactic-toggle:checked ~ .tactic-state {
+  display: inline-block;
+  vertical-align: top;
+  grid-row: 2;
+  justify-self: start;
+}
+
+.hl.lean .tactic > label {
+  position: relative;
+  grid-row: 1;
+  display: inline;
+}
+
+@media (hover: hover) {
+  .hl.lean .tactic:has(.tactic-toggle:not(:checked)) > label:hover {
+    background-color: #eeeeee;
+  }
+}
+
+.hl.lean .tactic-toggle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  height: 0;
+  width: 0;
+  z-index: -10;
+}
+
+.hl.lean .tactic > label::after {
+  content: "";
+  border: 1px solid #bbbbbb;
+  /* These need to be em, not rem, to scale with the font */
+  border-radius: 1em;
+  height: 0.25em;
+  vertical-align: middle;
+  width: 0.6em;
+  margin-left: 0.1em;
+  margin-right: 0.1em;
+  display: inline-block;
+  transition: all 0.5s;
+}
+
+/*
+@media (hover: hover) {
+  .hl.lean .tactic > label:hover::after {
+    border: 1px solid #aaaaaa;
+    background-color: #aaaaaa;
+    transition: all 0.5s;
+  }
+}
+*/
+
+.hl.lean .tactic > label:has(+ .tactic-toggle:checked)::after {
+  border: 1px solid #999999;
+  background-color: #999999;
+  transition: all 0.5s;
+}
+
+.hl.lean .tactic-state .goal + .goal {
+  margin-top: 1.5em;
+}
+
+/*
+Some CSS frameworks customize details/summary in ways not compatible with Verso's output.
+*/
+
+.hl.lean details {
+  display: block !important;
+  margin: 0;
+}
+
+.hl.lean details summary {
+  display: list-item !important;
+  margin: 0;
+}
+
+.hl.lean details summary:focus {
+  outline: none;
+  outline-offset: none;
+  color: inherit;
+}
+
+.hl.lean ul > li {
+  margin-bottom: 0;
+}
+
+.hl.lean details summary::marker {
+  display: inline !important;
+}
+
+.hl.lean details > summary:first-of-type {
+  list-style-type: disclosure-closed;
+  list-style-position: inside;
+}
+
+.hl.lean details[open] > summary:first-of-type {
+  list-style-type: disclosure-open;
+}
+
+.hl.lean details summary::before, .hl.lean details summary::after {
+  content: "" !important;
+  background: none;
+  display: none;
+}
+
+.hl.lean .tactic-state summary {
+  /* These need to be em, not rem, to scale with the font */
+  margin-left: -0.5em;
+}
+
+.hl.lean .tactic-state details {
+  /* These need to be em, not rem, to scale with the font */
+  padding-left: 0.5em;
+}
+
+.hl.lean .case-label {
+  display: block;
+  position: relative;
+}
+
+.hl.lean .case-label input[type="checkbox"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  height: 0;
+  width: 0;
+  z-index: -10;
+}
+
+.hl.lean .case-label:has(input[type="checkbox"])::before {
+  display: inline-block;
+  background-color: black;
+  content: ' ';
+  transition: ease 0.2s;
+  margin-right: 0.7em;
+  clip-path: polygon(100% 0, 0 0, 50% 100%);
+  width: 0.6em;
+  height: 0.6em;
+  vertical-align: middle;
+}
+
+.hl.lean .case-label:has(input[type="checkbox"]:not(:checked))::before {
+  transform: rotate(-90deg);
+}
+
+.hl.lean .case-label:has(input[type="checkbox"]) {
+
+}
+
+.hl.lean .case-label:has(input[type="checkbox"]:checked) {
+
+}
+
+
+.hl.lean .labeled-case > :not(:first-child) {
+  max-height: 0px;
+  display: block;
+  overflow: hidden;
+  transition: max-height 0.1s ease-in;
+  /* These need to be em, not rem, to scale with the font */
+  margin-left: 0.5em;
+  margin-top: 0.1em;
+}
+
+.hl.lean .labeled-case:has(.case-label input[type="checkbox"]:checked) > :not(:first-child) {
+  max-height: 100%;
+}
+
+
+.hl.lean .goal-name::before {
+  font-style: normal;
+  content: "case ";
+}
+
+.hl.lean .goal-name {
+  font-style: italic;
+  font-family: var(--verso-code-font-family);
+  color: inherit;
+}
+
+.hl.lean .hypotheses {
+  display: table;
+}
+
+.hl.lean .hypothesis {
+  display: table-row;
+}
+
+.hl.lean .hypothesis > * {
+  display: table-cell;
+}
+
+
+.hl.lean .hypotheses .colon {
+  text-align: center;
+  /* This needs to be em, not rem, to scale with the font */
+  min-width: 1em;
+}
+
+.hl.lean .hypotheses .name {
+  text-align: right;
+}
+
+.hl.lean .hypotheses .name,
+.hl.lean .hypotheses .type,
+.hl.lean .conclusion .type {
+  font-family: var(--verso-code-font-family);
+}
+
+.tippy-box {
+  /* Without these, mobile Safari will start making font sizes inconsistent when its text size adjustment feature is triggered.*/
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.tippy-box[data-theme~='lean'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 1px solid black;
+}
+.tippy-box[data-theme~='lean'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: #e5e5e5;
+}
+.tippy-box[data-theme~='lean'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-bottom-color: #e5e5e5;
+}
+.tippy-box[data-theme~='lean'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: #e5e5e5;
+}
+.tippy-box[data-theme~='lean'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: #e5e5e5;
+}
+
+.tippy-box[data-theme~='message'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: #e5e5e5;
+  border-width: 11px 11px 0;
+}
+.tippy-box[data-theme~='message'][data-placement^='top'] > .tippy-arrow::after {
+  bottom: -11px;
+  border-width: 11px 11px 0;
+}
+.tippy-box[data-theme~='message'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-width: 0 11px 11px;
+}
+.tippy-box[data-theme~='message'][data-placement^='bottom'] > .tippy-arrow::after {
+  top: -11px;
+  border-width: 0 11px 11px;
+}
+.tippy-box[data-theme~='message'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: #e5e5e5;
+  border-width: 11px 0 11px 11px;
+}
+.tippy-box[data-theme~='message'][data-placement^='left'] > .tippy-arrow::after {
+  right: -11px;
+  border-width: 11px 0 11px 11px;
+}
+
+.tippy-box[data-theme~='message'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: #e5e5e5;
+  border-width: 11px 11px 11px 0;
+}
+.tippy-box[data-theme~='message'][data-placement^='right'] > .tippy-arrow::after {
+  left: -11px;
+  border-width: 11px 11px 11px 0;
+}
+
+
+
+.tippy-box[data-theme~='warning'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 3px solid var(--verso-warning-color);
+}
+
+.tippy-box[data-theme~='error'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 3px solid #f7a7af;
+}
+
+.tippy-box[data-theme~='info'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 3px solid #99b3c2;
+}
+
+.tippy-box[data-theme~='tactic'] {
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: white;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-bottom-color: white;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: white;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: white;
+}
+
+.extra-doc-links {
+  list-style-type: none;
+  margin-left: 0;
+  padding: 0;
+}
+
+.extra-doc-links > li {
+  display: inline-block;
+}
+
+.extra-doc-links > li:not(:last-child)::after {
+  content: '|';
+  display: inline-block;
+  margin: 0 0.25em;
+}
+
+.verso-message .trace {
+  display: block;
+}
+
+.verso-message .trace > summary::marker {
+  color: var(--verso-text-color);
+}
+
+.verso-message .trace-children {
+  margin: 0;
+  padding: 0;
+}
+
+.verso-message .trace-children > li {
+  list-style-type: none;
+  margin-left: 1.5em;
+}
+
+.verso-message .trace-children > li:not(:has(.trace)) {
+  margin-left: 0;
+}
+
+.verso-message .trace-class {
+  color: color-mix(in srgb, currentColor 70%, transparent);
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+}
+
+.verso-message .text {
+  white-space: pre-wrap;
+}
+
+</style><script>
+      
+window.onload = () => {
+
+    // Don't show hovers inside of closed tactic states
+    function blockedByTactic(elem) {
+      let parent = elem.parentNode;
+      while (parent && "classList" in parent) {
+        if (parent.classList.contains("tactic")) {
+          const toggle = parent.querySelector("input.tactic-toggle");
+          if (toggle) {
+            return !toggle.checked;
+          }
+        }
+        parent = parent.parentNode;
+      }
+      return false;
+    }
+
+    // Track whether any tippy is visible (O(1) check instead of DOM scan)
+    let visibleTippyCount = 0;
+    function blockedByTippy(elem) {
+      return visibleTippyCount > 0;
+    }
+
+    // Binding highlights via event delegation with cached lookups
+    const bindingCache = new Map(); // context+binding -> [token elements]
+    let highlightedTokens = [];
+    function getBindingTokens(context, binding) {
+      const key = context + "\0" + binding;
+      let tokens = bindingCache.get(key);
+      if (!tokens) {
+        tokens = [];
+        for (const example of document.querySelectorAll(".hl.lean")) {
+          if (example.dataset.leanContext == context) {
+            for (const tok of example.querySelectorAll(".token[data-binding=\"" + CSS.escape(binding) + "\"]")) {
+              tokens.push(tok);
+            }
+          }
+        }
+        bindingCache.set(key, tokens);
+      }
+      return tokens;
+    }
+    for (const container of document.querySelectorAll(".hl.lean")) {
+      container.addEventListener("mouseover", (event) => {
+        const c = event.target.closest(".token");
+        if (!c || !c.dataset.binding || c.dataset.binding === "" || !container.contains(c)) return;
+        if (blockedByTactic(c)) return;
+        const tokens = getBindingTokens(container.dataset.leanContext, c.dataset.binding);
+        for (const tok of tokens) {
+          tok.classList.add("binding-hl");
+        }
+        highlightedTokens = tokens;
+      });
+      container.addEventListener("mouseout", (event) => {
+        const c = event.target.closest(".token");
+        if (!c || !container.contains(c)) return;
+        for (const tok of highlightedTokens) {
+          tok.classList.remove("binding-hl");
+        }
+        highlightedTokens = [];
+      });
+    }
+    /* Render docstrings */
+    if ('undefined' !== typeof marked) {
+        for (const d of document.querySelectorAll("code.docstring, pre.docstring")) {
+            const str = d.innerText;
+            const html = marked.parse(str);
+            const rendered = document.createElement("div");
+            rendered.classList.add("docstring");
+            rendered.innerHTML = html;
+            d.parentNode.replaceChild(rendered, d);
+        }
+    }
+    // Add hovers
+    let docsJson = "-verso-docs.json";
+    fetch(docsJson).then((resp) => resp.json()).then((versoDocData) => {
+
+      function hideParentTooltips(element) {
+        let parent = element.parentElement;
+        while (parent) {
+          const tippyInstance = parent._tippy;
+          if (tippyInstance) {
+            tippyInstance.hide();
+          }
+          parent = parent.parentElement;
+        }
+      }
+
+
+
+      const defaultTippyProps = {
+        /* DEBUG -- remove the space: * /
+        onHide(any) { return false; },
+        trigger: "click",
+        // */
+        /* theme: "lean", */
+        maxWidth: "none",
+        appendTo: () => document.body,
+        interactive: true,
+        delay: [100, null],
+        /* ignoreAttributes: true, */
+        followCursor: 'initial',
+        onShow(inst) {
+          if (inst.reference.className == 'tactic') {
+            const toggle = inst.reference.querySelector("input.tactic-toggle");
+            if (toggle && toggle.checked) {
+              return false;
+            }
+            hideParentTooltips(inst.reference);
+            if (blockedByTippy(inst.reference)) { return false; }
+
+          } else if (inst.reference.querySelector(".hover-info") || "versoHover" in inst.reference.dataset) {
+            if (blockedByTactic(inst.reference)) { return false };
+            if (blockedByTippy(inst.reference)) { return false; }
+          } else { // Nothing to show here!
+            return false;
+          }
+        },
+        onShown(inst) { visibleTippyCount++; },
+        onHidden(inst) { visibleTippyCount = Math.max(0, visibleTippyCount - 1); },
+        content (tgt) {
+          const content = document.createElement("span");
+          if (tgt.className == 'tactic') {
+            const state = tgt.querySelector(".tactic-state").cloneNode(true);
+            state.style.display = "block";
+            content.appendChild(state);
+            content.style.display = "block";
+            content.className = "hl lean popup";
+          } else {
+            content.className = "hl lean";
+            content.style.display = "block";
+            content.style.maxHeight = "300px";
+            content.style.overflowY = "auto";
+            content.style.overflowX = "hidden";
+            const hoverId = tgt.dataset.versoHover;
+            const hoverInfo = tgt.querySelector(".hover-info");
+            if (hoverId) { // Docstrings from the table
+              // TODO stop doing an implicit conversion from string to number here
+              let data = versoDocData[hoverId];
+              if (data) {
+                const info = document.createElement("span");
+                info.className = "hover-info";
+                info.style.display = "block";
+                info.innerHTML = data;
+                content.appendChild(info);
+                /* Render docstrings - TODO server-side */
+                if ('undefined' !== typeof marked) {
+                    for (const d of content.querySelectorAll("code.docstring, pre.docstring")) {
+                        const str = d.innerText;
+                        const html = marked.parse(str);
+                        const rendered = document.createElement("div");
+                        rendered.classList.add("docstring");
+                        rendered.innerHTML = html;
+                        d.parentNode.replaceChild(rendered, d);
+                    }
+                }
+              } else {
+                content.innerHTML = "Failed to load doc ID: " + hoverId;
+              }
+            } else if (hoverInfo) { // The inline info, still used for compiler messages
+              content.appendChild(hoverInfo.cloneNode(true));
+            }
+            const extraLinks = tgt.parentElement.dataset['versoLinks'];
+            if (extraLinks) {
+              try {
+                const extras = JSON.parse(extraLinks);
+                const links = document.createElement('ul');
+                links.className = 'extra-doc-links';
+                extras.forEach((l) => {
+                  const li = document.createElement('li');
+                  li.innerHTML = "<a href=\"" + l['href'] + "\" title=\"" + l.long + "\">" + l.short + "</a>";
+                  links.appendChild(li);
+                });
+                content.appendChild(links);
+              } catch (error) {
+                console.error(error);
+              }
+            }
+          }
+          return content;
+        }
+      };
+
+
+      document.querySelectorAll('.hl.lean .const.token, .hl.lean .keyword.token, .hl.lean .literal.token, .hl.lean .option.token, .hl.lean .var.token, .hl.lean .typed.token, .hl.lean .level-var, .hl.lean .level-const, .hl.lean .level-op, .hl.lean .sort').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'lean');
+      });
+      document.querySelectorAll('.hl.lean .has-info.warning').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'warning message');
+      });
+      document.querySelectorAll('.hl.lean .has-info.information').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'info message');
+      });
+      document.querySelectorAll('.hl.lean .has-info.error').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'error message');
+      });
+      document.querySelectorAll('.hl.lean .tactic').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'tactic');
+      });
+      // Skip tokens inside closed tactics — they interfere with tactic tippys
+      const closedTactics = new Set();
+      document.querySelectorAll('.hl.lean .tactic').forEach(tactic => {
+        const toggle = tactic.querySelector('input.tactic-toggle');
+        if (toggle && !toggle.checked) closedTactics.add(tactic);
+      });
+      function isInsideClosedTactic(el) {
+        const tactic = el.closest('.tactic');
+        return tactic && tactic !== el && closedTactics.has(tactic);
+      }
+
+      const tokenSelector = '.hl.lean .const.token, .hl.lean .keyword.token, .hl.lean .literal.token, .hl.lean .option.token, .hl.lean .var.token, .hl.lean .typed.token, .hl.lean .has-info, .hl.lean .tactic, .hl.lean .level-var, .hl.lean .level-const, .hl.lean .level-op, .hl.lean .sort';
+      tippy(Array.from(document.querySelectorAll(tokenSelector)).filter(el => !isInsideClosedTactic(el)), defaultTippyProps);
+
+      // Create/destroy token tippys when tactic checkbox toggles
+      const tacticTippySelector = '.const.token, .keyword.token, .literal.token, .option.token, .var.token, .typed.token, .has-info, .level-var, .level-const, .level-op, .sort';
+      document.querySelectorAll('.hl.lean .tactic').forEach(tactic => {
+        const toggle = tactic.querySelector('input.tactic-toggle');
+        if (toggle) toggle.addEventListener('change', () => {
+          if (toggle.checked) {
+            closedTactics.delete(tactic);
+            tactic.querySelectorAll('.token').forEach(tok => {
+              if (!tok._tippy && tok.matches(tacticTippySelector)) {
+                tippy(tok, defaultTippyProps);
+              }
+            });
+          } else {
+            closedTactics.add(tactic);
+            tactic.querySelectorAll('.token').forEach(tok => {
+              if (tok._tippy) tok._tippy.destroy();
+            });
+          }
+        });
+      });
+  });
+}
+</script>
+    <script src="-verso-search/search-highlight.js" defer="defer"></script>
+    </head>
+  <body>
+    <header>
+      <div class="header-logo-wrapper"></div>
+      <div class="header-title-wrapper">
+        <a href="" class="header-title"><h1>
+            Lean 4 自动化内幕</h1>
+          </a></div>
+      </header>
+    <label for="toggle-toc" id="toggle-toc-click"><span class="line line1"></span><span class="line line2"></span><span class="line line3"></span></label><div class="with-toc">
+      <div class="toc-backdrop" onclick="document.getElementById('toggle-toc-click')?.click()"></div>
+      <nav id="toc">
+        <input type="checkbox" id="toggle-toc"><div class="first">
+          <a href="" class="toc-title"><h1>
+              Lean 4 自动化内幕</h1>
+            </a><div class="split-tocs">
+            <div class="split-toc book">
+              <div class="title">
+                <label for="--verso-manual-toc-----bookRoot" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-----bookRoot" checked="checked"></label><span class="">Table of Contents</span></div>
+              <table><tr class="numbered"><td class="num">1.</td><td><a href="Ch00Setup/#ch00-setup">第零章 环境与运行约定</a></td></tr><tr class="numbered"><td class="num">2.</td><td><a href="Ch01MetaprogrammingModel/#ch01-metaprogramming-model">第一章 Lean 4 元编程模型</a></td></tr><tr class="numbered"><td class="num">3.</td><td><a href="Ch02Expr/#ch02-expr">第二章 Expr：Lean 4 的内部表示</a></td></tr><tr class="numbered"><td class="num">4.</td><td><a href="Ch03FirstTactic/#ch03-first-tactic">第三章 编写你的第一个 Tactic</a></td></tr><tr class="numbered"><td class="num">5.</td><td><a href="Ch04GoalManagement/#ch04-goal-management">第四章 目标管理</a></td></tr><tr class="numbered"><td class="num">6.</td><td><a href="Ch05TypeclassSynthesis/#ch05-typeclass-synthesis">第五章 Type Class Synthesis</a></td></tr><tr class="numbered"><td class="num">7.</td><td><a href="Ch06Simp/#ch06-simp">第六章 simp：重写引擎</a></td></tr><tr class="numbered"><td class="num">8.</td><td><a href="Ch07Ring/#ch07-ring">第七章 ring 和 <code>ring_nf</code>：代数范式化</a></td></tr><tr class="current numbered"><td class="num">9.</td><td><a href="Ch08Omega/#ch08-omega">第八章 omega：Presburger 算术决策过程</a></td></tr><tr class="numbered"><td class="num">10.</td><td><a href="Ch09Linarith/#ch09-linarith">第九章 linarith、nlinarith 与 polyrith</a></td></tr><tr class="numbered"><td class="num">11.</td><td><a href="Ch10NormNum/#ch10-norm-num">第十章 <code>norm_num</code>：数值计算框架</a></td></tr><tr class="numbered"><td class="num">12.</td><td><a href="Ch11Aesop/#ch11-aesop">第十一章 aesop：可配置的搜索引擎</a></td></tr><tr class="numbered"><td class="num">13.</td><td><a href="Ch12Grind/#ch12-grind">第十二章 grind：E-matching 与 Congruence Closure</a></td></tr><tr class="numbered"><td class="num">14.</td><td><a href="Ch13Decide/#ch13-decide">第十三章 decide 与 <code>native_decide</code>：有限计算判定</a></td></tr><tr class="numbered"><td class="num">15.</td><td><a href="Ch14Positivity/#ch14-positivity">第十四章 positivity：符号非负性推理</a></td></tr><tr class="numbered"><td class="num">16.</td><td><a href="Ch15FunProp/#ch15-fun-prop">第十五章 <code>fun_prop</code>：函数性质的自动证明</a></td></tr><tr class="numbered"><td class="num">17.</td><td><a href="Ch16Gcongr/#ch16-gcongr">第十六章 gcongr：广义合同性</a></td></tr><tr class="numbered"><td class="num">18.</td><td><a href="Ch17FieldSimp/#ch17-field-simp">第十七章 <code>field_simp</code>：分式化简</a></td></tr><tr class="numbered"><td class="num">19.</td><td><a href="Ch18LogicTransforms/#ch18-logic-transforms">第十八章 push<em>neg、contrapose、by</em>contra</a></td></tr><tr class="numbered"><td class="num">20.</td><td><a href="Ch19DesignYourOwn/#ch19-design-your-own">第十九章 设计你自己的领域自动化</a></td></tr><tr class="numbered"><td class="num">21.</td><td><a href="Ch20Reflection/#ch20-reflection">第二十章 反射证明模式</a></td></tr><tr class="numbered"><td class="num">22.</td><td><a href="Ch21Performance/#ch21-performance">第二十一章 性能工程</a></td></tr><tr class="numbered"><td class="num">23.</td><td><a href="Ch22ExternalTools/#ch22-external-tools">第二十二章 对接外部工具</a></td></tr><tr class="numbered"><td class="num">24.</td><td><a href="Ch23Methodology/#ch23-methodology">第二十三章 从证明模式到自动化：方法论</a></td></tr><tr class="numbered"><td class="num">25.</td><td><a href="Ch24TowardsAnalysis/#ch24-towards-analysis">第二十四章 迈向分析自动化</a></td></tr></table></div>
+            <div class="split-toc">
+              <div class="title">
+                <label for="--verso-manual-toc-ch08-omega" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch08-omega" checked="checked"></label><span class="number">9.</span> <span class="current"><a href="Ch08Omega/#ch08-omega">第八章 omega：Presburger 算术决策过程</a></span></div>
+              <table><tr class="numbered"><td class="num">9.1.</td><td><a href="Ch08Omega/#omega-what-it-solves">8.1 omega 解决什么问题</a></td></tr><tr class="numbered"><td class="num">9.2.</td><td><a href="Ch08Omega/#omega-theory">8.2 理论基础：Omega 算法</a></td></tr><tr class="numbered"><td class="num">9.3.</td><td><a href="Ch08Omega/#omega-capabilities">8.3 omega 的能力范围</a></td></tr><tr class="numbered"><td class="num">9.4.</td><td><a href="Ch08Omega/#nat-sub-handling">8.4 Nat.sub 的特殊处理</a></td></tr><tr class="numbered"><td class="num">9.5.</td><td><a href="Ch08Omega/#common-failure-modes">8.5 常见失败模式</a></td></tr><tr class="numbered"><td class="num">9.6.</td><td><a href="Ch08Omega/#omega-in-tactic-programming">8.6 在 tactic 编程中使用 omega</a></td></tr><tr class="numbered"><td class="num">9.7.</td><td><a href="Ch08Omega/#omega-vs-other-tactics">8.7 omega 与其他算术 tactic 的对比</a></td></tr><tr class="numbered"><td class="num">9.8.</td><td><a href="Ch08Omega/#ch08-exercises">8.8 练习</a></td></tr><tr class="numbered"><td class="num">9.9.</td><td><a href="Ch08Omega/#ch08-summary">8.9 小结</a></td></tr></table></div>
+            </div>
+          </div>
+        <div class="last">
+          <ul id="meta-links">
+            <li>
+              <a href="https://github.com/subfish-zhou/lean-tacticbook">Source Code</a></li>
+            <li>
+              <a href="https://github.com/subfish-zhou/lean-tacticbook/issues">Report Issues</a></li>
+            </ul>
+          </div>
+        </nav>
+      <main><div class="content-wrapper">
+          <nav class="prev-next-buttons">
+            <a class="local-button active" href="Ch07Ring/#ch07-ring" rel="prev" title="8. 第七章 ring 和 ring_nf：代数范式化"><span class="arrow">←</span><span class="where">8. 第七章 ring 和 ring_nf：代数范式化</span></a><a class="local-button active" href="Ch09Linarith/#ch09-linarith" rel="next" title="10. 第九章 linarith、nlinarith 与 polyrith"><span class="where">10. 第九章 linarith、nlinarith 与 polyrith</span><span class="arrow">→</span></a></nav>
+          <section>
+            <h1>
+              9. 第八章 omega：Presburger 算术决策过程<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-omega" title="Permalink">🔗</a></span></h1>
+            <p>
+              <strong>本章目标</strong>：理解 <code>omega</code> 的理论基础、能力边界和常见失败模式，
+学会在 tactic 编程中正确使用它。</p>
+            <section>
+              <h2 id="omega-what-it-solves">
+                9.1. 8.1 omega 解决什么问题<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=omega-what-it-solves" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code>omega</code> 是 Lean 4 内置的 <strong>Presburger 算术</strong> 决策过程。
+它能自动证明关于 <code>ℕ</code> 和 <code>ℤ</code> 的<strong>线性算术</strong>命题——
+即只涉及加法、常数乘法和比较的等式与不等式。</p>
+              <pre>-- 基本不等式
+example (n : ℕ) : n + 1 &gt; n := by
+  omega                          -- ⊢ n + 1 &gt; n，线性，直接判定
+
+-- 整数线性约束
+example (a b : ℤ) (h : a &lt; b) : a + 1 ≤ b := by
+  omega                          -- 从 h : a &lt; b 推出 a + 1 ≤ b
+
+-- 多变量线性组合
+example (x y : ℕ) (h1 : x ≤ 10) (h2 : y ≤ 10) : x + y ≤ 20 := by
+  omega                          -- 把 h1, h2 收集为线性约束系统
+</pre><p>
+                "Presburger 算术" 是整数上只允许加法和比较（不允许变量间乘法）的一阶理论。
+Presburger 在 1929 年证明了该理论的<strong>可判定性</strong>，
+意味着存在算法能判定任意 Presburger 公式的真假。
+<code>omega</code> tactic 实现的正是这样一个决策过程。</p>
+              </section>
+            <section>
+              <h2 id="omega-theory">
+                9.2. 8.2 理论基础：Omega 算法<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=omega-theory" title="Permalink">🔗</a></span></h2>
+              <p>
+                Lean 4 使用的 omega 算法基于 Pugh (1991)。
+核心思路：把目标和假设归约为整数线性不等式系统，
+通过<strong>变量消去</strong>判定系统是否有解。</p>
+              <section>
+                <h3 id="variable-elimination">
+                  9.2.1. 变量消去<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=variable-elimination" title="Permalink">🔗</a></span></h3>
+                <p>
+                  给定不等式系统 <code>{aᵢ x + bᵢ y + ⋯ ≤ cᵢ}</code>，算法逐步消去变量：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <strong>选择变量</strong> x</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>分离约束</strong>：找到所有关于 x 的下界 <code>ℓⱼ ≤ x</code> 和上界 <code>x ≤ uₖ</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>组合</strong>：对每对 <code>(ℓⱼ, uₖ)</code>，生成新约束 <code>ℓⱼ ≤ uₖ</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>整数修正</strong>：对整数情形，添加 "dark shadow" 约束以保证精确性</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>递归</strong>：对消去后的系统重复以上步骤</p>
+                    </li>
+                  </ol>
+                <p>
+                  当所有变量被消去后，系统退化为常数不等式。
+如果出现矛盾（如 $0 leq -1$），则原系统无整数解——目标得证。</p>
+                </section>
+              <section>
+                <h3 id="fourier-motzkin-difference">
+                  9.2.2. 与 Fourier-Motzkin 消去的区别<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=fourier-motzkin-difference" title="Permalink">🔗</a></span></h3>
+                <p>
+                  Fourier-Motzkin 消去适用于<strong>实数</strong>，只做步骤 1-3。
+omega 算法额外处理<strong>整数约束</strong>（步骤 4），
+因为实数解存在不意味着整数解存在：</p>
+                <pre>-- x + y = 1, x + y = 2 在实数上无解，整数上也无解
+-- 但 2x = 3 在实数上有解 x = 1.5，整数上无解
+example : ¬ ∃ x : ℤ, 2 * x = 3 := by
+  omega                          -- omega 知道 2x = 3 无整数解
+</pre></section>
+              <section>
+                <h3 id="lean-execution-flow">
+                  9.2.3. Lean 中的执行流程<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=lean-execution-flow" title="Permalink">🔗</a></span></h3>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <strong>收集</strong>：从 <code>LocalContext</code> 自动提取所有线性算术假设</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>规范化</strong>：统一到 ℤ 域，处理 Nat.sub，化为标准形 $a<em>1 x</em>1 + cdots leq c$</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>判定</strong>：运行 omega 算法</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>输出</strong>：矛盾 → 构造证明项关闭目标；有解 → 报错并给出反例</p>
+                    </li>
+                  </ol>
+                </section>
+              </section>
+            <section>
+              <h2 id="omega-capabilities">
+                9.3. 8.3 omega 的能力范围<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=omega-capabilities" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="omega-can-handle">
+                  9.3.1. 能处理的命题<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=omega-can-handle" title="Permalink">🔗</a></span></h3>
+                <pre>-- [1] 线性等式与不等式
+example (a b c : ℤ) (h : a + b ≤ c) : a ≤ c - b := by
+  omega                          -- 线性重排
+
+-- [2] 常数系数乘法（不是变量乘变量）
+example (x : ℤ) (h : 3 * x ≤ 9) : x ≤ 3 := by
+  omega                          -- 3 * x 中 3 是常数，OK
+
+-- [3] 整除与模运算
+example (n : ℤ) (h : n % 2 = 0) : ∃ k, n = 2 * k := by
+  omega                          -- omega 理解 % 的语义
+
+-- [4] 析取（通过分支搜索）
+example (n : ℕ) : n % 2 = 0 ∨ n % 2 = 1 := by
+  omega                          -- 穷举 n mod 2 的可能值
+
+-- [5] Nat 的截断减法
+example (n : ℕ) : n - n = 0 := by
+  omega                          -- 知道 Nat.sub 截断到 0
+
+-- [6] max / min
+example (a b : ℕ) : max a b ≥ a := by
+  omega                          -- omega 展开 max 的定义
+</pre></section>
+              <section>
+                <h3 id="omega-cannot-handle">
+                  9.3.2. 不能处理的命题<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=omega-cannot-handle" title="Permalink">🔗</a></span></h3>
+                <pre>-- [1] 变量乘法（非线性）
+-- example (x y : ℤ) (h : x * y = 0) : x = 0 ∨ y = 0 := by omega
+-- ✗ omega 不处理 x * y（两个变量相乘）
+
+-- [2] 指数 / 幂运算
+-- example (n : ℕ) : 2 ^ n ≥ 1 := by omega
+-- ✗ 2 ^ n 不是线性的，需要归纳法
+
+-- [3] 实数或其他域
+-- example (x : ℝ) : x + 1 &gt; x := by omega
+-- ✗ omega 只处理 ℕ 和 ℤ
+
+-- [4] 带量词交替的复杂公式
+-- ∀ x, ∃ y, P(x, y) 形式的嵌套量词超出处理范围
+</pre></section>
+              </section>
+            <section>
+              <h2 id="nat-sub-handling">
+                9.4. 8.4 Nat.sub 的特殊处理<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=nat-sub-handling" title="Permalink">🔗</a></span></h2>
+              <p>
+                自然数减法是截断的：<code>a - b = 0</code> 当 <code>a &lt; b</code>。
+这让 <code>ℕ</code> 上的推理比 <code>ℤ</code> 复杂，但 <code>omega</code> 内置了对此的处理。</p>
+              <section>
+                <h3 id="nat-sub-conversion">
+                  9.4.1. 转换策略<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=nat-sub-conversion" title="Permalink">🔗</a></span></h3>
+                <p>
+                  omega 把 <code>ℕ</code> 表达式翻译到 <code>ℤ</code> 时，遵循以下规则：</p>
+                <p>
+                  | ℕ 表达式 | ℤ 翻译 | 附加约束 |
+|----------|--------|----------|
+| <code>(n : ℕ)</code> | <code>n</code> | <code>n ≥ 0</code> |
+| <code>a - b</code> (Nat) | <code>max(a - b, 0)</code> | — |
+| <code>a / k</code> (Nat) | 整数除法 | <code>0 ≤ a / k</code> |
+| <code>a % k</code> (Nat) | <code>a - k * (a / k)</code> | <code>0 ≤ a % k &lt; k</code> |</p>
+                </section>
+              <section>
+                <h3 id="nat-sub-examples">
+                  9.4.2. 示例<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=nat-sub-examples" title="Permalink">🔗</a></span></h3>
+                <pre>-- 截断减法的典型场景
+example (n m : ℕ) (h : m ≤ n) : n - m + m = n := by
+  omega                          -- h : m ≤ n 保证不截断
+
+example (n : ℕ) (h : n ≥ 1) : n - 1 + 1 = n := by
+  omega                          -- h 保证 n - 1 不截断
+
+-- omega 知道截断的全部语义
+example (n : ℕ) : n - (n + 1) = 0 := by
+  omega                          -- n &lt; n + 1，截断到 0
+
+-- 不需要前置条件也能处理
+example (a b : ℕ) : a - b ≤ a := by
+  omega                          -- 无论是否截断都成立
+</pre></section>
+              </section>
+            <section>
+              <h2 id="common-failure-modes">
+                9.5. 8.5 常见失败模式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=common-failure-modes" title="Permalink">🔗</a></span></h2>
+              <p>
+                理解 omega 何时会失败，以及<strong>为什么</strong>失败，是高效使用它的关键。</p>
+              <section>
+                <h3 id="failure-nonlinear">
+                  9.5.1. 失败模式 1：非线性项<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-nonlinear" title="Permalink">🔗</a></span></h3>
+                <pre>-- omega 拒绝包含变量乘法的目标
+example (n : ℕ) (h : n * n = 4) : n = 2 := by
+  omega  -- ✗ omega does not handle multiplication of variables
+         -- 修复：nlinarith 或 interval_cases + omega
+</pre><p>
+                  <strong>诊断</strong>：错误信息通常包含 "omega does not handle" 或
+"could not prove"。检查目标和假设中是否有变量间相乘的项。</p>
+                </section>
+              <section>
+                <h3 id="failure-unsupported-type">
+                  9.5.2. 失败模式 2：目标中有不支持的类型<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-unsupported-type" title="Permalink">🔗</a></span></h3>
+                <pre>-- omega 只支持 ℕ 和 ℤ
+example (x : Fin 5) (h : x.val &lt; 3) : x.val + 2 &lt; 5 := by
+  omega  -- ✓ x.val : ℕ，omega 可以处理
+         -- 但如果目标直接涉及 Fin 的运算（取模），可能失败
+</pre><p>
+                  <strong>诊断</strong>：如果 omega 报错说无法处理某个表达式，
+检查是否需要先用 <code>simp</code> 或手动 <code>show</code> 把类型转换为 ℕ/ℤ。</p>
+                </section>
+              <section>
+                <h3 id="failure-insufficient-hypotheses">
+                  9.5.3. 失败模式 3：假设不足<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-insufficient-hypotheses" title="Permalink">🔗</a></span></h3>
+                <pre>-- omega 只使用上下文中已有的假设
+example (n : ℕ) : n - 1 + 1 = n := by
+  omega  -- ✗ 需要 n ≥ 1 但上下文中没有
+         -- omega 会给出反例：n = 0
+</pre><p>
+                  <strong>诊断</strong>：omega 的报错通常会给出反例。
+检查反例是否暴露了缺失的前置条件。</p>
+                </section>
+              <section>
+                <h3 id="failure-hidden-definition">
+                  9.5.4. 失败模式 4：隐藏在定义背后的线性关系<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-hidden-definition" title="Permalink">🔗</a></span></h3>
+                <pre>def myDouble (n : ℕ) := 2 * n
+
+-- omega 不会展开自定义定义
+example (n : ℕ) : myDouble n ≥ n := by
+  omega  -- ✗ omega 看到的是 myDouble n，不知道它等于 2 * n
+         -- 修复：先 unfold myDouble，再 omega
+</pre><p>
+                  <strong>诊断</strong>：如果目标"看起来"是线性的但 omega 失败，
+检查是否有未展开的定义。用 <code>unfold</code> 或 <code>simp only [myDouble]</code> 先展开。</p>
+                </section>
+              <section>
+                <h3 id="failure-too-many-variables">
+                  9.5.5. 失败模式 5：变量太多导致超时<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-too-many-variables" title="Permalink">🔗</a></span></h3>
+                <p>
+                  omega 算法的复杂度随变量数指数增长。
+虽然实际中很少触发，但当假设中包含大量不相关变量时，
+omega 可能显著变慢。</p>
+                <pre>-- 如果上下文有 20+ 个线性假设，omega 可能变慢
+-- 修复：在调用前用 clear 清除不相关假设
+example (a b c d e f : ℕ)
+    (h1 : a ≤ b) (h2 : b ≤ c) (h3 : c ≤ d)
+    (h4 : d ≤ e) (h5 : e ≤ f) : a ≤ f := by
+  omega                          -- 变量不多，正常工作
+</pre></section>
+              </section>
+            <section>
+              <h2 id="omega-in-tactic-programming">
+                9.6. 8.6 在 tactic 编程中使用 omega<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=omega-in-tactic-programming" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="omega-direct-call">
+                  9.6.1. 直接调用<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=omega-direct-call" title="Permalink">🔗</a></span></h3>
+                <pre>-- 在 tactic block 中调用
+evalTactic (← `(tactic| omega))
+</pre><p>
+                  这是最简单的方式：生成 <code>omega</code> 的 syntax 对象，然后执行它。
+如果 omega 无法关闭目标，<code>evalTactic</code> 会抛出异常。</p>
+                </section>
+              <section>
+                <h3 id="omega-probing-call">
+                  9.6.2. 探测性调用<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=omega-probing-call" title="Permalink">🔗</a></span></h3>
+                <p>
+                  有时你想<strong>尝试</strong> omega 但不希望失败中断流程：</p>
+                <pre>-- 尝试用 omega 关闭目标，失败则返回 false
+def tryOmega (goal : MVarId) : MetaM Bool := do
+  try
+    let (remaining, _) ←              -- remaining : 剩余子目标列表
+      Lean.Elab.runTactic goal         -- 在 goal 上运行 tactic
+        (← `(tactic| omega))
+    return remaining.isEmpty           -- 全部关闭则返回 true
+  catch _ =&gt;
+    return false                       -- omega 失败，静默返回 false
+</pre></section>
+              <section>
+                <h3 id="omega-combining-tactics">
+                  9.6.3. 与其他 tactic 组合<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=omega-combining-tactics" title="Permalink">🔗</a></span></h3>
+                <p>
+                  omega 经常作为 "收尾" tactic 出现在组合策略中：</p>
+                <pre>-- 先简化，再尝试 omega
+macro "simp_omega" : tactic =&gt;
+  `(tactic| (simp &lt;;&gt; try omega))
+
+-- 在 decide 策略中作为后备
+macro "auto_arith" : tactic =&gt;
+  `(tactic| first | omega | norm_num | simp [Nat.add_comm])
+</pre></section>
+              <section>
+                <h3 id="omega-as-discharger">
+                  9.6.4. 在 discharger 中使用<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=omega-as-discharger" title="Permalink">🔗</a></span></h3>
+                <p>
+                  许多 tactic 接受 discharger 参数来关闭 side goal。
+omega 是线性算术 side goal 的理想 discharger：</p>
+                <pre>-- simp 产生的算术 side goal 由 omega 关闭
+example (xs : List ℕ) (h : xs.length &gt; 2) :
+    xs.length - 1 &gt; 0 := by
+  simp (config := { decide := false }) at *
+  omega                          -- 关闭 simp 留下的算术目标
+</pre></section>
+              </section>
+            <section>
+              <h2 id="omega-vs-other-tactics">
+                9.7. 8.7 omega 与其他算术 tactic 的对比<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=omega-vs-other-tactics" title="Permalink">🔗</a></span></h2>
+              <p>
+                | tactic | 理论域 | 强项 | 弱项 |
+|--------|--------|------|------|
+| <code>omega</code> | ℕ, ℤ（线性） | 整除、模运算、Nat.sub | 非线性、实数 |
+| <code>linarith</code> | 任意 ordered field | 实数线性、可扩展 | 不懂整除、不处理 Nat.sub |
+| <code>nlinarith</code> | 同上 + 非线性提示 | 非线性（带 hint） | 需要手动提供非线性项 |
+| <code>norm_num</code> | 具体数值 | 计算确定值 | 不处理变量 |
+| <code>decide</code> | Decidable 实例 | 有限类型穷举 | 无限类型 |
+| <code>ring</code> | 交换环 | 多项式等式 | 不等式 |</p>
+              <p>
+                <strong>选择原则</strong>：ℕ/ℤ 线性 → <code>omega</code>；实数线性 → <code>linarith</code>；
+非线性 → <code>nlinarith</code>；纯数值 → <code>norm_num</code>；多项式等式 → <code>ring</code>。</p>
+              <section>
+                <h3 id="combination-examples">
+                  9.7.1. 组合示例<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=combination-examples" title="Permalink">🔗</a></span></h3>
+                <pre>-- 非线性目标，omega 不行，用 nlinarith
+example (n : ℕ) (h : n ≥ 2) : n * n ≥ 4 := by
+  nlinarith [sq_nonneg (n - 2)]
+
+-- omega 处理模运算（linarith 做不到）
+example (a b : ℤ) (h : a % 2 = 0) (h2 : b % 2 = 0) :
+    (a + b) % 2 = 0 := by
+  omega                          -- omega 的整除推理能力
+
+-- omega 自动展开 Nat.succ
+example (n : ℕ) (h : Nat.succ n &gt; 3) : n ≥ 3 := by
+  omega                          -- 知道 Nat.succ n = n + 1
+</pre></section>
+              <section>
+                <h3 id="practical-tips">
+                  9.7.2. 实用技巧<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=practical-tips" title="Permalink">🔗</a></span></h3>
+                <p>
+                  omega 会自动扫描 <code>LocalContext</code> 中所有线性算术假设，
+<strong>无需手动指定</strong>。但自定义定义不会被展开——
+调用前先 <code>unfold</code> 或 <code>simp only [...]</code>。</p>
+                <p>
+                  <code>norm_num</code> 擅长具体计算（如 <code>100 * 99 / 2 = 4950</code>），
+<code>omega</code> 擅长带变量的线性推理。两者互补，几乎不重叠。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch08-exercises">
+                9.8. 8.8 练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-exercises" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="exercise-8-1">
+                  9.8.1. 练习 1：基础线性推理<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-8-1" title="Permalink">🔗</a></span></h3>
+                <p>
+                  判断以下哪些目标 <code>omega</code> 能直接证明，并尝试证明它们。</p>
+                <pre>-- (a) 能否用 omega 证明？
+example (n : ℕ) (h : n &gt; 0) : 2 * n ≥ 2 := by
+  sorry
+
+-- (b) 能否用 omega 证明？
+example (a b : ℤ) (h1 : a + b = 10) (h2 : a - b = 4) : a = 7 := by
+  sorry
+
+-- (c) 能否用 omega 证明？
+example (n : ℕ) : n * (n + 1) / 2 ≥ 0 := by
+  sorry
+
+-- (d) 能否用 omega 证明？
+example (x : ℤ) (h : x % 3 = 0) : x % 6 = 0 ∨ x % 6 = 3 := by
+  sorry
+</pre><p>
+                  <strong>提示</strong>：(a) 和 (d) 是线性的，(b) 看起来线性但检查一下解，
+(c) 包含变量乘法。</p>
+                </section>
+              <section>
+                <h3 id="exercise-8-2">
+                  9.8.2. 练习 2：诊断失败<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-8-2" title="Permalink">🔗</a></span></h3>
+                <p>
+                  以下每个 <code>omega</code> 调用都会失败。解释失败原因，并给出修复方案。</p>
+                <pre>-- (a) 为什么失败？如何修复？
+example (n : ℕ) : n ^ 2 ≥ 0 := by
+  omega
+
+-- (b) 为什么失败？如何修复？
+def triple (n : ℕ) := 3 * n
+example (n : ℕ) : triple n ≥ n := by
+  omega
+
+-- (c) 为什么失败？如何修复？
+example (n : ℕ) : n - 3 + 3 = n := by
+  omega
+</pre><p>
+                  <strong>提示</strong>：(a) 非线性项，(b) 未展开的定义，(c) 缺少前置条件。</p>
+                </section>
+              <section>
+                <h3 id="exercise-8-3">
+                  9.8.3. 练习 3：tactic 编程<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-8-3" title="Permalink">🔗</a></span></h3>
+                <p>
+                  编写一个 tactic <code>omega_or_sorry</code>，尝试用 omega 关闭目标，
+如果失败则用 <code>sorry</code> 关闭并在 info log 中输出警告。</p>
+                <pre>-- 骨架
+elab "omega_or_sorry" : tactic =&gt; do
+  sorry -- 你的实现
+</pre><p>
+                  <strong>提示</strong>：使用 <code>try</code>/<code>catch</code> 包裹 <code>evalTactic</code>，
+在 <code>catch</code> 分支中调用 <code>logWarning</code> 后再执行 <code>sorry</code>。</p>
+                </section>
+              <section>
+                <h3 id="exercise-8-4">
+                  9.8.4. 练习 4：omega 与 linarith 的边界<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-8-4" title="Permalink">🔗</a></span></h3>
+                <p>
+                  找出一个命题，使得 <code>omega</code> 能证明但 <code>linarith</code> 不能，
+以及一个命题，使得 <code>linarith</code> 能证明但 <code>omega</code> 不能。
+解释原因。</p>
+                <p>
+                  <strong>提示</strong>：考虑整除性（omega 的强项）和实数域（linarith 的强项）。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch08-summary">
+                9.9. 8.9 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-summary" title="Permalink">🔗</a></span></h2>
+              <p>
+                | 概念 | 关键点 |
+|------|--------|
+| 理论基础 | Presburger 算术——整数上只有加法的一阶理论，可判定 |
+| 算法核心 | 变量消去 + dark shadow 整数修正 |
+| 适用范围 | ℕ 和 ℤ 上的线性等式、不等式、整除、模运算 |
+| Nat.sub | 自动处理截断语义，翻译为 max(a-b, 0) |
+| 能力边界 | 变量乘法、指数、实数 → 超出范围 |
+| 失败诊断 | 检查非线性项、未展开定义、缺失假设、不支持的类型 |
+| 编程使用 | <code>evalTactic</code> 直接调用，<code>try</code>/<code>catch</code> 探测性调用 |
+| 与 linarith | omega 处理整数整除，linarith 处理实数有序域 |</p>
+              <p>
+                下一章将介绍 <code>linarith</code>、<code>nlinarith</code> 和 <code>polyrith</code>——从线性到非线性的算术自动化。
+</p>
+              </section>
+            </section>
+          <nav class="prev-next-buttons">
+            <a class="local-button active" href="Ch07Ring/#ch07-ring" rel="prev" title="8. 第七章 ring 和 ring_nf：代数范式化"><span class="arrow">←</span><span class="where">8. 第七章 ring 和 ring_nf：代数范式化</span></a><a class="local-button active" href="Ch09Linarith/#ch09-linarith" rel="next" title="10. 第九章 linarith、nlinarith 与 polyrith"><span class="where">10. 第九章 linarith、nlinarith 与 polyrith</span><span class="arrow">→</span></a></nav>
+          </div>
+        </main></div>
+    </body>
+  </html>
+

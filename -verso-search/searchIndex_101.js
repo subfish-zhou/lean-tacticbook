@@ -1,0 +1,1 @@
+window.docContents[101].resolve({"/Ch20Reflection/#stepwise-construction":{"contents":"Lean Expr → 解析 → MetaM 中运行算法 → 逐步用 mkApp 构造证明项\n\n\n优点：MetaM 中的计算是编译后的代码，速度快。\n缺点：每一步变换都要构造对应的证明项，实现复杂。\n\n","context":"Lean 4 自动化内幕\u0009第二十章 反射证明模式\u000920.6 反射 vs 逐步构造","header":"21.6.2. 逐步构造","id":"/Ch20Reflection/#stepwise-construction"}});

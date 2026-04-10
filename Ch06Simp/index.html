@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      (function(){
+  const {protocol:proto, host:hostName, pathname:path, search:srch, hash:hsh} = window.location;
+  if (!(path.endsWith("/") || path.endsWith(".html"))) {
+    window.location.replace(`${proto}//${hostName}${path}/${srch}${hsh}`);
+  }
+})()</script>
+    <base href="./../"><meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <title>第六章 simp：重写引擎</title><link rel="stylesheet" href="book.css">
+    <link rel="stylesheet" href="verso-vars.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js" integrity="sha384-zbcZAIxlvJtNE3Dp5nxLXdXtXyxwOdnILY1TDPVmKFhl4r4nSUG1r8bcFXGVa4Te" crossorigin="anonymous"></script>
+    <script src="-verso-search/elasticlunr.min.js"></script>
+    <script src="-verso-search/fuzzysort.min.js"></script>
+    <script src="-verso-search/searchIndex.js"></script>
+    <script type="module" src="-verso-search/search-init.js"></script>
+    <link rel="stylesheet" href="-verso-search/search-box.css">
+    <link rel="stylesheet" href="-verso-search/search-highlight.css">
+    <link rel="stylesheet" href="-verso-search/domain-display.css">
+    <script src="-verso-data/katex/katex.js"></script>
+    <script src="-verso-data/katex/math.js"></script>
+    <script src="-verso-data/popper.min.js"></script>
+    <script src="-verso-data/tippy-bundle.umd.min.js"></script>
+    <link rel="stylesheet" href="-verso-data/tippy-border.css">
+    <link rel="stylesheet" href="-verso-data/katex/katex.css">
+    <style>
+
+.hl.lean {
+  white-space: pre;
+  font-weight: normal;
+  font-style: normal;
+  font-size: inherit;
+}
+
+.hl.lean .keyword {
+  color: var(--verso-code-keyword-color,);
+  font-weight: var(--verso-code-keyword-weight, bold);
+  font-style: var(--verso-code-keyword-style, normal);
+  font-family: var(--verso-code-keyword-font-family,);
+}
+
+.hl.lean .const {
+  color: var(--verso-code-const-color,);
+  font-weight: var(--verso-code-const-weight, normal);
+  font-style: var(--verso-code-const-style, normal);
+  font-family: var(--verso-code-const-font-family,);
+}
+
+.hl.lean .var {
+  color: var(--verso-code-var-color,);
+  font-weight: var(--verso-code-var-weight, normal);
+  font-style: var(--verso-code-var-style, italic);
+  font-family: var(--verso-code-var-font-family,);
+
+  position: relative;
+}
+
+.hl.lean .literal, .hl.lean .unknown {
+  color: var(--verso-code-color,);
+  font-weight: normal;
+  font-style: normal;
+  font-family: var(--verso-code-font-family,);
+}
+
+.hover-container {
+  width: 0;
+  height: 0;
+  position: relative;
+  display: inline;
+}
+
+.hl.lean a {
+  color: inherit;
+  text-decoration: currentcolor underline dotted;
+}
+
+.hl.lean a:hover {
+  text-decoration: currentcolor underline solid;
+}
+
+.hl.lean .hover-info {
+  white-space: normal;
+}
+
+.hl.lean .token .hover-info {
+  display: none;
+  position: absolute;
+  background-color: #e5e5e5;
+  border: 1px solid black;
+  padding: 0.5rem;
+  z-index: 300;
+}
+
+.hl.lean .hover-info.messages {
+  max-height: 10rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  padding: 0 0.5rem 0 0;
+  display: block;
+}
+
+.hl.lean .hover-info code {
+  white-space: pre-wrap;
+  background: none;
+  color: black;
+}
+
+.hl.lean .hover-info.messages > code {
+  padding: 0.5rem;
+  display: block;
+  width: fit-content;
+}
+
+.hl.lean .hover-info.messages > code:only-child {
+  margin: 0;
+}
+
+.hl.lean .hover-info.messages > code {
+  margin: 0.1rem;
+}
+
+.hl.lean .hover-info.messages > code:not(:first-child) {
+  margin-top: 0rem;
+}
+
+.hl.lean {
+}
+
+.hl.lean.block {
+  display: block;
+}
+
+.hl.lean.inline {
+  display: inline;
+  white-space: pre-wrap;
+}
+
+.hl.lean * {
+}
+
+.hl.lean .token {
+  transition: all 0.25s; /* Slight fade for highlights */
+}
+
+@media (hover: hover) {
+  .hl.lean .token.binding-hl, .hl.lean .literal.string:hover, .hl.lean .token.typed:hover {
+    background-color: #eee;
+    border-radius: 2px;
+    transition: none;
+  }
+}
+
+
+.hl.lean .has-info .token:not(.tactic-state):not(.tactic-state *), .hl.lean .has-info .inter-text:not(.tactic-state):not(.tactic-state *) {
+  text-decoration-style: wavy;
+  text-decoration-line: underline;
+  text-decoration-thickness: from-font;
+  text-decoration-skip-ink: none;
+}
+
+.hl.lean .has-info .hover-info {
+  display: none;
+  position: absolute;
+  transform: translate(0.25rem, 0.3rem);
+  border: 1px solid black;
+  padding: 0.5rem;
+  z-index: 400;
+  text-align: left;
+}
+
+.hl.lean .has-info.error :not(.tactic-state):not(.tactic-state *){
+  text-decoration-color: red;
+}
+
+@media (hover: hover) {
+  .hl.lean .has-info.error:hover {
+    background-color: #ffb3b3;
+  }
+}
+
+.hl.lean .hover-info.messages > code.error {
+  background-color: #e5e5e5;
+  border-left: 0.2rem solid #ffb3b3;
+}
+
+.tippy-box[data-theme~='error'] .hl.lean .hover-info.messages > code.error {
+  background: none;
+  border: none;
+}
+
+.error .verso-message, .error .verso-message .token, .error .verso-message label {
+  color: var(--verso-error-color);
+}
+
+.error .verso-message .case-label:has(input[type="checkbox"])::before {
+  background-color: var(--verso-error-color) !important;
+}
+
+.hl.lean .has-info.warning :not(.tactic-state):not(.tactic-state *) {
+  text-decoration-color: var(--verso-warning-indicator-color);
+}
+
+@media (hover: hover) {
+  .hl.lean .has-info.warning:hover {
+    background-color:var(--verso-warning-color);
+  }
+}
+
+.hl.lean .hover-info.messages > code.warning {
+  background-color: var(--verso-warning-color);
+}
+
+.lean-output {
+  border-left: 0.2em solid transparent;
+  padding: 0 0 0 0.5em;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.lean-output.error {
+  border-color: var(--verso-error-indicator-color);
+}
+
+.lean-output.information {
+  border-color: var(--verso-info-indicator-color);
+}
+
+.lean-output.warning {
+  border-color: var(--verso-warning-indicator-color);
+}
+
+.hl.lean .hover-info.messages > code.error {
+  background-color: #e5e5e5;
+  border-left: 0.2rem solid var(--verso-warning-color);
+}
+
+.tippy-box[data-theme~='warning'] .hl.lean .hover-info.messages > code.warning {
+  background: none;
+  border: none;
+}
+
+
+.hl.lean .has-info.information :not(.tactic-state):not(.tactic-state *) {
+  text-decoration-color: var(--verso-info-indicator-color, blue);
+}
+
+@media (hover: hover) {
+  .hl.lean .has-info.information:hover {
+    background-color: #4777ff;
+  }
+}
+
+
+.hl.lean .hover-info.messages > code.information {
+  background-color: #e5e5e5;
+  border-left: 0.2rem solid #4777ff;
+}
+
+.tippy-box[data-theme~='info'] .hl.lean .hover-info.messages > code.information {
+  background: none;
+  border: none;
+}
+
+.hl.lean div.docstring {
+  font-family: var(--verso-text-font-family, sans-serif);
+  white-space: normal;
+  max-width: calc(min(40rem, 90vw));
+  width: max-content;
+}
+
+.hl.lean div.docstring > :last-child {
+  margin-bottom: 0;
+}
+
+.hl.lean div.docstring > :first-child {
+  margin-top: 0;
+}
+
+.hl.lean .hover-info .sep {
+  display: block;
+  width: auto;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0;
+  height: 1px;
+  border-top: 1px solid #ccc;
+}
+
+.hl.lean code {
+  font-family: var(--verso-code-font-family);
+}
+
+.hl.lean .tactic-state {
+  display: none;
+  position: relative;
+  width: fit-content;
+  border: 1px solid #888888;
+  border-radius: 0.1rem;
+  padding: 0.5rem;
+  font-family: sans-serif;
+  background-color: #ffffff;
+}
+
+.hl.lean.popup .tactic-state {
+  position: static;
+  display: block;
+  width: auto;
+  border: none;
+  padding: 0.5rem;
+  font-family: sans-serif;
+  background-color: #ffffff;
+}
+
+
+.hl.lean .tactic {
+  position: relative;
+  display: inline;
+  vertical-align: top;
+  /* Without these, mobile Safari will start making font sizes inconsistent when its text size adjustment feature is triggered.*/
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.hl.lean .tactic:has(.tactic-toggle:checked) {
+  display: inline-grid;
+  grid-template-columns: 1fr;
+}
+
+.hl.lean .tactic-toggle:checked ~ .tactic-state {
+  display: inline-block;
+  vertical-align: top;
+  grid-row: 2;
+  justify-self: start;
+}
+
+.hl.lean .tactic > label {
+  position: relative;
+  grid-row: 1;
+  display: inline;
+}
+
+@media (hover: hover) {
+  .hl.lean .tactic:has(.tactic-toggle:not(:checked)) > label:hover {
+    background-color: #eeeeee;
+  }
+}
+
+.hl.lean .tactic-toggle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  height: 0;
+  width: 0;
+  z-index: -10;
+}
+
+.hl.lean .tactic > label::after {
+  content: "";
+  border: 1px solid #bbbbbb;
+  /* These need to be em, not rem, to scale with the font */
+  border-radius: 1em;
+  height: 0.25em;
+  vertical-align: middle;
+  width: 0.6em;
+  margin-left: 0.1em;
+  margin-right: 0.1em;
+  display: inline-block;
+  transition: all 0.5s;
+}
+
+/*
+@media (hover: hover) {
+  .hl.lean .tactic > label:hover::after {
+    border: 1px solid #aaaaaa;
+    background-color: #aaaaaa;
+    transition: all 0.5s;
+  }
+}
+*/
+
+.hl.lean .tactic > label:has(+ .tactic-toggle:checked)::after {
+  border: 1px solid #999999;
+  background-color: #999999;
+  transition: all 0.5s;
+}
+
+.hl.lean .tactic-state .goal + .goal {
+  margin-top: 1.5em;
+}
+
+/*
+Some CSS frameworks customize details/summary in ways not compatible with Verso's output.
+*/
+
+.hl.lean details {
+  display: block !important;
+  margin: 0;
+}
+
+.hl.lean details summary {
+  display: list-item !important;
+  margin: 0;
+}
+
+.hl.lean details summary:focus {
+  outline: none;
+  outline-offset: none;
+  color: inherit;
+}
+
+.hl.lean ul > li {
+  margin-bottom: 0;
+}
+
+.hl.lean details summary::marker {
+  display: inline !important;
+}
+
+.hl.lean details > summary:first-of-type {
+  list-style-type: disclosure-closed;
+  list-style-position: inside;
+}
+
+.hl.lean details[open] > summary:first-of-type {
+  list-style-type: disclosure-open;
+}
+
+.hl.lean details summary::before, .hl.lean details summary::after {
+  content: "" !important;
+  background: none;
+  display: none;
+}
+
+.hl.lean .tactic-state summary {
+  /* These need to be em, not rem, to scale with the font */
+  margin-left: -0.5em;
+}
+
+.hl.lean .tactic-state details {
+  /* These need to be em, not rem, to scale with the font */
+  padding-left: 0.5em;
+}
+
+.hl.lean .case-label {
+  display: block;
+  position: relative;
+}
+
+.hl.lean .case-label input[type="checkbox"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  height: 0;
+  width: 0;
+  z-index: -10;
+}
+
+.hl.lean .case-label:has(input[type="checkbox"])::before {
+  display: inline-block;
+  background-color: black;
+  content: ' ';
+  transition: ease 0.2s;
+  margin-right: 0.7em;
+  clip-path: polygon(100% 0, 0 0, 50% 100%);
+  width: 0.6em;
+  height: 0.6em;
+  vertical-align: middle;
+}
+
+.hl.lean .case-label:has(input[type="checkbox"]:not(:checked))::before {
+  transform: rotate(-90deg);
+}
+
+.hl.lean .case-label:has(input[type="checkbox"]) {
+
+}
+
+.hl.lean .case-label:has(input[type="checkbox"]:checked) {
+
+}
+
+
+.hl.lean .labeled-case > :not(:first-child) {
+  max-height: 0px;
+  display: block;
+  overflow: hidden;
+  transition: max-height 0.1s ease-in;
+  /* These need to be em, not rem, to scale with the font */
+  margin-left: 0.5em;
+  margin-top: 0.1em;
+}
+
+.hl.lean .labeled-case:has(.case-label input[type="checkbox"]:checked) > :not(:first-child) {
+  max-height: 100%;
+}
+
+
+.hl.lean .goal-name::before {
+  font-style: normal;
+  content: "case ";
+}
+
+.hl.lean .goal-name {
+  font-style: italic;
+  font-family: var(--verso-code-font-family);
+  color: inherit;
+}
+
+.hl.lean .hypotheses {
+  display: table;
+}
+
+.hl.lean .hypothesis {
+  display: table-row;
+}
+
+.hl.lean .hypothesis > * {
+  display: table-cell;
+}
+
+
+.hl.lean .hypotheses .colon {
+  text-align: center;
+  /* This needs to be em, not rem, to scale with the font */
+  min-width: 1em;
+}
+
+.hl.lean .hypotheses .name {
+  text-align: right;
+}
+
+.hl.lean .hypotheses .name,
+.hl.lean .hypotheses .type,
+.hl.lean .conclusion .type {
+  font-family: var(--verso-code-font-family);
+}
+
+.tippy-box {
+  /* Without these, mobile Safari will start making font sizes inconsistent when its text size adjustment feature is triggered.*/
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.tippy-box[data-theme~='lean'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 1px solid black;
+}
+.tippy-box[data-theme~='lean'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: #e5e5e5;
+}
+.tippy-box[data-theme~='lean'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-bottom-color: #e5e5e5;
+}
+.tippy-box[data-theme~='lean'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: #e5e5e5;
+}
+.tippy-box[data-theme~='lean'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: #e5e5e5;
+}
+
+.tippy-box[data-theme~='message'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: #e5e5e5;
+  border-width: 11px 11px 0;
+}
+.tippy-box[data-theme~='message'][data-placement^='top'] > .tippy-arrow::after {
+  bottom: -11px;
+  border-width: 11px 11px 0;
+}
+.tippy-box[data-theme~='message'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-width: 0 11px 11px;
+}
+.tippy-box[data-theme~='message'][data-placement^='bottom'] > .tippy-arrow::after {
+  top: -11px;
+  border-width: 0 11px 11px;
+}
+.tippy-box[data-theme~='message'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: #e5e5e5;
+  border-width: 11px 0 11px 11px;
+}
+.tippy-box[data-theme~='message'][data-placement^='left'] > .tippy-arrow::after {
+  right: -11px;
+  border-width: 11px 0 11px 11px;
+}
+
+.tippy-box[data-theme~='message'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: #e5e5e5;
+  border-width: 11px 11px 11px 0;
+}
+.tippy-box[data-theme~='message'][data-placement^='right'] > .tippy-arrow::after {
+  left: -11px;
+  border-width: 11px 11px 11px 0;
+}
+
+
+
+.tippy-box[data-theme~='warning'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 3px solid var(--verso-warning-color);
+}
+
+.tippy-box[data-theme~='error'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 3px solid #f7a7af;
+}
+
+.tippy-box[data-theme~='info'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 3px solid #99b3c2;
+}
+
+.tippy-box[data-theme~='tactic'] {
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: white;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-bottom-color: white;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: white;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: white;
+}
+
+.extra-doc-links {
+  list-style-type: none;
+  margin-left: 0;
+  padding: 0;
+}
+
+.extra-doc-links > li {
+  display: inline-block;
+}
+
+.extra-doc-links > li:not(:last-child)::after {
+  content: '|';
+  display: inline-block;
+  margin: 0 0.25em;
+}
+
+.verso-message .trace {
+  display: block;
+}
+
+.verso-message .trace > summary::marker {
+  color: var(--verso-text-color);
+}
+
+.verso-message .trace-children {
+  margin: 0;
+  padding: 0;
+}
+
+.verso-message .trace-children > li {
+  list-style-type: none;
+  margin-left: 1.5em;
+}
+
+.verso-message .trace-children > li:not(:has(.trace)) {
+  margin-left: 0;
+}
+
+.verso-message .trace-class {
+  color: color-mix(in srgb, currentColor 70%, transparent);
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+}
+
+.verso-message .text {
+  white-space: pre-wrap;
+}
+
+</style><script>
+      
+window.onload = () => {
+
+    // Don't show hovers inside of closed tactic states
+    function blockedByTactic(elem) {
+      let parent = elem.parentNode;
+      while (parent && "classList" in parent) {
+        if (parent.classList.contains("tactic")) {
+          const toggle = parent.querySelector("input.tactic-toggle");
+          if (toggle) {
+            return !toggle.checked;
+          }
+        }
+        parent = parent.parentNode;
+      }
+      return false;
+    }
+
+    // Track whether any tippy is visible (O(1) check instead of DOM scan)
+    let visibleTippyCount = 0;
+    function blockedByTippy(elem) {
+      return visibleTippyCount > 0;
+    }
+
+    // Binding highlights via event delegation with cached lookups
+    const bindingCache = new Map(); // context+binding -> [token elements]
+    let highlightedTokens = [];
+    function getBindingTokens(context, binding) {
+      const key = context + "\0" + binding;
+      let tokens = bindingCache.get(key);
+      if (!tokens) {
+        tokens = [];
+        for (const example of document.querySelectorAll(".hl.lean")) {
+          if (example.dataset.leanContext == context) {
+            for (const tok of example.querySelectorAll(".token[data-binding=\"" + CSS.escape(binding) + "\"]")) {
+              tokens.push(tok);
+            }
+          }
+        }
+        bindingCache.set(key, tokens);
+      }
+      return tokens;
+    }
+    for (const container of document.querySelectorAll(".hl.lean")) {
+      container.addEventListener("mouseover", (event) => {
+        const c = event.target.closest(".token");
+        if (!c || !c.dataset.binding || c.dataset.binding === "" || !container.contains(c)) return;
+        if (blockedByTactic(c)) return;
+        const tokens = getBindingTokens(container.dataset.leanContext, c.dataset.binding);
+        for (const tok of tokens) {
+          tok.classList.add("binding-hl");
+        }
+        highlightedTokens = tokens;
+      });
+      container.addEventListener("mouseout", (event) => {
+        const c = event.target.closest(".token");
+        if (!c || !container.contains(c)) return;
+        for (const tok of highlightedTokens) {
+          tok.classList.remove("binding-hl");
+        }
+        highlightedTokens = [];
+      });
+    }
+    /* Render docstrings */
+    if ('undefined' !== typeof marked) {
+        for (const d of document.querySelectorAll("code.docstring, pre.docstring")) {
+            const str = d.innerText;
+            const html = marked.parse(str);
+            const rendered = document.createElement("div");
+            rendered.classList.add("docstring");
+            rendered.innerHTML = html;
+            d.parentNode.replaceChild(rendered, d);
+        }
+    }
+    // Add hovers
+    let docsJson = "-verso-docs.json";
+    fetch(docsJson).then((resp) => resp.json()).then((versoDocData) => {
+
+      function hideParentTooltips(element) {
+        let parent = element.parentElement;
+        while (parent) {
+          const tippyInstance = parent._tippy;
+          if (tippyInstance) {
+            tippyInstance.hide();
+          }
+          parent = parent.parentElement;
+        }
+      }
+
+
+
+      const defaultTippyProps = {
+        /* DEBUG -- remove the space: * /
+        onHide(any) { return false; },
+        trigger: "click",
+        // */
+        /* theme: "lean", */
+        maxWidth: "none",
+        appendTo: () => document.body,
+        interactive: true,
+        delay: [100, null],
+        /* ignoreAttributes: true, */
+        followCursor: 'initial',
+        onShow(inst) {
+          if (inst.reference.className == 'tactic') {
+            const toggle = inst.reference.querySelector("input.tactic-toggle");
+            if (toggle && toggle.checked) {
+              return false;
+            }
+            hideParentTooltips(inst.reference);
+            if (blockedByTippy(inst.reference)) { return false; }
+
+          } else if (inst.reference.querySelector(".hover-info") || "versoHover" in inst.reference.dataset) {
+            if (blockedByTactic(inst.reference)) { return false };
+            if (blockedByTippy(inst.reference)) { return false; }
+          } else { // Nothing to show here!
+            return false;
+          }
+        },
+        onShown(inst) { visibleTippyCount++; },
+        onHidden(inst) { visibleTippyCount = Math.max(0, visibleTippyCount - 1); },
+        content (tgt) {
+          const content = document.createElement("span");
+          if (tgt.className == 'tactic') {
+            const state = tgt.querySelector(".tactic-state").cloneNode(true);
+            state.style.display = "block";
+            content.appendChild(state);
+            content.style.display = "block";
+            content.className = "hl lean popup";
+          } else {
+            content.className = "hl lean";
+            content.style.display = "block";
+            content.style.maxHeight = "300px";
+            content.style.overflowY = "auto";
+            content.style.overflowX = "hidden";
+            const hoverId = tgt.dataset.versoHover;
+            const hoverInfo = tgt.querySelector(".hover-info");
+            if (hoverId) { // Docstrings from the table
+              // TODO stop doing an implicit conversion from string to number here
+              let data = versoDocData[hoverId];
+              if (data) {
+                const info = document.createElement("span");
+                info.className = "hover-info";
+                info.style.display = "block";
+                info.innerHTML = data;
+                content.appendChild(info);
+                /* Render docstrings - TODO server-side */
+                if ('undefined' !== typeof marked) {
+                    for (const d of content.querySelectorAll("code.docstring, pre.docstring")) {
+                        const str = d.innerText;
+                        const html = marked.parse(str);
+                        const rendered = document.createElement("div");
+                        rendered.classList.add("docstring");
+                        rendered.innerHTML = html;
+                        d.parentNode.replaceChild(rendered, d);
+                    }
+                }
+              } else {
+                content.innerHTML = "Failed to load doc ID: " + hoverId;
+              }
+            } else if (hoverInfo) { // The inline info, still used for compiler messages
+              content.appendChild(hoverInfo.cloneNode(true));
+            }
+            const extraLinks = tgt.parentElement.dataset['versoLinks'];
+            if (extraLinks) {
+              try {
+                const extras = JSON.parse(extraLinks);
+                const links = document.createElement('ul');
+                links.className = 'extra-doc-links';
+                extras.forEach((l) => {
+                  const li = document.createElement('li');
+                  li.innerHTML = "<a href=\"" + l['href'] + "\" title=\"" + l.long + "\">" + l.short + "</a>";
+                  links.appendChild(li);
+                });
+                content.appendChild(links);
+              } catch (error) {
+                console.error(error);
+              }
+            }
+          }
+          return content;
+        }
+      };
+
+
+      document.querySelectorAll('.hl.lean .const.token, .hl.lean .keyword.token, .hl.lean .literal.token, .hl.lean .option.token, .hl.lean .var.token, .hl.lean .typed.token, .hl.lean .level-var, .hl.lean .level-const, .hl.lean .level-op, .hl.lean .sort').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'lean');
+      });
+      document.querySelectorAll('.hl.lean .has-info.warning').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'warning message');
+      });
+      document.querySelectorAll('.hl.lean .has-info.information').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'info message');
+      });
+      document.querySelectorAll('.hl.lean .has-info.error').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'error message');
+      });
+      document.querySelectorAll('.hl.lean .tactic').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'tactic');
+      });
+      // Skip tokens inside closed tactics — they interfere with tactic tippys
+      const closedTactics = new Set();
+      document.querySelectorAll('.hl.lean .tactic').forEach(tactic => {
+        const toggle = tactic.querySelector('input.tactic-toggle');
+        if (toggle && !toggle.checked) closedTactics.add(tactic);
+      });
+      function isInsideClosedTactic(el) {
+        const tactic = el.closest('.tactic');
+        return tactic && tactic !== el && closedTactics.has(tactic);
+      }
+
+      const tokenSelector = '.hl.lean .const.token, .hl.lean .keyword.token, .hl.lean .literal.token, .hl.lean .option.token, .hl.lean .var.token, .hl.lean .typed.token, .hl.lean .has-info, .hl.lean .tactic, .hl.lean .level-var, .hl.lean .level-const, .hl.lean .level-op, .hl.lean .sort';
+      tippy(Array.from(document.querySelectorAll(tokenSelector)).filter(el => !isInsideClosedTactic(el)), defaultTippyProps);
+
+      // Create/destroy token tippys when tactic checkbox toggles
+      const tacticTippySelector = '.const.token, .keyword.token, .literal.token, .option.token, .var.token, .typed.token, .has-info, .level-var, .level-const, .level-op, .sort';
+      document.querySelectorAll('.hl.lean .tactic').forEach(tactic => {
+        const toggle = tactic.querySelector('input.tactic-toggle');
+        if (toggle) toggle.addEventListener('change', () => {
+          if (toggle.checked) {
+            closedTactics.delete(tactic);
+            tactic.querySelectorAll('.token').forEach(tok => {
+              if (!tok._tippy && tok.matches(tacticTippySelector)) {
+                tippy(tok, defaultTippyProps);
+              }
+            });
+          } else {
+            closedTactics.add(tactic);
+            tactic.querySelectorAll('.token').forEach(tok => {
+              if (tok._tippy) tok._tippy.destroy();
+            });
+          }
+        });
+      });
+  });
+}
+</script>
+    <script src="-verso-search/search-highlight.js" defer="defer"></script>
+    </head>
+  <body>
+    <header>
+      <div class="header-logo-wrapper"></div>
+      <div class="header-title-wrapper">
+        <a href="" class="header-title"><h1>
+            Lean 4 自动化内幕</h1>
+          </a></div>
+      </header>
+    <label for="toggle-toc" id="toggle-toc-click"><span class="line line1"></span><span class="line line2"></span><span class="line line3"></span></label><div class="with-toc">
+      <div class="toc-backdrop" onclick="document.getElementById('toggle-toc-click')?.click()"></div>
+      <nav id="toc">
+        <input type="checkbox" id="toggle-toc"><div class="first">
+          <a href="" class="toc-title"><h1>
+              Lean 4 自动化内幕</h1>
+            </a><div class="split-tocs">
+            <div class="split-toc book">
+              <div class="title">
+                <label for="--verso-manual-toc-----bookRoot" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-----bookRoot" checked="checked"></label><span class="">Table of Contents</span></div>
+              <table><tr class="numbered"><td class="num">1.</td><td><a href="Ch00Setup/#ch00-setup">第零章 环境与运行约定</a></td></tr><tr class="numbered"><td class="num">2.</td><td><a href="Ch01MetaprogrammingModel/#ch01-metaprogramming-model">第一章 Lean 4 元编程模型</a></td></tr><tr class="numbered"><td class="num">3.</td><td><a href="Ch02Expr/#ch02-expr">第二章 Expr：Lean 4 的内部表示</a></td></tr><tr class="numbered"><td class="num">4.</td><td><a href="Ch03FirstTactic/#ch03-first-tactic">第三章 编写你的第一个 Tactic</a></td></tr><tr class="numbered"><td class="num">5.</td><td><a href="Ch04GoalManagement/#ch04-goal-management">第四章 目标管理</a></td></tr><tr class="numbered"><td class="num">6.</td><td><a href="Ch05TypeclassSynthesis/#ch05-typeclass-synthesis">第五章 Type Class Synthesis</a></td></tr><tr class="current numbered"><td class="num">7.</td><td><a href="Ch06Simp/#ch06-simp">第六章 simp：重写引擎</a></td></tr><tr class="numbered"><td class="num">8.</td><td><a href="Ch07Ring/#ch07-ring">第七章 ring 和 <code>ring_nf</code>：代数范式化</a></td></tr><tr class="numbered"><td class="num">9.</td><td><a href="Ch08Omega/#ch08-omega">第八章 omega：Presburger 算术决策过程</a></td></tr><tr class="numbered"><td class="num">10.</td><td><a href="Ch09Linarith/#ch09-linarith">第九章 linarith、nlinarith 与 polyrith</a></td></tr><tr class="numbered"><td class="num">11.</td><td><a href="Ch10NormNum/#ch10-norm-num">第十章 <code>norm_num</code>：数值计算框架</a></td></tr><tr class="numbered"><td class="num">12.</td><td><a href="Ch11Aesop/#ch11-aesop">第十一章 aesop：可配置的搜索引擎</a></td></tr><tr class="numbered"><td class="num">13.</td><td><a href="Ch12Grind/#ch12-grind">第十二章 grind：E-matching 与 Congruence Closure</a></td></tr><tr class="numbered"><td class="num">14.</td><td><a href="Ch13Decide/#ch13-decide">第十三章 decide 与 <code>native_decide</code>：有限计算判定</a></td></tr><tr class="numbered"><td class="num">15.</td><td><a href="Ch14Positivity/#ch14-positivity">第十四章 positivity：符号非负性推理</a></td></tr><tr class="numbered"><td class="num">16.</td><td><a href="Ch15FunProp/#ch15-fun-prop">第十五章 <code>fun_prop</code>：函数性质的自动证明</a></td></tr><tr class="numbered"><td class="num">17.</td><td><a href="Ch16Gcongr/#ch16-gcongr">第十六章 gcongr：广义合同性</a></td></tr><tr class="numbered"><td class="num">18.</td><td><a href="Ch17FieldSimp/#ch17-field-simp">第十七章 <code>field_simp</code>：分式化简</a></td></tr><tr class="numbered"><td class="num">19.</td><td><a href="Ch18LogicTransforms/#ch18-logic-transforms">第十八章 push<em>neg、contrapose、by</em>contra</a></td></tr><tr class="numbered"><td class="num">20.</td><td><a href="Ch19DesignYourOwn/#ch19-design-your-own">第十九章 设计你自己的领域自动化</a></td></tr><tr class="numbered"><td class="num">21.</td><td><a href="Ch20Reflection/#ch20-reflection">第二十章 反射证明模式</a></td></tr><tr class="numbered"><td class="num">22.</td><td><a href="Ch21Performance/#ch21-performance">第二十一章 性能工程</a></td></tr><tr class="numbered"><td class="num">23.</td><td><a href="Ch22ExternalTools/#ch22-external-tools">第二十二章 对接外部工具</a></td></tr><tr class="numbered"><td class="num">24.</td><td><a href="Ch23Methodology/#ch23-methodology">第二十三章 从证明模式到自动化：方法论</a></td></tr><tr class="numbered"><td class="num">25.</td><td><a href="Ch24TowardsAnalysis/#ch24-towards-analysis">第二十四章 迈向分析自动化</a></td></tr></table></div>
+            <div class="split-toc">
+              <div class="title">
+                <label for="--verso-manual-toc-ch06-simp" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch06-simp" checked="checked"></label><span class="number">7.</span> <span class="current"><a href="Ch06Simp/#ch06-simp">第六章 simp：重写引擎</a></span></div>
+              <table><tr class="numbered"><td class="num">7.1.</td><td><a href="Ch06Simp/#simp-core-idea">6.1 simp 的核心思想</a></td></tr><tr class="numbered"><td class="num">7.2.</td><td><a href="Ch06Simp/#simp-lemmas">6.2 重写规则集：simp lemmas</a></td></tr><tr class="numbered"><td class="num">7.3.</td><td><a href="Ch06Simp/#directionality-lhs-to-rhs">6.3 方向性：只从左到右</a></td></tr><tr class="numbered"><td class="num">7.4.</td><td><a href="Ch06Simp/#internal-index-discrtree">6.4 内部索引：DiscrTree</a></td></tr><tr class="numbered"><td class="num">7.5.</td><td><a href="Ch06Simp/#traversal-strategy">6.5 遍历策略</a></td></tr><tr class="numbered"><td class="num">7.6.</td><td><a href="Ch06Simp/#simp-variants">6.6 simp 的变体</a></td></tr><tr class="numbered"><td class="num">7.7.</td><td><a href="Ch06Simp/#discharger-conditional-lemmas">6.7 Discharger：条件引理的证明器</a></td></tr><tr class="numbered"><td class="num">7.8.</td><td><a href="Ch06Simp/#simp-config">6.8 simp 的配置</a></td></tr><tr class="numbered"><td class="num">7.9.</td><td><a href="Ch06Simp/#debugging-simp">6.9 调试 simp</a></td></tr><tr class="numbered"><td class="num">7.10.</td><td><a href="Ch06Simp/#ch06-common-failure-patterns">6.10 常见失败模式</a></td></tr><tr class="numbered"><td class="num">7.11.</td><td><a href="Ch06Simp/#simp-in-metaprograms">6.11 在元程序中调用 simp</a></td></tr><tr class="numbered"><td class="num">7.12.</td><td><a href="Ch06Simp/#simp-annotation-best-practices">6.12 @[simp] 标注的最佳实践</a></td></tr><tr class="numbered"><td class="num">7.13.</td><td><a href="Ch06Simp/#simp-collaboration-with-tactics">6.13 simp 与其他 tactic 的协作</a></td></tr><tr class="numbered"><td class="num">7.14.</td><td><a href="Ch06Simp/#ch06-summary">6.14 小结</a></td></tr><tr class="numbered"><td class="num">7.15.</td><td><a href="Ch06Simp/#ch06-exercises">6.15 练习</a></td></tr><tr class="numbered"><td class="num">7.16.</td><td><a href="Ch06Simp/#ch06-next-chapter">6.16 下一章预告</a></td></tr></table></div>
+            </div>
+          </div>
+        <div class="last">
+          <ul id="meta-links">
+            <li>
+              <a href="https://github.com/subfish-zhou/lean-tacticbook">Source Code</a></li>
+            <li>
+              <a href="https://github.com/subfish-zhou/lean-tacticbook/issues">Report Issues</a></li>
+            </ul>
+          </div>
+        </nav>
+      <main><div class="content-wrapper">
+          <nav class="prev-next-buttons">
+            <a class="local-button active" href="Ch05TypeclassSynthesis/#ch05-typeclass-synthesis" rel="prev" title="6. 第五章 Type Class Synthesis"><span class="arrow">←</span><span class="where">6. 第五章 Type Class Synthesis</span></a><a class="local-button active" href="Ch07Ring/#ch07-ring" rel="next" title="8. 第七章 ring 和 ring_nf：代数范式化"><span class="where">8. 第七章 ring 和 ring_nf：代数范式化</span><span class="arrow">→</span></a></nav>
+          <section>
+            <h1>
+              7. 第六章 simp：重写引擎<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch06-simp" title="Permalink">🔗</a></span></h1>
+            <p>
+              <strong>本章目标</strong>：深入理解 <code>simp</code> 的工作原理——重写规则集、方向性、优先级——并掌握配置、调试和避坑技巧。</p>
+            <p>
+              在前面的章节中，你已经学会了手写 tactic：<code>rw</code>、<code>apply</code>、<code>intro</code>、<code>cases</code>……
+它们精确、可控，但面对一连串"显然"的化简步骤时，手写每一步既繁琐又脆弱。
+<code>simp</code> 正是从"手写 tactic"过渡到"自动化"的第一站：
+把一大批等式引理打包成一个<strong>重写规则集</strong>，自动、反复地应用，直到目标无法再化简。
+理解 <code>simp</code> 的内部机制，是后续章节（<code>ring</code>、<code>omega</code>、<code>aesop</code>、自定义 tactic）的基础。</p>
+            <section>
+              <h2 id="simp-core-idea">
+                7.1. 6.1 simp 的核心思想<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-core-idea" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code>simp</code> 是一个<strong>项重写系统（term rewriting system）</strong>，工作流程概括为四步：</p>
+              <pre>-- [示意]
+loop:
+  1. 在目标（或假设）中找到一个子项 t
+  2. 在规则集中找到一条引理  lhs = rhs  使得 t 匹配 lhs
+  3. 把 t 替换为 rhs
+  4. 如果目标发生了变化，回到 1；否则停止
+</pre><p>
+                停止的条件有两个：<strong>收敛</strong>（没有规则能继续应用）或<strong>超时</strong>（超过 heartbeat / maxSteps 限制）。</p>
+              </section>
+            <section>
+              <h2 id="simp-lemmas">
+                7.2. 6.2 重写规则集：simp lemmas<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-lemmas" title="Permalink">🔗</a></span></h2>
+              <p>
+                任何被标记了 <code>@[simp]</code> 的定理都会被加入全局 simp 规则集。Lean 4 的 Mathlib 中有<strong>数千条</strong> simp lemma，覆盖自然数、列表、集合、逻辑连接词等大量日常化简。</p>
+              <section>
+                <h3 id="four-lemma-forms">
+                  7.2.1. 四种引理形式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=four-lemma-forms" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong>等式引理</strong>——最常见：</p>
+                <pre>-- [可运行]
+@[simp] theorem Nat.add_zero (n : Nat) : n + 0 = n := by omega
+-- simp 看到 ?n + 0 就替换为 ?n
+</pre><p>
+                  <strong>条件等式</strong>——带前提的重写：</p>
+                <pre>-- [示意]
+@[simp] theorem if_pos {p : Prop} [Decidable p] (h : p) :
+    (if p then a else b) = a
+-- simp 必须先证明前提 h : p，才会应用这条规则
+</pre><p>
+                  <strong>命题引理</strong>——化简为 <code>True</code> 或 <code>False</code>：</p>
+                <pre>-- [示意]
+@[simp] theorem Nat.lt_irrefl (n : Nat) : ¬(n &lt; n)
+-- simp 遇到 n &lt; n 时化为 False
+</pre><p>
+                  <strong>iff 引理</strong>——等价替换：</p>
+                <pre>-- [示意]
+@[simp] theorem not_and {p q : Prop} : ¬(p ∧ q) ↔ (p → ¬q)
+</pre></section>
+              <section>
+                <h3 id="candidate-selection">
+                  7.2.2. 候选选择<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=candidate-selection" title="Permalink">🔗</a></span></h3>
+                <p>
+                  当目标中出现可重写的子项时，simp 会先用 DiscrTree 索引按 LHS 骨架筛选候选引理，再对候选逐一做 <code>isDefEq</code> 匹配和方向检查，第一条匹配成功的引理立即应用。候选来源大致包括三类：用户在 tactic 中显式传入的引理（<code>simp \[foo, bar\]</code>）、局部假设、以及全局 <code>@[simp]</code> 集。其中<strong>用户显式传入的引理最可控</strong>——你确切知道它们会被考虑，不依赖索引是否恰好命中。</p>
+                <blockquote><p>
+                    <strong>注意</strong>：simp 内部的候选排序属于实现细节，不同 Lean 版本可能调整。编写证明时不要依赖特定的选择顺序，而应通过 <code>simp only [...]</code> 或 <code>simp [extra_lemma]</code> 显式控制引理集。</p>
+                  </blockquote></section>
+              </section>
+            <section>
+              <h2 id="directionality-lhs-to-rhs">
+                7.3. 6.3 方向性：只从左到右<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=directionality-lhs-to-rhs" title="Permalink">🔗</a></span></h2>
+              <p>
+                <strong>这是理解 simp 最关键的一点。</strong></p>
+              <p>
+                simp 只会把引理的 <strong>LHS 重写为 RHS</strong>，永远不会反过来。对于 <code>@[simp] theorem foo : A = B</code>，simp 把 <code>A</code> 替换为 <code>B</code>，但不会把 <code>B</code> 替换为 <code>A</code>。</p>
+              <p>
+                这决定了 simp lemma 的<strong>编写原则</strong>：</p>
+              <p>
+                | 原则 | 说明 |
+|------|------|
+| LHS 比 RHS 复杂 | 化简应让表达式变"简单" |
+| RHS 不引入新变量 | RHS 的自由变量必须都出现在 LHS 中 |
+| 不能左右对称 | <code>a + b = b + a</code> 会导致无限循环 |
+| 一致的范式方向 | 同一概念的多条引理应朝同一范式化简 |</p>
+              <p>
+                如果你需要<strong>反方向</strong>使用某条 simp lemma，可以用 <code>←</code>：</p>
+              <pre>-- [可运行]
+example (h : a = b + 1) : b + 1 = a := by
+  simp [← h]
+</pre></section>
+            <section>
+              <h2 id="internal-index-discrtree">
+                7.4. 6.4 内部索引：DiscrTree<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=internal-index-discrtree" title="Permalink">🔗</a></span></h2>
+              <p>
+                simp 用 <strong>discrimination tree（DiscrTree）</strong> 来加速查找。注册引理时，提取 LHS 的"骨架"（head symbol + arity）组织成前缀树；查找时，用子项骨架快速定位候选集，再对候选做 <code>isDefEq</code> 精确匹配。</p>
+              <p>
+                这意味着大多数引理在索引阶段就被过滤掉了。引理的 LHS 越具体，索引效率越高；LHS 是纯 metavariable 的引理会匹配所有子项，效率极差。</p>
+              </section>
+            <section>
+              <h2 id="traversal-strategy">
+                7.5. 6.5 遍历策略<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=traversal-strategy" title="Permalink">🔗</a></span></h2>
+              <p>
+                simp 对目标表达式采用<strong>由外向内（outermost-first）+ 不动点迭代</strong>：</p>
+              <pre>-- [伪代码]
+function simp(term):
+  loop:
+    if apply_rules(term) succeeds:
+      term ← result; continue     -- 根节点变了，重新开始
+    for each subterm: simp(subterm)  -- 递归化简子项
+    if apply_rules(term) succeeds:
+      term ← result; continue     -- 子项变化使根节点可化简
+    else: break                    -- 不动点，停止
+</pre><p>
+                子项化简后根节点可能变得可化简，因此整个过程反复迭代。<code>maxSteps</code> 限制总重写步数。</p>
+              </section>
+            <section>
+              <h2 id="simp-variants">
+                7.6. 6.6 simp 的变体<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-variants" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="simp-only">
+                  7.6.1. simp only<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-only" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>simp only \[lemma1, lemma2, ...\]</code> <strong>只使用指定引理</strong>，不加载全局 <code>@[simp]</code> 集。</p>
+                <pre>-- [可运行]
+example (n : Nat) : n + 0 + 0 = n := by
+  simp only [Nat.add_zero]
+</pre><p>
+                  优点：可预测（不随 import 变化）、性能好（引理集小）、Mathlib 风格指南推荐。</p>
+                </section>
+              <section>
+                <h3 id="simp-all">
+                  7.6.2. <code>simp_all</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-all" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>simp_all</code> 化简目标<strong>和所有假设</strong>，允许假设间相互化简：</p>
+                <pre>-- [可运行]
+example (h1 : a = 0) (h2 : a + b = 5) : b = 5 := by
+  simp_all
+-- 先用 h1 化简 h2 得 0 + b = 5 即 b = 5，然后解决目标
+</pre><p>
+                  假设化简为 <code>True</code> 则丢弃，化简为 <code>False</code> 则 <code>contradiction</code> 结束。由于 <code>simp_all</code> 会改写假设本身，它比裸 <code>simp</code> 更强，但也更需要谨慎——假设被改写后可能变得难以阅读或在后续 tactic 中不易引用。</p>
+                </section>
+              <section>
+                <h3 id="dsimp">
+                  7.6.3. dsimp<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=dsimp" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>dsimp</code> 只做 definitional equality 下的化简（beta、eta、iota 规约和 proof 为 <code>rfl</code> 的等式），开销更小。</p>
+                <pre>-- [可运行]
+example : (fun x =&gt; x + 1) 3 = 4 := by
+  dsimp  -- beta 规约后 rfl
+</pre></section>
+              </section>
+            <section>
+              <h2 id="discharger-conditional-lemmas">
+                7.7. 6.7 Discharger：条件引理的证明器<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=discharger-conditional-lemmas" title="Permalink">🔗</a></span></h2>
+              <p>
+                当 simp 应用条件引理 <code>h : p → lhs = rhs</code> 时，需要证明前提 <code>p</code>。默认 simp 递归调用自身作为 discharger，递归深度由 <code>maxDischargeDepth</code>（默认 2）控制。</p>
+              <p>
+                你也可以指定自定义 discharger：</p>
+              <pre>-- [可运行]
+example (n : Nat) (h : n &gt; 0) : n - 1 + 1 = n := by
+  simp (dsimp := false) (discharger := omega)
+</pre></section>
+            <section>
+              <h2 id="simp-config">
+                7.8. 6.8 simp 的配置<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-config" title="Permalink">🔗</a></span></h2>
+              <pre>-- [示意]
+structure Simp.Config where
+  maxSteps          : Nat  := 100000  -- 最大重写步数
+  maxDischargeDepth : Nat  := 2       -- 条件证明的递归深度
+  contextual        : Bool := false   -- 上下文化简（if 分支）
+  memoize           : Bool := true    -- 缓存子项结果
+  zeta              : Bool := true    -- 展开 let 绑定
+  beta              : Bool := true    -- β 规约
+  eta               : Bool := true    -- η 规约
+  iota              : Bool := true    -- match/recursor 规约
+  decide            : Bool := false   -- 用 decide 证明条件
+  failIfUnchanged   : Bool := true    -- 目标不变则报错
+</pre><p>
+                在 tactic 中传入：</p>
+              <pre>-- [可运行]
+example (p : Prop) [Decidable p] (h : p) (a b : Nat) :
+    (if p then a else b) = a := by
+  simp (config := { contextual := true })
+</pre><p>
+                <strong>contextual simp</strong> 默认关闭但很有用：在 <code>if</code> 的 <code>then</code> 分支中 simp 假设条件为真，<code>else</code> 分支中假设为假。</p>
+              </section>
+            <section>
+              <h2 id="debugging-simp">
+                7.9. 6.9 调试 simp<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=debugging-simp" title="Permalink">🔗</a></span></h2>
+              <pre>-- [可运行]
+-- 查看 simp 应用了哪些规则
+set_option trace.Meta.Tactic.simp.rewrite true in
+example : 0 + 1 = 1 := by simp
+
+-- 查看条件引理的 discharge 过程
+set_option trace.Meta.Tactic.simp.discharge true in
+example : 0 + 1 = 1 := by simp
+</pre><p>
+                trace 输出示例：</p>
+              <pre>-- [示意]
+[Meta.Tactic.simp.rewrite] 0 + 1 ==&gt; 1    using theorem Nat.zero_add
+</pre><p>
+                引理没触发的常见原因：LHS 不匹配（差一个 unfold）、条件无法 discharge、引理不在 simp 集中。</p>
+              <section>
+                <h3 id="simp-query">
+                  7.9.1. simp?<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-query" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>simp?</code> 告诉你 simp 实际使用了哪些引理，方便改写为 <code>simp only [...]</code>：</p>
+                <pre>-- [可运行]
+example : 0 + 1 = 1 := by simp?
+-- 输出：Try this: simp only [Nat.zero_add]
+</pre></section>
+              </section>
+            <section>
+              <h2 id="ch06-common-failure-patterns">
+                7.10. 6.10 常见失败模式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch06-common-failure-patterns" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="failure-simp-loop">
+                  7.10.1. 失败模式 1：simp 循环<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-simp-loop" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong>症状</strong>：<code>(deterministic) timeout</code> 或 heartbeat 耗尽。</p>
+                <pre>-- [示意]
+@[simp] theorem comm : a + b = b + a
+-- simp 不断交换：a + b → b + a → a + b → ...
+</pre><p>
+                  <strong>修复</strong>：不要把交换律标 <code>@[simp]</code>。需要时用 <code>rw [add_comm]</code>，或用 <code>ring</code>/<code>ac_rfl</code>。</p>
+                </section>
+              <section>
+                <h3 id="failure-simp-no-progress">
+                  7.10.2. 失败模式 2：simp 改变不了目标<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-simp-no-progress" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong>症状</strong>：<code>simp made no progress</code>。</p>
+                <pre>-- [示意]
+def myFun (n : Nat) := n + 1
+example : myFun 3 = 4 := by simp        -- 失败！simp 不认识 myFun
+example : myFun 3 = 4 := by simp [myFun] -- ✅ 告诉 simp 展开 myFun
+</pre><p>
+                  其他原因：条件引理的前提无法 discharge，或引理根本不在 simp 集中。</p>
+                </section>
+              <section>
+                <h3 id="failure-unexpected-unfolding">
+                  7.10.3. 失败模式 3：意外展开<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-unexpected-unfolding" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong>症状</strong>：目标变成一大堆底层表达式。</p>
+                <p>
+                  <strong>修复</strong>：用 <code>simp only [...]</code> 控制引理集，或关闭特定规约：</p>
+                <pre>-- [示意]
+simp (config := { iota := false })  -- 关闭 match 展开
+simp (config := { zeta := false })  -- 关闭 let 展开
+</pre></section>
+              <section>
+                <h3 id="failure-simp-too-slow">
+                  7.10.4. 失败模式 4：simp 太慢<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-simp-too-slow" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong>原因</strong>：全局 <code>@[simp]</code> 集太大、目标表达式太大、或 LHS 太泛的引理。</p>
+                <p>
+                  <strong>修复</strong>：用 <code>simp only</code> 减小引理集；先 <code>rw</code> 手动化简关键步骤再 simp。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="simp-in-metaprograms">
+                7.11. 6.11 在元程序中调用 simp<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-in-metaprograms" title="Permalink">🔗</a></span></h2>
+              <p>
+                最简单的方式是 <code>evalTactic</code>：</p>
+              <pre>-- [可运行]
+import Lean.Elab.Tactic.Simp
+
+evalTactic (← `(tactic| simp \[my_lemma\]))
+evalTactic (← `(tactic| simp only [Nat.add_zero, Nat.mul_one]))
+evalTactic (← `(tactic| simp (config := { failIfUnchanged := false }) \[my_lemma\]))
+</pre><blockquote><p>
+                  <strong>底层 API</strong>：<code>Lean.Meta.simp</code> 提供更底层接口（<code>Simp.Context</code> → <code>Simp.Result</code>），但随版本变化较大。大多数 tactic 开发用 <code>evalTactic</code> 足够。</p>
+                </blockquote></section>
+            <section>
+              <h2 id="simp-annotation-best-practices">
+                7.12. 6.12 @[simp] 标注的最佳实践<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-annotation-best-practices" title="Permalink">🔗</a></span></h2>
+              <p>
+                <strong>好的 simp lemma：</strong></p>
+              <pre>-- [可运行]
+@[simp] theorem List.length_nil : [].length = 0 := rfl
+@[simp] theorem List.length_cons (a : α) (l : List α) :
+    (a :: l).length = l.length + 1 := rfl
+</pre><p>
+                <strong>危险的 simp lemma：</strong></p>
+              <pre>-- [示意]
+@[simp] theorem bad_comm : a + b = b + a       -- ❌ 循环
+@[simp] theorem bad_var : f a = g a b           -- ❌ b 不在 LHS 中
+@[simp] theorem bad_direction : n = n + 0       -- ❌ 方向反了
+</pre><p>
+                如果引理只在特定场景有用，不标 <code>@[simp]</code>，需要时 <code>simp \[my_lemma\]</code> 局部传入。</p>
+              </section>
+            <section>
+              <h2 id="simp-collaboration-with-tactics">
+                7.13. 6.13 simp 与其他 tactic 的协作<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-collaboration-with-tactics" title="Permalink">🔗</a></span></h2>
+              <pre>-- [可运行]
+-- rw + simp：先手动重写关键步骤，再 simp 收尾
+example (h : a = b) : a + 0 = b := by
+  rw [h]; simp
+
+-- constructor + simp：分拆后逐一化简
+example : True ∧ (0 + 1 = 1) := by
+  constructor
+  · trivial
+  · simp
+</pre><p>
+                常用模式：<code>simp only [...]</code> 做预处理，化简目标后交给 <code>exact</code>、<code>omega</code> 等收尾。</p>
+              </section>
+            <section>
+              <h2 id="ch06-summary">
+                7.14. 6.14 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch06-summary" title="Permalink">🔗</a></span></h2>
+              <p>
+                | 概念 | 关键点 |
+|------|--------|
+| 核心机制 | 项重写系统，DiscrTree 索引，不动点迭代 |
+| 方向性 | 只从 LHS 到 RHS；用 <code>← lemma</code> 反转 |
+| 引理形式 | 等式、条件等式、iff、命题 |
+| 变体 | <code>simp only</code>（精确）、<code>simp_all</code>（含假设）、<code>dsimp</code>（definitional） |
+| Discharger | 条件引理的前提证明器，可自定义 |
+| 配置 | <code>Simp.Config</code>：maxSteps、contextual、zeta、iota 等 |
+| 调试 | <code>trace.Meta.Tactic.simp.*</code>、<code>simp?</code> |
+| 避坑 | 不标交换律、不引入新变量、<code>simp only</code> 优于裸 <code>simp</code> |</p>
+              </section>
+            <section>
+              <h2 id="ch06-exercises">
+                7.15. 6.15 练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch06-exercises" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="exercise-6-1">
+                  7.15.1. 练习 1（热身）：基本 simp<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-6-1" title="Permalink">🔗</a></span></h3>
+                <pre>-- [可运行]
+-- 预测 simp 能否解决以下目标，然后验证。
+example : [1, 2, 3].length = 3 := by
+  sorry
+
+example (n : Nat) : n + 0 + 0 + 0 = n := by
+  sorry
+</pre></section>
+              <section>
+                <h3 id="exercise-6-2">
+                  7.15.2. 练习 2（热身）：simp only<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-6-2" title="Permalink">🔗</a></span></h3>
+                <pre>-- [可运行]
+-- 先用 simp? 找出需要的引理，再改写为 simp only 版本。
+example (a b : Nat) : a + 0 + (b + 0) = a + b := by
+  sorry
+</pre></section>
+              <section>
+                <h3 id="exercise-6-3">
+                  7.15.3. 练习 3（debug）：为什么 simp 失败了？<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-6-3" title="Permalink">🔗</a></span></h3>
+                <pre>-- [可运行]
+-- 以下 simp 会失败。用 trace 找出原因并修复。
+def double (n : Nat) := 2 * n
+
+example : double 3 = 6 := by
+  simp  -- simp made no progress!
+  sorry
+</pre><p>
+                  提示：simp 不认识 <code>double</code>。你需要告诉它展开。</p>
+                </section>
+              <section>
+                <h3 id="exercise-6-4">
+                  7.15.4. 练习 4（综合）：组合化简<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-6-4" title="Permalink">🔗</a></span></h3>
+                <pre>-- [可运行]
+-- 组合 simp 和 omega 完成证明。不能单独用一个 tactic 搞定。
+example (n : Nat) (h : n &gt; 0) :
+    [n].length + (n - 1 + 1) = n + 1 := by
+  sorry
+  -- 提示：先用 simp 把 [n].length 化简为 1，目标变为 1 + (n - 1 + 1) = n + 1，再用 omega 处理算术
+</pre></section>
+              </section>
+            <section>
+              <h2 id="ch06-next-chapter">
+                7.16. 6.16 下一章预告<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch06-next-chapter" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code>simp</code> 擅长"逐步重写化简"，但有些等式它处理不了——比如多项式恒等式 <code>(a + b)² = a² + 2ab + b²</code>。
+下一章进入 <code>ring</code>：基于<strong>范式化（normalization）</strong> 的判定过程，专门解决可交换环上的等式问题。
+</p>
+              </section>
+            </section>
+          <nav class="prev-next-buttons">
+            <a class="local-button active" href="Ch05TypeclassSynthesis/#ch05-typeclass-synthesis" rel="prev" title="6. 第五章 Type Class Synthesis"><span class="arrow">←</span><span class="where">6. 第五章 Type Class Synthesis</span></a><a class="local-button active" href="Ch07Ring/#ch07-ring" rel="next" title="8. 第七章 ring 和 ring_nf：代数范式化"><span class="where">8. 第七章 ring 和 ring_nf：代数范式化</span><span class="arrow">→</span></a></nav>
+          </div>
+        </main></div>
+    </body>
+  </html>
+
