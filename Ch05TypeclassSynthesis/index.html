@@ -949,46 +949,437 @@ window.onload = () => {
             <div class="split-toc">
               <div class="title">
                 <label for="--verso-manual-toc-ch05-typeclass-synthesis" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch05-typeclass-synthesis" checked="checked"></label><span class="number">6.</span> <span class="current"><a href="Ch05TypeclassSynthesis/#ch05-typeclass-synthesis">第五章 Type Class Synthesis</a></span></div>
-              <table><tr class="numbered"><td class="num">6.1.</td><td><a href="Ch05TypeclassSynthesis/5___0-_______________/#recap-and-motivation">5.0 回顾与动机</a></td></tr><tr class="numbered"><td class="num">6.2.</td><td><a href="Ch05TypeclassSynthesis/5___1-Type-Class-_______________/#typeclass-dual-role">5.1 Type Class 的双重角色</a></td></tr><tr class="numbered"><td class="num">6.3.</td><td><a href="Ch05TypeclassSynthesis/5___2-Synthesis-_______________/#synthesis-search-process">5.2 Synthesis 的搜索过程</a></td></tr><tr class="numbered"><td class="num">6.4.</td><td><a href="Ch05TypeclassSynthesis/5___3-___-MetaM-_________-Synthesis/#synthesis-in-metam">5.3 在 MetaM 中调用 Synthesis</a></td></tr><tr class="numbered"><td class="num">6.5.</td><td><a href="Ch05TypeclassSynthesis/5___4-______________________________/#practical-check-commutativity">5.4 实际应用：检查交换律</a></td></tr><tr class="numbered"><td class="num">6.6.</td><td><a href="Ch05TypeclassSynthesis/5___5-Synthesis-_____________________/#synthesis-vs-other-lookup">5.5 Synthesis 与其他查找机制</a></td></tr><tr class="numbered"><td class="num">6.7.</td><td><a href="Ch05TypeclassSynthesis/5___6-______-Synthesis-______/#controlling-synthesis-behavior">5.6 控制 Synthesis 行为</a></td></tr><tr class="numbered"><td class="num">6.8.</td><td><a href="Ch05TypeclassSynthesis/5___7-__________________/#common-failure-patterns">5.7 常见失败模式</a></td></tr><tr class="numbered"><td class="num">6.9.</td><td><a href="Ch05TypeclassSynthesis/5___8-______/#ch05-exercises">5.8 练习</a></td></tr><tr class="numbered"><td class="num">6.10.</td><td><a href="Ch05TypeclassSynthesis/5___9-______/#ch05-summary">5.9 小结</a></td></tr><tr class="numbered"><td class="num">6.11.</td><td><a href="Ch05TypeclassSynthesis/_______________/#ch05-next-chapter">下一章预告</a></td></tr></table></div>
+              <table><tr class="numbered"><td class="num">6.1.</td><td><a href="Ch05TypeclassSynthesis/#recap-and-motivation">5.0 回顾与动机</a></td></tr><tr class="numbered"><td class="num">6.2.</td><td><a href="Ch05TypeclassSynthesis/#typeclass-dual-role">5.1 Type Class 的双重角色</a></td></tr><tr class="numbered"><td class="num">6.3.</td><td><a href="Ch05TypeclassSynthesis/#synthesis-search-process">5.2 Synthesis 的搜索过程</a></td></tr><tr class="numbered"><td class="num">6.4.</td><td><a href="Ch05TypeclassSynthesis/#synthesis-in-metam">5.3 在 MetaM 中调用 Synthesis</a></td></tr><tr class="numbered"><td class="num">6.5.</td><td><a href="Ch05TypeclassSynthesis/#practical-check-commutativity">5.4 实际应用：检查交换律</a></td></tr><tr class="numbered"><td class="num">6.6.</td><td><a href="Ch05TypeclassSynthesis/#synthesis-vs-other-lookup">5.5 Synthesis 与其他查找机制</a></td></tr><tr class="numbered"><td class="num">6.7.</td><td><a href="Ch05TypeclassSynthesis/#controlling-synthesis-behavior">5.6 控制 Synthesis 行为</a></td></tr><tr class="numbered"><td class="num">6.8.</td><td><a href="Ch05TypeclassSynthesis/#common-failure-patterns">5.7 常见失败模式</a></td></tr><tr class="numbered"><td class="num">6.9.</td><td><a href="Ch05TypeclassSynthesis/#ch05-exercises">5.8 练习</a></td></tr><tr class="numbered"><td class="num">6.10.</td><td><a href="Ch05TypeclassSynthesis/#ch05-summary">5.9 小结</a></td></tr><tr class="numbered"><td class="num">6.11.</td><td><a href="Ch05TypeclassSynthesis/#ch05-next-chapter">下一章预告</a></td></tr></table></div>
             </div>
           </div>
         <div class="last"></div>
         </nav>
       <main><div class="content-wrapper">
           <nav class="prev-next-buttons">
-            <a class="local-button active" href="Ch04GoalManagement/_______________/#next-chapter-preview" rel="prev" title="5.11. 下一章预告"><span class="arrow">←</span><span class="where">5.11. 下一章预告</span></a><a class="local-button active" href="Ch05TypeclassSynthesis/5___0-_______________/#recap-and-motivation" rel="next" title="6.1. 5.0 回顾与动机"><span class="where">6.1. 5.0 回顾与动机</span><span class="arrow">→</span></a></nav>
+            <a class="local-button active" href="Ch04GoalManagement/#ch04-goal-management" rel="prev" title="5. 第四章 目标管理"><span class="arrow">←</span><span class="where">5. 第四章 目标管理</span></a><a class="local-button active" href="Ch06Simp/#ch06-simp" rel="next" title="7. 第六章 simp：重写引擎"><span class="where">7. 第六章 simp：重写引擎</span><span class="arrow">→</span></a></nav>
           <section>
             <h1>
               6. 第五章 Type Class Synthesis<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch05-typeclass-synthesis" title="Permalink">🔗</a></span></h1>
             <p>
               <strong>本章目标</strong>：理解 type class synthesis 的搜索机制，掌握在 tactic 元编程中调用、控制和调试实例搜索的方法。</p>
-            <ol class="section-toc">
-              <li>
-                <a href="Ch05TypeclassSynthesis/5___0-_______________/#recap-and-motivation"><span class="number">6.1.</span> 5.0 回顾与动机</a></li>
-              <li>
-                <a href="Ch05TypeclassSynthesis/5___1-Type-Class-_______________/#typeclass-dual-role"><span class="number">6.2.</span> 5.1 Type Class 的双重角色</a></li>
-              <li>
-                <a href="Ch05TypeclassSynthesis/5___2-Synthesis-_______________/#synthesis-search-process"><span class="number">6.3.</span> 5.2 Synthesis 的搜索过程</a></li>
-              <li>
-                <a href="Ch05TypeclassSynthesis/5___3-___-MetaM-_________-Synthesis/#synthesis-in-metam"><span class="number">6.4.</span> 5.3 在 MetaM 中调用 Synthesis</a></li>
-              <li>
-                <a href="Ch05TypeclassSynthesis/5___4-______________________________/#practical-check-commutativity"><span class="number">6.5.</span> 5.4 实际应用：检查交换律</a></li>
-              <li>
-                <a href="Ch05TypeclassSynthesis/5___5-Synthesis-_____________________/#synthesis-vs-other-lookup"><span class="number">6.6.</span> 5.5 Synthesis 与其他查找机制</a></li>
-              <li>
-                <a href="Ch05TypeclassSynthesis/5___6-______-Synthesis-______/#controlling-synthesis-behavior"><span class="number">6.7.</span> 5.6 控制 Synthesis 行为</a></li>
-              <li>
-                <a href="Ch05TypeclassSynthesis/5___7-__________________/#common-failure-patterns"><span class="number">6.8.</span> 5.7 常见失败模式</a></li>
-              <li>
-                <a href="Ch05TypeclassSynthesis/5___8-______/#ch05-exercises"><span class="number">6.9.</span> 5.8 练习</a></li>
-              <li>
-                <a href="Ch05TypeclassSynthesis/5___9-______/#ch05-summary"><span class="number">6.10.</span> 5.9 小结</a></li>
-              <li>
-                <a href="Ch05TypeclassSynthesis/_______________/#ch05-next-chapter"><span class="number">6.11.</span> 下一章预告</a></li>
-              </ol>
+            <section>
+              <h2 id="recap-and-motivation">
+                6.1. 5.0 回顾与动机<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=recap-and-motivation" title="Permalink">🔗</a></span></h2>
+              <p>
+                在第四章中，你学习了如何在 tactic 框架里管理多个目标——创建子目标、聚焦、切换、合并。
+这些操作让你能够把复杂的证明任务分解成若干小步骤。</p>
+              <p>
+                但 tactic 做的不仅仅是拆分目标。很多自动化 tactic（<code>simp</code>、<code>ring</code>、<code>omega</code>、<code>aesop</code>）
+在工作时需要<strong>自动发现当前类型具备哪些代数性质</strong>——比如 <code>Nat</code> 上有加法，<code>List α</code> 上有
+<code>Append</code> 操作。这些性质通过 <strong>type class instance</strong> 注册，发现它们的过程叫做
+<strong>type class synthesis</strong>（实例合成）。</p>
+              <p>
+                本章回答三个问题：</p>
+              <ol start="1">
+                <li>
+                  <p>
+                    Lean 是怎样自动找到 type class 实例的？（搜索机制）</p>
+                  </li>
+                <li>
+                  <p>
+                    在元编程中如何主动调用这个搜索？（API 使用）</p>
+                  </li>
+                <li>
+                  <p>
+                    搜索失败时怎么诊断和修复？（常见失败模式）</p>
+                  </li>
+                </ol>
+              <p>
+                下一章讲的 <code>simp</code> 正是建立在实例搜索之上——<code>simp</code> 需要知道当前类型满足哪些
+simp lemma，而 lemma 的适用性往往由 type class 实例判定。</p>
+              </section>
+            <section>
+              <h2 id="typeclass-dual-role">
+                6.2. 5.1 Type Class 的双重角色<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=typeclass-dual-role" title="Permalink">🔗</a></span></h2>
+              <p>
+                Type class 在 Lean 4 中同时扮演两个角色：</p>
+              <p>
+                <strong>角色一：接口抽象。</strong> 定义类型需要支持的操作，类似其他语言的 interface / trait。</p>
+              <pre>-- [示意] type class 的基本定义形式
+class Add (α : Type) where
+  add : α → α → α
+</pre><p>
+                <strong>角色二：自动搜索。</strong> 当编译器看到方括号参数 <code>[Add α]</code> 时，它会在已注册的实例中自动寻找匹配项。</p>
+              <pre>-- [示意] 方括号参数触发自动搜索
+def double [Add α] (x : α) : α := Add.add x x
+-- 写 `double 3` 时，Lean 自动搜索 `Add Nat` 的实例并填入
+</pre><p>
+                对 tactic 编写者来说，<strong>第二个角色更重要</strong>——很多 tactic 需要在运行时动态查询当前类型满足哪些性质。<code>ring</code> 需要知道类型是否构成交换环，<code>simp</code> 需要知道有哪些化简规则可用。这些查询的底层机制就是 type class synthesis。</p>
+              </section>
+            <section>
+              <h2 id="synthesis-search-process">
+                6.3. 5.2 Synthesis 的搜索过程<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=synthesis-search-process" title="Permalink">🔗</a></span></h2>
+              <p>
+                当 Lean 需要寻找一个 type class 实例（比如 <code>Add (Fin n)</code>）时，搜索按以下步骤进行。</p>
+              <section>
+                <h3 id="step-check-cache">
+                  6.3.1. 第一步：查缓存<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=step-check-cache" title="Permalink">🔗</a></span></h3>
+                <p>
+                  Lean 使用 <strong>tabled resolution</strong>（带记忆化的搜索）。之前搜索过的结果会被缓存，同一个实例可能在一次编译中被请求成千上万次，缓存避免了重复搜索。</p>
+                </section>
+              <section>
+                <h3 id="step-expand-candidates">
+                  6.3.2. 第二步：展开候选实例<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=step-expand-candidates" title="Permalink">🔗</a></span></h3>
+                <p>
+                  缓存未命中时，Lean 遍历所有 <code>@[instance]</code> 声明，逐一尝试 <strong>unification</strong>。</p>
+                <pre>-- [伪代码] 搜索 Add (Fin n)
+目标：Add (Fin n)
+  ├─ 候选 instAddFin : Add (Fin n)     ← unify 成功！
+  ├─ 候选 instAddNat : Add Nat         ← unify 失败（Fin n ≠ Nat）
+  └─ ...
+</pre></section>
+              <section>
+                <h3 id="step-recursive-search">
+                  6.3.3. 第三步：递归搜索前提<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=step-recursive-search" title="Permalink">🔗</a></span></h3>
+                <p>
+                  如果候选实例依赖其他 type class（有 <code>[...]</code> 参数），Lean 递归搜索这些前提。</p>
+                <pre>-- [示意] 有前提的实例
+instance [Add α] : Add (Option α) where
+  add
+    | some a, some b =&gt; some (Add.add a b)
+    | _, _ =&gt; none
+</pre><p>
+                  搜索 <code>Add (Option Nat)</code> 时，Lean 发现需要先找 <code>Add Nat</code>，触发递归：</p>
+                <pre>-- [伪代码] 递归搜索
+目标：Add (Option Nat)
+  └─ 候选 instAddOption : [Add α] → Add (Option α)
+       ├─ unify：α := Nat
+       └─ 递归目标：Add Nat  ← 成功！
+</pre></section>
+              <section>
+                <h3 id="step-depth-limit">
+                  6.3.4. 第四步：深度限制<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=step-depth-limit" title="Permalink">🔗</a></span></h3>
+                <p>
+                  Lean 通过两个参数控制搜索规模：</p>
+                <ul>
+                  <li>
+                    <p>
+                      <strong><code>synthInstance.maxHeartbeats</code></strong>：最大计算步数（默认 20000）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong><code>synthInstance.maxSize</code></strong>：搜索树最大节点数</p>
+                    </li>
+                  </ul>
+                <p>
+                  超限后搜索终止报错，防止循环依赖导致无限搜索。</p>
+                <blockquote><p>
+                    <strong>注意</strong>：Synthesis 不只搜索全局注册的 <code>@[instance]</code> 声明，也会考虑当前<strong>局部上下文</strong>中的实例——例如函数签名里的 <code>[Add α]</code> 参数、<code>haveI</code> 引入的实例、以及 <code>withNewLocalInstance</code> 临时注册的实例，都会参与搜索。</p>
+                  </blockquote></section>
+              <section>
+                <h3 id="instance-priority">
+                  6.3.5. 优先级<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=instance-priority" title="Permalink">🔗</a></span></h3>
+                <p>
+                  每个实例有一个优先级数值（<code>@[instance N]</code>），N 越大越优先，默认 1000。</p>
+                <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.inductive-103" data-verso-hover="102">inductive</span><span class="inter-text"> </span><span class="const token" data-binding="const-MyType" data-verso-hover="103" id="MyType">MyType</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-null-120">where</span><span class="inter-text">
+  </span><span class="unknown token" data-binding="">|</span><span class="inter-text"> </span><span class="const token" data-binding="const-MyType.mk" data-verso-hover="104" id="MyType___mk">mk</span><span class="inter-text">
+
+</span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.instance-134">instance</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.namedPrio-143">priority</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:=</span><span class="inter-text"> </span><span class="unknown token" data-binding="">2000</span><span class="unknown token" data-binding="">)</span><span class="inter-text"> </span><span class="const token" data-binding="const-myTypeToStringHigh" data-verso-hover="105" id="myTypeToStringHigh">myTypeToStringHigh</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-ToString" data-verso-hover="106">ToString</span><span class="inter-text"> </span><a href="Ch05TypeclassSynthesis/#MyType" title="Definition of example"><span class="const token" data-binding="const-MyType" data-verso-hover="103">MyType</span></a><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.whereStructInst-199">where</span><span class="inter-text">
+  </span><span class="const token" data-binding="const-ToString.toString" data-verso-hover="107">toString</span><span class="inter-text"> </span><span class="unknown token" data-binding="">_</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:=</span><span class="inter-text"> </span><span class="literal string token" data-binding="" data-verso-hover="108">"MyType(high)"</span><span class="inter-text">
+
+</span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.instance-237">instance</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.namedPrio-246">priority</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:=</span><span class="inter-text"> </span><span class="unknown token" data-binding="">100</span><span class="unknown token" data-binding="">)</span><span class="inter-text"> </span><span class="const token" data-binding="const-myTypeToStringLow" data-verso-hover="109" id="myTypeToStringLow">myTypeToStringLow</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-ToString" data-verso-hover="106">ToString</span><span class="inter-text"> </span><a href="Ch05TypeclassSynthesis/#MyType" title="Definition of example"><span class="const token" data-binding="const-MyType" data-verso-hover="103">MyType</span></a><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.whereStructInst-300">where</span><span class="inter-text">
+  </span><span class="const token" data-binding="const-ToString.toString" data-verso-hover="107">toString</span><span class="inter-text"> </span><span class="unknown token" data-binding="">_</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:=</span><span class="inter-text"> </span><span class="literal string token" data-binding="" data-verso-hover="110">"MyType(low)"</span></code><p>
+                  当你对同一类型有通用实例和特化实例时，给特化实例更高优先级可以控制选择偏好。</p>
+                <blockquote><p>
+                    <strong>提醒</strong>：重叠实例加优先级是为<strong>不可避免的冲突</strong>而设计的应急手段，不鼓励主动制造同头实例。优先设计不重叠的实例结构；只有在库兼容性等外部约束下无法避免时，再用优先级消歧。</p>
+                  </blockquote></section>
+              </section>
+            <section>
+              <h2 id="synthesis-in-metam">
+                6.4. 5.3 在 MetaM 中调用 Synthesis<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=synthesis-in-metam" title="Permalink">🔗</a></span></h2>
+              <p>
+                编写 tactic 时，你经常需要在 <code>MetaM</code> 中手动触发实例搜索。</p>
+              <section>
+                <h3 id="synth-instance-throws">
+                  6.4.1. <code>synthInstance</code>：失败即报错<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=synth-instance-throws" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+synthInstance (type : Expr) : MetaM Expr
+</pre><p>
+                  传入 type class 类型的 <code>Expr</code>，返回找到的实例项。搜索失败时抛异常。</p>
+                <pre>-- [示意] 在 tactic 中搜索 Add Nat
+elab "demo_synth" : tactic =&gt; do
+  let addNatType ← mkAppM ``Add #[mkConst ``Nat]
+  let inst ← synthInstance addNatType
+  logInfo m!"找到实例：{inst}"
+</pre><p>
+                  这里 <code>mkAppM</code> 会自动处理 universe 和隐式参数，比手动 <code>mkApp</code> + <code>mkConst</code> 更安全。</p>
+                </section>
+              <section>
+                <h3 id="synth-instance-optional">
+                  6.4.2. <code>synthInstance?</code>：失败返回 <code>none</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=synth-instance-optional" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+synthInstance? (type : Expr) : MetaM (Option Expr)
+</pre><p>
+                  当你需要<strong>探测</strong>实例是否存在而非一定要找到它时，用这个版本。</p>
+                <pre>-- [示意] 根据 Decidable 实例选择策略
+elab "smart_decide" : tactic =&gt; withMainContext do
+  let target ← getMainTarget
+  let decType ← mkAppM ``Decidable #[target]
+  match ← synthInstance? decType with
+  | some _ =&gt; logInfo "目标可判定，使用 decide"
+  | none   =&gt; logInfo "目标不可判定，需要其他方法"
+</pre></section>
+              <section>
+                <h3 id="is-instance-check">
+                  6.4.3. <code>isInstance</code>：检查声明是否是实例<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=is-instance-check" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+isInstance (declName : Name) : CoreM Bool
+</pre><p>
+                  遍历环境中的声明并筛选实例时会用到。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="practical-check-commutativity">
+                6.5. 5.4 实际应用：检查交换律<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=practical-check-commutativity" title="Permalink">🔗</a></span></h2>
+              <p>
+                下面用一个<strong>语义示意</strong>来展示 synthesis 在 tactic 中的典型调用模式。注意：这段代码侧重演示"从目标提取信息 → 构造搜索目标 → 探测实例"的流程，并非推荐的落地模板——实际 tactic 需要处理更多边界情况（如隐式参数、universe level 等）。</p>
+              <pre>-- [示意·语义演示，非落地模板] 检查运算是否满足交换律
+elab "check_comm" : tactic =&gt; withMainContext do
+  let target ← getMainTarget
+  let some (α, lhs, _rhs) := target.eq?
+    | throwError "目标不是等式"
+  match lhs with
+  | .app (.app f _a) _b =&gt;
+    let commType ← mkAppM ``Commutative #[f]
+    match ← synthInstance? commType with
+    | some _ =&gt; logInfo "运算满足交换律！"
+    | none   =&gt; logInfo "未找到交换律实例"
+  | _ =&gt; throwError "左侧不是二元运算应用的形式"
+</pre><p>
+                这展示了典型模式：从目标提取类型 → <code>mkAppM</code> 构造搜索目标 → <code>synthInstance?</code> 探测 → 根据结果分支。</p>
+              </section>
+            <section>
+              <h2 id="synthesis-vs-other-lookup">
+                6.6. 5.5 Synthesis 与其他查找机制<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=synthesis-vs-other-lookup" title="Permalink">🔗</a></span></h2>
+              <p>
+                Type class synthesis 不是唯一的"按类型查找"机制。理解区别帮你选对工具。</p>
+              <p>
+                <strong>DiscrTree</strong>（discrimination tree）：按表达式骨架索引，<code>simp</code> 和 <code>aesop</code> 用它匹配引理。和 synthesis 的区别——synthesis 返回唯一实例项，DiscrTree 返回候选列表。</p>
+              <pre>-- [示意]
+DiscrTree.getMatch (dt : DiscrTree α) (e : Expr) : MetaM (Array α)
+</pre><p>
+                <strong><code>getEqnsFor?</code></strong>：获取函数的展开方程式引理，不涉及 type class。</p>
+              <pre>-- [示意]
+let eqns ← Meta.getEqnsFor? declName
+-- eqns : Option (Array Name)
+</pre><p>
+                | 需求 | 用什么 |
+|------|--------|
+| 查找 type class 实例 | <code>synthInstance</code> / <code>synthInstance?</code> |
+| 按表达式形状匹配引理 | <code>DiscrTree.getMatch</code> |
+| 获取函数展开方程 | <code>getEqnsFor?</code> |</p>
+              </section>
+            <section>
+              <h2 id="controlling-synthesis-behavior">
+                6.7. 5.6 控制 Synthesis 行为<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=controlling-synthesis-behavior" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="adjust-search-budget">
+                  6.7.1. 调整搜索预算<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=adjust-search-budget" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意] 临时增加搜索预算
+withOptions (fun o =&gt; o.set `synthInstance.maxHeartbeats 80000) do
+  let inst ← synthInstance goalType
+</pre><p>
+                  注意：<strong>盲目增大预算不是正解</strong>。超时通常说明实例注册有问题（见 5.7 节）。</p>
+                </section>
+              <section>
+                <h3 id="temporary-local-instance">
+                  6.7.2. 临时添加局部实例<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=temporary-local-instance" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+-- withNewLocalInstance (className : Name) (fvar : Expr) (body : MetaM α)
+-- 在 body 执行期间，把 fvar 注册为 className 的临时实例
+</pre><p>
+                  典型用途：把 hypothesis 中的 type class 约束临时注册为实例，让后续 synthesis 能找到它。</p>
+                </section>
+              <section>
+                <h3 id="user-side-control">
+                  6.7.3. 用户侧控制<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=user-side-control" title="Permalink">🔗</a></span></h3>
+                <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.structureTk-407">structure</span><span class="inter-text"> </span><span class="const token" data-binding="const-MyComplexType" data-verso-hover="111" id="MyComplexType">MyComplexType</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-null-431">where</span><span class="inter-text">
+  </span><span class="const token" data-binding="const-MyComplexType.val" data-verso-hover="112" id="MyComplexType___val">val</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Nat" data-verso-hover="26">Nat</span><span class="inter-text">
+
+</span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.instance-450">instance</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Add" data-verso-hover="113">Add</span><span class="inter-text"> </span><a href="Ch05TypeclassSynthesis/#MyComplexType" title="Definition of example"><span class="const token" data-binding="const-MyComplexType" data-verso-hover="111">MyComplexType</span></a><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.whereStructInst-479">where</span><span class="inter-text">
+  </span><span class="const token" data-binding="const-Add.add" data-verso-hover="114">add</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.330" data-verso-hover="115">a</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.333" data-verso-hover="115">b</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:=</span><span class="inter-text"> </span><span class="unknown token" data-binding="const-MyComplexType.mk" data-verso-hover="116">⟨</span><span class="var token" data-binding="var-_uniq.330" data-verso-hover="115">a</span><span class="unknown token" data-binding="">.</span><a href="Ch05TypeclassSynthesis/#MyComplexType___val" title="Definition of example"><span class="const token" data-binding="const-MyComplexType.val" data-verso-hover="112">val</span></a><span class="inter-text"> </span><span class="unknown token" data-binding="">+</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.333" data-verso-hover="115">b</span><span class="unknown token" data-binding="">.</span><a href="Ch05TypeclassSynthesis/#MyComplexType___val" title="Definition of example"><span class="const token" data-binding="const-MyComplexType.val" data-verso-hover="112">val</span></a><span class="unknown token" data-binding="const-MyComplexType.mk" data-verso-hover="116">⟩</span><span class="inter-text">
+
+</span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.set_option-519" data-verso-hover="117">set_option</span><span class="inter-text"> </span><span class="option token" data-binding="option-synthInstance.maxHeartbeats" data-verso-hover="118">synthInstance.maxHeartbeats</span><span class="inter-text"> </span><span class="unknown token" data-binding="">40000</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.in-519">in</span><span class="inter-text">
+</span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.example-567">example</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Add" data-verso-hover="113">Add</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><a href="Ch05TypeclassSynthesis/#MyComplexType" title="Definition of example"><span class="const token" data-binding="const-MyComplexType" data-verso-hover="111">MyComplexType</span></a><span class="inter-text"> </span><span class="unknown token" data-binding="">×</span><span class="inter-text"> </span><a href="Ch05TypeclassSynthesis/#MyComplexType" title="Definition of example"><span class="const token" data-binding="const-MyComplexType" data-verso-hover="111">MyComplexType</span></a><span class="unknown token" data-binding="">)</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:=</span><span class="inter-text"> </span><span class="const token" data-binding="const-inferInstance" data-verso-hover="119">inferInstance</span></code></section>
+              </section>
+            <section>
+              <h2 id="common-failure-patterns">
+                6.8. 5.7 常见失败模式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=common-failure-patterns" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="failure-no-instance-found">
+                  6.8.1. 失败一：找不到实例（No Instance Found）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-no-instance-found" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong>症状</strong>：<code>failed to synthesize instance Add MyType</code>。</p>
+                <p>
+                  常见原因：忘记定义实例、没有 import 实例所在模块、类型参数含有未解决的 metavariable。</p>
+                <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.structureTk-701">structure</span><span class="inter-text"> </span><span class="const token" data-binding="const-Point" data-verso-hover="120" id="Point">Point</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-null-717">where</span><span class="inter-text">
+  </span><span class="const token" data-binding="const-Point.x" data-verso-hover="121" id="Point___x">x</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Nat" data-verso-hover="26">Nat</span><span class="inter-text">
+  </span><span class="const token" data-binding="const-Point.y" data-verso-hover="122" id="Point___y">y</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Nat" data-verso-hover="26">Nat</span><span class="inter-text">
+
+-- 忘记注册实例：
+-- instance : Add Point where
+--   add p q := ⟨p.x + q.x, p.y + q.y⟩
+
+-- 下面会报错：failed to synthesize Add Point
+-- #check (inferInstance : Add Point)</span></code><p>
+                  <strong>诊断</strong>：用 <code>#check (inferInstance : TargetClass TargetType)</code> 手动测试。成功则问题在 <code>Expr</code> 构造，失败则问题在实例注册。</p>
+                </section>
+              <section>
+                <h3 id="failure-diamond-problem">
+                  6.8.2. 失败二：实例歧义 / Diamond Problem<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-diamond-problem" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong>症状</strong>：找到多个实例无法决定，或多重继承路径不一致。</p>
+                <pre>-- [示意] Diamond problem
+class A (α : Type)
+class B (α : Type) extends A α
+class C (α : Type) extends A α
+class D (α : Type) extends B α, C α
+-- D → B → A 和 D → C → A 必须 definitionally equal
+</pre><p>
+                  <strong>诊断</strong>：<code>set_option trace.Meta.synthInstance true</code> 查看完整搜索过程。</p>
+                <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.set_option-995" data-verso-hover="117">set_option</span><span class="inter-text"> </span><span class="option token" data-binding="option-trace.Meta.synthInstance" data-verso-hover="123">trace.Meta.synthInstance</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.set_option-995" data-verso-hover="117">true</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.in-995">in</span><span class="inter-text">
+</span><span class="has-info information"><span class="hover-container"><span class="hover-info messages"><code class="verso-message information"><span class="text"></span><span class="highlighted"><span class="inter-text"></span><span class="const token" data-binding="const-inferInstance" data-verso-hover="119">inferInstance</span><span class="inter-text"></span></span><span class="text"> : </span><span class="highlighted"><span class="inter-text"></span><span class="const token" data-binding="const-Add" data-verso-hover="113">Add</span><span class="inter-text"> </span><span class="const token" data-binding="const-Nat" data-verso-hover="26">ℕ</span></span></code></span></span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.check-1039">#check</span></span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="has-info information"><span class="hover-container"><span class="hover-info messages"><code class="verso-message information"><span class="text"></span><details class="trace" role="group"><summary><span class="trace-class">[Meta.synthInstance]</span> <span class="text">✅️</span><span class="text"> </span><span class="highlighted"><span class="inter-text"></span><span class="const token" data-binding="const-Add" data-verso-hover="113">Add</span><span class="inter-text"> </span><span class="const token" data-binding="const-Nat" data-verso-hover="26">ℕ</span></span></summary><ul class="trace-children"><li><details class="trace" role="group"><summary><span class="trace-class">[Meta.synthInstance]</span> <span class="text">✅️</span><span class="text"> </span><span class="text">new goal </span><span class="highlighted"><span class="inter-text"></span><span class="const token" data-binding="const-Add" data-verso-hover="113">Add</span><span class="inter-text"> </span><span class="const token" data-binding="const-Nat" data-verso-hover="26">ℕ</span></span></summary><ul class="trace-children"><li><span class="trace"><span class="trace-class">[Meta.synthInstance.instances]</span> <span class="text">#[</span><span class="highlighted"><span class="const token" data-binding="const-AddZero.toAdd" data-verso-hover="124">@</span><span class="const token" data-binding="const-AddZero.toAdd" data-verso-hover="124">AddZero.toAdd</span></span><span class="text">, </span><span class="highlighted"><span class="const token" data-binding="const-Lean.Grind.AddCommMonoid.toAdd" data-verso-hover="125">@</span><span class="const token" data-binding="const-Lean.Grind.AddCommMonoid.toAdd" data-verso-hover="125">Grind.AddCommMonoid.toAdd</span></span><span class="text">, </span><span class="highlighted"><span class="const token" data-binding="const-Lean.Grind.Semiring.toAdd" data-verso-hover="126">@</span><span class="const token" data-binding="const-Lean.Grind.Semiring.toAdd" data-verso-hover="126">Grind.Semiring.toAdd</span></span><span class="text">, </span><span class="highlighted"><span class="const token" data-binding="const-AddSemigroup.toAdd" data-verso-hover="127">@</span><span class="const token" data-binding="const-AddSemigroup.toAdd" data-verso-hover="127">AddSemigroup.toAdd</span></span><span class="text">, </span><span class="highlighted"><span class="const token" data-binding="const-AddCommMagma.toAdd" data-verso-hover="128">@</span><span class="const token" data-binding="const-AddCommMagma.toAdd" data-verso-hover="128">AddCommMagma.toAdd</span></span><span class="text">, </span><span class="highlighted"><span class="const token" data-binding="const-Distrib.toAdd" data-verso-hover="129">@</span><span class="const token" data-binding="const-Distrib.toAdd" data-verso-hover="129">Distrib.toAdd</span></span><span class="text">, </span><span class="highlighted"><span class="inter-text"></span><span class="const token" data-binding="const-instAddNat" data-verso-hover="130">instAddNat</span><span class="inter-text"></span></span><span class="text">]</span></span></li></ul></details></li><li><details class="trace" role="group"><summary><span class="trace-class">[Meta.synthInstance.apply]</span> <span class="text">✅️</span><span class="text"> </span><span class="text">apply </span><span class="highlighted"><span class="inter-text"></span><span class="const token" data-binding="const-instAddNat" data-verso-hover="130">instAddNat</span><span class="inter-text"></span></span><span class="text"> to </span><span class="highlighted"><span class="inter-text"></span><span class="const token" data-binding="const-Add" data-verso-hover="113">Add</span><span class="inter-text"> </span><span class="const token" data-binding="const-Nat" data-verso-hover="26">ℕ</span></span></summary><ul class="trace-children"><li><span class="trace"><span class="trace-class">[Meta.synthInstance.tryResolve]</span> <span class="text">✅️</span><span class="text"> </span><span class="highlighted"><span class="inter-text"></span><span class="const token" data-binding="const-Add" data-verso-hover="113">Add</span><span class="inter-text"> </span><span class="const token" data-binding="const-Nat" data-verso-hover="26">ℕ</span></span><span class="text"> ≟ </span><span class="highlighted"><span class="inter-text"></span><span class="const token" data-binding="const-Add" data-verso-hover="113">Add</span><span class="inter-text"> </span><span class="const token" data-binding="const-Nat" data-verso-hover="26">ℕ</span></span></span></li><li><span class="trace"><span class="trace-class">[Meta.synthInstance.answer]</span> <span class="text">✅️</span><span class="text"> </span><span class="highlighted"><span class="inter-text"></span><span class="const token" data-binding="const-Add" data-verso-hover="113">Add</span><span class="inter-text"> </span><span class="const token" data-binding="const-Nat" data-verso-hover="26">ℕ</span></span></span></li></ul></details></li><li><span class="trace"><span class="trace-class">[Meta.synthInstance]</span> <span class="text">result </span><span class="highlighted"><span class="inter-text"></span><span class="const token" data-binding="const-instAddNat" data-verso-hover="130">instAddNat</span><span class="inter-text"></span></span></span></li></ul></details></code></span></span><span class="const token" data-binding="const-inferInstance" data-verso-hover="119">inferInstance</span></span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Add" data-verso-hover="113">Add</span><span class="inter-text"> </span><span class="const token" data-binding="const-Nat" data-verso-hover="26">Nat</span><span class="unknown token" data-binding="">)</span></code></section>
+              <section>
+                <h3 id="failure-cyclic-dependency">
+                  6.8.3. 失败三：循环依赖导致超时<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-cyclic-dependency" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong>症状</strong>：<code>maxHeartbeats</code> 超限。</p>
+                <pre>-- [示意] 循环实例——不要这样写！
+instance [B α] : A α where ...
+instance [A α] : B α where ...
+-- A α → B α → A α → ... 无限循环
+</pre><p>
+                  Tabled resolution 能处理某些循环（缓存命中时），但如果每步涉及新类型参数，缓存帮不上忙。</p>
+                <p>
+                  <strong>修复</strong>：打破循环——去掉一个方向的实例，或改成非 instance 的普通定义。</p>
+                </section>
+              <section>
+                <h3 id="pitfall-universe-out-param">
+                  6.8.4. 补充陷阱：Universe 与 Out-parameter<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=pitfall-universe-out-param" title="Permalink">🔗</a></span></h3>
+                <p>
+                  用 <code>mkConst</code> 时需提供 universe level 参数，遗漏会导致错误。推荐用 <code>mkAppM</code> 自动处理：</p>
+                <pre>-- [示意] mkAppM 自动推导 universe
+let type ← mkAppM ``Add #[mkConst ``Nat]
+</pre><p>
+                  对有 <strong>out-parameter</strong> 的 type class（如 <code>HAdd</code>），synthesis 完成后要读取 metavariable 赋值来获取推断出的输出类型。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch05-exercises">
+                6.9. 5.8 练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch05-exercises" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="exercise-5-1">
+                  6.9.1. 练习 1（热身）：探测 BEq 实例<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-5-1" title="Permalink">🔗</a></span></h3>
+                <p>
+                  编写 <code>elab</code> 命令 <code>has_beq</code>，接受一个类型名，报告该类型是否有 <code>BEq</code> 实例。</p>
+                <pre>-- [示意] 实现后的预期调用形式
+-- #has_beq Nat         →  "Nat 有 BEq 实例"
+-- #has_beq (Nat → Nat) →  "Nat → Nat 没有 BEq 实例"
+</pre><p>
+                  提示：<code>synthInstance?</code> + <code>mkAppM</code> 构造 <code>BEq</code> 类型。</p>
+                </section>
+              <section>
+                <h3 id="exercise-5-2">
+                  6.9.2. 练习 2（热身）：观察搜索过程<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-5-2" title="Permalink">🔗</a></span></h3>
+                <p>
+                  用 trace 选项观察实例搜索，回答：搜索 <code>Add (List Nat)</code> 触发了几次递归？</p>
+                <pre>-- [可运行]
+set_option trace.Meta.synthInstance true in
+#check (inferInstance : Add (List Nat))
+</pre></section>
+              <section>
+                <h3 id="exercise-5-3">
+                  6.9.3. 练习 3（Debug）：诊断超时<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-5-3" title="Permalink">🔗</a></span></h3>
+                <p>
+                  下面的代码会导致 synthesis 超时，解释原因并修复。</p>
+                <pre>-- [示意] 超时代码
+class Serialize (α : Type) where
+  serialize : α → String
+
+class Deserialize (α : Type) where
+  deserialize : String → Option α
+
+instance [Deserialize α] : Serialize α where
+  serialize _ := "serialized"
+
+instance [Serialize α] : Deserialize α where
+  deserialize _ := none
+
+-- 超时：example : Serialize Nat := inferInstance
+</pre><p>
+                  提示：画依赖箭头找环。修复方案：可以为 <code>Nat</code> 提供直接的 base instance 打破循环，也可以去掉形成环的某条 instance 边（改为普通 <code>def</code>），根据实际需求选择。</p>
+                </section>
+              <section>
+                <h3 id="exercise-5-4">
+                  6.9.4. 练习 4（综合）：自动交换律改写<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-5-4" title="Permalink">🔗</a></span></h3>
+                <p>
+                  编写 tactic <code>comm_rw</code>：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      检查目标是否是等式 <code>a op b = c op d</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      用 <code>synthInstance?</code> 检查 <code>op</code> 是否满足 <code>Commutative</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      满足则用交换律改写左侧为 <code>b op a</code>；不满足则报错</p>
+                    </li>
+                  </ol>
+                <pre>-- [示意] 预期行为
+-- example (a b : Nat) : a + b = b + a := by comm_rw; rfl
+</pre><p>
+                  提示：结合第三章 <code>Expr</code> 操作、第四章目标管理、本章 <code>synthInstance?</code>。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch05-summary">
+                6.10. 5.9 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch05-summary" title="Permalink">🔗</a></span></h2>
+              <p>
+                | 概念 | 关键点 | 何时用到 |
+|------|--------|----------|
+| Type class synthesis | tabled resolution + 优先级 | 涉及 <code>[...]</code> 参数时 |
+| <code>synthInstance</code> | 搜索实例，失败报错 | 确定实例必须存在 |
+| <code>synthInstance?</code> | 失败返回 <code>none</code> | 探测/分支策略 |
+| 优先级 | <code>@[instance N]</code>，N 越大越优先 | 控制候选选择顺序 |
+| <code>withOptions</code> | 临时调整搜索参数 | 搜索预算不足 |
+| <code>withNewLocalInstance</code> | 临时注册局部实例 | 把 hypothesis 变成实例 |
+| DiscrTree | 按表达式骨架索引引理 | <code>simp</code>/<code>aesop</code> 式匹配 |
+| <code>trace.Meta.synthInstance</code> | 打印搜索过程 | 诊断 synthesis 问题 |</p>
+              <p>
+                <strong>三条实用原则</strong>：</p>
+              <ol start="1">
+                <li>
+                  <p>
+                    <strong>先用 <code>synthInstance?</code> 探测，再决定策略。</strong> 不要假设实例一定存在。</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>超时时先查循环，再考虑加预算。</strong> 加预算是治标不治本。</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>用 trace 诊断。</strong> <code>set_option trace.Meta.synthInstance true</code> 是调试利器。</p>
+                  </li>
+                </ol>
+              </section>
+            <section>
+              <h2 id="ch05-next-chapter">
+                6.11. 下一章预告<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch05-next-chapter" title="Permalink">🔗</a></span></h2>
+              <p>
+                你现在理解了 Lean 如何自动发现类型的性质。下一章深入讲解 <strong><code>simp</code></strong>——Lean 4 中最常用的自动化 tactic。<code>simp</code> 的工作依赖 simp lemma 数据库，而哪些 lemma 适用于当前目标，往往由 type class synthesis 来判断。掌握本章知识，你将更容易理解 <code>simp</code> 内部的匹配和改写逻辑。
+</p>
+              </section>
             </section>
           <nav class="prev-next-buttons">
-            <a class="local-button active" href="Ch04GoalManagement/_______________/#next-chapter-preview" rel="prev" title="5.11. 下一章预告"><span class="arrow">←</span><span class="where">5.11. 下一章预告</span></a><a class="local-button active" href="Ch05TypeclassSynthesis/5___0-_______________/#recap-and-motivation" rel="next" title="6.1. 5.0 回顾与动机"><span class="where">6.1. 5.0 回顾与动机</span><span class="arrow">→</span></a></nav>
+            <a class="local-button active" href="Ch04GoalManagement/#ch04-goal-management" rel="prev" title="5. 第四章 目标管理"><span class="arrow">←</span><span class="where">5. 第四章 目标管理</span></a><a class="local-button active" href="Ch06Simp/#ch06-simp" rel="next" title="7. 第六章 simp：重写引擎"><span class="where">7. 第六章 simp：重写引擎</span><span class="arrow">→</span></a></nav>
           </div>
         </main></div>
     </body>

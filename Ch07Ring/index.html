@@ -949,44 +949,462 @@ window.onload = () => {
             <div class="split-toc">
               <div class="title">
                 <label for="--verso-manual-toc-ch07-ring" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch07-ring" checked="checked"></label><span class="number">8.</span> <span class="current"><a href="Ch07Ring/#ch07-ring">第七章 ring 和 <code>ring_nf</code>：代数范式化</a></span></div>
-              <table><tr class="numbered"><td class="num">8.1.</td><td><a href="Ch07Ring/ring-__________________/#ring-what-it-solves">ring 解决什么问题</a></td></tr><tr class="numbered"><td class="num">8.2.</td><td><a href="Ch07Ring/_______________Horner-______/#horner-normal-form">内部原理：Horner 范式</a></td></tr><tr class="numbered"><td class="num">8.3.</td><td><a href="Ch07Ring/ring_nf-__________________/#ring-nf-normalization-only"><code>ring_nf</code>：只做范式化</a></td></tr><tr class="numbered"><td class="num">8.4.</td><td><a href="Ch07Ring/_____________________/#supported-algebraic-structures">支持的代数结构</a></td></tr><tr class="numbered"><td class="num">8.5.</td><td><a href="Ch07Ring/___________________________/#common-failures-and-diagnostics">常见失败模式与诊断</a></td></tr><tr class="numbered"><td class="num">8.6.</td><td><a href="Ch07Ring/___-ring-_________-tactic/#related-tactics">与 ring 相关的 tactic</a></td></tr><tr class="numbered"><td class="num">8.7.</td><td><a href="Ch07Ring/_____________________-ring/#metaprogramming-ring">在元编程中调用 ring</a></td></tr><tr class="numbered"><td class="num">8.8.</td><td><a href="Ch07Ring/____________/#performance-considerations">性能考量</a></td></tr><tr class="numbered"><td class="num">8.9.</td><td><a href="Ch07Ring/______/#ch07-exercises">练习</a></td></tr><tr class="numbered"><td class="num">8.10.</td><td><a href="Ch07Ring/______/#ch07-summary">小结</a></td></tr></table></div>
+              <table><tr class="numbered"><td class="num">8.1.</td><td><a href="Ch07Ring/#ring-what-it-solves">ring 解决什么问题</a></td></tr><tr class="numbered"><td class="num">8.2.</td><td><a href="Ch07Ring/#horner-normal-form">内部原理：Horner 范式</a></td></tr><tr class="numbered"><td class="num">8.3.</td><td><a href="Ch07Ring/#ring-nf-normalization-only"><code>ring_nf</code>：只做范式化</a></td></tr><tr class="numbered"><td class="num">8.4.</td><td><a href="Ch07Ring/#supported-algebraic-structures">支持的代数结构</a></td></tr><tr class="numbered"><td class="num">8.5.</td><td><a href="Ch07Ring/#common-failures-and-diagnostics">常见失败模式与诊断</a></td></tr><tr class="numbered"><td class="num">8.6.</td><td><a href="Ch07Ring/#related-tactics">与 ring 相关的 tactic</a></td></tr><tr class="numbered"><td class="num">8.7.</td><td><a href="Ch07Ring/#metaprogramming-ring">在元编程中调用 ring</a></td></tr><tr class="numbered"><td class="num">8.8.</td><td><a href="Ch07Ring/#performance-considerations">性能考量</a></td></tr><tr class="numbered"><td class="num">8.9.</td><td><a href="Ch07Ring/#ch07-exercises">练习</a></td></tr><tr class="numbered"><td class="num">8.10.</td><td><a href="Ch07Ring/#ch07-summary">小结</a></td></tr></table></div>
             </div>
           </div>
         <div class="last"></div>
         </nav>
       <main><div class="content-wrapper">
           <nav class="prev-next-buttons">
-            <a class="local-button active" href="Ch06Simp/6___16-_______________/#ch06-next-chapter" rel="prev" title="7.16. 6.16 下一章预告"><span class="arrow">←</span><span class="where">7.16. 6.16 下一章预告</span></a><a class="local-button active" href="Ch07Ring/ring-__________________/#ring-what-it-solves" rel="next" title="8.1. ring 解决什么问题"><span class="where">8.1. ring 解决什么问题</span><span class="arrow">→</span></a></nav>
+            <a class="local-button active" href="Ch06Simp/#ch06-simp" rel="prev" title="7. 第六章 simp：重写引擎"><span class="arrow">←</span><span class="where">7. 第六章 simp：重写引擎</span></a><a class="local-button active" href="Ch08Omega/#ch08-omega" rel="next" title="9. 第八章 omega：Presburger 算术决策过程"><span class="where">9. 第八章 omega：Presburger 算术决策过程</span><span class="arrow">→</span></a></nav>
           <section>
             <h1>
               8. 第七章 ring 和 <code>ring_nf</code>：代数范式化<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-ring" title="Permalink">🔗</a></span></h1>
             <p>
               <strong>本章目标</strong>：理解 <code>ring</code> 的决策过程，掌握 <code>ring_nf</code> 的化简用法，学会诊断常见失败模式。</p>
-            <ol class="section-toc">
-              <li>
-                <a href="Ch07Ring/ring-__________________/#ring-what-it-solves"><span class="number">8.1.</span> ring 解决什么问题</a></li>
-              <li>
-                <a href="Ch07Ring/_______________Horner-______/#horner-normal-form"><span class="number">8.2.</span> 内部原理：Horner 范式</a></li>
-              <li>
-                <a href="Ch07Ring/ring_nf-__________________/#ring-nf-normalization-only"><span class="number">8.3.</span> <code>ring_nf</code>：只做范式化</a></li>
-              <li>
-                <a href="Ch07Ring/_____________________/#supported-algebraic-structures"><span class="number">8.4.</span> 支持的代数结构</a></li>
-              <li>
-                <a href="Ch07Ring/___________________________/#common-failures-and-diagnostics"><span class="number">8.5.</span> 常见失败模式与诊断</a></li>
-              <li>
-                <a href="Ch07Ring/___-ring-_________-tactic/#related-tactics"><span class="number">8.6.</span> 与 ring 相关的 tactic</a></li>
-              <li>
-                <a href="Ch07Ring/_____________________-ring/#metaprogramming-ring"><span class="number">8.7.</span> 在元编程中调用 ring</a></li>
-              <li>
-                <a href="Ch07Ring/____________/#performance-considerations"><span class="number">8.8.</span> 性能考量</a></li>
-              <li>
-                <a href="Ch07Ring/______/#ch07-exercises"><span class="number">8.9.</span> 练习</a></li>
-              <li>
-                <a href="Ch07Ring/______/#ch07-summary"><span class="number">8.10.</span> 小结</a></li>
-              </ol>
+            <section>
+              <h2 id="ring-what-it-solves">
+                8.1. ring 解决什么问题<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ring-what-it-solves" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code>ring</code> 证明<strong>交换（半）环</strong>上的多项式恒等式。它是一个<strong>完备决策过程</strong>：
+对于交换环公理可推出的任何多项式等式，<code>ring</code> 一定能判定。</p>
+              <pre>-- 基础展开
+example (x y : ℤ) : (x + y) ^ 2 = x ^ 2 + 2 * x * y + y ^ 2 := by
+  ring
+  -- ✅ ring 把两边规范化为同一个 Horner 范式，得到 rfl
+
+-- 因式分解方向同样成立
+example (a b : ℝ) : a ^ 2 - b ^ 2 = (a - b) * (a + b) := by
+  ring
+  -- ✅ 方向无关：ring 总是规范化到唯一范式再比较
+
+-- 多变量高次
+example (a b c : ℚ) :
+    (a + b + c) ^ 3 =
+      a ^ 3 + b ^ 3 + c ^ 3 +
+      3 * (a ^ 2 * b + a ^ 2 * c + b ^ 2 * a + b ^ 2 * c + c ^ 2 * a + c ^ 2 * b) +
+      6 * a * b * c := by
+  ring
+  -- ✅ 变量数和次数不影响正确性，只影响性能
+</pre><p>
+                <code>ring</code> 的三条核心边界：</p>
+              <ol start="1">
+                <li>
+                  <p>
+                    <strong>不处理序</strong>——<code>ring</code> 不能证明 <code>x + 1 &gt; x</code>，那是 <code>linarith</code> / <code>positivity</code> 的领域</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>不展开函数</strong>——<code>ring</code> 把 <code>sin x</code>、<code>f n</code> 等当作不透明原子</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>不处理除法</strong>——<code>x / y * y = x</code> 需要 <code>y ≠ 0</code>，超出环公理</p>
+                  </li>
+                </ol>
+              </section>
+            <section>
+              <h2 id="horner-normal-form">
+                8.2. 内部原理：Horner 范式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=horner-normal-form" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="what-is-horner-nf">
+                  8.2.1. 什么是 Horner 范式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=what-is-horner-nf" title="Permalink">🔗</a></span></h3>
+                <p>
+                  多项式 $a<em>0 + a</em>1 x + a<em>2 x^2 + cdots + a</em>n x^n$ 的 Horner 形式是：</p>
+                <p>
+                  $$a<em>0 + x cdot (a</em>1 + x cdot (a<em>2 + cdots + x cdot a</em>n))$$</p>
+                <p>
+                  这种嵌套表示有两个优势：</p>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>唯一性</strong>——同一个多项式只有一种 Horner 范式（在固定变量序下）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>高效求值</strong>——只需 $n$ 次乘法 + $n$ 次加法，不需要幂运算</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="ring-proof-strategy">
+                  8.2.2. ring 的证明策略<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ring-proof-strategy" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>ring</code> 的工作分为三步：</p>
+                <pre>            规范化                    比较                    规范化
+LHS ────────────→ nf_lhs ═══════════════════ nf_rhs ←──────────── RHS
+    proof₁: LHS = nf_lhs    nf_lhs ≡ nf_rhs    proof₂: RHS = nf_rhs
+                              (结构相等)
+</pre><ol start="1">
+                  <li>
+                    <p>
+                      对 LHS 递归应用环公理（结合律、交换律、分配律），产生 <code>proof₁ : LHS = nf_lhs</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      对 RHS 做同样处理，产生 <code>proof₂ : RHS = nf_rhs</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      检查 <code>nf_lhs</code> 与 <code>nf_rhs</code> 是否结构相同（<code>rfl</code>）</p>
+                    </li>
+                  <li>
+                    <p>
+                      若相同，组合得到 <code>LHS = RHS</code>；若不同，报错</p>
+                    </li>
+                  </ol>
+                <p>
+                  关键点：第 3 步是<strong>纯粹的语法比较</strong>——不需要搜索或回溯。
+与搜索型 tactic 不同，<code>ring</code> 没有回溯搜索空间，因此不会因搜索爆炸而超时。
+但规范化本身产生的项数可能随变量数和次数急剧增长（见 7.8），所以高次多变量场景下 <code>ring</code> 依然可能很慢。</p>
+                </section>
+              <section>
+                <h3 id="multivariate-case">
+                  8.2.3. 多变量情形<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=multivariate-case" title="Permalink">🔗</a></span></h3>
+                <p>
+                  对于多变量多项式，<code>ring</code> 选定一个变量序（通常按出现顺序），
+然后递归地把系数本身视为"内层"多项式。例如 $2xy + 3x + y$ 以 $x$ 为主变量时：</p>
+                <p>
+                  $$x cdot (2y + 3) + y$$</p>
+                <p>
+                  内层系数 $2y + 3$ 和 $y$ 再以 $y$ 为主变量做 Horner 规范化。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="ring-nf-normalization-only">
+                8.3. <code>ring_nf</code>：只做范式化<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ring-nf-normalization-only" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code>ring_nf</code> 执行与 <code>ring</code> 相同的规范化过程，但<strong>不要求两边相等</strong>。
+它把目标（或假设）中的代数子表达式化简为 Horner 范式。</p>
+              <section>
+                <h3 id="ring-nf-simplify-goal">
+                  8.3.1. 化简目标<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ring-nf-simplify-goal" title="Permalink">🔗</a></span></h3>
+                <pre>example (x : ℤ) : (x + 1) ^ 2 - 1 = x ^ 2 + 2 * x := by
+  ring_nf
+  -- ring_nf 把两边分别化简为范式
+  -- 如果化简后两边相同，目标自动关闭
+  -- 如果不同，留下化简后的目标供后续 tactic 处理
+</pre></section>
+              <section>
+                <h3 id="ring-nf-simplify-hypothesis">
+                  8.3.2. 化简假设<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ring-nf-simplify-hypothesis" title="Permalink">🔗</a></span></h3>
+                <pre>example (x : ℤ) (h : (x + 1) ^ 2 = 9) : x ^ 2 + 2 * x = 8 := by
+  ring_nf at h
+  -- h 从 (x + 1) ^ 2 = 9 变为 x ^ 2 + 2 * x + 1 = 9
+  linarith
+  -- ⊢ x ^ 2 + 2 * x = 8，由 h 和 linarith 解决
+</pre></section>
+              <section>
+                <h3 id="ring-nf-vs-ring">
+                  8.3.3. <code>ring_nf</code> 与 ring 的选择<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ring-nf-vs-ring" title="Permalink">🔗</a></span></h3>
+                <p>
+                  | 场景 | 推荐 tactic |
+|------|------------|
+| 证明 <code>LHS = RHS</code>，两边都是多项式 | <code>ring</code> |
+| 化简后交给其他 tactic | <code>ring_nf</code> 然后接后续 tactic |
+| 化简假设中的代数表达式 | <code>ring_nf at h</code> |
+| 只想看化简结果（探索性） | <code>ring_nf</code> |</p>
+                <p>
+                  经验法则：如果你认为等式纯粹是代数恒等式，先用 <code>ring</code>。
+如果 <code>ring</code> 失败，再考虑 <code>ring_nf</code> + 其他 tactic 的组合。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="supported-algebraic-structures">
+                8.4. 支持的代数结构<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=supported-algebraic-structures" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="structure-overview">
+                  8.4.1. 结构总览<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=structure-overview" title="Permalink">🔗</a></span></h3>
+                <p>
+                  | 结构 | 典型类型 | 注意事项 |
+|------|---------|---------|
+| 交换环 <code>CommRing</code> | <code>ℤ</code>, <code>ℚ</code>, <code>ℝ</code>, <code>ℂ</code>, <code>ZMod n</code> | 完整支持 |
+| 交换半环 <code>CommSemiring</code> | <code>ℕ</code> | 减法受限（见 7.5） |
+| 交换代数 | <code>R[X]</code>（多项式环） | 系数环需是 <code>CommRing</code> |
+| 域 <code>Field</code> | <code>ℚ</code>, <code>ℝ</code>, <code>ℂ</code> | 不处理除法（用 <code>field_simp</code> + <code>ring</code>） |</p>
+                </section>
+              <section>
+                <h3 id="nat-subtraction-trap">
+                  8.4.2. ℕ 上的减法陷阱<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=nat-subtraction-trap" title="Permalink">🔗</a></span></h3>
+                <p>
+                  自然数上的减法是截断减法（<code>a - b = 0</code> 当 <code>a ≤ b</code>），不满足环公理。
+<code>ring</code> 可以处理 <code>ℕ</code> 上的加法和乘法，但涉及减法时经常失败：</p>
+                <pre>-- ✅ 没有减法，ring 正常工作
+example (n : ℕ) : (n + 1) ^ 2 = n ^ 2 + 2 * n + 1 := by ring
+
+-- ❌ 有减法，ring 可能失败
+-- example (n : ℕ) : (n + 1) - 1 = n := by ring  -- fails
+-- 正确做法：用 omega
+example (n : ℕ) : (n + 1) - 1 = n := by omega
+</pre><p>
+                  <strong>实践规则</strong>：在 <code>ℕ</code> 上，只要目标含有减法，就不要首先想到 <code>ring</code>——优先考虑 <code>omega</code> 或先转换到 <code>ℤ</code>。</p>
+                </section>
+              <section>
+                <h3 id="unsupported-structures">
+                  8.4.3. 不支持的结构<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=unsupported-structures" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>非交换环</strong>（如矩阵环）——用 <code>noncomm_ring</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>除法环上的除法</strong>——用 <code>field_simp</code> 先消除分母，再用 <code>ring</code></p>
+                    </li>
+                  </ul>
+                <pre>-- field_simp + ring 的经典组合
+example (x : ℝ) (hx : x ≠ 0) : (x ^ 2 - 1) / x = x - 1 / x := by
+  field_simp
+  -- ⊢ x ^ 2 - 1 = x * x - 1（消除分母后）
+  ring
+</pre></section>
+              </section>
+            <section>
+              <h2 id="common-failures-and-diagnostics">
+                8.5. 常见失败模式与诊断<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=common-failures-and-diagnostics" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="goal-not-equality">
+                  8.5.1. 目标不是等式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=goal-not-equality" title="Permalink">🔗</a></span></h3>
+                <pre>-- ❌ ring 只能证明等式，不能证明不等式
+-- example (x : ℤ) : x ^ 2 ≥ 0 := by ring
+-- 错误信息：ring failed, ring expressions not equal
+-- 修复：用 nlinarith 或 positivity
+example (x : ℤ) : x ^ 2 ≥ 0 := by positivity
+</pre><p>
+                  <code>ring</code> 的错误信息 <code>ring expressions not equal</code> 可能误导：
+它并不意味着等式不成立，只是说 <code>ring</code> 的规范化后两边不同。
+对于不等式，<code>ring</code> 的规范化根本不适用。</p>
+                </section>
+              <section>
+                <h3 id="equality-depends-on-hypothesis">
+                  8.5.2. 等式依赖假设<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=equality-depends-on-hypothesis" title="Permalink">🔗</a></span></h3>
+                <pre>-- ❌ ring 不使用任何假设
+-- example (x y : ℤ) (h : x = y) : x ^ 2 = y ^ 2 := by ring
+-- ring 看不到 h，只看到 x ^ 2 和 y ^ 2 是不同的范式
+-- 修复方案 1：先 subst
+example (x y : ℤ) (h : x = y) : x ^ 2 = y ^ 2 := by subst h; ring
+-- 修复方案 2：用 linear_combination
+example (x y : ℤ) (h : x = y) : x ^ 2 = y ^ 2 := by
+  linear_combination (x + y) * h
+  -- 思路：用假设 h 乘以 (x + y)，生成一个可供 ring 验证的新恒等式
+  -- linear_combination 把目标变成 x^2 - y^2 - (x+y)*(x-y) = 0
+  -- 然后用 ring 验证
+</pre></section>
+              <section>
+                <h3 id="opaque-functions">
+                  8.5.3. 含有不透明函数<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=opaque-functions" title="Permalink">🔗</a></span></h3>
+                <pre>-- ❌ ring 不展开 abs
+-- example (x : ℤ) : |x| ^ 2 = x ^ 2 := by ring
+-- ring 把 |x| 当作原子 a，看到 a^2 ≠ x^2
+-- 修复：需要分情况讨论或用专门引理
+example (x : ℤ) : |x| ^ 2 = x ^ 2 := sq_abs x
+</pre></section>
+              <section>
+                <h3 id="type-mismatch">
+                  8.5.4. 类型不匹配<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=type-mismatch" title="Permalink">🔗</a></span></h3>
+                <pre>-- ❌ 混合 ℕ 和 ℤ
+-- example (n : ℕ) : (n : ℤ) + 1 = ↑n + 1 := by ring
+-- 有时 coercion 会导致 ring 看到不同的表达式
+-- 修复：用 push_cast 统一类型后再 ring
+example (n : ℕ) : (↑(n + 1) : ℤ) = ↑n + 1 := by push_cast; ring
+</pre></section>
+              <section>
+                <h3 id="diagnostic-flowchart">
+                  8.5.5. 诊断流程图<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=diagnostic-flowchart" title="Permalink">🔗</a></span></h3>
+                <p>
+                  当 <code>ring</code> 失败时，按以下顺序检查：</p>
+                <pre>ring 失败
+  │
+  ├─ 目标是不等式？ ──→ 用 linarith / nlinarith / positivity
+  │
+  ├─ 等式依赖假设？ ──→ 用 linear_combination / subst / rw 先处理
+  │
+  ├─ 含有函数调用？ ──→ 用 simp 先展开，或手动 rw 相关引理
+  │
+  ├─ ℕ 上有减法？   ──→ 用 omega 或转换到 ℤ
+  │
+  ├─ 含有除法？     ──→ 用 field_simp 先消分母
+  │
+  └─ 类型 coercion？ ──→ 用 push_cast / pull_cast 统一类型
+</pre></section>
+              </section>
+            <section>
+              <h2 id="related-tactics">
+                8.6. 与 ring 相关的 tactic<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=related-tactics" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="linear-combination">
+                  8.6.1. <code>linear_combination</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=linear-combination" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>linear_combination</code> 是 <code>ring</code> 最重要的搭档。
+给定等式假设 $h<em>1, ldots, h</em>k$，找到系数使目标成为这些假设的线性组合 + <code>ring</code> 恒等式：</p>
+                <pre>example (a b : ℤ) (h1 : a + b = 5) (h2 : a - b = 1) : a = 3 := by
+  linear_combination (h1 + h2) / 2
+  -- 内部步骤：把目标改写为 LHS - RHS - (展开) = 0，用 ring 验证
+</pre></section>
+              <section>
+                <h3 id="field-simp-plus-ring">
+                  8.6.2. <code>field_simp</code> + ring<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=field-simp-plus-ring" title="Permalink">🔗</a></span></h3>
+                <p>
+                  处理含分式的等式：先用 <code>field_simp</code> 消分母，再用 <code>ring</code>：</p>
+                <pre>example (a b : ℝ) (ha : a ≠ 0) (hb : b ≠ 0) :
+    1 / a + 1 / b = (a + b) / (a * b) := by
+  field_simp; ring
+</pre></section>
+              <section>
+                <h3 id="push-cast-plus-ring">
+                  8.6.3. <code>push_cast</code> + ring<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=push-cast-plus-ring" title="Permalink">🔗</a></span></h3>
+                <p>
+                  类型转换（<code>ℕ → ℤ</code> 等）会阻碍 <code>ring</code>。<code>push_cast</code> 把 cast 推到最内层：</p>
+                <pre>example (m n : ℕ) : ((m + n : ℕ) : ℤ) = (m : ℤ) + (n : ℤ) := by
+  push_cast; ring
+</pre></section>
+              </section>
+            <section>
+              <h2 id="metaprogramming-ring">
+                8.7. 在元编程中调用 ring<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=metaprogramming-ring" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="via-eval-tactic">
+                  8.7.1. 通过 evalTactic<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=via-eval-tactic" title="Permalink">🔗</a></span></h3>
+                <pre>import Mathlib.Tactic.Ring
+
+elab "try_ring" : tactic =&gt; do
+  try
+    Lean.Elab.Tactic.evalTactic (← `(tactic| ring))
+    --                           ^^^^^^^^^^^^^^^^
+    --  syntax quotation：构造 `ring` 的 Syntax 对象
+  catch _ =&gt;
+    Lean.logInfo "ring failed, skipping"
+</pre></section>
+              <section>
+                <h3 id="low-level-api">
+                  8.7.2. 底层 API<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=low-level-api" title="Permalink">🔗</a></span></h3>
+                <pre>open Lean Elab Tactic in
+elab "ring_diagnose" : tactic =&gt; withMainContext do
+  let goal ← getMainGoal
+  let target ← goal.getType
+  let some (_, _, lhs, rhs) := target.eq?
+    --  eq? 返回 (level, type, lhs, rhs)；非等式返回 none
+    | throwError "ring_diagnose: goal is not an equality"
+  logInfo m!"LHS: {lhs}"
+  logInfo m!"RHS: {rhs}"
+  try
+    evalTactic (← `(tactic| ring))
+    logInfo "ring succeeded!"
+  catch e =&gt;
+    logInfo m!"ring failed: {e.toMessageData}"
+</pre></section>
+              </section>
+            <section>
+              <h2 id="performance-considerations">
+                8.8. 性能考量<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=performance-considerations" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code>ring</code> 的复杂度与表达式大小多项式相关，但高次幂会导致项数爆炸：</p>
+              <pre>-- ✅ 快速：变量少、次数低
+example (x : ℤ) : (x + 1) ^ 4 = x ^ 4 + 4 * x ^ 3 + 6 * x ^ 2 + 4 * x + 1 := by
+  ring
+
+-- ⚠️ 较慢：(a + b + c + d + e) ^ 10 可能需要数秒
+</pre><p>
+                性能提示：太慢时先手动化简子表达式，或拆分证明步骤。</p>
+              </section>
+            <section>
+              <h2 id="ch07-exercises">
+                8.9. 练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-exercises" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="exercise-7-1">
+                  8.9.1. 练习 7.1：基础展开（⭐）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-7-1" title="Permalink">🔗</a></span></h3>
+                <p>
+                  证明以下等式：</p>
+                <pre>-- (a) 立方和公式
+example (a b : ℤ) :
+    a ^ 3 + b ^ 3 = (a + b) * (a ^ 2 - a * b + b ^ 2) := by
+  sorry
+
+-- (b) 完全立方展开
+example (x y : ℤ) :
+    (x - y) ^ 3 = x ^ 3 - 3 * x ^ 2 * y + 3 * x * y ^ 2 - y ^ 3 := by
+  sorry
+</pre></section>
+              <section>
+                <h3 id="exercise-7-2">
+                  8.9.2. 练习 7.2：<code>ring_nf</code> 化简（⭐）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-7-2" title="Permalink">🔗</a></span></h3>
+                <p>
+                  使用 <code>ring_nf</code> 化简假设后完成证明：</p>
+                <pre>-- 提示：ring_nf at h 化简假设，然后用 linarith
+example (x : ℤ) (h : (x + 2) ^ 2 = (x + 1) ^ 2 + 5) : x = 1 := by
+  sorry
+</pre></section>
+              <section>
+                <h3 id="exercise-7-3">
+                  8.9.3. 练习 7.3：<code>linear_combination</code>（⭐⭐）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-7-3" title="Permalink">🔗</a></span></h3>
+                <p>
+                  使用 <code>linear_combination</code> 完成以下证明。关键是找到正确的系数：</p>
+                <pre>-- (a)
+example (a b : ℤ) (h1 : a + b = 10) (h2 : a - b = 4) : a = 7 := by
+  sorry
+  -- 提示：h1 和 h2 应该以什么系数组合？
+
+-- (b)
+example (x y : ℤ) (h1 : x + y = 5) (h2 : x * y = 6) :
+    x ^ 2 + y ^ 2 = 13 := by
+  sorry
+  -- 提示：x^2 + y^2 = (x+y)^2 - 2*x*y
+</pre></section>
+              <section>
+                <h3 id="exercise-7-4">
+                  8.9.4. 练习 7.4：<code>field_simp</code> + ring（⭐⭐）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-7-4" title="Permalink">🔗</a></span></h3>
+                <p>
+                  消分母后用 <code>ring</code> 完成：</p>
+                <pre>example (x : ℝ) (hx : x ≠ 0) :
+    (x + 1 / x) ^ 2 = x ^ 2 + 2 + 1 / x ^ 2 := by
+  sorry
+  -- 提示：field_simp 然后 ring
+</pre></section>
+              <section>
+                <h3 id="exercise-7-5">
+                  8.9.5. 练习 7.5：诊断失败（⭐⭐）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-7-5" title="Permalink">🔗</a></span></h3>
+                <p>
+                  以下 <code>ring</code> 调用都会失败。为每个找出失败原因并给出正确证明：</p>
+                <pre>-- (a) 为什么失败？用什么替代？
+-- example (n : ℕ) : n * (n + 1) / 2 + (n + 1) = (n + 1) * (n + 2) / 2 := by ring
+
+-- (b) 为什么失败？用什么替代？
+-- example (x : ℤ) (h : x &gt; 0) : x ^ 2 &gt; 0 := by ring
+
+-- (c) 为什么失败？用什么替代？
+-- example (x y : ℤ) (h : x = y + 1) : x ^ 2 = y ^ 2 + 2 * y + 1 := by ring
+</pre></section>
+              <section>
+                <h3 id="exercise-7-6">
+                  8.9.6. 练习 7.6：组合 tactic（⭐⭐⭐）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-7-6" title="Permalink">🔗</a></span></h3>
+                <p>
+                  综合运用本章所学完成证明：</p>
+                <pre>-- 提示：可能需要 push_cast, ring_nf, linarith 等多个 tactic 的组合
+example (n : ℕ) : (2 * n + 1) ^ 2 - 1 = 4 * n * (n + 1) := by
+  sorry
+  -- 注意：这里是 ℕ 上的减法！
+</pre></section>
+              </section>
+            <section>
+              <h2 id="ch07-summary">
+                8.10. 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-summary" title="Permalink">🔗</a></span></h2>
+              <p>
+                | 概念 | 关键点 |
+|------|--------|
+| <code>ring</code> 原理 | 规范化为 Horner 范式，做纯语法比较 |
+| 适用范围 | 交换（半）环上的多项式恒等式 |
+| <code>ring_nf</code> | 只做范式化，不要求相等；可作用于假设 |
+| <code>linear_combination</code> | 利用等式假设 + <code>ring</code> 证明依赖假设的等式 |
+| <code>field_simp</code> + <code>ring</code> | 先消分母再证多项式等式 |
+| <code>push_cast</code> + <code>ring</code> | 先统一类型转换再证等式 |
+| 常见失败 | 不等式、假设依赖、函数不透明、ℕ 减法、除法、类型转换 |</p>
+              <p>
+                下一章：<code>omega</code>——线性整数/自然数算术的完备决策过程。
+</p>
+              </section>
             </section>
           <nav class="prev-next-buttons">
-            <a class="local-button active" href="Ch06Simp/6___16-_______________/#ch06-next-chapter" rel="prev" title="7.16. 6.16 下一章预告"><span class="arrow">←</span><span class="where">7.16. 6.16 下一章预告</span></a><a class="local-button active" href="Ch07Ring/ring-__________________/#ring-what-it-solves" rel="next" title="8.1. ring 解决什么问题"><span class="where">8.1. ring 解决什么问题</span><span class="arrow">→</span></a></nav>
+            <a class="local-button active" href="Ch06Simp/#ch06-simp" rel="prev" title="7. 第六章 simp：重写引擎"><span class="arrow">←</span><span class="where">7. 第六章 simp：重写引擎</span></a><a class="local-button active" href="Ch08Omega/#ch08-omega" rel="next" title="9. 第八章 omega：Presburger 算术决策过程"><span class="where">9. 第八章 omega：Presburger 算术决策过程</span><span class="arrow">→</span></a></nav>
           </div>
         </main></div>
     </body>

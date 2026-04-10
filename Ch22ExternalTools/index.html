@@ -949,14 +949,14 @@ window.onload = () => {
             <div class="split-toc">
               <div class="title">
                 <label for="--verso-manual-toc-ch22-external-tools" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch22-external-tools" checked="checked"></label><span class="number">23.</span> <span class="current"><a href="Ch22ExternalTools/#ch22-external-tools">第二十二章 对接外部工具</a></span></div>
-              <table><tr class="numbered"><td class="num">23.1.</td><td><a href="Ch22ExternalTools/22___1-___________________________/#why-external-tools">22.1 为什么对接外部工具</a></td></tr><tr class="numbered"><td class="num">23.2.</td><td><a href="Ch22ExternalTools/22___2-_________Certificate_________/#certificate-mode">22.2 证书（Certificate）模式</a></td></tr><tr class="numbered"><td class="num">23.3.</td><td><a href="Ch22ExternalTools/22___3-Oracle-______/#oracle-mode">22.3 Oracle 模式</a></td></tr><tr class="numbered"><td class="num">23.4.</td><td><a href="Ch22ExternalTools/22___4-__________________/#implementing-external-calls">22.4 实现外部调用</a></td></tr><tr class="numbered"><td class="num">23.5.</td><td><a href="Ch22ExternalTools/22___5-_______________/#encoding-decoding">22.5 编码与解码</a></td></tr><tr class="numbered"><td class="num">23.6.</td><td><a href="Ch22ExternalTools/22___6-_________LLM-__________________/#llm-assisted-proof-search">22.6 案例：LLM 辅助证明搜索</a></td></tr><tr class="numbered"><td class="num">23.7.</td><td><a href="Ch22ExternalTools/22___7-__________________/#three-modes-comparison">22.7 三种模式对比</a></td></tr><tr class="numbered"><td class="num">23.8.</td><td><a href="Ch22ExternalTools/22___8-____________/#practical-considerations">22.8 实践考量</a></td></tr><tr class="numbered"><td class="num">23.9.</td><td><a href="Ch22ExternalTools/22___9-____________/#external-failure-modes">22.9 失败模式</a></td></tr><tr class="numbered"><td class="num">23.10.</td><td><a href="Ch22ExternalTools/22___10-__________________/#external-design-checklist">22.10 设计检查清单</a></td></tr><tr class="numbered"><td class="num">23.11.</td><td><a href="Ch22ExternalTools/22___11-______/#external-exercises">22.11 练习</a></td></tr><tr class="numbered"><td class="num">23.12.</td><td><a href="Ch22ExternalTools/22___12-______/#external-summary">22.12 小结</a></td></tr></table></div>
+              <table><tr class="numbered"><td class="num">23.1.</td><td><a href="Ch22ExternalTools/#why-external-tools">22.1 为什么对接外部工具</a></td></tr><tr class="numbered"><td class="num">23.2.</td><td><a href="Ch22ExternalTools/#certificate-mode">22.2 证书（Certificate）模式</a></td></tr><tr class="numbered"><td class="num">23.3.</td><td><a href="Ch22ExternalTools/#oracle-mode">22.3 Oracle 模式</a></td></tr><tr class="numbered"><td class="num">23.4.</td><td><a href="Ch22ExternalTools/#implementing-external-calls">22.4 实现外部调用</a></td></tr><tr class="numbered"><td class="num">23.5.</td><td><a href="Ch22ExternalTools/#encoding-decoding">22.5 编码与解码</a></td></tr><tr class="numbered"><td class="num">23.6.</td><td><a href="Ch22ExternalTools/#llm-assisted-proof-search">22.6 案例：LLM 辅助证明搜索</a></td></tr><tr class="numbered"><td class="num">23.7.</td><td><a href="Ch22ExternalTools/#three-modes-comparison">22.7 三种模式对比</a></td></tr><tr class="numbered"><td class="num">23.8.</td><td><a href="Ch22ExternalTools/#practical-considerations">22.8 实践考量</a></td></tr><tr class="numbered"><td class="num">23.9.</td><td><a href="Ch22ExternalTools/#external-failure-modes">22.9 失败模式</a></td></tr><tr class="numbered"><td class="num">23.10.</td><td><a href="Ch22ExternalTools/#external-design-checklist">22.10 设计检查清单</a></td></tr><tr class="numbered"><td class="num">23.11.</td><td><a href="Ch22ExternalTools/#external-exercises">22.11 练习</a></td></tr><tr class="numbered"><td class="num">23.12.</td><td><a href="Ch22ExternalTools/#external-summary">22.12 小结</a></td></tr></table></div>
             </div>
           </div>
         <div class="last"></div>
         </nav>
       <main><div class="content-wrapper">
           <nav class="prev-next-buttons">
-            <a class="local-button active" href="Ch21Performance/21___12-______/#performance-summary" rel="prev" title="22.15. 21.12 小结"><span class="arrow">←</span><span class="where">22.15. 21.12 小结</span></a><a class="local-button active" href="Ch22ExternalTools/22___1-___________________________/#why-external-tools" rel="next" title="23.1. 22.1 为什么对接外部工具"><span class="where">23.1. 22.1 为什么对接外部工具</span><span class="arrow">→</span></a></nav>
+            <a class="local-button active" href="Ch21Performance/#ch21-performance" rel="prev" title="22. 第二十一章 性能工程"><span class="arrow">←</span><span class="where">22. 第二十一章 性能工程</span></a><a class="local-button active" href="Ch23Methodology/#ch23-methodology" rel="next" title="24. 第二十三章 从证明模式到自动化：方法论"><span class="where">24. 第二十三章 从证明模式到自动化：方法论</span><span class="arrow">→</span></a></nav>
           <section>
             <h1>
               23. 第二十二章 对接外部工具<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch22-external-tools" title="Permalink">🔗</a></span></h1>
@@ -974,35 +974,415 @@ CAS 做 Gröbner 基计算、SMT 求解器做线性算术——
             <p>
               本章讨论如何<strong>安全地</strong>借用外部计算能力，
 同时保持 Lean 内核作为最终信任锚。</p>
-            <ol class="section-toc">
-              <li>
-                <a href="Ch22ExternalTools/22___1-___________________________/#why-external-tools"><span class="number">23.1.</span> 22.1 为什么对接外部工具</a></li>
-              <li>
-                <a href="Ch22ExternalTools/22___2-_________Certificate_________/#certificate-mode"><span class="number">23.2.</span> 22.2 证书（Certificate）模式</a></li>
-              <li>
-                <a href="Ch22ExternalTools/22___3-Oracle-______/#oracle-mode"><span class="number">23.3.</span> 22.3 Oracle 模式</a></li>
-              <li>
-                <a href="Ch22ExternalTools/22___4-__________________/#implementing-external-calls"><span class="number">23.4.</span> 22.4 实现外部调用</a></li>
-              <li>
-                <a href="Ch22ExternalTools/22___5-_______________/#encoding-decoding"><span class="number">23.5.</span> 22.5 编码与解码</a></li>
-              <li>
-                <a href="Ch22ExternalTools/22___6-_________LLM-__________________/#llm-assisted-proof-search"><span class="number">23.6.</span> 22.6 案例：LLM 辅助证明搜索</a></li>
-              <li>
-                <a href="Ch22ExternalTools/22___7-__________________/#three-modes-comparison"><span class="number">23.7.</span> 22.7 三种模式对比</a></li>
-              <li>
-                <a href="Ch22ExternalTools/22___8-____________/#practical-considerations"><span class="number">23.8.</span> 22.8 实践考量</a></li>
-              <li>
-                <a href="Ch22ExternalTools/22___9-____________/#external-failure-modes"><span class="number">23.9.</span> 22.9 失败模式</a></li>
-              <li>
-                <a href="Ch22ExternalTools/22___10-__________________/#external-design-checklist"><span class="number">23.10.</span> 22.10 设计检查清单</a></li>
-              <li>
-                <a href="Ch22ExternalTools/22___11-______/#external-exercises"><span class="number">23.11.</span> 22.11 练习</a></li>
-              <li>
-                <a href="Ch22ExternalTools/22___12-______/#external-summary"><span class="number">23.12.</span> 22.12 小结</a></li>
-              </ol>
+            <section>
+              <h2 id="why-external-tools">
+                23.1. 22.1 为什么对接外部工具<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=why-external-tools" title="Permalink">🔗</a></span></h2>
+              <p>
+                | 问题域 | 外部工具 | 为什么 Lean 不自己做 |
+|--------|----------|---------------------|
+| 命题 SAT | CaDiCaL、Kissat | CDCL 算法 + 启发式需百万行优化代码 |
+| SMT | Z3、cvc5 | 理论组合框架极其复杂 |
+| 符号计算 | Sage、Mathematica | Gröbner 基、积分、级数求和 |
+| ITP 桥接 | Coq、Isabelle | 复用其他证明助手的引理库 |
+| 证明搜索 | LLM（GPT、Claude） | 启发式 tactic 建议 |</p>
+              <p>
+                核心张力：外部工具能<strong>快速给出答案</strong>，但 Lean 的保证依赖<strong>内核检查</strong>。
+设计问题归结为：<strong>如何利用外部计算能力而不破坏信任模型？</strong></p>
+              </section>
+            <section>
+              <h2 id="certificate-mode">
+                23.2. 22.2 证书（Certificate）模式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=certificate-mode" title="Permalink">🔗</a></span></h2>
+              <p>
+                最安全的方式：外部工具生成<strong>证书</strong>，Lean 验证证书。</p>
+              <section>
+                <h3 id="certificate-workflow">
+                  23.2.1. 工作流程<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=certificate-workflow" title="Permalink">🔗</a></span></h3>
+                <pre>❶ Lean 把问题编码为外部格式（DIMACS、SMT-LIB、JSON）
+❷ 启动外部进程，发送问题
+❸ 外部工具求解，返回证书（resolution proof、多项式系数等）
+❹ Lean 解析证书，在内核中验证正确性
+❺ 验证通过 → 构造 Lean 证明项
+</pre><p>
+                  <strong>安全性</strong>：即使外部工具有 bug 或返回垃圾数据，
+Lean 内核会拒绝不正确的证书。外部工具<strong>不在可信基础（TCB）中</strong>。</p>
+                </section>
+              <section>
+                <h3 id="case-polyrith">
+                  23.2.2. 案例：<code>polyrith</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=case-polyrith" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意] polyrith 的使用
+example (a b : ℚ) (h1 : a + b = 3) (h2 : a - b = 1) :
+    a = 2 := by
+  polyrith
+  -- ▸ 内部流程：
+  -- ❶ 编码：把 h1、h2 和目标转为多项式约束，序列化为 JSON
+  -- ❷ 调用：发送给 Sage 服务器（远程 HTTP 请求）
+  -- ❸ 求解：Sage 计算 Gröbner 基，找到系数 1/2 * h1 + 1/2 * h2
+  -- ❹ 返回：系数作为证书
+  -- ❺ 验证：Lean 用系数构造 linear_combination，由 ring 验证
+</pre><p>
+                  关键：Sage 不在 TCB 中——验证完全由 <code>ring</code> 在 Lean 内核完成。</p>
+                </section>
+              <section>
+                <h3 id="case-sat-certificate">
+                  23.2.3. 案例：SAT 证书<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=case-sat-certificate" title="Permalink">🔗</a></span></h3>
+                <pre>❶ Lean 把命题编码为 CNF（DIMACS 格式）
+❷ 调用 CaDiCaL
+❸ 求解器返回 LRAT 证书（resolution proof 的紧凑表示）
+❹ Lean 中的 LRAT checker 验证每一步 resolution
+</pre><p>
+                  LRAT 是 SAT 竞赛标准——Lean 只需一个高效 LRAT checker 即可对接任意求解器。</p>
+                </section>
+              <section>
+                <h3 id="certificate-cost">
+                  23.2.4. 证书模式的代价<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=certificate-cost" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>编码/解析开销</strong>：MetaM 端代码量不小</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>验证开销</strong>：内核验证证书消耗 heartbeats</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>证书膨胀</strong>：SAT 的 resolution proof 可达 GB 级</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>工具依赖</strong>：需要外部工具可用（网络或本地安装）</p>
+                    </li>
+                  </ul>
+                </section>
+              </section>
+            <section>
+              <h2 id="oracle-mode">
+                23.3. 22.3 Oracle 模式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=oracle-mode" title="Permalink">🔗</a></span></h2>
+              <p>
+                不安全但方便：<strong>直接信任</strong>外部工具的结果。</p>
+              <pre>-- [示意] ⚠️ 不安全：引入新公理
+axiom smt_oracle : ∀ p : Prop, Decidable p
+-- ▸ 这不是合法公理——可以用它证明 False
+</pre><section>
+                <h3 id="oracle-vs-native-decide">
+                  23.3.1. Oracle vs <code>native_decide</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=oracle-vs-native-decide" title="Permalink">🔗</a></span></h3>
+                <p>
+                  | | <code>native_decide</code> | Oracle（<code>sorry</code>/自定义公理） |
+|---|---|---|
+| 逻辑层面 | <strong>不引入新公理</strong> | 引入不可验证的假设 |
+| 可信基础 | Lean 内核 + 编译器 | Lean + 外部工具 |
+| 失败时 | 类型错误 | 可能引入矛盾 |
+| Mathlib | 谨慎使用 | 不接受 |</p>
+                <p>
+                  <strong><code>native_decide</code> 不是 oracle</strong>——它在已信任的编译环境中做更快的判定计算。</p>
+                </section>
+              <section>
+                <h3 id="oracle-reasonable-scenarios">
+                  23.3.2. Oracle 的合理场景<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=oracle-reasonable-scenarios" title="Permalink">🔗</a></span></h3>
+                <pre>❶ 快速原型：用 sorry 标记子目标，先完成整体架构
+❷ 开发迭代：信任外部结果以加速编辑-编译循环
+❸ 最终替换：逐步把 sorry 替换为证书模式或手动证明
+</pre><p>
+                  永远不要把含 <code>sorry</code> 的代码合并到主分支。
+<code>#check_no_sorry</code> 和 Mathlib CI 强制执行这一纪律。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="implementing-external-calls">
+                23.4. 22.4 实现外部调用<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=implementing-external-calls" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="io-process-spawn">
+                  23.4.1. <code>IO.Process.spawn</code>——流式交互<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=io-process-spawn" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意] 启动外部进程并流式通信
+def callSolver (problem : String) : IO String := do
+  let child ← IO.Process.spawn {
+    cmd := "z3"                    -- ❶ 可执行文件
+    args := #["-in", "-smt2"]     -- ❷ 命令行参数
+    stdin := .piped                -- ❸ 管道式 stdin/stdout
+    stdout := .piped
+    stderr := .piped
+  }
+  child.stdin.putStr problem       -- ❹ 写入问题
+  child.stdin.flush
+  let stdout ← child.stdout.readToEnd  -- ❺ 读取输出
+  let exitCode ← child.wait
+  if exitCode ≠ 0 then
+    throw &lt;| IO.userError s!"z3 failed with exit code {exitCode}"
+  return stdout
+</pre></section>
+              <section>
+                <h3 id="io-process-output">
+                  23.4.2. <code>IO.Process.output</code>——一次性调用<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=io-process-output" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意] 简便版本，适合短时脚本
+def callScript (input : String) : IO String := do
+  let result ← IO.Process.output {
+    cmd := "python3"
+    args := #["solver_script.py", "--input", input]
+  }
+  -- ▸ result : { exitCode : UInt32, stdout : String, stderr : String }
+  if result.exitCode ≠ 0 then
+    throw &lt;| IO.userError s!"script failed: {result.stderr}"
+  return result.stdout
+</pre></section>
+              <section>
+                <h3 id="external-in-tactic">
+                  23.4.3. 在 tactic 中使用<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=external-in-tactic" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>TacticM</code> → <code>MetaM</code> → 可执行 <code>IO</code>：</p>
+                <pre>-- [示意] 在 tactic 中调用外部工具
+elab "external_solve" : tactic =&gt; do
+  let goal ← getMainTarget
+  let smt2 := encodeGoal goal          -- ❶ 编码
+  let result ← callSolver smt2         -- ❷ 调用（IO 操作）
+  match parseSolverOutput result with   -- ❸ 解析
+  | .sat cert =&gt;
+    let proof ← verifyCertificate cert goal  -- ❹ 验证证书
+    closeMainGoal proof
+  | .unsat   =&gt; throwError "solver says unsat"
+  | .unknown =&gt; throwError "solver returned unknown"
+</pre></section>
+              </section>
+            <section>
+              <h2 id="encoding-decoding">
+                23.5. 22.5 编码与解码<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=encoding-decoding" title="Permalink">🔗</a></span></h2>
+              <p>
+                对接外部工具的大量工作在于<strong>编码</strong>（Lean Expr → 外部格式）和<strong>解码</strong>（外部输出 → 证书）。</p>
+              <pre>-- [示意] 编码：Lean Expr → SMT-LIB
+partial def encodeToSMT (e : Expr) : MetaM String := do
+  if let some (a, b) ← matchAnd? e then       -- ❶ 匹配 And
+    return s!"(and {← encodeToSMT a} {← encodeToSMT b})"
+  else if let some (a, b) ← matchOr? e then   -- ❷ 匹配 Or
+    return s!"(or {← encodeToSMT a} {← encodeToSMT b})"
+  else if let some a ← matchNot? e then        -- ❸ 匹配 Not
+    return s!"(not {← encodeToSMT a})"
+  else                                          -- ❹ 不可识别 → 不透明变量
+    let name ← mkFreshUserName `x
+    return s!"{name}"
+</pre><p>
+                和反射中的 quote 一样，编码覆盖范围<strong>直接决定工具能力边界</strong>——
+不可识别的构造被当作不透明变量，求解器无法分析其语义。</p>
+              </section>
+            <section>
+              <h2 id="llm-assisted-proof-search">
+                23.6. 22.6 案例：LLM 辅助证明搜索<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=llm-assisted-proof-search" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="llm-architecture">
+                  23.6.1. 架构<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=llm-architecture" title="Permalink">🔗</a></span></h3>
+                <pre>  Lean Server ──→ LLM API ──→ tactic 候选 ["simp", "ring", ...]
+  (目标 + 上下文)                       │
+       └── 逐个尝试执行 ←──────────────┘
+           验证通过 → 接受；全部失败 → 报错
+</pre></section>
+              <section>
+                <h3 id="llm-implementation-skeleton">
+                  23.6.2. 实现骨架<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=llm-implementation-skeleton" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+elab "llm_suggest" : tactic =&gt; do
+  let goal ← getMainTarget
+  let ctx ← getLocalHypotheses
+  let response ← callLLM (formatPrompt goal ctx)  -- ❶ 调用 LLM
+  let candidates ← parseTactics response           -- ❷ 解析候选
+  for tac in candidates do                          -- ❸ 逐个尝试
+    try
+      evalTacticStr tac    -- 在 MetaM 中执行
+      return               -- 成功 → 结束
+    catch _ =&gt; continue
+  throwError "all LLM suggestions failed"
+</pre></section>
+              <section>
+                <h3 id="llm-trust-model">
+                  23.6.3. 信任模型与防护<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=llm-trust-model" title="Permalink">🔗</a></span></h3>
+                <p>
+                  LLM 不在 TCB 中——和 SAT 求解器地位相同：提供候选，Lean 内核裁决。</p>
+                <pre>LLM 可能生成：             应对：
+  正确 tactic             → 内核验证通过 ✓
+  错误 tactic             → 内核拒绝 ✓
+  包含 sorry 的 tactic     → 框架层面过滤 ⚠️
+</pre><p>
+                  <strong>防护措施</strong>：过滤 <code>sorry</code>、每个候选设 heartbeat 上限、执行后检查目标是否全部关闭。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="three-modes-comparison">
+                23.7. 22.7 三种模式对比<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=three-modes-comparison" title="Permalink">🔗</a></span></h2>
+              <p>
+                | | 证书模式 | Oracle 模式 | LLM 辅助 |
+|---|---|---|---|
+| <strong>安全性</strong> | 高 | 低 | 高 |
+| <strong>TCB</strong> | Lean 内核 | Lean + 外部工具 | Lean 内核 |
+| <strong>确定性</strong> | 确定 | 确定 | 不确定 |
+| <strong>适用</strong> | SAT/SMT、Gröbner | 开发迭代 | 探索性证明 |
+| <strong>Mathlib</strong> | 接受 | 不接受 | 结果可接受 |
+| <strong>代表</strong> | <code>polyrith</code>、<code>bv_decide</code> | <code>sorry</code> 工作流 | LeanDojo、ReProver |</p>
+              </section>
+            <section>
+              <h2 id="practical-considerations">
+                23.8. 22.8 实践考量<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=practical-considerations" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="availability-fallback">
+                  23.8.1. 可用性与 fallback<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=availability-fallback" title="Permalink">🔗</a></span></h3>
+                <pre>polyrith 需要网络 → 失败时打印系数，用户手动写 linear_combination
+SAT tactic 需本地安装 → 提供安装指引或 Docker 镜像
+LLM tactic 需 API key → 优雅降级，给出清晰错误
+</pre></section>
+              <section>
+                <h3 id="reproducibility">
+                  23.8.2. 可复现性<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=reproducibility" title="Permalink">🔗</a></span></h3>
+                <p>
+                  外部工具引入不确定性。解决方案：</p>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>缓存证书</strong>：<code>polyrith</code> 支持 <code>--only</code> 模式使用缓存系数</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>固化 LLM 建议</strong>：成功的 tactic 替换为确定性版本</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>CI 独立</strong>：不依赖外部服务，只用缓存结果</p>
+                    </li>
+                  </ul>
+                </section>
+              </section>
+            <section>
+              <h2 id="external-failure-modes">
+                23.9. 22.9 失败模式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=external-failure-modes" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="failure-tool-unavailable">
+                  23.9.1. 失败 1：外部工具不可用<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-tool-unavailable" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+-- ✗ 用户没装 z3
+-- 错误：z3: command not found
+-- ✓ tactic 应捕获 IO 错误并给出安装提示
+-- ✓ 提供不依赖外部工具的 fallback
+</pre></section>
+              <section>
+                <h3 id="failure-incomplete-encoding">
+                  23.9.2. 失败 2：编码不完整<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-incomplete-encoding" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+-- ✗ 目标涉及自定义类型，编码函数不识别 → 求解器返回 unknown
+-- ✓ 诊断：打印编码后的 SMT-LIB 查看遗漏
+-- ✓ 修复：扩展编码函数，或先 unfold/simp 消除未识别构造
+</pre></section>
+              <section>
+                <h3 id="failure-certificate-verification">
+                  23.9.3. 失败 3：证书验证失败<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-certificate-verification" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+-- ✗ 外部工具 bug 导致错误证书 → Lean 验证失败
+-- ✓ 这正是证书模式的价值——错误被捕获，不引入矛盾
+-- ✓ 更新工具版本或报告 bug
+</pre></section>
+              <section>
+                <h3 id="failure-oracle-contradiction">
+                  23.9.4. 失败 4：Oracle 引入矛盾<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-oracle-contradiction" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+-- ✗ 自定义公理 axiom smt_says (p : Prop) : p → 可证明 False
+-- ✓ 用 sorry 而非自定义公理——sorry 至少有编译器警告
+-- ✓ oracle 公理永远不要进入生产代码
+</pre></section>
+              <section>
+                <h3 id="failure-llm-sorry">
+                  23.9.5. 失败 5：LLM 建议含 <code>sorry</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-llm-sorry" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+-- ✗ LLM 返回 "intro h; sorry" → 框架不过滤则证明不完整
+-- ✓ 执行前过滤 sorry；执行后检查无剩余目标
+</pre></section>
+              <section>
+                <h3 id="failure-certificate-bloat">
+                  23.9.6. 失败 6：证书膨胀导致验证超时<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-certificate-bloat" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+-- ✗ 10 万变量 SAT 问题，resolution proof 100 万步 → heartbeats 爆炸
+-- ✓ 用 native_decide 验证证书（而非内核归约）
+-- ✓ 使用更紧凑的证书格式
+</pre></section>
+              </section>
+            <section>
+              <h2 id="external-design-checklist">
+                23.10. 22.10 设计检查清单<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=external-design-checklist" title="Permalink">🔗</a></span></h2>
+              <p>
+                | 检查项 | 问题 |
+|--------|------|
+| <strong>信任模型</strong> | 证书模式还是 oracle？生产代码必须用证书模式 |
+| <strong>编码范围</strong> | 需要编码哪些构造？不识别的如何处理？ |
+| <strong>证书格式</strong> | 返回什么格式？如何在 Lean 中验证？ |
+| <strong>可用性</strong> | 工具不可用时的 fallback？ |
+| <strong>可复现性</strong> | 证书缓存？CI 能否不依赖外部服务？ |
+| <strong>性能</strong> | 编码 + 调用 + 验证的总时间可接受？ |
+| <strong>错误信息</strong> | 各种失败场景是否有清晰提示？ |</p>
+              </section>
+            <section>
+              <h2 id="external-exercises">
+                23.11. 22.11 练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=external-exercises" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="exercise-choose-integration">
+                  23.11.1. 练习 1（设计）：选择集成模式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-choose-integration" title="Permalink">🔗</a></span></h3>
+                <p>
+                  对以下场景，选择证书模式、oracle 模式或 LLM 辅助，说明理由：</p>
+                <pre>(a) Mathlib PR 中需要证明一个 200 变量的 SAT 问题。
+(b) 个人项目探索阶段，需快速验证一批代数恒等式。
+(c) 教学工具：学生输入定理，系统尝试自动找到证明。
+</pre><p>
+                  <strong>提示</strong>：(a) 必须证书模式——Mathlib 不接受 sorry；
+(b) oracle（sorry）加速迭代，后续替换；
+(c) LLM 辅助——不确定性可接受，内核保证正确性。</p>
+                </section>
+              <section>
+                <h3 id="exercise-tcb-comparison">
+                  23.11.2. 练习 2（分析）：可信基础对比<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-tcb-comparison" title="Permalink">🔗</a></span></h3>
+                <p>
+                  列出以下证明方式的 TCB，从小到大排序：</p>
+                <pre>(a) by ring
+(b) by native_decide
+(c) by polyrith（调用 Sage 后用 ring 验证）
+(d) by sorry（信任外部 SMT 的口头声明）
+</pre><p>
+                  <strong>提示</strong>：(a) Lean 内核；(b) 内核 + 编译器；
+(c) 和 (a) 相同（Sage 不在 TCB 中——证书由 ring 验证）；
+(d) 内核 + 外部 SMT + 人工判断。</p>
+                </section>
+              <section>
+                <h3 id="exercise-encoding-signatures">
+                  23.11.3. 练习 3（进阶）：设计编码函数签名<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-encoding-signatures" title="Permalink">🔗</a></span></h3>
+                <p>
+                  为以下场景设计类型签名（不需实现）：</p>
+                <pre>-- (a) 把 Prop 目标编码为 SMT-LIB，需要返回变量映射以便解码
+-- def encodeGoalToSMT : ??? := ...
+
+-- (b) 解析 LRAT 证书
+-- def parseLRAT : ??? := ...
+</pre><p>
+                  <strong>提示</strong>：
+(a) <code>Expr → MetaM (String × HashMap Expr String)</code>
+(b) <code>String → MetaM (List LRATStep)</code></p>
+                </section>
+              </section>
+            <section>
+              <h2 id="external-summary">
+                23.12. 22.12 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=external-summary" title="Permalink">🔗</a></span></h2>
+              <p>
+                | 概念 | 关键点 |
+|------|--------|
+| 外部工具的价值 | 利用专门求解器补充 Lean 内部 tactic |
+| 证书模式 | 外部工具给证书，Lean 验证——外部工具不在 TCB 中 |
+| Oracle 模式 | 直接信任外部结果——不安全，仅限开发迭代 |
+| <code>native_decide</code> ≠ oracle | 不引入新公理，只是更快的判定计算 |
+| <code>IO.Process</code> API | <code>spawn</code>（流式）和 <code>output</code>（一次性）两种方式 |
+| 编码/解码 | 覆盖范围决定工具能力边界（同反射的 quote） |
+| LLM 辅助 | LLM 提供候选，Lean 验证——安全但不确定 |
+| 可复现性 | 缓存证书，CI 不依赖外部服务 |
+| 主要陷阱 | 工具不可用、编码不全、oracle 矛盾、证书膨胀 |</p>
+              <p>
+                <strong>一句话总结</strong>：对接外部工具的核心原则是<strong>计算外包，验证内留</strong>——
+让专门的求解器做它擅长的计算，但证明正确性由 Lean 内核担保。</p>
+              <p>
+                下一章讨论自动化方法论——如何从手动证明中系统地发现可自动化的模式。
+</p>
+              </section>
             </section>
           <nav class="prev-next-buttons">
-            <a class="local-button active" href="Ch21Performance/21___12-______/#performance-summary" rel="prev" title="22.15. 21.12 小结"><span class="arrow">←</span><span class="where">22.15. 21.12 小结</span></a><a class="local-button active" href="Ch22ExternalTools/22___1-___________________________/#why-external-tools" rel="next" title="23.1. 22.1 为什么对接外部工具"><span class="where">23.1. 22.1 为什么对接外部工具</span><span class="arrow">→</span></a></nav>
+            <a class="local-button active" href="Ch21Performance/#ch21-performance" rel="prev" title="22. 第二十一章 性能工程"><span class="arrow">←</span><span class="where">22. 第二十一章 性能工程</span></a><a class="local-button active" href="Ch23Methodology/#ch23-methodology" rel="next" title="24. 第二十三章 从证明模式到自动化：方法论"><span class="where">24. 第二十三章 从证明模式到自动化：方法论</span><span class="arrow">→</span></a></nav>
           </div>
         </main></div>
     </body>

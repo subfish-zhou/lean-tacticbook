@@ -949,44 +949,419 @@ window.onload = () => {
             <div class="split-toc">
               <div class="title">
                 <label for="--verso-manual-toc-ch02-expr" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch02-expr" checked="checked"></label><span class="number">3.</span> <span class="current"><a href="Ch02Expr/#ch02-expr">第二章 Expr：Lean 4 的内部表示</a></span></div>
-              <table><tr class="numbered"><td class="num">3.1.</td><td><a href="Ch02Expr/Expr-_________/#what-is-expr">Expr 是什么</a></td></tr><tr class="numbered"><td class="num">3.2.</td><td><a href="Ch02Expr/Expr-____________/#expr-constructors">Expr 的构造子</a></td></tr><tr class="numbered"><td class="num">3.3.</td><td><a href="Ch02Expr/____________________________________/#expr-encoding-examples">表达式如何编码：几个例子</a></td></tr><tr class="numbered"><td class="num">3.4.</td><td><a href="Ch02Expr/____________-Expr___-match_expr--___--let_expr/#pattern-matching-expr">模式匹配 Expr：<code>match_expr</code> 和 <code>let_expr</code></a></td></tr><tr class="numbered"><td class="num">3.5.</td><td><a href="Ch02Expr/______-Expr/#constructing-expr">构造 Expr</a></td></tr><tr class="numbered"><td class="num">3.6.</td><td><a href="Ch02Expr/de-Bruijn-______-vs-____________/#debruijn-vs-fvar">de Bruijn 索引 vs 自由变量</a></td></tr><tr class="numbered"><td class="num">3.7.</td><td><a href="Ch02Expr/__________________/#expr-utility-functions">实用工具函数</a></td></tr><tr class="numbered"><td class="num">3.8.</td><td><a href="Ch02Expr/______/#ch02-summary">小结</a></td></tr><tr class="numbered"><td class="num">3.9.</td><td><a href="Ch02Expr/_____________________-debug/#ch02-common-failures">常见失败模式与 debug</a></td></tr><tr class="numbered"><td class="num">3.10.</td><td><a href="Ch02Expr/______/#ch02-exercises">练习</a></td></tr></table></div>
+              <table><tr class="numbered"><td class="num">3.1.</td><td><a href="Ch02Expr/#what-is-expr">Expr 是什么</a></td></tr><tr class="numbered"><td class="num">3.2.</td><td><a href="Ch02Expr/#expr-constructors">Expr 的构造子</a></td></tr><tr class="numbered"><td class="num">3.3.</td><td><a href="Ch02Expr/#expr-encoding-examples">表达式如何编码：几个例子</a></td></tr><tr class="numbered"><td class="num">3.4.</td><td><a href="Ch02Expr/#pattern-matching-expr">模式匹配 Expr：<code>match_expr</code> 和 <code>let_expr</code></a></td></tr><tr class="numbered"><td class="num">3.5.</td><td><a href="Ch02Expr/#constructing-expr">构造 Expr</a></td></tr><tr class="numbered"><td class="num">3.6.</td><td><a href="Ch02Expr/#debruijn-vs-fvar">de Bruijn 索引 vs 自由变量</a></td></tr><tr class="numbered"><td class="num">3.7.</td><td><a href="Ch02Expr/#expr-utility-functions">实用工具函数</a></td></tr><tr class="numbered"><td class="num">3.8.</td><td><a href="Ch02Expr/#ch02-summary">小结</a></td></tr><tr class="numbered"><td class="num">3.9.</td><td><a href="Ch02Expr/#ch02-common-failures">常见失败模式与 debug</a></td></tr><tr class="numbered"><td class="num">3.10.</td><td><a href="Ch02Expr/#ch02-exercises">练习</a></td></tr></table></div>
             </div>
           </div>
         <div class="last"></div>
         </nav>
       <main><div class="content-wrapper">
           <nav class="prev-next-buttons">
-            <a class="local-button active" href="Ch01MetaprogrammingModel/______/#ch01-exercises" rel="prev" title="2.9. 练习"><span class="arrow">←</span><span class="where">2.9. 练习</span></a><a class="local-button active" href="Ch02Expr/Expr-_________/#what-is-expr" rel="next" title="3.1. Expr 是什么"><span class="where">3.1. Expr 是什么</span><span class="arrow">→</span></a></nav>
+            <a class="local-button active" href="Ch01MetaprogrammingModel/#ch01-metaprogramming-model" rel="prev" title="2. 第一章 Lean 4 元编程模型"><span class="arrow">←</span><span class="where">2. 第一章 Lean 4 元编程模型</span></a><a class="local-button active" href="Ch03FirstTactic/#ch03-first-tactic" rel="next" title="4. 第三章 编写你的第一个 Tactic"><span class="where">4. 第三章 编写你的第一个 Tactic</span><span class="arrow">→</span></a></nav>
           <section>
             <h1>
               3. 第二章 Expr：Lean 4 的内部表示<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch02-expr" title="Permalink">🔗</a></span></h1>
             <p>
               <strong>本章目标</strong>：理解 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Expr" data-verso-hover="42">Expr</span></code> 的构造方式、模式匹配惯用法，以及在元程序中操作表达式的基本技巧。</p>
-            <ol class="section-toc">
-              <li>
-                <a href="Ch02Expr/Expr-_________/#what-is-expr"><span class="number">3.1.</span> Expr 是什么</a></li>
-              <li>
-                <a href="Ch02Expr/Expr-____________/#expr-constructors"><span class="number">3.2.</span> Expr 的构造子</a></li>
-              <li>
-                <a href="Ch02Expr/____________________________________/#expr-encoding-examples"><span class="number">3.3.</span> 表达式如何编码：几个例子</a></li>
-              <li>
-                <a href="Ch02Expr/____________-Expr___-match_expr--___--let_expr/#pattern-matching-expr"><span class="number">3.4.</span> 模式匹配 Expr：<code>match_expr</code> 和 <code>let_expr</code></a></li>
-              <li>
-                <a href="Ch02Expr/______-Expr/#constructing-expr"><span class="number">3.5.</span> 构造 Expr</a></li>
-              <li>
-                <a href="Ch02Expr/de-Bruijn-______-vs-____________/#debruijn-vs-fvar"><span class="number">3.6.</span> de Bruijn 索引 vs 自由变量</a></li>
-              <li>
-                <a href="Ch02Expr/__________________/#expr-utility-functions"><span class="number">3.7.</span> 实用工具函数</a></li>
-              <li>
-                <a href="Ch02Expr/______/#ch02-summary"><span class="number">3.8.</span> 小结</a></li>
-              <li>
-                <a href="Ch02Expr/_____________________-debug/#ch02-common-failures"><span class="number">3.9.</span> 常见失败模式与 debug</a></li>
-              <li>
-                <a href="Ch02Expr/______/#ch02-exercises"><span class="number">3.10.</span> 练习</a></li>
-              </ol>
+            <section>
+              <h2 id="what-is-expr">
+                3.1. Expr 是什么<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=what-is-expr" title="Permalink">🔗</a></span></h2>
+              <p>
+                Lean 4 中的每个项——数值、函数、命题、证明——在内核里都表示为 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Expr" data-verso-hover="42">Expr</span></code> 类型的值。当你写 <code>fun n =&gt; n + 1</code>，Lean 解析并精化后，内部存储的就是一棵 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Expr" data-verso-hover="42">Expr</span></code> 树。</p>
+              <p>
+                理解 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Expr" data-verso-hover="42">Expr</span></code> 是写 tactic 的基础：你的 tactic 读取目标（一个 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Expr" data-verso-hover="42">Expr</span></code>），分析它的结构，构造新的 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Expr" data-verso-hover="42">Expr</span></code> 作为证明项。</p>
+              </section>
+            <section>
+              <h2 id="expr-constructors">
+                3.2. Expr 的构造子<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=expr-constructors" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Expr" data-verso-hover="42">Expr</span></code> 定义在 <code>Lean/Expr.lean</code> 中，有以下核心构造子：</p>
+              <pre>inductive Expr where
+  | bvar    (deBruijnIndex : Nat)           -- 绑定变量（de Bruijn 索引）
+  | fvar    (fvarId : FVarId)               -- 自由变量（局部上下文中的变量）
+  | mvar    (mvarId : MVarId)               -- 元变量（未解决的目标/hole）
+  | sort    (u : Level)                     -- Sort（Type u / Prop）
+  | const   (declName : Name) (us : List Level)  -- 常量（定义/定理的引用）
+  | app     (fn : Expr) (arg : Expr)        -- 函数应用
+  | lam     (binderName : Name) (binderType : Expr) (body : Expr) (bi : BinderInfo)  -- λ
+  | forallE (binderName : Name) (binderType : Expr) (body : Expr) (bi : BinderInfo)  -- ∀/→
+  | letE    (declName : Name) (type : Expr) (value : Expr) (body : Expr) (nonDep : Bool)  -- let
+  | lit     (l : Literal)                   -- 字面量（数值/字符串）
+  | mdata   (data : MData) (expr : Expr)    -- 元数据注解
+  | proj    (typeName : Name) (idx : Nat) (struct : Expr)  -- 结构体投影
+</pre><p>
+                看起来很多，但日常 tactic 编写中最常遇到的是 <code>app</code>、<code>const</code>、<code>fvar</code>、<code>mvar</code>、<code>lam</code>、<code>forallE</code> 这六个。</p>
+              </section>
+            <section>
+              <h2 id="expr-encoding-examples">
+                3.3. 表达式如何编码：几个例子<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=expr-encoding-examples" title="Permalink">🔗</a></span></h2>
+              <blockquote><p>
+                  以下树形结构是<strong>示意图</strong>，用于说明 <code>app</code> 的嵌套方式，而不是逐字符精确的 elaborated form。</p>
+                </blockquote><section>
+                <h3 id="example-nat-add">
+                  3.3.1. 例 1：<code>Nat.add 2 3</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=example-nat-add" title="Permalink">🔗</a></span></h3>
+                <pre>app
+├── app
+│   ├── const `Nat.add []
+│   └── lit (Literal.natVal 2)
+└── lit (Literal.natVal 3)
+</pre><p>
+                  Lean 4 中多参数函数是 curried 的：<code>f a b</code> 表示为 <code>app (app f a) b</code>。</p>
+                </section>
+              <section>
+                <h3 id="example-lambda">
+                  3.3.2. 例 2：<code>fun n : Nat =&gt; n + 1</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=example-lambda" title="Permalink">🔗</a></span></h3>
+                <pre>lam `n (const `Nat [])
+  (app (app (const `HAdd.hAdd [...]) (bvar 0)) (lit 1))
+  BinderInfo.default
+</pre><p>
+                  注意 body 中用 <code>bvar 0</code> 指代最近的绑定变量 <code>n</code>——这是 de Bruijn 索引。</p>
+                </section>
+              <section>
+                <h3 id="example-forall">
+                  3.3.3. 例 3：<code>∀ n : Nat, n = n</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=example-forall" title="Permalink">🔗</a></span></h3>
+                <pre>forallE `n (const `Nat [])
+  (app (app (app (const `Eq [...]) (const `Nat [])) (bvar 0)) (bvar 0))
+  BinderInfo.default
+</pre><p>
+                  <code>∀</code> 和 <code>→</code> 都用 <code>forallE</code>；如果 body 不引用绑定变量（即 <code>bvar 0</code> 不出现），那就是 <code>→</code>。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="pattern-matching-expr">
+                3.4. 模式匹配 Expr：<code>match_expr</code> 和 <code>let_expr</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=pattern-matching-expr" title="Permalink">🔗</a></span></h2>
+              <p>
+                手动 match <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Expr" data-verso-hover="42">Expr</span></code> 构造子非常繁琐（要处理 <code>app (app (const ...) ...) ...</code>）。Lean 提供了两个语法糖：</p>
+              <blockquote><p>
+                  <strong>注意</strong>：<code>match_expr</code> 和 <code>let_expr</code> 是专门的模式匹配语法糖，不是普通函数名。你不能对它们用 <code>#check</code>（不像 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Meta.forallTelescope" data-verso-hover="43">forallTelescope</span></code> 那样是一个可查类型的函数）。它们的作用是按 <strong>head constant</strong> 匹配表达式（如 <code>Eq</code>、<code>And</code>、<code>Or</code>），自动拆开嵌套的 <code>app</code>。对于 <code>forallE</code> 这类 binder 构造子，应该用普通的 <code>Expr.isForall</code> 或直接 <code>match</code>。</p>
+                </blockquote><section>
+                <h3 id="match-expr">
+                  3.4.1. <code>match_expr</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=match-expr" title="Permalink">🔗</a></span></h3>
+                <pre>match_expr goalType with
+| Eq α lhs rhs =&gt;
+  -- goalType 是 @Eq α lhs rhs
+  logInfo m!"This is an equality: {← ppExpr lhs} = {← ppExpr rhs}"
+| And p q =&gt;
+  -- goalType 是 And p q
+  logInfo m!"This is a conjunction"
+| _ =&gt;
+  logInfo m!"Unknown shape"
+</pre><p>
+                  <code>match_expr</code> 按 head constant 匹配：<code>Eq α lhs rhs</code> 匹配 <code>@Eq α lhs rhs</code>，自动解开所有 <code>app</code>。</p>
+                </section>
+              <section>
+                <h3 id="let-expr">
+                  3.4.2. <code>let_expr</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=let-expr" title="Permalink">🔗</a></span></h3>
+                <p>
+                  用于 <code>do</code> 块中的 pattern matching（类似 <code>let some x := ... | return</code>）：</p>
+                <pre>let_expr Eq α lhs rhs := goalType | throwError "not an equality"
+-- 到这里 lhs, rhs 就是绑定好的 Expr
+</pre><p>
+                  <code>let_expr</code> 在 tactic 代码中用得更多，因为失败时可以直接跳出。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="constructing-expr">
+                3.5. 构造 Expr<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=constructing-expr" title="Permalink">🔗</a></span></h2>
+              <p>
+                读取 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Expr" data-verso-hover="42">Expr</span></code> 用模式匹配，构造 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Expr" data-verso-hover="42">Expr</span></code> 用 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.mkApp" data-verso-hover="44">mkApp</span></code> 系列函数：</p>
+              <section>
+                <h3 id="manual-construction">
+                  3.5.1. 手动构造<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=manual-construction" title="Permalink">🔗</a></span></h3>
+                <pre>-- 构造 @Eq Nat a b
+let eqExpr := mkApp3 (mkConst ``Eq) (mkConst ``Nat) a b
+
+-- 构造 @Eq.refl Nat a  (即 rfl 的证明项)
+let rflExpr := mkApp2 (mkConst ``Eq.refl) (mkConst ``Nat) a
+</pre><p>
+                  常用构造函数：</p>
+                <ul>
+                  <li>
+                    <p>
+                      <code>mkConst n</code>：常量引用</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>mkApp f a</code>：单参数应用</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>mkApp2/3/4/5/6</code>：多参数应用</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>mkAppN f #[a,b,c]</code>：数组参数应用</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>mkLambda n bi t body</code>：构造 λ 表达式</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>mkForall n bi t body</code>：构造 ∀ 表达式</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="quotation-construction">
+                  3.5.2. 用引号构造（quotation）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=quotation-construction" title="Permalink">🔗</a></span></h3>
+                <p>
+                  在 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Elab.Term.TermElabM" data-verso-hover="13">TermElabM</span></code> / <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Elab.Tactic.TacticM" data-verso-hover="14">TacticM</span></code> 中，可以用 quotation + <code>elabTerm</code> 从语法直接构造：</p>
+                <pre>let e ← elabTerm (← `(Nat.add 2 3)) none
+-- e 是精化后的 Expr
+</pre><p>
+                  这更方便，但有额外开销（要走一遍 elaboration）。在性能敏感的 tactic 中，手动 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.mkApp" data-verso-hover="44">mkApp</span></code> 更好。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="debruijn-vs-fvar">
+                3.6. de Bruijn 索引 vs 自由变量<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=debruijn-vs-fvar" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Expr" data-verso-hover="42">Expr</span></code> 中有两种变量：</p>
+              <ul>
+                <li>
+                  <p>
+                    <strong><code>bvar n</code></strong>（bound variable）：de Bruijn 索引，表示"向外数第 n 个 λ/∀ 绑定者"。索引 0 = 最近的绑定。</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong><code>fvar id</code></strong>（free variable）：局部上下文中的变量，用唯一 ID 标识。</p>
+                  </li>
+                </ul>
+              <p>
+                在元程序中，我们通常借助 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Meta.forallTelescope" data-verso-hover="43">forallTelescope</span></code>、<code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Meta.lambdaTelescope" data-verso-hover="45">lambdaTelescope</span></code> 等 API 打开绑定结构；这些 API 会把 body 中对应的 <code>bvar</code> 替换成当前局部上下文里的 <code>fvar</code>，因此日常 tactic 代码里更常直接操作 <code>fvar</code>。关键 API：</p>
+              <pre>-- 进入 ∀ 类型，把绑定变量转为 fvar
+forallTelescope goalType fun fvars body =&gt; do
+  -- fvars : Array Expr  （每个都是 fvar）
+  -- body  : Expr        （bvar 已被替换为 fvar）
+  ...
+
+-- 进入 λ 表达式
+lambdaTelescope e fun fvars body =&gt; do
+  ...
+</pre><p>
+                <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Meta.forallTelescope" data-verso-hover="43">forallTelescope</span></code> 和 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Meta.lambdaTelescope" data-verso-hover="45">lambdaTelescope</span></code> 是处理绑定结构的标准方式。它们：</p>
+              <ol start="1">
+                <li>
+                  <p>
+                    创建新的 <code>fvar</code> 加入局部上下文</p>
+                  </li>
+                <li>
+                  <p>
+                    把 body 中的 <code>bvar</code> 替换为对应 <code>fvar</code></p>
+                  </li>
+                <li>
+                  <p>
+                    回调结束后自动清理</p>
+                  </li>
+                </ol>
+              <p>
+                <strong>注意</strong>：<code>fvar</code> 只在创建它的 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.LocalContext" data-verso-hover="7">LocalContext</span></code> 中有效。不要把一个 telescope 回调里的 <code>fvar</code> 泄漏到外面。</p>
+              </section>
+            <section>
+              <h2 id="expr-utility-functions">
+                3.7. 实用工具函数<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=expr-utility-functions" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Meta.MetaM" data-verso-hover="6">MetaM</span></code> 提供了大量操作 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Expr" data-verso-hover="42">Expr</span></code> 的工具：</p>
+              <section>
+                <h3 id="type-related-utils">
+                  3.7.1. 类型相关<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=type-related-utils" title="Permalink">🔗</a></span></h3>
+                <pre>inferType (e : Expr) : MetaM Expr         -- 推断 e 的类型
+isDefEq (a b : Expr) : MetaM Bool          -- a 和 b 定义等价？（可能触发 unification）
+whnf (e : Expr) : MetaM Expr               -- 弱头范式
+isProof (e : Expr) : MetaM Bool            -- e 是证明项？
+isProp (e : Expr) : MetaM Bool             -- e 的类型是 Prop？
+</pre></section>
+              <section>
+                <h3 id="structural-analysis-utils">
+                  3.7.2. 结构分析<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=structural-analysis-utils" title="Permalink">🔗</a></span></h3>
+                <pre>Expr.getAppFn (e : Expr) : Expr            -- 获取应用头（剥掉所有 app）
+Expr.getAppArgs (e : Expr) : Array Expr    -- 获取所有参数
+Expr.isApp (e : Expr) : Bool               -- 是 app？
+Expr.isConst (e : Expr) : Bool             -- 是 const？
+Expr.constName (e : Expr) : Name           -- const 的名字（前提：isConst）
+</pre></section>
+              <section>
+                <h3 id="substitution-traversal">
+                  3.7.3. 替换与遍历<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=substitution-traversal" title="Permalink">🔗</a></span></h3>
+                <pre>kabstract (e : Expr) (t : Expr) : MetaM Expr  -- 把 e 中匹配 t 的子项抽象为 bvar（支持 occurrences 控制）
+replace (e : Expr) (f : Expr → Option Expr) : Expr  -- 自定义替换
+Expr.foldlM (init : α) (f : α → Expr → MetaM α) (e : Expr) : MetaM α  -- 遍历
+</pre></section>
+              </section>
+            <section>
+              <h2 id="ch02-summary">
+                3.8. 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch02-summary" title="Permalink">🔗</a></span></h2>
+              <ul>
+                <li>
+                  <p>
+                    <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Expr" data-verso-hover="42">Expr</span></code>：Lean 中一切项的内部表示，树形结构</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>app</code>：函数应用，多参数 = 嵌套 app（curried）</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>bvar</code> / <code>fvar</code>：绑定变量 vs 自由变量；元程序中用 <code>fvar</code></p>
+                  </li>
+                <li>
+                  <p>
+                    <code>match_expr</code> / <code>let_expr</code>：按 head constant 模式匹配，避免手动解 app</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>mkApp*</code>：手动构造表达式；性能敏感时优于 <code>elabTerm</code></p>
+                  </li>
+                <li>
+                  <p>
+                    <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Meta.forallTelescope" data-verso-hover="43">forallTelescope</span></code>：进入 ∀ 类型的标准方式</p>
+                  </li>
+                </ul>
+              </section>
+            <section>
+              <h2 id="ch02-common-failures">
+                3.9. 常见失败模式与 debug<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch02-common-failures" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="failure-match-expr-whnf">
+                  3.9.1. 失败 1：<code>match_expr</code> 匹配不上，明明目标看起来是对的<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-match-expr-whnf" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>match_expr</code> 按 head constant 匹配，但 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Meta.whnf" data-verso-hover="12">whnf</span></code> 没有自动调用。如果目标被 <code>let</code> 或 <code>abbrev</code> 包了一层，需要先 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Meta.whnf" data-verso-hover="12">whnf</span></code>：</p>
+                <pre>-- [示意]
+let target ← whnf (← goal.getType)  -- 先规约
+match_expr target with
+| Eq α lhs rhs =&gt; ...
+| _ =&gt; throwError "not an equality"
+</pre></section>
+              <section>
+                <h3 id="failure-constname-panic">
+                  3.9.2. 失败 2：<code>Expr.constName</code> panic<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-constname-panic" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>constName</code> 在表达式不是 <code>const</code> 时会 panic。安全做法是先检查：</p>
+                <pre>-- [示意]
+if e.isConst then
+  let name := e.constName
+  ...
+</pre><p>
+                  或用 <code>Expr.constName?</code> 返回 <code>Option Name</code>。</p>
+                </section>
+              <section>
+                <h3 id="failure-fvar-leak">
+                  3.9.3. 失败 3：<code>fvar</code> 泄漏出 telescope 回调<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-fvar-leak" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Meta.forallTelescope" data-verso-hover="43">forallTelescope</span></code> 里创建的 <code>fvar</code> 只在回调内有效。如果你把它存到外面的变量里再使用，会得到 <code>unknown free variable</code> 错误。</p>
+                <pre>-- [示意] 错误做法
+let mut leaked : Expr := default
+forallTelescope goalType fun fvars body =&gt; do
+  leaked := fvars[0]!  -- ❌ fvar 会在回调结束后失效
+-- 在这里用 leaked 会出错
+</pre><p>
+                  正确做法：把需要的结果在回调内计算完，只返回不含 <code>fvar</code> 的值。</p>
+                </section>
+              <section>
+                <h3 id="failure-mkapp-arity">
+                  3.9.4. 失败 4：手动 <code>mkApp</code> 参数个数错<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-mkapp-arity" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>mkApp3 (mkConst Eq) a b</code> 会构造出类型错误的表达式（<code>Eq</code> 需要 3 个参数：类型 α、lhs、rhs）。这类错误不会立即 panic，而是在后续 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Meta.isDefEq" data-verso-hover="11">isDefEq</span></code> 或 <code>check</code> 时才报 type mismatch。</p>
+                <p>
+                  <strong>建议</strong>：用 <code>mkEq</code>、<code>mkEqRefl</code> 等高层 API，而不是手动数参数。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch02-exercises">
+                3.10. 练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch02-exercises" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="exercise-2-1">
+                  3.10.1. 练习 2.1（热身）：用 <code>#check @Eq</code> 观察 Expr 结构<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-2-1" title="Permalink">🔗</a></span></h3>
+                <p>
+                  在 VS Code 中运行：</p>
+                <code class="hl lean block" data-lean-context="examples"><span class="has-info information"><span class="hover-container"><span class="hover-info messages"><code class="verso-message information"><span class="text"></span><span class="highlighted"><span class="const token" data-binding="const-Eq" data-verso-hover="29">@</span><span class="const token" data-binding="const-Eq" data-verso-hover="29">Eq</span></span><span class="text"> : </span><span class="highlighted"><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_pp_uniq.2" data-verso-hover="46">α</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="sort token" data-binding="sort-112978979043057490" data-verso-hover="47">Sort u_1</span><span class="unknown token" data-binding="">}</span><span class="inter-text"> </span><span class="unknown token" data-binding="">→</span><span class="inter-text"> </span><span class="var token" data-binding="var-_pp_uniq.2" data-verso-hover="46">α</span><span class="inter-text"> </span><span class="unknown token" data-binding="">→</span><span class="inter-text"> </span><span class="var token" data-binding="var-_pp_uniq.2" data-verso-hover="46">α</span><span class="inter-text"> </span><span class="unknown token" data-binding="">→</span><span class="inter-text"> </span><span class="sort token" data-binding="sort-14430969920833713138" data-verso-hover="48">Prop</span></span></code></span></span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.check-0">#check</span></span><span class="inter-text"> </span><span class="unknown token" data-binding="">@</span><span class="const token" data-binding="const-Eq" data-verso-hover="29">Eq</span></code><code class="hl lean block" data-lean-context="examples"><span class="has-info information"><span class="hover-container"><span class="hover-info messages"><code class="verso-message information"><span class="text"></span><span class="highlighted"><span class="inter-text"></span><span class="const token" data-binding="const-And" data-verso-hover="49">And</span><span class="inter-text"></span></span><span class="text"> : </span><span class="highlighted"><span class="inter-text"></span><span class="sort token" data-binding="sort-14430969920833713138" data-verso-hover="48">Prop</span><span class="inter-text"> </span><span class="unknown token" data-binding="">→</span><span class="inter-text"> </span><span class="sort token" data-binding="sort-14430969920833713138" data-verso-hover="48">Prop</span><span class="inter-text"> </span><span class="unknown token" data-binding="">→</span><span class="inter-text"> </span><span class="sort token" data-binding="sort-14430969920833713138" data-verso-hover="48">Prop</span></span></code></span></span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.check-0">#check</span></span><span class="inter-text"> </span><span class="unknown token" data-binding="">@</span><span class="const token" data-binding="const-And" data-verso-hover="49">And</span></code><code class="hl lean block" data-lean-context="examples"><span class="has-info information"><span class="hover-container"><span class="hover-info messages"><code class="verso-message information"><span class="text"></span><span class="highlighted"><span class="const token" data-binding="const-Eq.refl" data-verso-hover="50">@</span><span class="const token" data-binding="const-Eq.refl" data-verso-hover="50">Eq.refl</span></span><span class="text"> : </span><span class="highlighted"><span class="unknown token" data-binding="">∀</span><span class="inter-text"> </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_pp_uniq.2" data-verso-hover="46">α</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="sort token" data-binding="sort-112978979043057490" data-verso-hover="47">Sort u_1</span><span class="unknown token" data-binding="">}</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_pp_uniq.3" data-verso-hover="51">a</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="var token" data-binding="var-_pp_uniq.2" data-verso-hover="46">α</span><span class="unknown token" data-binding="">),</span><span class="inter-text"> </span><span class="var token" data-binding="var-_pp_uniq.3" data-verso-hover="51">a</span><span class="inter-text"> </span><span class="const token" data-binding="const-Eq" data-verso-hover="29">=</span><span class="inter-text"> </span><span class="var token" data-binding="var-_pp_uniq.3" data-verso-hover="51">a</span></span></code></span></span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.check-0">#check</span></span><span class="inter-text"> </span><span class="unknown token" data-binding="">@</span><span class="const token" data-binding="const-Eq.refl" data-verso-hover="50">Eq.refl</span></code><p>
+                  观察每个常量需要几个参数。这能帮你理解为什么 <code>match_expr</code> 写 <code>Eq α lhs rhs</code>（3 个参数）而 <code>And p q</code>（2 个参数）。</p>
+                </section>
+              <section>
+                <h3 id="exercise-2-2">
+                  3.10.2. 练习 2.2（热身）：打印目标的 head constant<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-2-2" title="Permalink">🔗</a></span></h3>
+                <p>
+                  写一个 tactic，打印当前目标的 head constant 名字：</p>
+                <pre>import Lean
+open Lean Elab Tactic Meta
+</pre><code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.elab-96">elab</span><span class="inter-text"> </span><span class="literal string token" data-binding="" data-verso-hover="52">"show_head"</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Lean.Parser.Category.tactic" data-verso-hover="17">tactic</span><span class="inter-text"> </span><span class="unknown token" data-binding="">=&gt;</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.do-125">do</span><span class="inter-text">
+  </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.doLetArrow-130">let</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.179" data-verso-hover="18">goal</span><span class="inter-text"> </span><span class="unknown token" data-binding="">←</span><span class="inter-text"> </span><span class="const token" data-binding="const-Lean.Elab.Tactic.getMainGoal" data-verso-hover="19">getMainGoal</span><span class="inter-text">
+  </span><span class="var token" data-binding="var-_uniq.179" data-verso-hover="18">goal</span><span class="unknown token" data-binding="">.</span><span class="const token" data-binding="const-Lean.MVarId.withContext" data-verso-hover="53">withContext</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.do-174">do</span><span class="inter-text">
+    </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.doLetArrow-181">let</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.430" data-verso-hover="20">target</span><span class="inter-text"> </span><span class="unknown token" data-binding="">←</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.179" data-verso-hover="18">goal</span><span class="unknown token" data-binding="">.</span><span class="const token" data-binding="const-Lean.MVarId.getType" data-verso-hover="21">getType</span><span class="inter-text">
+    </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.doLet-213">let</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.434" data-verso-hover="20">head</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:=</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.430" data-verso-hover="20">target</span><span class="unknown token" data-binding="">.</span><span class="const token" data-binding="const-Lean.Expr.getAppFn" data-verso-hover="54">getAppFn</span><span class="inter-text">
+    </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.doIf-245">if</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.434" data-verso-hover="20">head</span><span class="unknown token" data-binding="">.</span><span class="const token" data-binding="const-Lean.Expr.isConst" data-verso-hover="55">isConst</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.doIf-245">then</span><span class="inter-text">
+      </span><span class="const token" data-binding="const-Lean.logInfo" data-verso-hover="24">logInfo</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.termM!_-280">m!</span><span class="unknown token" data-binding="">"Head constant: {</span><span class="var token" data-binding="var-_uniq.434" data-verso-hover="20">head</span><span class="unknown token" data-binding="">.</span><span class="const token" data-binding="const-Lean.Expr.constName" data-verso-hover="56">constName</span><span class="unknown token" data-binding="">}"</span><span class="inter-text">
+    </span><span class="keyword token" data-binding="kw-occ-null-320">else</span><span class="inter-text">
+      </span><span class="const token" data-binding="const-Lean.logInfo" data-verso-hover="24">logInfo</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.termM!_-339">m!</span><span class="unknown token" data-binding="">"Head is not a constant: {</span><span class="unknown token" data-binding="">←</span><span class="inter-text"> </span><span class="const token" data-binding="const-Lean.Meta.ppExpr" data-verso-hover="23">ppExpr</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.434" data-verso-hover="20">head</span><span class="unknown token" data-binding="">}"</span><span class="inter-text">
+
+</span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.example-386">example</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.4476" data-verso-hover="25">n</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Nat" data-verso-hover="26">Nat</span><span class="unknown token" data-binding="">)</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.4476" data-verso-hover="25">n</span><span class="inter-text"> </span><span class="unknown token" data-binding="">+</span><span class="inter-text"> </span><span class="typed token" data-binding="" data-verso-hover="25">0</span><span class="inter-text"> </span><span class="unknown token" data-binding="">=</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.4476" data-verso-hover="25">n</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:=</span><span class="inter-text"> </span><span class="tactic"><label for="tactic-state-11181128750585735646-419-421-10"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.byTactic-419" data-verso-hover="27">by</span></label><input type="checkbox" class="tactic-toggle" id="tactic-state-11181128750585735646-419-421-10"><span class="tactic-state"><span class="goal"><span class="hypotheses"><span class="hypothesis"><span class="name"><span class="var token" data-binding="var-_uniq.4476" data-verso-hover="25">n</span></span><span class="colon">:</span><span class="type"><span class="inter-text"></span><span class="const token" data-binding="const-Nat" data-verso-hover="26">ℕ</span><span class="inter-text"></span></span></span></span><span class="conclusion"><span class="prefix">⊢ </span><span class="type"><span class="inter-text"></span><span class="var token" data-binding="var-_uniq.4476" data-verso-hover="25">n</span><span class="inter-text"> </span><span class="const token" data-binding="const-HAdd.hAdd" data-verso-hover="28">+</span><span class="inter-text"> </span><span class="unknown token" data-binding="">0</span><span class="inter-text"> </span><span class="const token" data-binding="const-Eq" data-verso-hover="29">=</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.4476" data-verso-hover="25">n</span></span></span></span></span></span><span class="inter-text">
+  </span><span class="has-info warning"><span class="hover-container"><span class="hover-info messages"><code class="verso-message warning"><span class="text"></span><span class="text">'</span><span class="text">show_head</span><span class="text">' tactic does nothing</span><span class="text">
+</span><span class="text">
+</span><span class="text">Note: </span><span class="text">This linter can be disabled with `set_option </span><span class="text">linter.unusedTactic</span><span class="text"> false`</span></code><code class="verso-message information"><span class="text"></span><span class="text">Head constant: </span><span class="text">Eq</span></code></span></span><span class="tactic"><label for="tactic-state-11181128750585735646-424-433-12"><span class="keyword token" data-binding="kw-occ-tacticShow_head-424">show_head</span></label><input type="checkbox" class="tactic-toggle" id="tactic-state-11181128750585735646-424-433-12"><span class="tactic-state"><span class="goal"><span class="hypotheses"><span class="hypothesis"><span class="name"><span class="var token" data-binding="var-_uniq.4476" data-verso-hover="25">n</span></span><span class="colon">:</span><span class="type"><span class="inter-text"></span><span class="const token" data-binding="const-Nat" data-verso-hover="26">ℕ</span><span class="inter-text"></span></span></span></span><span class="conclusion"><span class="prefix">⊢ </span><span class="type"><span class="inter-text"></span><span class="var token" data-binding="var-_uniq.4476" data-verso-hover="25">n</span><span class="inter-text"> </span><span class="const token" data-binding="const-HAdd.hAdd" data-verso-hover="28">+</span><span class="inter-text"> </span><span class="unknown token" data-binding="">0</span><span class="inter-text"> </span><span class="const token" data-binding="const-Eq" data-verso-hover="29">=</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.4476" data-verso-hover="25">n</span></span></span></span></span></span></span><span class="inter-text">   -- 应输出: Head constant: Eq
+  </span><span class="tactic"><label for="tactic-state-7-470-474-14"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Tactic.simp-470" data-verso-hover="30">simp</span></label><input type="checkbox" class="tactic-toggle" id="tactic-state-7-470-474-14"><span class="tactic-state">All goals completed! 🐙</span></span></code><blockquote><p>
+                    和 Ch1 的 <code>trace_goal</code> 一样，这类只打印信息不改变目标的 tactic 可能触发 "tactic does nothing" 警告，可以忽略。</p>
+                  </blockquote></section>
+              <section>
+                <h3 id="exercise-2-3">
+                  3.10.3. 练习 2.3（debug）：找出 <code>match_expr</code> 失败的原因<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-2-3" title="Permalink">🔗</a></span></h3>
+                <p>
+                  以下 tactic 想匹配 <code>∀ x, P x</code> 形式的目标，但总是走到 <code>_</code> 分支。为什么？</p>
+                <pre>-- 这段代码有逻辑错误
+import Lean
+open Lean Elab Tactic Meta
+
+elab "check_forall" : tactic =&gt; do
+  let goal ← getMainGoal
+  goal.withContext do
+    let target ← goal.getType
+    match_expr target with
+    | ForAll _ _ =&gt; logInfo "Found a forall!"
+    | _ =&gt; logInfo "Not a forall"
+
+example : ∀ n : Nat, n = n := by
+  check_forall   -- 为什么输出 "Not a forall"？
+  intro n; rfl
+</pre><p>
+                  提示：<code>match_expr</code> 匹配的是 head <strong>constant</strong>（如 <code>Eq</code>、<code>And</code>），而 <code>∀</code> 不是一个常量——它是 <code>Expr.forallE</code> 构造子。要检查 <code>∀</code>，应该用普通的 <code>Expr.isForall</code> 或直接 <code>match</code> 构造子。</p>
+                </section>
+              <section>
+                <h3 id="exercise-2-4">
+                  3.10.4. 练习 2.4（综合）：实现 <code>show_structure</code> tactic<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-2-4" title="Permalink">🔗</a></span></h3>
+                <p>
+                  写一个 <code>show_structure</code> tactic，对当前目标做以下分类并打印：</p>
+                <ul>
+                  <li>
+                    <p>
+                      如果是等式 <code>a = b</code>：打印 <code>"Equality: {a} = {b}"</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      如果是合取 <code>P ∧ Q</code>：打印 <code>"Conjunction: {P} ∧ {Q}"</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      如果是 <code>∀</code> 类型：打印 <code>"Forall"</code> 和绑定变量的类型</p>
+                    </li>
+                  <li>
+                    <p>
+                      否则：打印 <code>"Other: {target}"</code></p>
+                    </li>
+                  </ul>
+                <p>
+                  测试用例：</p>
+                <pre>-- [可运行] 实现 show_structure 后测试
+example : 1 + 1 = 2 := by show_structure; norm_num
+example : True ∧ True := by show_structure; exact ⟨trivial, trivial⟩
+example : ∀ n : Nat, n = n := by show_structure; intro n; rfl
+example : True := by show_structure; trivial
+</pre><p>
+                  下一章：用 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Expr" data-verso-hover="42">Expr</span></code> 和 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Elab.Tactic.TacticM" data-verso-hover="14">TacticM</span></code> 写出你的第一个有用的 tactic。
+</p>
+                </section>
+              </section>
             </section>
           <nav class="prev-next-buttons">
-            <a class="local-button active" href="Ch01MetaprogrammingModel/______/#ch01-exercises" rel="prev" title="2.9. 练习"><span class="arrow">←</span><span class="where">2.9. 练习</span></a><a class="local-button active" href="Ch02Expr/Expr-_________/#what-is-expr" rel="next" title="3.1. Expr 是什么"><span class="where">3.1. Expr 是什么</span><span class="arrow">→</span></a></nav>
+            <a class="local-button active" href="Ch01MetaprogrammingModel/#ch01-metaprogramming-model" rel="prev" title="2. 第一章 Lean 4 元编程模型"><span class="arrow">←</span><span class="where">2. 第一章 Lean 4 元编程模型</span></a><a class="local-button active" href="Ch03FirstTactic/#ch03-first-tactic" rel="next" title="4. 第三章 编写你的第一个 Tactic"><span class="where">4. 第三章 编写你的第一个 Tactic</span><span class="arrow">→</span></a></nav>
           </div>
         </main></div>
     </body>

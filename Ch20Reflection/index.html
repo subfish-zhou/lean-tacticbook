@@ -949,14 +949,14 @@ window.onload = () => {
             <div class="split-toc">
               <div class="title">
                 <label for="--verso-manual-toc-ch20-reflection" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch20-reflection" checked="checked"></label><span class="number">21.</span> <span class="current"><a href="Ch20Reflection/#ch20-reflection">第二十章 反射证明模式</a></span></div>
-              <table><tr class="numbered"><td class="num">21.1.</td><td><a href="Ch20Reflection/20___1-_____________________/#reflection-core-idea">20.1 反射的核心思想</a></td></tr><tr class="numbered"><td class="num">21.2.</td><td><a href="Ch20Reflection/20___2-____________________________________/#bool-tautology-example">20.2 一个最小例子：布尔重言式</a></td></tr><tr class="numbered"><td class="num">21.3.</td><td><a href="Ch20Reflection/20___3-____________________________________/#integer-expr-equivalence">20.3 完整示例：整数表达式等价</a></td></tr><tr class="numbered"><td class="num">21.4.</td><td><a href="Ch20Reflection/20___4-________________________quote/#reflection-quote">20.4 反射的关键步骤：quote</a></td></tr><tr class="numbered"><td class="num">21.5.</td><td><a href="Ch20Reflection/20___5-decide___-native_decide--___-Decidable/#decide-native-decide">20.5 decide、<code>native_decide</code> 与 Decidable</a></td></tr><tr class="numbered"><td class="num">21.6.</td><td><a href="Ch20Reflection/20___6-______-vs-____________/#reflection-vs-stepwise">20.6 反射 vs 逐步构造</a></td></tr><tr class="numbered"><td class="num">21.7.</td><td><a href="Ch20Reflection/20___7-____________/#reflection-failure-modes">20.7 失败模式</a></td></tr><tr class="numbered"><td class="num">21.8.</td><td><a href="Ch20Reflection/20___8-__________________/#reflection-design-checklist">20.8 设计检查清单</a></td></tr><tr class="numbered"><td class="num">21.9.</td><td><a href="Ch20Reflection/20___9-____________________________________/#reflection-takeaways">20.9 落地总结：本章的核心收获</a></td></tr><tr class="numbered"><td class="num">21.10.</td><td><a href="Ch20Reflection/20___10-______/#reflection-exercises">20.10 练习</a></td></tr><tr class="numbered"><td class="num">21.11.</td><td><a href="Ch20Reflection/20___11-______/#reflection-summary">20.11 小结</a></td></tr></table></div>
+              <table><tr class="numbered"><td class="num">21.1.</td><td><a href="Ch20Reflection/#reflection-core-idea">20.1 反射的核心思想</a></td></tr><tr class="numbered"><td class="num">21.2.</td><td><a href="Ch20Reflection/#bool-tautology-example">20.2 一个最小例子：布尔重言式</a></td></tr><tr class="numbered"><td class="num">21.3.</td><td><a href="Ch20Reflection/#integer-expr-equivalence">20.3 完整示例：整数表达式等价</a></td></tr><tr class="numbered"><td class="num">21.4.</td><td><a href="Ch20Reflection/#reflection-quote">20.4 反射的关键步骤：quote</a></td></tr><tr class="numbered"><td class="num">21.5.</td><td><a href="Ch20Reflection/#decide-native-decide">20.5 decide、<code>native_decide</code> 与 Decidable</a></td></tr><tr class="numbered"><td class="num">21.6.</td><td><a href="Ch20Reflection/#reflection-vs-stepwise">20.6 反射 vs 逐步构造</a></td></tr><tr class="numbered"><td class="num">21.7.</td><td><a href="Ch20Reflection/#reflection-failure-modes">20.7 失败模式</a></td></tr><tr class="numbered"><td class="num">21.8.</td><td><a href="Ch20Reflection/#reflection-design-checklist">20.8 设计检查清单</a></td></tr><tr class="numbered"><td class="num">21.9.</td><td><a href="Ch20Reflection/#reflection-takeaways">20.9 落地总结：本章的核心收获</a></td></tr><tr class="numbered"><td class="num">21.10.</td><td><a href="Ch20Reflection/#reflection-exercises">20.10 练习</a></td></tr><tr class="numbered"><td class="num">21.11.</td><td><a href="Ch20Reflection/#reflection-summary">20.11 小结</a></td></tr></table></div>
             </div>
           </div>
         <div class="last"></div>
         </nav>
       <main><div class="content-wrapper">
           <nav class="prev-next-buttons">
-            <a class="local-button active" href="Ch19DesignYourOwn/19___12-______/#design-summary" rel="prev" title="20.12. 19.12 小结"><span class="arrow">←</span><span class="where">20.12. 19.12 小结</span></a><a class="local-button active" href="Ch20Reflection/20___1-_____________________/#reflection-core-idea" rel="next" title="21.1. 20.1 反射的核心思想"><span class="where">21.1. 20.1 反射的核心思想</span><span class="arrow">→</span></a></nav>
+            <a class="local-button active" href="Ch19DesignYourOwn/#ch19-design-your-own" rel="prev" title="20. 第十九章 设计你自己的领域自动化"><span class="arrow">←</span><span class="where">20. 第十九章 设计你自己的领域自动化</span></a><a class="local-button active" href="Ch21Performance/#ch21-performance" rel="next" title="22. 第二十一章 性能工程"><span class="where">22. 第二十一章 性能工程</span><span class="arrow">→</span></a></nav>
           <section>
             <h1>
               21. 第二十章 反射证明模式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch20-reflection" title="Permalink">🔗</a></span></h1>
@@ -978,33 +978,450 @@ window.onload = () => {
             <p>
               反射的核心洞察：<strong>如果你能写一个可计算的判定函数，
 就不需要手动构造复杂的证明项——让 Lean 的计算引擎替你验证</strong>。</p>
-            <ol class="section-toc">
-              <li>
-                <a href="Ch20Reflection/20___1-_____________________/#reflection-core-idea"><span class="number">21.1.</span> 20.1 反射的核心思想</a></li>
-              <li>
-                <a href="Ch20Reflection/20___2-____________________________________/#bool-tautology-example"><span class="number">21.2.</span> 20.2 一个最小例子：布尔重言式</a></li>
-              <li>
-                <a href="Ch20Reflection/20___3-____________________________________/#integer-expr-equivalence"><span class="number">21.3.</span> 20.3 完整示例：整数表达式等价</a></li>
-              <li>
-                <a href="Ch20Reflection/20___4-________________________quote/#reflection-quote"><span class="number">21.4.</span> 20.4 反射的关键步骤：quote</a></li>
-              <li>
-                <a href="Ch20Reflection/20___5-decide___-native_decide--___-Decidable/#decide-native-decide"><span class="number">21.5.</span> 20.5 decide、<code>native_decide</code> 与 Decidable</a></li>
-              <li>
-                <a href="Ch20Reflection/20___6-______-vs-____________/#reflection-vs-stepwise"><span class="number">21.6.</span> 20.6 反射 vs 逐步构造</a></li>
-              <li>
-                <a href="Ch20Reflection/20___7-____________/#reflection-failure-modes"><span class="number">21.7.</span> 20.7 失败模式</a></li>
-              <li>
-                <a href="Ch20Reflection/20___8-__________________/#reflection-design-checklist"><span class="number">21.8.</span> 20.8 设计检查清单</a></li>
-              <li>
-                <a href="Ch20Reflection/20___9-____________________________________/#reflection-takeaways"><span class="number">21.9.</span> 20.9 落地总结：本章的核心收获</a></li>
-              <li>
-                <a href="Ch20Reflection/20___10-______/#reflection-exercises"><span class="number">21.10.</span> 20.10 练习</a></li>
-              <li>
-                <a href="Ch20Reflection/20___11-______/#reflection-summary"><span class="number">21.11.</span> 20.11 小结</a></li>
-              </ol>
+            <section>
+              <h2 id="reflection-core-idea">
+                21.1. 20.1 反射的核心思想<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=reflection-core-idea" title="Permalink">🔗</a></span></h2>
+              <p>
+                传统 tactic 在 <code>MetaM</code> 中<strong>手动构造证明项</strong>——
+拆解目标、匹配引理、用 <code>mkApp</code> 拼装，每一步都要处理
+universe、typeclass、unification 等细节。反射走完全不同的路：</p>
+              <pre>传统方式: 目标 → 在 MetaM 中逐步构造证明项 → 内核检查
+反射方式: 目标 → 编码为数据 → 计算出 true → 正确性引理 → QED
+</pre><p>
+                反射把<strong>证明的复杂性转移到正确性引理的一次性证明上</strong>——
+一旦正确性引理证毕，每次使用只需做一次计算。</p>
+              <section>
+                <h3 id="four-step-pattern">
+                  21.1.1. 四步模式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=four-step-pattern" title="Permalink">🔗</a></span></h3>
+                <p>
+                  几乎所有反射 tactic 都遵循同一套模式：</p>
+                <pre>❶ 定义语法（syntax）：  用归纳类型表示表达式
+❷ 定义语义（semantics）：语法 → 实际数学对象（解释函数）
+❸ 范式化（normalization）：把语法化简为范式
+❹ 正确性引理（soundness）：范式化保持语义
+</pre><p>
+                  使用时：把 Lean 表达式 <strong>quote</strong> 为语法对象 → 范式化 →
+用 <code>decide</code> 验证范式 → 用正确性引理得到原始命题的证明。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="bool-tautology-example">
+                21.2. 20.2 一个最小例子：布尔重言式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=bool-tautology-example" title="Permalink">🔗</a></span></h2>
+              <pre>-- [示意] ❶ 语法
+inductive BExpr
+  | var (i : Fin n)
+  | true_ | false_
+  | and (a b : BExpr)
+  | or  (a b : BExpr)
+  | not (a : BExpr)
+
+-- [示意] ❷ 语义——给定变量赋值，求值为 Bool
+def BExpr.eval (env : Fin n → Bool) : BExpr → Bool
+  | .var i     =&gt; env i
+  | .true_     =&gt; true
+  | .false_    =&gt; false
+  | .and a b   =&gt; a.eval env && b.eval env
+  | .or  a b   =&gt; a.eval env || b.eval env
+  | .not a     =&gt; !(a.eval env)
+
+-- [示意] ❸ 判定——穷举所有赋值
+def BExpr.isTaut (e : BExpr) : Bool :=
+  (Finset.univ).forall fun env =&gt; e.eval env
+  -- ▸ 对所有可能的 env 检查 eval 返回 true
+
+-- [示意] ❹ 正确性引理
+theorem isTaut_sound (e : BExpr) (h : e.isTaut = true) :
+    ∀ env, e.eval env = true := by
+  simp [BExpr.isTaut, Finset.forall_mem_univ] at h; exact h
+</pre><p>
+                使用时：要证 <code>p ∨ ¬p</code>，把它反射为 <code>BExpr.or (.var 0) (.not (.var 0))</code>，
+计算 <code>isTaut</code> 得 <code>true</code>，<code>isTaut_sound</code> 给出证明。
+<strong>证明的复杂度从"构造项"变成了"执行函数"</strong>——
+<code>isTaut_sound</code> 只需证明一次，之后每个重言式都是纯计算。</p>
+              </section>
+            <section>
+              <h2 id="integer-expr-equivalence">
+                21.3. 20.3 完整示例：整数表达式等价<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=integer-expr-equivalence" title="Permalink">🔗</a></span></h2>
+              <p>
+                <strong>扩展阅读</strong>：本节展示更接近实际 tactic 规模的设计。
+初次阅读可浏览结构，不必逐行理解——核心模式已在 §20.2 中完整呈现。</p>
+              <p>
+                目标：自动判定整数多项式表达式等价——更接近实际 tactic 的规模。</p>
+              <section>
+                <h3 id="iexpr-syntax-semantics">
+                  21.3.1. ❶ 语法 + ❷ 语义<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=iexpr-syntax-semantics" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+inductive IExpr
+  | lit (n : ℤ)          -- 字面量
+  | var (i : ℕ)          -- 第 i 个变量
+  | add (a b : IExpr)
+  | mul (a b : IExpr)
+  | neg (a : IExpr)
+
+abbrev IEnv := ℕ → ℤ    -- 环境：变量赋值
+
+def IExpr.denote (env : IEnv) : IExpr → ℤ
+  | .lit n     =&gt; n
+  | .var i     =&gt; env i
+  | .add a b   =&gt; a.denote env + b.denote env
+  | .mul a b   =&gt; a.denote env * b.denote env
+  | .neg a     =&gt; -(a.denote env)
+</pre></section>
+              <section>
+                <h3 id="iexpr-normalization">
+                  21.3.2. ❸ 范式化<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=iexpr-normalization" title="Permalink">🔗</a></span></h3>
+                <p>
+                  选 Horner 形式（<code>a * x + b</code> 的递归表示）作为范式：</p>
+                <pre>-- [示意] Horner Normal Form
+inductive HNF
+  | const (n : ℤ)                        -- 常数
+  | horner (p : HNF) (i : ℕ) (q : HNF)  -- p * x_i + q
+
+def IExpr.toHNF : IExpr → HNF := ...     -- ❶ 转换算法
+def HNF.denote (env : IEnv) : HNF → ℤ := ... -- ❷ 范式的语义
+instance : DecidableEq HNF := ...        -- ❸ 结构相等，可判定
+</pre><ul>
+                  <li>
+                    <p>
+                      <strong>❶</strong> 转换算法把 <code>IExpr</code> 递归化为 Horner 范式，合并同类项。</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>❸</strong> <code>DecidableEq</code> 使得 <code>decide</code> 可以比较两个范式。</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="iexpr-soundness">
+                  21.3.3. ❹ 正确性引理<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=iexpr-soundness" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意] 核心：范式化保持语义
+theorem toHNF_sound (e : IExpr) (env : IEnv) :
+    e.toHNF.denote env = e.denote env := by
+  induction e with                       -- 对语法结构归纳
+  | lit n =&gt; simp [IExpr.toHNF, HNF.denote, IExpr.denote]
+  | add a b iha ihb =&gt;
+    simp [*, IExpr.toHNF, HNF.denote, IExpr.denote]; ring
+  | mul a b iha ihb =&gt;
+    simp [*, IExpr.toHNF, HNF.denote, IExpr.denote]; ring
+  | _ =&gt; simp [*, IExpr.toHNF, HNF.denote, IExpr.denote]; ring
+
+-- 推论：范式相等 → 语义相等（tactic 实际使用的引理）
+theorem eq_of_toHNF_eq (e1 e2 : IExpr) (env : IEnv)
+    (h : e1.toHNF = e2.toHNF) :
+    e1.denote env = e2.denote env := by
+  have := toHNF_sound e1 env
+  have := toHNF_sound e2 env
+  rw [h] at *; linarith
+</pre><p>
+                  正确性引理只需证明一次——之后每个等式判定都是纯计算。</p>
+                </section>
+              <section>
+                <h3 id="iexpr-assemble-tactic">
+                  21.3.4. 组装 tactic<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=iexpr-assemble-tactic" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意] MetaM 端的工作极少
+elab "int_ring" : tactic =&gt; do
+  let goal ← getMainTarget
+  -- 1. 解析目标 e1 = e2
+  -- 2. quote: 把 e1, e2 反射为 IExpr 值
+  -- 3. 构造 e1.toHNF = e2.toHNF 的 decide 证明
+  -- 4. 用 eq_of_toHNF_eq 得到原始等式的证明
+  sorry -- 完整实现需要 quote 机制，见 §20.4
+</pre><p>
+                  <strong>纯反射方案</strong>在 MetaM 中几乎不做计算，所有验证交给内核。
+实现简单但性能受限——见 §20.6。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="reflection-quote">
+                21.4. 20.4 反射的关键步骤：quote<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=reflection-quote" title="Permalink">🔗</a></span></h2>
+              <p>
+                <strong>概念说明</strong>：本节介绍 quote 的设计思路，而非要求你手写完整的 quote 函数。
+理解"要把 <code>Expr</code> 编码成内部语法树"这一概念即可。</p>
+              <p>
+                <strong>Quote</strong>（反射/引用）把 Lean 的 <code>Expr</code> 编码为归纳类型的值。
+其核心逻辑是模式匹配目标表达式，递归编码为语法类型：</p>
+              <pre>quote 的工作流程（以 IExpr 为例）：
+  ❶ 遇到整数字面量 → IExpr.lit n
+  ❷ 遇到加法 a + b  → IExpr.add (quote a) (quote b)
+  ❸ 遇到乘法 a * b  → IExpr.mul (quote a) (quote b)
+  ❹ 遇到未知表达式  → IExpr.var i（分配一个新变量编号）
+</pre><p>
+                实现上，quote 函数在 <code>MetaM</code> 中执行，接收 Lean 的 <code>Expr</code> 并输出
+归纳类型的值（同样是 <code>Expr</code>），同时维护一个变量映射表
+记录已见过的不透明子表达式。</p>
+              <p>
+                quote 的覆盖范围<strong>直接决定反射 tactic 的能力边界</strong>——
+不能识别的构造会被当作不透明变量，范式化无法深入分析。</p>
+              </section>
+            <section>
+              <h2 id="decide-native-decide">
+                21.5. 20.5 decide、<code>native_decide</code> 与 Decidable<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=decide-native-decide" title="Permalink">🔗</a></span></h2>
+              <p>
+                反射的最后一步是验证计算结果。这依赖 <code>Decidable</code> 类型类和两种执行机制。</p>
+              <section>
+                <h3 id="decidable-role">
+                  21.5.1. Decidable 的角色<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=decidable-role" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意] Decidable 的定义
+inductive Decidable (p : Prop) where
+  | isTrue  (h : p)     -- p 成立，附带证明
+  | isFalse (h : ¬p)    -- p 不成立，附带反证
+
+-- decide 的工作原理：
+-- 1. 找到 Decidable p 的实例
+-- 2. 内核对该实例做 whnf 归约
+-- 3. 归约到 isTrue h → h 就是证明；归约到 isFalse _ → 失败
+</pre><p>
+                  反射的本质是<strong>把不一定可判定的问题转化为可判定的问题</strong>：
+原始目标 <code>e1.denote env = e2.denote env</code> 可能不可判定，
+但反射后的 <code>e1.toHNF = e2.toHNF</code>（结构相等）一定是 <code>DecidableEq</code>。
+正确性引理桥接两者。</p>
+                </section>
+              <section>
+                <h3 id="decide-vs-native-decide">
+                  21.5.2. decide vs <code>native_decide</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=decide-vs-native-decide" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+example : (3 + 4 : ℕ) = 7 := by decide
+  -- ▸ 内核归约 3 + 4 得到 7，然后 rfl——慢但可信度最高
+
+example : (10 ^ 20 + 1 : ℕ) ≠ 10 ^ 20 := by native_decide
+  -- ▸ 编译为原生代码执行——快但信任编译器
+</pre><p>
+                  | | <code>decide</code> | <code>native_decide</code> |
+|---|---|---|
+| 执行方式 | 内核归约（解释执行） | 编译为原生代码 |
+| 速度 | 慢 | 快（几个数量级） |
+| 可信度 | 最高（内核检查每一步） | 较低（信任编译器） |
+| 适用规模 | 小实例（&lt; 1000 步） | 大实例 |
+| Mathlib 接受度 | 总是接受 | 谨慎使用 |</p>
+                <p>
+                  <strong>经验法则</strong>：先试 <code>decide</code>；超时则换 <code>native_decide</code>。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="reflection-vs-stepwise">
+                21.6. 20.6 反射 vs 逐步构造<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=reflection-vs-stepwise" title="Permalink">🔗</a></span></h2>
+              <p>
+                这是设计反射 tactic 时最重要的决策。</p>
+              <section>
+                <h3 id="pure-reflection">
+                  21.6.1. 纯反射<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=pure-reflection" title="Permalink">🔗</a></span></h3>
+                <pre>Lean Expr → quote → 内部表示 → 范式化（内核计算）→ decide
+</pre><p>
+                  <strong>优点</strong>：实现简单——MetaM 端只做 quote，验证全在内核中。
+<strong>缺点</strong>：内核要执行范式化算法——对大表达式极慢。</p>
+                </section>
+              <section>
+                <h3 id="stepwise-construction">
+                  21.6.2. 逐步构造<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=stepwise-construction" title="Permalink">🔗</a></span></h3>
+                <pre>Lean Expr → 解析 → MetaM 中运行算法 → 逐步用 mkApp 构造证明项
+</pre><p>
+                  <strong>优点</strong>：MetaM 中的计算是编译后的代码，速度快。
+<strong>缺点</strong>：每一步变换都要构造对应的证明项，实现复杂。</p>
+                </section>
+              <section>
+                <h3 id="hybrid-approach">
+                  21.6.3. 混合方案（实际选择）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=hybrid-approach" title="Permalink">🔗</a></span></h3>
+                <p>
+                  真实 tactic 通常<strong>混合两种方案</strong>——在 MetaM 中做范式化（快），
+用反射验证范式等价（简单）：</p>
+                <pre>-- [示意] ring 的实际策略（简化版）
+-- ❶ MetaM 中范式化为 Horner 形式（编译后的代码，快）
+-- ❷ 反射验证：范式 = 原始表达式（正确性引理 + rfl）
+-- ❸ MetaM 中比较两个范式（结构相等）
+-- ❹ Eq.trans 串联：lhs = norm = rhs
+</pre><p>
+                  <code>norm_num</code>（第十章）也遵循这个模式：在 MetaM 中做数值计算，
+用反射验证结果。对素性测试等复杂运算，
+把 <code>Nat.Prime 37</code> 转化为可计算的判定函数。</p>
+                <p>
+                  | | 纯反射 | 逐步构造 | 混合 |
+|---|---|---|---|
+| 实现难度 | 低 | 高 | 中 |
+| 性能 | 慢（内核计算） | 快 | 快 |
+| 可信度 | 高 | 中（依赖实现） | 高 |
+| 典型代表 | 教学示例 | — | <code>ring</code>、<code>norm_num</code> |</p>
+                <p>
+                  <strong>设计建议</strong>：原型阶段用纯反射（快速验证算法正确性），
+性能不足时迁移到混合方案。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="reflection-failure-modes">
+                21.7. 20.7 失败模式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=reflection-failure-modes" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="failure-decidable-missing">
+                  21.7.1. 失败 1：Decidable 实例缺失<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-decidable-missing" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+-- ✗ 函数外延性不可判定
+example : (fun x : ℕ =&gt; x + 1) = (fun x =&gt; 1 + x) := by decide
+  -- 错误：failed to synthesize Decidable instance
+  -- ✓ 修复：用 funext 和 omega
+</pre><p>
+                  <code>decide</code> 只能处理有 <code>Decidable</code> 实例的命题。</p>
+                </section>
+              <section>
+                <h3 id="ch20-failure-kernel-timeout">
+                  21.7.2. 失败 2：内核计算超时<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch20-failure-kernel-timeout" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+-- ✗ decide 在大实例上超时
+example : (List.range 10000).length = 10000 := by decide
+  -- 内核展开 10000 次 List.cons → 超时
+  -- ✓ 修复 1：native_decide
+  -- ✓ 修复 2：simp [List.length_range]（引理推理优于暴力计算）
+</pre><p>
+                  <strong>优先选择引理推理而非暴力计算</strong>。</p>
+                </section>
+              <section>
+                <h3 id="failure-incomplete-quote">
+                  21.7.3. 失败 3：quote 不完整<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-incomplete-quote" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+-- ✗ quote 无法识别 max 函数，把 max a b 当作不透明变量
+-- 结果：max a b + 0 和 max a b 的范式不同
+-- ✓ 修复：扩展 quote 识别 max，或先 simp 消除 + 0
+</pre><p>
+                  遇到"应该能证但不能证"，首先检查 quote 是否识别了所有构造。</p>
+                </section>
+              <section>
+                <h3 id="failure-native-decide-trust">
+                  21.7.4. 失败 4：<code>native_decide</code> 的信任问题<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-native-decide-trust" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+-- native_decide 的证明不被内核检查计算过程
+-- 如果编译器有 bug，可能产生错误的证明
+-- ✓ 建议：开发阶段用 native_decide 加速，最终验证用 decide
+</pre><p>
+                  <code>native_decide</code> 的可信基础包括 Lean 编译器，
+比纯 <code>decide</code>（只信任内核）多一层信任。Mathlib 对其使用有严格限制。</p>
+                </section>
+              <section>
+                <h3 id="failure-normalization-incomplete">
+                  21.7.5. 失败 5：范式化不完备<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-normalization-incomplete" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+-- ✗ 范式化不处理除法：(a * b) / b 和 a 的范式不同
+-- ✓ 这不是 bug——范式化的运算集合是有限的
+-- ▸ 设计时明确边界：范式化能处理什么运算？
+</pre></section>
+              </section>
+            <section>
+              <h2 id="reflection-design-checklist">
+                21.8. 20.8 设计检查清单<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=reflection-design-checklist" title="Permalink">🔗</a></span></h2>
+              <p>
+                动手前逐项回答：</p>
+              <p>
+                | 检查项 | 问题 |
+|--------|------|
+| <strong>判定性</strong> | 问题可判定吗？能写出 <code>→ Bool</code> 的函数吗？ |
+| <strong>范式</strong> | 用什么范式？范式相等是否容易判定？ |
+| <strong>正确性</strong> | 范式化保持语义的证明是否可行？（最难的部分） |
+| <strong>quote 范围</strong> | 需要识别哪些构造？不识别的怎么处理？ |
+| <strong>性能</strong> | <code>decide</code> 够用还是需要 <code>native_decide</code> / 混合方案？ |
+| <strong>边界</strong> | 超出能力范围时，错误信息如何提示用户？ |</p>
+              <p>
+                <strong>正确性引理是整个开发中最耗时的部分</strong>——
+先用小例子验证范式化算法，再投入大量时间写证明。</p>
+              </section>
+            <section>
+              <h2 id="reflection-takeaways">
+                21.9. 20.9 落地总结：本章的核心收获<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=reflection-takeaways" title="Permalink">🔗</a></span></h2>
+              <p>
+                读完本章，你应该带走三件事：</p>
+              <ol start="1">
+                <li>
+                  <p>
+                    <strong>四步模式是反射的骨架</strong>（§20.1–20.2）：语法 → 语义 → 范式化 → 正确性引理。
+   布尔重言式例子（§20.2）已完整展示了这个模式——如果你只精读一节，读这节。</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>设计决策比实现细节更重要</strong>（§20.6）：纯反射 vs 逐步构造 vs 混合方案，
+   决定了 tactic 的性能和实现复杂度。实际项目几乎总是走混合路线。</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>quote 和范式化是能力边界</strong>（§20.4, §20.7）：反射 tactic 能证什么、不能证什么，
+   取决于 quote 识别了哪些构造、范式化覆盖了哪些运算。</p>
+                  </li>
+                </ol>
+              <p>
+                其余内容（整式反射的完整骨架、<code>Decidable</code> 的内部机制、<code>quoteIExpr</code> 的实现细节）
+属于进阶参考——当你真正要实现反射 tactic 时再回来查阅。</p>
+              </section>
+            <section>
+              <h2 id="reflection-exercises">
+                21.10. 20.10 练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=reflection-exercises" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="exercise-identify-four-steps">
+                  21.10.1. 练习 1（基础 · §20.2 复习）：识别四步模式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-identify-four-steps" title="Permalink">🔗</a></span></h3>
+                <p>
+                  标出以下代码中哪些部分对应 ❶语法、❷语义、❸范式化、❹正确性：</p>
+                <pre>-- [示意]
+inductive PExpr                    -- (?)
+  | var (i : Nat)
+  | add (a b : PExpr)
+
+def PExpr.eval (env : Nat → ℕ) : PExpr → ℕ     -- (?)
+  | .var i =&gt; env i
+  | .add a b =&gt; a.eval env + b.eval env
+
+def PExpr.sort : PExpr → PExpr := ...            -- (?)
+
+theorem sort_sound (e : PExpr) (env : Nat → ℕ) : -- (?)
+    (e.sort).eval env = e.eval env := ...
+</pre></section>
+              <section>
+                <h3 id="exercise-choose-approach">
+                  21.10.2. 练习 2（设计）：选择反射 vs 逐步构造<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-choose-approach" title="Permalink">🔗</a></span></h3>
+                <p>
+                  对以下场景，判断应用纯反射、逐步构造还是混合方案，说明理由：</p>
+                <pre>(a) 验证 8-bit 位运算等式（如 x &&& (x ||| y) = x）
+    变量最多 3 个，结果空间 2^24 = 16M。
+
+(b) 验证 ℝ 上的多项式恒等式，变量最多 20 个。
+
+(c) 验证有限群的元素阶，群的阶 ≤ 100。
+</pre><p>
+                  <strong>提示</strong>：(a) 穷举可行但边界——<code>native_decide</code> 可能需要；
+(b) 穷举不可行，必须范式化；(c) 穷举可行，纯 <code>decide</code> 可能够用。</p>
+                </section>
+              <section>
+                <h3 id="exercise-design-soundness">
+                  21.10.3. 练习 3（进阶）：设计正确性引理<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-design-soundness" title="Permalink">🔗</a></span></h3>
+                <p>
+                  为"列表排序等价性"反射设计正确性引理的<strong>陈述</strong>（不需要证明）：</p>
+                <pre>-- [示意] 判定两个列表是否是同一个 multiset
+-- 语法：List ℕ
+-- 范式化：排序
+-- 判定：排序后结构相等
+-- 请写出 sort_perm_sound 的类型签名：
+-- theorem sort_perm_sound : ???
+</pre><p>
+                  <strong>提示</strong>：<code>List.sort l₁ = List.sort l₂ → l₁ ~ l₂</code>（<code>~</code> 是 <code>List.Perm</code>）。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="reflection-summary">
+                21.11. 20.11 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=reflection-summary" title="Permalink">🔗</a></span></h2>
+              <p>
+                | 概念 | 关键点 |
+|------|--------|
+| 反射核心思想 | 命题 → 可计算数据 → 计算验证 → 正确性引理桥接 |
+| 四步模式 | 语法 → 语义 → 范式化 → 正确性引理 |
+| quote | 把 Lean Expr 编码为归纳类型值；覆盖范围决定能力边界 |
+| <code>decide</code> | 内核归约，慢但可信度最高 |
+| <code>native_decide</code> | 编译执行，快但信任编译器 |
+| 纯反射 vs 混合 | 原型用纯反射，生产用混合（MetaM 范式化 + 反射验证） |
+| 正确性引理 | 最耗时的部分——先用小例子验证算法再投入证明 |
+| 相关章节 | <code>ring</code>（第七章）、<code>norm_num</code>（第十章）、<code>decide</code>（第十三章） |
+| 主要陷阱 | Decidable 缺失、内核超时、quote 不完整、范式化不完备 |</p>
+              <p>
+                <strong>一句话总结</strong>：反射把"构造证明的复杂性"转移为"一次性证明正确性引理的复杂性"——
+如果你的问题可判定，反射几乎总是比逐步构造更简单的起点。</p>
+              <p>
+                下一章讨论性能工程——当 <code>decide</code> 超时、证明项过大时如何诊断和优化。
+</p>
+              </section>
             </section>
           <nav class="prev-next-buttons">
-            <a class="local-button active" href="Ch19DesignYourOwn/19___12-______/#design-summary" rel="prev" title="20.12. 19.12 小结"><span class="arrow">←</span><span class="where">20.12. 19.12 小结</span></a><a class="local-button active" href="Ch20Reflection/20___1-_____________________/#reflection-core-idea" rel="next" title="21.1. 20.1 反射的核心思想"><span class="where">21.1. 20.1 反射的核心思想</span><span class="arrow">→</span></a></nav>
+            <a class="local-button active" href="Ch19DesignYourOwn/#ch19-design-your-own" rel="prev" title="20. 第十九章 设计你自己的领域自动化"><span class="arrow">←</span><span class="where">20. 第十九章 设计你自己的领域自动化</span></a><a class="local-button active" href="Ch21Performance/#ch21-performance" rel="next" title="22. 第二十一章 性能工程"><span class="where">22. 第二十一章 性能工程</span><span class="arrow">→</span></a></nav>
           </div>
         </main></div>
     </body>

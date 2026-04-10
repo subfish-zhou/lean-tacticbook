@@ -949,46 +949,503 @@ window.onload = () => {
             <div class="split-toc">
               <div class="title">
                 <label for="--verso-manual-toc-ch04-goal-management" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch04-goal-management" checked="checked"></label><span class="number">5.</span> <span class="current"><a href="Ch04GoalManagement/#ch04-goal-management">第四章 目标管理</a></span></div>
-              <table><tr class="numbered"><td class="num">5.1.</td><td><a href="Ch04GoalManagement/_______________/#recap-and-intro">回顾与导引</a></td></tr><tr class="numbered"><td class="num">5.2.</td><td><a href="Ch04GoalManagement/4___1-________________________/#multi-goal-mental-model">4.1 多目标的心智模型</a></td></tr><tr class="numbered"><td class="num">5.3.</td><td><a href="Ch04GoalManagement/4___2-__________________/#goal-list-operations">4.2 目标列表操作</a></td></tr><tr class="numbered"><td class="num">5.4.</td><td><a href="Ch04GoalManagement/4___3-_________Focus___/#focus">4.3 聚焦（Focus）</a></td></tr><tr class="numbered"><td class="num">5.5.</td><td><a href="Ch04GoalManagement/4___4-_____________________/#save-restore-state">4.4 保存与恢复状态</a></td></tr><tr class="numbered"><td class="num">5.6.</td><td><a href="Ch04GoalManagement/4___5-____________-tactic/#calling-other-tactics">4.5 调用其他 tactic</a></td></tr><tr class="numbered"><td class="num">5.7.</td><td><a href="Ch04GoalManagement/4___6--withMainContext--______/#with-main-context">4.6 <code>withMainContext</code> 模式</a></td></tr><tr class="numbered"><td class="num">5.8.</td><td><a href="Ch04GoalManagement/4___7-___________________________/#common-failures-debugging">4.7 常见失败模式与调试</a></td></tr><tr class="numbered"><td class="num">5.9.</td><td><a href="Ch04GoalManagement/4___8-______/#exercises">4.8 练习</a></td></tr><tr class="numbered"><td class="num">5.10.</td><td><a href="Ch04GoalManagement/4___9-______/#summary">4.9 小结</a></td></tr><tr class="numbered"><td class="num">5.11.</td><td><a href="Ch04GoalManagement/_______________/#next-chapter-preview">下一章预告</a></td></tr></table></div>
+              <table><tr class="numbered"><td class="num">5.1.</td><td><a href="Ch04GoalManagement/#recap-and-intro">回顾与导引</a></td></tr><tr class="numbered"><td class="num">5.2.</td><td><a href="Ch04GoalManagement/#multi-goal-mental-model">4.1 多目标的心智模型</a></td></tr><tr class="numbered"><td class="num">5.3.</td><td><a href="Ch04GoalManagement/#goal-list-operations">4.2 目标列表操作</a></td></tr><tr class="numbered"><td class="num">5.4.</td><td><a href="Ch04GoalManagement/#focus">4.3 聚焦（Focus）</a></td></tr><tr class="numbered"><td class="num">5.5.</td><td><a href="Ch04GoalManagement/#save-restore-state">4.4 保存与恢复状态</a></td></tr><tr class="numbered"><td class="num">5.6.</td><td><a href="Ch04GoalManagement/#calling-other-tactics">4.5 调用其他 tactic</a></td></tr><tr class="numbered"><td class="num">5.7.</td><td><a href="Ch04GoalManagement/#with-main-context">4.6 <code>withMainContext</code> 模式</a></td></tr><tr class="numbered"><td class="num">5.8.</td><td><a href="Ch04GoalManagement/#common-failures-debugging">4.7 常见失败模式与调试</a></td></tr><tr class="numbered"><td class="num">5.9.</td><td><a href="Ch04GoalManagement/#exercises">4.8 练习</a></td></tr><tr class="numbered"><td class="num">5.10.</td><td><a href="Ch04GoalManagement/#summary">4.9 小结</a></td></tr><tr class="numbered"><td class="num">5.11.</td><td><a href="Ch04GoalManagement/#next-chapter-preview">下一章预告</a></td></tr></table></div>
             </div>
           </div>
         <div class="last"></div>
         </nav>
       <main><div class="content-wrapper">
           <nav class="prev-next-buttons">
-            <a class="local-button active" href="Ch03FirstTactic/______/#ch03-summary" rel="prev" title="4.10. 小结"><span class="arrow">←</span><span class="where">4.10. 小结</span></a><a class="local-button active" href="Ch04GoalManagement/_______________/#recap-and-intro" rel="next" title="5.1. 回顾与导引"><span class="where">5.1. 回顾与导引</span><span class="arrow">→</span></a></nav>
+            <a class="local-button active" href="Ch03FirstTactic/#ch03-first-tactic" rel="prev" title="4. 第三章 编写你的第一个 Tactic"><span class="arrow">←</span><span class="where">4. 第三章 编写你的第一个 Tactic</span></a><a class="local-button active" href="Ch05TypeclassSynthesis/#ch05-typeclass-synthesis" rel="next" title="6. 第五章 Type Class Synthesis"><span class="where">6. 第五章 Type Class Synthesis</span><span class="arrow">→</span></a></nav>
           <section>
             <h1>
               5. 第四章 目标管理<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch04-goal-management" title="Permalink">🔗</a></span></h1>
             <p>
               <strong>本章目标</strong>：掌握多目标操作、目标聚焦、保存/恢复状态、<code>try</code>/<code>catch</code> 回溯，以及常见的失败模式与调试手段。</p>
-            <ol class="section-toc">
-              <li>
-                <a href="Ch04GoalManagement/_______________/#recap-and-intro"><span class="number">5.1.</span> 回顾与导引</a></li>
-              <li>
-                <a href="Ch04GoalManagement/4___1-________________________/#multi-goal-mental-model"><span class="number">5.2.</span> 4.1 多目标的心智模型</a></li>
-              <li>
-                <a href="Ch04GoalManagement/4___2-__________________/#goal-list-operations"><span class="number">5.3.</span> 4.2 目标列表操作</a></li>
-              <li>
-                <a href="Ch04GoalManagement/4___3-_________Focus___/#focus"><span class="number">5.4.</span> 4.3 聚焦（Focus）</a></li>
-              <li>
-                <a href="Ch04GoalManagement/4___4-_____________________/#save-restore-state"><span class="number">5.5.</span> 4.4 保存与恢复状态</a></li>
-              <li>
-                <a href="Ch04GoalManagement/4___5-____________-tactic/#calling-other-tactics"><span class="number">5.6.</span> 4.5 调用其他 tactic</a></li>
-              <li>
-                <a href="Ch04GoalManagement/4___6--withMainContext--______/#with-main-context"><span class="number">5.7.</span> 4.6 <code>withMainContext</code> 模式</a></li>
-              <li>
-                <a href="Ch04GoalManagement/4___7-___________________________/#common-failures-debugging"><span class="number">5.8.</span> 4.7 常见失败模式与调试</a></li>
-              <li>
-                <a href="Ch04GoalManagement/4___8-______/#exercises"><span class="number">5.9.</span> 4.8 练习</a></li>
-              <li>
-                <a href="Ch04GoalManagement/4___9-______/#summary"><span class="number">5.10.</span> 4.9 小结</a></li>
-              <li>
-                <a href="Ch04GoalManagement/_______________/#next-chapter-preview"><span class="number">5.11.</span> 下一章预告</a></li>
-              </ol>
+            <section>
+              <h2 id="recap-and-intro">
+                5.1. 回顾与导引<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=recap-and-intro" title="Permalink">🔗</a></span></h2>
+              <p>
+                在第三章中，你学会了 tactic 的基本写法：如何用 <code>elab</code> 声明一个 tactic，如何通过 <code>getMainGoal</code> 获取当前目标，如何用 <code>Expr</code> 构造证明项，最终通过 <code>MVarId.assign</code> 把证明项赋给目标元变量。那些例子都有一个共同特征——<strong>自始至终只有一个目标</strong>。</p>
+              <p>
+                但现实中，很多 tactic 会把一个目标拆成多个子目标。比如 <code>constructor</code> 会把 <code>⊢ A ∧ B</code> 拆成 <code>⊢ A</code> 和 <code>⊢ B</code> 两个子目标；<code>induction</code> 会为每个构造子生成一个子目标。一旦出现多个目标，你的 tactic 就必须回答以下问题：</p>
+              <ul>
+                <li>
+                  <p>
+                    哪个目标是"主目标"？其余目标怎么办？</p>
+                  </li>
+                <li>
+                  <p>
+                    处理完主目标后，新产生的子目标放在列表的什么位置？</p>
+                  </li>
+                <li>
+                  <p>
+                    如果想对某个子目标单独操作、其余目标暂时隐藏，该怎么做？</p>
+                  </li>
+                <li>
+                  <p>
+                    如果一次尝试失败了，怎么把状态回退到尝试之前？</p>
+                  </li>
+                </ul>
+              <p>
+                本章就来回答这些问题。你将看到 Lean 4 的 tactic 框架把目标管理的复杂性压缩到了一组简洁的 API 里——但"简洁"不等于"不会出错"。理解这些 API 的语义细节，是写出健壮 tactic 的关键。</p>
+              </section>
+            <section>
+              <h2 id="multi-goal-mental-model">
+                5.2. 4.1 多目标的心智模型<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=multi-goal-mental-model" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code>TacticM</code> 的核心状态之一是 <code>goals : List MVarId</code>——一个有序的元变量 ID 列表。你可以把它理解为 tactic 的"待办事项清单"。每个 <code>MVarId</code> 代表一个尚未填入证明项的"洞"，而列表的顺序决定了 tactic 的行为。</p>
+              <p>
+                几个关键规则：</p>
+              <p>
+                <strong>顺序有意义。</strong> 列表的第一个元素是"主目标"（main goal），也就是 <code>getMainGoal</code> 返回的那个。当用户在 Lean InfoView 中看到的"当前目标"，就是这个主目标。顺序不仅影响显示，还影响 tactic 的执行——大多数 tactic 默认只操作主目标。</p>
+              <p>
+                <strong>tactic 默认只操作主目标。</strong> 当你调用 <code>assumption</code>、<code>exact</code>、<code>apply</code> 等内置 tactic 时，它们会取出主目标进行处理。如果主目标被解决了，它从列表中移除，下一个目标自然成为新的主目标。如果 <code>apply</code> 产生了新的子目标，这些子目标会被放到列表的前面，这样用户接下来就会先看到并处理这些新产生的子目标。</p>
+              <p>
+                <strong><code>&lt;;&gt;</code> 对所有子目标执行。</strong> 比如 <code>constructor &lt;;&gt; simp</code> 的语义是：先执行 <code>constructor</code>（可能产生多个子目标），然后对 <code>constructor</code> 产生的 <strong>每一个</strong> 子目标都执行 <code>simp</code>。这是一个广播操作符，在组合 tactic 时非常方便。</p>
+              <p>
+                <strong>目标列表可能包含已解决的目标。</strong> 当某个 <code>MVarId</code> 已经被赋值（<code>isAssigned</code> 返回 <code>true</code>），它实际上已经解决了，但它可能还留在 <code>goals</code> 列表里。这就是为什么你经常需要调用 <code>getUnsolvedGoals</code> 而不是 <code>getGoals</code>——前者会帮你过滤掉已经赋值的元变量。</p>
+              </section>
+            <section>
+              <h2 id="goal-list-operations">
+                5.3. 4.2 目标列表操作<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=goal-list-operations" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="basic-api">
+                  5.3.1. 基本 API<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=basic-api" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+getGoals : TacticM (List MVarId)            -- 获取全部目标（含可能已解决的）
+setGoals (gs : List MVarId) : TacticM Unit  -- 设置全部目标
+getMainGoal : TacticM MVarId                -- 获取第一个目标（主目标）
+getUnsolvedGoals : TacticM (List MVarId)    -- 过滤掉已赋值的目标
+</pre><p>
+                  <code>getGoals</code> 和 <code>setGoals</code> 是最底层的操作——它们直接读写 tactic state 中的目标列表，不做任何过滤或检查。<code>getMainGoal</code> 则是 <code>getGoals</code> 的便利包装：它取出列表的第一个元素，如果列表为空就抛出 "no goals" 错误。</p>
+                <p>
+                  <code>getUnsolvedGoals</code> 值得特别关注。它不仅获取目标列表，还会对每个目标调用 <code>MVarId.isAssigned</code>，只保留尚未赋值的目标。这在你处理完一批目标后特别有用——你不需要手动追踪哪些目标已经被解决，只需在最后调用 <code>getUnsolvedGoals</code> 就能得到干净的列表。</p>
+                </section>
+              <section>
+                <h3 id="common-patterns">
+                  5.3.2. 常见模式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=common-patterns" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+-- 模式 1（推荐）：用 replaceMainGoal 替换主目标
+elab "my_tactic" : tactic =&gt; do
+  let goal ← getMainGoal
+  -- ... 处理 goal，产生 newGoals ...
+  replaceMainGoal newGoals
+</pre><p>
+                  模式 1 是最常见的 tactic 结构。<code>replaceMainGoal newGoals</code> 会把主目标从列表中移除，并把 <code>newGoals</code> 插到列表前面、其余目标保留在后面。这遵循了 Lean 的惯例：<strong>新子目标总是排在前面</strong>，这样用户会按"深度优先"的顺序处理它们。</p>
+                <p>
+                  <strong>为什么推荐 <code>replaceMainGoal</code>？</strong> 它在内部完成了"取出其余目标、拼接新目标"的逻辑，等价于：</p>
+                <pre>-- [示意]
+-- replaceMainGoal 的等价手写版（不推荐，仅供理解）
+let rest := (← getGoals).erase goal
+setGoals (newGoals ++ rest)
+</pre><p>
+                  直接用 <code>replaceMainGoal</code> 更简洁、不容易出错，应作为模式 1 的首选写法。</p>
+                <pre>-- [示意]
+-- 模式 2：处理所有目标
+elab "my_tactic_all" : tactic =&gt; do
+  let goals ← getGoals
+  let mut remaining := []
+  for g in goals do
+    -- ... 尝试处理 g ...
+    if !(← g.isAssigned) then
+      remaining := remaining ++ [g]
+  setGoals remaining
+</pre><p>
+                  模式 2 遍历所有目标并逐一处理。在循环结束后，用 <code>isAssigned</code> 过滤掉已解决的目标。这里有一个微妙之处：处理某个目标时可能会<strong>间接影响其他目标</strong>，比如 unification 可能会把两个目标中共享的元变量统一起来。所以即使你没有显式处理某个目标，它也可能在循环中途变成"已解决"的。</p>
+                <pre>-- [示意]
+-- 模式 3：交换目标顺序
+elab "swap" : tactic =&gt; do
+  let goals ← getGoals
+  match goals with
+  | g1 :: g2 :: rest =&gt; setGoals (g2 :: g1 :: rest)
+  | _ =&gt; throwError "swap requires at least 2 goals"
+</pre><p>
+                  模式 3 展示了目标列表操作的灵活性：你可以任意重新排列目标的顺序。实际上 Lean 内置的 <code>rotate_left</code>、<code>rotate_right</code>、<code>swap</code> 等 tactic 就是这样实现的——纯粹的列表操作，不涉及任何证明项的构造。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="focus">
+                5.4. 4.3 聚焦（Focus）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=focus" title="Permalink">🔗</a></span></h2>
+              <p>
+                当你的 tactic 只关心主目标、不想被其他目标干扰时，<code>focus</code> 是标准工具。它的语义可以用下面的简化实现来理解：</p>
+              <blockquote><p>
+                  <strong>注意</strong>：以下伪代码<strong>仅用于帮助理解 <code>focus</code> 的语义</strong>，不是推荐的实现模板。在实际代码中直接调用 <code>Lean.Elab.Tactic.focus</code> 即可，不需要手写这段逻辑。</p>
+                </blockquote><pre>-- [伪代码]
+-- 简化示意，帮助理解 focus 的语义（不是推荐模板）
+def focus (tac : TacticM Unit) : TacticM Unit := do
+  let goals ← getGoals
+  match goals with
+  | [] =&gt; throwError "no goals"
+  | main :: rest =&gt;
+    setGoals [main]        -- 暂时隐藏其余目标
+    tac                     -- 执行 tactic，它只能看到 main
+    let newGoals ← getGoals -- tac 可能解决了 main，也可能产生了新子目标
+    setGoals (newGoals ++ rest)  -- 把其余目标拼回来
+</pre><p>
+                这个伪代码揭示了 <code>focus</code> 的本质：它在执行 <code>tac</code> 之前，把 <code>rest</code> 从目标列表中"摘走"，执行完再"拼回来"。这意味着 <code>tac</code> 内部调用 <code>getGoals</code> 只会看到与 <code>main</code> 相关的目标（<code>main</code> 本身，以及 <code>tac</code> 新产生的子目标）。</p>
+              <p>
+                这为什么有用？考虑一个场景：你正在写一个 tactic，它先调用 <code>cases</code>，然后对产生的每个子目标做一些处理。如果没有 <code>focus</code>，<code>cases</code> 产生的子目标会和原来就有的其他目标混在一起，你很难区分哪些是 <code>cases</code> 新产生的、哪些是之前就存在的。用 <code>focus</code> 包一下，<code>cases</code> 产生的子目标就是 <code>getGoals</code> 返回的全部——干净利落。</p>
+              <p>
+                在你自己的 tactic 中使用 <code>focus</code>：</p>
+              <pre>-- [示意]
+elab "my_focused_tactic" : tactic =&gt; do
+  let goal ← getMainGoal
+  goal.withContext do
+    Lean.Elab.Tactic.focus do
+      -- 这里只能看到一个目标（主目标）
+      let target ← (← getMainGoal).getType
+      -- ... 对 target 做分析和处理 ...
+</pre><p>
+                注意 <code>focus</code> 和 <code>withContext</code> 经常一起出现：<code>focus</code> 确保目标列表的隔离，<code>withContext</code> 确保局部上下文的正确性。两者解决的是不同维度的问题，不能互相替代。</p>
+              </section>
+            <section>
+              <h2 id="save-restore-state">
+                5.5. 4.4 保存与恢复状态<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=save-restore-state" title="Permalink">🔗</a></span></h2>
+              <p>
+                有时你想"先试一个策略，如果失败就回退到试之前的状态，换一个策略再试"。这种试探性执行（speculative execution）是很多自动化 tactic 的核心模式。Lean 提供了 <code>saveState</code> 和 <code>restoreState</code> 来支持这种模式。</p>
+              <section>
+                <h3 id="save-restore-basic-usage">
+                  5.5.1. 基本用法<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=save-restore-basic-usage" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+elab "try_or_skip" : tactic =&gt; do
+  let state ← saveState
+  try
+    evalTactic (← `(tactic| assumption))
+  catch _ =&gt;
+    restoreState state
+    -- assumption 失败了，恢复状态，什么都不做
+</pre><p>
+                  这里的流程是：先把当前完整状态保存到 <code>state</code>，然后尝试执行 <code>assumption</code>。如果 <code>assumption</code> 成功，皆大欢喜，<code>state</code> 就被丢弃了。如果 <code>assumption</code> 抛出异常（说明它无法解决当前目标），<code>catch</code> 会捕获异常，调用 <code>restoreState state</code> 回退到尝试之前的状态。</p>
+                </section>
+              <section>
+                <h3 id="what-savestate-saves">
+                  5.5.2. <code>saveState</code> 保存了什么？<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=what-savestate-saves" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>saveState</code> 保存的是<strong>完整的 <code>Meta.State</code> 和 <code>Core.State</code></strong>，其中最重要的部分是 <code>MetavarContext</code>——它记录了所有元变量的赋值情况以及 universe 约束。这意味着 <code>restoreState</code> 不仅会回退目标列表，还会撤销所有 unification 产生的副作用。</p>
+                <p>
+                  为什么这很重要？因为 tactic 执行过程中，<code>apply</code> 或 <code>unify</code> 可能会给一些元变量赋值，而这些元变量可能不仅仅属于当前目标——它们可能是多个目标共享的。如果你只回退目标列表而不回退 <code>MetavarContext</code>，那些共享的元变量就会残留着"试探性赋值"，导致后续的 tactic 行为异常。<code>restoreState</code> 通过一次性回退整个状态来避免这个问题。</p>
+                </section>
+              <section>
+                <h3 id="try-tactic-wrapper">
+                  5.5.3. 更高层的封装：<code>tryTactic?</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=try-tactic-wrapper" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+-- 尝试执行 tac，失败则恢复状态并返回 none
+def tryTactic? (tac : TacticM α) : TacticM (Option α) := do
+  let s ← saveState
+  try
+    let r ← tac
+    return some r
+  catch _ =&gt;
+    restoreState s
+    return none
+</pre><p>
+                  <code>tryTactic?</code> 把"试一试"的模式封装成了返回 <code>Option</code> 的函数。如果 <code>tac</code> 成功，返回 <code>some r</code>；如果失败，恢复状态并返回 <code>none</code>。调用者可以用 <code>match</code> 或 <code>if let</code> 来分支处理，而不需要手动写 <code>try</code>/<code>catch</code>/<code>restoreState</code>。</p>
+                <p>
+                  这个模式在编写"先试策略 A，不行试策略 B"的 tactic 时特别有用：</p>
+                <pre>-- [示意]
+elab "try_simp_then_omega" : tactic =&gt; do
+  if let some _ ← tryTactic? (evalTactic (← `(tactic| simp))) then
+    return  -- simp 成功，结束
+  if let some _ ← tryTactic? (evalTactic (← `(tactic| omega))) then
+    return  -- omega 成功，结束
+  throwError "neither simp nor omega worked"
+</pre></section>
+              </section>
+            <section>
+              <h2 id="calling-other-tactics">
+                5.6. 4.5 调用其他 tactic<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=calling-other-tactics" title="Permalink">🔗</a></span></h2>
+              <p>
+                在你的 tactic 中复用已有 tactic 是常见需求。Lean 提供了两种主要方式。</p>
+              <section>
+                <h3 id="evaltactic-syntax">
+                  5.6.1. 方式 1：用 <code>evalTactic</code> 执行语法<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=evaltactic-syntax" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+elab "my_combo" : tactic =&gt; do
+  evalTactic (← `(tactic| simp))
+  evalTactic (← `(tactic| ring))
+</pre><p>
+                  <code>evalTactic</code> 接受一个 <code>Syntax</code> 参数（通过 <code>`(tactic| ...)</code> 引用构造），然后像用户在交互模式中输入这个 tactic 一样执行它。这是最通用的方式——任何用户能在 <code>by</code> 块中写的 tactic，你都能通过 <code>evalTactic</code> 调用。</p>
+                <p>
+                  它的缺点是<strong>间接性</strong>：每次调用都要经过语法解析和 tactic 分发（elaborate），比直接调用底层 API 函数慢一些。但在大多数场景下，这点开销可以忽略不计。</p>
+                </section>
+              <section>
+                <h3 id="direct-impl-call">
+                  5.6.2. 方式 2：直接调用实现函数<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=direct-impl-call" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+import Lean.Elab.Tactic.Simp
+
+elab "simp_then_check" : tactic =&gt; do
+  evalTactic (← `(tactic| simp))
+  let goals ← getUnsolvedGoals
+  if goals.isEmpty then
+    logInfo "simp closed everything!"
+  else
+    logInfo m!"simp left {goals.length} goals"
+</pre><p>
+                  虽然这个例子仍然用了 <code>evalTactic</code>，但你也可以直接调用 simp 的底层 API（如 <code>Lean.Meta.Simp.simp</code>）来获得更细粒度的控制——比如指定 simp lemma 集合、控制展开深度等。直接调用底层函数的好处是性能更好、控制更精细；缺点是你需要了解该 tactic 的内部 API，而这些 API 不一定有稳定的接口保证。</p>
+                <p>
+                  <strong>选择建议</strong>：如果你只是想"在我的 tactic 中途调用一下 simp"，用 <code>evalTactic</code> 就够了。如果你需要精细控制或者性能敏感，再考虑直接调用底层 API。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="with-main-context">
+                5.7. 4.6 <code>withMainContext</code> 模式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=with-main-context" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="context-mismatch-problem">
+                  5.7.1. 问题背景<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=context-mismatch-problem" title="Permalink">🔗</a></span></h3>
+                <p>
+                  在 tactic 编程中，有一个容易踩的坑：<strong>局部上下文不匹配</strong>。每个目标（<code>MVarId</code>）都有自己的局部上下文（local context），包含了该目标可见的局部变量和假设。当你调用 <code>getLCtx</code> 获取局部上下文时，拿到的是<strong>当前活跃的上下文</strong>，而这个上下文不一定是你正在操作的那个目标的上下文。</p>
+                <p>
+                  举个例子：你用 <code>getMainGoal</code> 拿到了目标 <code>g</code>，然后直接调用 <code>getLCtx</code>。如果之前有别的操作切换过上下文，<code>getLCtx</code> 返回的可能不是 <code>g</code> 的上下文，而是之前某个操作遗留下来的上下文。这会导致你在错误的上下文中查找假设，产生难以排查的 bug。</p>
+                </section>
+              <section>
+                <h3 id="context-solution">
+                  5.7.2. 解决方案<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=context-solution" title="Permalink">🔗</a></span></h3>
+                <pre>-- [示意]
+elab "safe_tactic" : tactic =&gt; do
+  withMainContext do        -- 自动切换到主目标的上下文
+    let target ← getMainTarget
+    -- 这里的 getLCtx 保证是主目标的局部上下文
+    let lctx ← getLCtx
+    -- ... 在正确的上下文中操作 ...
+</pre><p>
+                  <code>withMainContext</code> 的实现等价于 <code>getMainGoal &gt;&gt;= fun g =&gt; g.withContext</code>。它做了两件事：取出主目标，然后在该目标的局部上下文中执行后续代码。这样你在 <code>do</code> 块中调用 <code>getLCtx</code>、<code>getLocalDecl</code> 等 API 时，总是能拿到正确的上下文。</p>
+                </section>
+              <section>
+                <h3 id="withmaincontext-vs-withcontext">
+                  5.7.3. <code>withMainContext</code> vs <code>withContext</code> 的区别<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=withmaincontext-vs-withcontext" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>withContext</code> 是更底层的 API：<code>g.withContext do ...</code> 在目标 <code>g</code> 的上下文中执行代码。你需要自己指定是哪个目标。</p>
+                <p>
+                  <code>withMainContext</code> 是语法糖：它自动选择主目标。在大多数 tactic 中，你操作的就是主目标，所以用 <code>withMainContext</code> 更简洁。</p>
+                <p>
+                  但如果你在遍历多个目标（比如模式 2 中的循环），你应该用 <code>g.withContext</code> 而不是 <code>withMainContext</code>——因为循环中的 <code>g</code> 不一定是主目标：</p>
+                <pre>-- [示意]
+elab "inspect_all" : tactic =&gt; do
+  for g in (← getGoals) do
+    g.withContext do           -- 用 g 的上下文，而非主目标的
+      let target ← g.getType
+      let lctx ← getLCtx
+      logInfo m!"Goal {g.name} has {lctx.size} local decls, target: {target}"
+</pre><p>
+                  如果在这个循环里用 <code>withMainContext</code>，每次迭代都会切换到主目标的上下文，而不是当前循环变量 <code>g</code> 的上下文——这几乎肯定不是你想要的。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="common-failures-debugging">
+                5.8. 4.7 常见失败模式与调试<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=common-failures-debugging" title="Permalink">🔗</a></span></h2>
+              <p>
+                写 tactic 时，目标管理相关的 bug 往往表现为"运行时没报错，但结果不对"或"莫名其妙的 internal error"。以下是最常见的几类问题。</p>
+              <section>
+                <h3 id="failure-forgetting-goals-update">
+                  5.8.1. 4.7.1 忘了更新 goals 列表<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-forgetting-goals-update" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong>症状</strong>：你的 tactic 把主目标解决了（给它 <code>assign</code> 了一个证明项），但后续 tactic 仍然试图操作已解决的目标，或者 Lean InfoView 显示的目标没有变化。</p>
+                <p>
+                  <strong>原因</strong>：你 <code>assign</code> 了目标，但没有调用 <code>setGoals</code> 把已解决的目标从列表中移除。</p>
+                <pre>-- [示意]
+-- ❌ 错误写法
+elab "bad_exact" : tactic =&gt; do
+  let goal ← getMainGoal
+  goal.assign someProofTerm
+  -- 忘了 setGoals！goal 仍在列表中
+
+-- ✅ 正确写法
+elab "good_exact" : tactic =&gt; do
+  let goal ← getMainGoal
+  goal.assign someProofTerm
+  let remaining ← getUnsolvedGoals  -- 自动过滤已赋值的目标
+  setGoals remaining
+</pre><p>
+                  <strong>建议</strong>：如果你的 tactic 可能通过 <code>assign</code> 解决目标却没有同步更新列表，可以在最后调用 <code>setGoals (← getUnsolvedGoals)</code> 来清理残留的已解决目标。但这只是一个<strong>防御性清理手段</strong>，不应作为通用模板——在大多数场景下，优先使用 <code>replaceMainGoal</code> 来精确管理目标列表，而不是依赖最后的"大扫除"。</p>
+                </section>
+              <section>
+                <h3 id="failure-savestate-restorestate">
+                  5.8.2. 4.7.2 <code>saveState</code> 和 <code>restoreState</code> 的正确用法<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-savestate-restorestate" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong>症状</strong>：你用了 <code>try</code>/<code>catch</code> 来回退失败的尝试，但回退后状态仍然不干净——有些元变量残留了赋值。</p>
+                <p>
+                  <strong>原因</strong>：你在 <code>catch</code> 中忘了 <code>restoreState</code>，或者在 <code>try</code> 块外面保存了状态但在 <code>try</code> 块里面又进行了会影响状态的操作。</p>
+                <pre>-- [示意]
+-- ❌ 常见错误：忘了 restoreState
+elab "bad_try" : tactic =&gt; do
+  try
+    evalTactic (← `(tactic| apply And.intro))
+  catch _ =&gt;
+    pure ()  -- 没有 restoreState！
+    -- apply 可能已经创建了新的元变量或做了 unification
+    -- 这些副作用会残留
+
+-- ✅ 正确写法
+elab "good_try" : tactic =&gt; do
+  let s ← saveState
+  try
+    evalTactic (← `(tactic| apply And.intro))
+  catch _ =&gt;
+    restoreState s  -- 完全回退
+</pre><p>
+                  另一个常见错误是<strong>在错误的位置保存状态</strong>。如果你在循环中多次保存/恢复，确保每次保存的是当次迭代开始时的状态，而不是循环开始前的总状态——否则每次恢复都会回退到循环起点，丢失前面迭代的成果。</p>
+                </section>
+              <section>
+                <h3 id="failure-focus-side-effects">
+                  5.8.3. 4.7.3 <code>focus</code> 的副作用<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-focus-side-effects" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong>症状</strong>：在 <code>focus</code> 块结束后，你发现某些目标"消失了"，或者目标的顺序与预期不同。</p>
+                <p>
+                  <strong>原因</strong>：<code>focus</code> 在结束时会把 <code>tac</code> 执行后的目标列表和之前"摘走"的 <code>rest</code> 拼接在一起。如果 <code>tac</code> 内部调用了 <code>setGoals</code> 并且不小心把 <code>rest</code> 中的目标也加进去（例如通过某个间接调用），<code>focus</code> 结束后这些目标就会出现两次。</p>
+                <pre>-- [示意]
+-- ❌ 可能出问题的用法
+elab "focus_danger" : tactic =&gt; do
+  Lean.Elab.Tactic.focus do
+    let allGoals ← getGoals  -- focus 内部，只能看到主目标
+    -- 但如果你在这里通过 MetavarContext 获取了其他目标并加到列表中...
+    -- focus 结束时会把它们和 rest 拼起来，可能导致重复
+</pre><p>
+                  <strong>建议</strong>：在 <code>focus</code> 块内部，不要往目标列表中添加不属于当前 <code>focus</code> 范围的目标。<code>focus</code> 的契约是"进去时只看到主目标，出来时只有新产生的子目标"。遵守这个契约就不会出问题。</p>
+                </section>
+              <section>
+                <h3 id="failure-context-misuse">
+                  5.8.4. 4.7.4 <code>withMainContext</code> vs <code>withContext</code> 的误用<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-context-misuse" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong>症状</strong>：你在遍历多个目标时，每个目标拿到的局部上下文都一样——都是主目标的上下文。</p>
+                <p>
+                  <strong>原因</strong>：在循环中用了 <code>withMainContext</code> 而不是 <code>g.withContext</code>。详见 4.6 节的讨论。</p>
+                <p>
+                  <strong>调试技巧</strong>：在循环中加一行 <code>logInfo m!"Processing goal {g.name} in context with {(← getLCtx).size} decls"</code>，如果每次打印的 <code>size</code> 都一样（且不符合预期），说明上下文切换有问题。</p>
+                </section>
+              <section>
+                <h3 id="general-debugging-tips">
+                  5.8.5. 4.7.5 通用调试手段<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=general-debugging-tips" title="Permalink">🔗</a></span></h3>
+                <p>
+                  当 tactic 的行为不符合预期时，以下手段可以帮助你定位问题：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <strong><code>logInfo</code> 打印状态</strong>：在关键位置打印目标列表的长度和内容。<code>logInfo m!"goals: {← getGoals}"</code> 会显示当前所有目标的 <code>MVarId</code>。</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong><code>isAssigned</code> 检查</strong>：在 <code>setGoals</code> 之前，检查每个目标的赋值状态。<code>for g in goals do logInfo m!"{g.name}: assigned={← g.isAssigned}"</code> 可以帮你确认哪些目标已经被解决了。</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>最小化复现</strong>：把 tactic 拆成更小的步骤，在每步之后检查目标状态。这比在整个 tactic 上猜测问题原因要高效得多。</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong><code>trace</code> 系统</strong>：Lean 提供了 <code>trace[Meta.Tactic]</code> 等 trace 选项，可以打印 tactic 框架内部的执行细节。通过 <code>set_option trace.Meta.Tactic true</code> 开启。</p>
+                    </li>
+                  </ol>
+                </section>
+              </section>
+            <section>
+              <h2 id="exercises">
+                5.9. 4.8 练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercises" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="warmup-exercises">
+                  5.9.1. 热身练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=warmup-exercises" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong>练习 4.1：<code>rotate_goals</code></strong></p>
+                <p>
+                  实现一个 tactic <code>rotate_goals</code>，它把目标列表"旋转"一个位置：主目标移到列表末尾，第二个目标变成新的主目标。如果只有一个或零个目标，什么都不做。</p>
+                <code class="hl lean block" data-lean-context="examples"><span class="has-info warning"><span class="hover-container"><span class="hover-info messages"><code class="verso-message warning"><span class="text"></span><span class="text">declaration uses `</span><span class="highlighted"><span class="inter-text"></span><span class="unknown token" data-binding="">sorry</span><span class="inter-text"></span></span><span class="text">`</span></code></span></span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.elab-98">elab</span><span class="inter-text"> </span><span class="literal string token" data-binding="" data-verso-hover="98">"rotate_goals"</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Lean.Parser.Category.tactic" data-verso-hover="17">tactic</span><span class="inter-text"> </span><span class="unknown token" data-binding="">=&gt;</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.do-130">do</span><span class="inter-text">
+  </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.sorry-135" data-verso-hover="99">sorry</span></span><span class="inter-text"> -- 你的实现</span></code><p>
+                  提示：你只需要用 <code>getGoals</code> 和 <code>setGoals</code>，加上列表操作。</p>
+                <p>
+                  <strong>练习 4.2：<code>count_goals</code></strong></p>
+                <p>
+                  实现一个 tactic <code>count_goals</code>，它不改变任何状态，只在 InfoView 中打印当前未解决的目标数量。</p>
+                <code class="hl lean block" data-lean-context="examples"><span class="has-info warning"><span class="hover-container"><span class="hover-info messages"><code class="verso-message warning"><span class="text"></span><span class="text">declaration uses `</span><span class="highlighted"><span class="inter-text"></span><span class="unknown token" data-binding="">sorry</span><span class="inter-text"></span></span><span class="text">`</span></code></span></span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.elab-207">elab</span><span class="inter-text"> </span><span class="literal string token" data-binding="" data-verso-hover="100">"count_goals"</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Lean.Parser.Category.tactic" data-verso-hover="17">tactic</span><span class="inter-text"> </span><span class="unknown token" data-binding="">=&gt;</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.do-238">do</span><span class="inter-text">
+  </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.sorry-243" data-verso-hover="99">sorry</span></span><span class="inter-text"> -- 你的实现</span></code><p>
+                  提示：使用 <code>getUnsolvedGoals</code> 和 <code>logInfo</code>。</p>
+                </section>
+              <section>
+                <h3 id="debug-exercises">
+                  5.9.2. Debug 练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=debug-exercises" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong>练习 4.3：找出 bug</strong></p>
+                <p>
+                  下面的 tactic 试图对每个目标尝试 <code>assumption</code>，解决能解决的，保留不能解决的。但它有一个 bug——找出来并修复它。</p>
+                <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.elab-320">elab</span><span class="inter-text"> </span><span class="literal string token" data-binding="" data-verso-hover="101">"try_assumption_all"</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Lean.Parser.Category.tactic" data-verso-hover="17">tactic</span><span class="inter-text"> </span><span class="unknown token" data-binding="">=&gt;</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.do-358">do</span><span class="inter-text">
+  </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.doLetArrow-363">let</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.2113" data-verso-hover="78">goals</span><span class="inter-text"> </span><span class="unknown token" data-binding="">←</span><span class="inter-text"> </span><span class="const token" data-binding="const-Lean.Elab.Tactic.getGoals" data-verso-hover="59">getGoals</span><span class="inter-text">
+  </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.doFor-388" data-verso-hover="63">for</span><span class="inter-text"> </span><span class="has-info warning"><span class="hover-container"><span class="hover-info messages"><code class="verso-message warning"><span class="text"></span><span class="text">unused variable `</span><span class="text">g</span><span class="text">`</span><span class="text">
+</span><span class="text">
+</span><span class="text">Note: </span><span class="text">This linter can be disabled with `set_option </span><span class="text">linter.unusedVariables</span><span class="text"> false`</span></code></span></span><span class="var token" data-binding="var-_uniq.2209" data-verso-hover="18">g</span></span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.doForDecl-392">in</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.2113" data-verso-hover="78">goals</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.doFor-388" data-verso-hover="63">do</span><span class="inter-text">
+    </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.doTry-410">try</span><span class="inter-text">
+      </span><span class="const token" data-binding="const-Lean.Elab.Tactic.evalTactic" data-verso-hover="83">evalTactic</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="unknown token" data-binding="">←</span><span class="inter-text"> </span><span class="unknown token" data-binding="">`(tactic|</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Tactic.assumption-446" data-verso-hover="89">assumption</span><span class="unknown token" data-binding="">)</span><span class="unknown token" data-binding="">)</span><span class="inter-text">
+    </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.doCatch-463">catch</span><span class="inter-text"> </span><span class="unknown token" data-binding="">_</span><span class="inter-text"> </span><span class="unknown token" data-binding="">=&gt;</span><span class="inter-text">
+      </span><span class="const token" data-binding="const-Pure.pure" data-verso-hover="85">pure</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="unknown token" data-binding="">)</span><span class="inter-text">
+  -- Bug 在哪里？</span></code><p>
+                  提示：考虑两个问题——（1）<code>evalTactic</code> 默认作用于<strong>主目标</strong>（即目标列表的第一个元素），而不是循环变量 <code>g</code>——所以循环中每次 <code>assumption</code> 操作的未必是你期望的目标；（2）失败时状态有没有被正确恢复？</p>
+                </section>
+              <section>
+                <h3 id="comprehensive-exercises">
+                  5.9.3. 综合练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=comprehensive-exercises" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong>练习 4.4：<code>first_success</code></strong></p>
+                <p>
+                  实现一个 tactic <code>first_success</code>，它接受一个 tactic 列表，对主目标依次尝试每个 tactic，使用第一个成功的。如果全部失败，抛出错误信息列出所有尝试过的 tactic 和它们的错误。</p>
+                <pre>-- [伪代码]
+-- 目标行为：
+-- first_success [simp, omega, assumption]
+-- 等价于：先试 simp，不行试 omega，不行试 assumption，全不行则报错
+
+elab "first_success" : tactic =&gt; do
+  sorry -- 你的实现
+</pre><p>
+                  提示：使用 <code>saveState</code>/<code>restoreState</code> 进行回溯。把每次失败的错误信息收集起来，如果全部失败，用 <code>throwError</code> 一次性报告。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="summary">
+                5.10. 4.9 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=summary" title="Permalink">🔗</a></span></h2>
+              <p>
+                | 操作 | API |
+|------|-----|
+| 获取/设置目标列表 | <code>getGoals</code> / <code>setGoals</code> |
+| 获取未解决的目标 | <code>getUnsolvedGoals</code> |
+| 只看主目标 | <code>getMainGoal</code> / <code>getMainTarget</code> |
+| 聚焦 | <code>focus tac</code> |
+| 保存/恢复 | <code>saveState</code> / <code>restoreState</code> |
+| 试探性执行 | <code>tryTactic?</code> |
+| 调用其他 tactic | <code>evalTactic (← `(tactic| ...))</code> |
+| 安全上下文切换 | <code>withMainContext do</code> / <code>g.withContext do</code> |</p>
+              <p>
+                <strong>核心原则</strong>：</p>
+              <ul>
+                <li>
+                  <p>
+                    永远用 <code>withContext</code> 或 <code>withMainContext</code> 确保局部上下文正确——在遍历多个目标时，用 <code>g.withContext</code> 而不是 <code>withMainContext</code>。</p>
+                  </li>
+                <li>
+                  <p>
+                    回溯时用 <code>saveState</code> / <code>restoreState</code>，不要手动管理 <code>MetavarContext</code>——手动管理几乎必然遗漏。</p>
+                  </li>
+                <li>
+                  <p>
+                    新子目标放在列表前面，遵循用户期望的深度优先顺序。优先使用 <code>replaceMainGoal</code> 而非手写 <code>getGoals</code>/<code>erase</code>/<code>setGoals</code>。</p>
+                  </li>
+                <li>
+                  <p>
+                    需要清理残留的已解决目标时，可以用 <code>setGoals (← getUnsolvedGoals)</code> 作为防御性手段，但不应作为目标管理的通用模板。</p>
+                  </li>
+                <li>
+                  <p>
+                    出了问题时，用 <code>logInfo</code> 打印目标列表和赋值状态进行调试。</p>
+                  </li>
+                </ul>
+              </section>
+            <section>
+              <h2 id="next-chapter-preview">
+                5.11. 下一章预告<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=next-chapter-preview" title="Permalink">🔗</a></span></h2>
+              <p>
+                下一章将进入 <strong>Type Class Synthesis</strong>——Lean 的类型类推断系统。你将了解 Lean 如何自动搜索类型类实例，<code>instance</code> 的优先级如何影响搜索顺序，以及在 tactic 编程中如何手动触发和控制 instance synthesis。这是理解 <code>simp</code>、<code>norm_num</code> 等高级 tactic 内部机制的基础。
+</p>
+              </section>
             </section>
           <nav class="prev-next-buttons">
-            <a class="local-button active" href="Ch03FirstTactic/______/#ch03-summary" rel="prev" title="4.10. 小结"><span class="arrow">←</span><span class="where">4.10. 小结</span></a><a class="local-button active" href="Ch04GoalManagement/_______________/#recap-and-intro" rel="next" title="5.1. 回顾与导引"><span class="where">5.1. 回顾与导引</span><span class="arrow">→</span></a></nav>
+            <a class="local-button active" href="Ch03FirstTactic/#ch03-first-tactic" rel="prev" title="4. 第三章 编写你的第一个 Tactic"><span class="arrow">←</span><span class="where">4. 第三章 编写你的第一个 Tactic</span></a><a class="local-button active" href="Ch05TypeclassSynthesis/#ch05-typeclass-synthesis" rel="next" title="6. 第五章 Type Class Synthesis"><span class="where">6. 第五章 Type Class Synthesis</span><span class="arrow">→</span></a></nav>
           </div>
         </main></div>
     </body>
