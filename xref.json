@@ -9670,6 +9670,219 @@
        {"title": "证明构造策略", "shortTitle": null, "number": "3"},
        {"title": "加法示例", "shortTitle": null, "number": "1"}]},
      "address": "/Ch10NormNum/"}]}},
+ "Verso.Genre.Manual.example":
+ {"title": "Verso.Genre.Manual.example",
+  "description": null,
+  "contents":
+  {"quadratic":
+   [{"id": "quadratic",
+     "data":
+     {"/Ch15FunProp/#quadratic":
+      {"display": "quadratic",
+       "context":
+       ["Lean 4 自动化内幕",
+        "第十五章  fun_prop ：函数性质的自动证明",
+        "15.5 调试技巧",
+        "技巧 3：unfold + show 暴露结构"]}},
+     "address": "/Ch15FunProp/"}],
+   "myf":
+   [{"id": "myf",
+     "data":
+     {"/Ch12Grind/#myf":
+      {"display": "myf",
+       "context":
+       ["Lean 4 自动化内幕",
+        "第十二章 grind：E-matching 与 Congruence Closure",
+        "12.7 常见失败模式",
+        "失败 2：定义未展开"]}},
+     "address": "/Ch12Grind/"}],
+   "myTypeToStringLow":
+   [{"id": "myTypeToStringLow",
+     "data":
+     {"/Ch05TypeclassSynthesis/#myTypeToStringLow":
+      {"display": "myTypeToStringLow",
+       "context":
+       ["Lean 4 自动化内幕",
+        "第五章 Type Class Synthesis",
+        "5.2 Synthesis 的搜索过程",
+        "优先级"]}},
+     "address": "/Ch05TypeclassSynthesis/"}],
+   "myTypeToStringHigh":
+   [{"id": "myTypeToStringHigh",
+     "data":
+     {"/Ch05TypeclassSynthesis/#myTypeToStringHigh":
+      {"display": "myTypeToStringHigh",
+       "context":
+       ["Lean 4 自动化内幕",
+        "第五章 Type Class Synthesis",
+        "5.2 Synthesis 的搜索过程",
+        "优先级"]}},
+     "address": "/Ch05TypeclassSynthesis/"}],
+   "double":
+   [{"id": "double",
+     "data":
+     {"/Ch06Simp/#double":
+      {"display": "double",
+       "context":
+       ["Lean 4 自动化内幕",
+        "第六章 simp：重写引擎",
+        "6.15 练习",
+        "练习 3（debug）：为什么 simp 失败了？"]}},
+     "address": "/Ch06Simp/"}],
+   "SimpLemmaDemo.add_zero":
+   [{"id": "SimpLemmaDemo___add_zero",
+     "data":
+     {"/Ch06Simp/#SimpLemmaDemo___add_zero":
+      {"display": "add_zero",
+       "context":
+       ["Lean 4 自动化内幕", "第六章 simp：重写引擎", "6.2 重写规则集：simp lemmas", "四种引理形式"]}},
+     "address": "/Ch06Simp/"}],
+   "Point.y":
+   [{"id": "Point___y",
+     "data":
+     {"/Ch05TypeclassSynthesis/#Point___y":
+      {"display": "y",
+       "context":
+       ["Lean 4 自动化内幕",
+        "第五章 Type Class Synthesis",
+        "5.7 常见失败模式",
+        "失败一：找不到实例（No Instance Found）"]}},
+     "address": "/Ch05TypeclassSynthesis/"}],
+   "Point.x":
+   [{"id": "Point___x",
+     "data":
+     {"/Ch05TypeclassSynthesis/#Point___x":
+      {"display": "x",
+       "context":
+       ["Lean 4 自动化内幕",
+        "第五章 Type Class Synthesis",
+        "5.7 常见失败模式",
+        "失败一：找不到实例（No Instance Found）"]}},
+     "address": "/Ch05TypeclassSynthesis/"}],
+   "Point":
+   [{"id": "Point",
+     "data":
+     {"/Ch05TypeclassSynthesis/#Point":
+      {"display": "Point",
+       "context":
+       ["Lean 4 自动化内幕",
+        "第五章 Type Class Synthesis",
+        "5.7 常见失败模式",
+        "失败一：找不到实例（No Instance Found）"]}},
+     "address": "/Ch05TypeclassSynthesis/"}],
+   "MyType.mk":
+   [{"id": "MyType___mk",
+     "data":
+     {"/Ch05TypeclassSynthesis/#MyType___mk":
+      {"display": "mk",
+       "context":
+       ["Lean 4 自动化内幕",
+        "第五章 Type Class Synthesis",
+        "5.2 Synthesis 的搜索过程",
+        "优先级"]}},
+     "address": "/Ch05TypeclassSynthesis/"}],
+   "MyType":
+   [{"id": "MyType",
+     "data":
+     {"/Ch05TypeclassSynthesis/#MyType":
+      {"display": "MyType",
+       "context":
+       ["Lean 4 自动化内幕",
+        "第五章 Type Class Synthesis",
+        "5.2 Synthesis 的搜索过程",
+        "优先级"]}},
+     "address": "/Ch05TypeclassSynthesis/"}],
+   "MyComplexType.val":
+   [{"id": "MyComplexType___val",
+     "data":
+     {"/Ch05TypeclassSynthesis/#MyComplexType___val":
+      {"display": "val",
+       "context":
+       ["Lean 4 自动化内幕",
+        "第五章 Type Class Synthesis",
+        "5.6 控制 Synthesis 行为",
+        "用户侧控制"]}},
+     "address": "/Ch05TypeclassSynthesis/"}],
+   "MyComplexType":
+   [{"id": "MyComplexType",
+     "data":
+     {"/Ch05TypeclassSynthesis/#MyComplexType":
+      {"display": "MyComplexType",
+       "context":
+       ["Lean 4 自动化内幕",
+        "第五章 Type Class Synthesis",
+        "5.6 控制 Synthesis 行为",
+        "用户侧控制"]}},
+     "address": "/Ch05TypeclassSynthesis/"}],
+   "IsEven":
+   [{"id": "IsEven",
+     "data":
+     {"/Ch13Decide/#IsEven":
+      {"display": "IsEven",
+       "context":
+       ["Lean 4 自动化内幕",
+        "第十三章 decide 与  native_decide ：有限计算判定",
+        "13.5 编写 Decidable 实例",
+        "方式 3：归约到已有可判定命题"]}},
+     "address": "/Ch13Decide/"}],
+   "GoodSimpLemmaDemo.length_nil":
+   [{"id": "GoodSimpLemmaDemo___length_nil",
+     "data":
+     {"/Ch06Simp/#GoodSimpLemmaDemo___length_nil":
+      {"display": "length_nil",
+       "context": ["Lean 4 自动化内幕", "第六章 simp：重写引擎", "6.12 @[simp] 标注的最佳实践"]}},
+     "address": "/Ch06Simp/"}],
+   "GoodSimpLemmaDemo.length_cons":
+   [{"id": "GoodSimpLemmaDemo___length_cons",
+     "data":
+     {"/Ch06Simp/#GoodSimpLemmaDemo___length_cons":
+      {"display": "length_cons",
+       "context": ["Lean 4 自动化内幕", "第六章 simp：重写引擎", "6.12 @[simp] 标注的最佳实践"]}},
+     "address": "/Ch06Simp/"}],
+   "Color.red":
+   [{"id": "Color___red",
+     "data":
+     {"/Ch13Decide/#Color___red":
+      {"display": "red",
+       "context":
+       ["Lean 4 自动化内幕",
+        "第十三章 decide 与  native_decide ：有限计算判定",
+        "13.5 编写 Decidable 实例",
+        "方式 1：deriving 自动派生"]}},
+     "address": "/Ch13Decide/"}],
+   "Color.green":
+   [{"id": "Color___green",
+     "data":
+     {"/Ch13Decide/#Color___green":
+      {"display": "green",
+       "context":
+       ["Lean 4 自动化内幕",
+        "第十三章 decide 与  native_decide ：有限计算判定",
+        "13.5 编写 Decidable 实例",
+        "方式 1：deriving 自动派生"]}},
+     "address": "/Ch13Decide/"}],
+   "Color.blue":
+   [{"id": "Color___blue",
+     "data":
+     {"/Ch13Decide/#Color___blue":
+      {"display": "blue",
+       "context":
+       ["Lean 4 自动化内幕",
+        "第十三章 decide 与  native_decide ：有限计算判定",
+        "13.5 编写 Decidable 实例",
+        "方式 1：deriving 自动派生"]}},
+     "address": "/Ch13Decide/"}],
+   "Color":
+   [{"id": "Color",
+     "data":
+     {"/Ch13Decide/#Color":
+      {"display": "Color",
+       "context":
+       ["Lean 4 自动化内幕",
+        "第十三章 decide 与  native_decide ：有限计算判定",
+        "13.5 编写 Decidable 实例",
+        "方式 1：deriving 自动派生"]}},
+     "address": "/Ch13Decide/"}]}},
  "Verso.Genre.Manual.doc.tech":
  {"title": "Terminology",
   "description": "Definitions of technical terms",

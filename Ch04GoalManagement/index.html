@@ -1356,19 +1356,15 @@ elab "focus_danger" : tactic =&gt; do
                   <strong>练习 4.1：<code>rotate_goals</code></strong></p>
                 <p>
                   实现一个 tactic <code>rotate_goals</code>，它把目标列表"旋转"一个位置：主目标移到列表末尾，第二个目标变成新的主目标。如果只有一个或零个目标，什么都不做。</p>
-                <pre>-- [可运行]
-elab "rotate_goals" : tactic =&gt; do
-  sorry -- 你的实现
-</pre><p>
+                <code class="hl lean block" data-lean-context="examples"><span class="has-info warning"><span class="hover-container"><span class="hover-info messages"><code class="verso-message warning"><span class="text"></span><span class="text">declaration uses `</span><span class="highlighted"><span class="inter-text"></span><span class="unknown token" data-binding="">sorry</span><span class="inter-text"></span></span><span class="text">`</span></code></span></span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.elab-98">elab</span><span class="inter-text"> </span><span class="literal string token" data-binding="" data-verso-hover="98">"rotate_goals"</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Lean.Parser.Category.tactic" data-verso-hover="17">tactic</span><span class="inter-text"> </span><span class="unknown token" data-binding="">=&gt;</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.do-130">do</span><span class="inter-text">
+  </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.sorry-135" data-verso-hover="99">sorry</span></span><span class="inter-text"> -- 你的实现</span></code><p>
                   提示：你只需要用 <code>getGoals</code> 和 <code>setGoals</code>，加上列表操作。</p>
                 <p>
                   <strong>练习 4.2：<code>count_goals</code></strong></p>
                 <p>
                   实现一个 tactic <code>count_goals</code>，它不改变任何状态，只在 InfoView 中打印当前未解决的目标数量。</p>
-                <pre>-- [可运行]
-elab "count_goals" : tactic =&gt; do
-  sorry -- 你的实现
-</pre><p>
+                <code class="hl lean block" data-lean-context="examples"><span class="has-info warning"><span class="hover-container"><span class="hover-info messages"><code class="verso-message warning"><span class="text"></span><span class="text">declaration uses `</span><span class="highlighted"><span class="inter-text"></span><span class="unknown token" data-binding="">sorry</span><span class="inter-text"></span></span><span class="text">`</span></code></span></span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.elab-207">elab</span><span class="inter-text"> </span><span class="literal string token" data-binding="" data-verso-hover="100">"count_goals"</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Lean.Parser.Category.tactic" data-verso-hover="17">tactic</span><span class="inter-text"> </span><span class="unknown token" data-binding="">=&gt;</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.do-238">do</span><span class="inter-text">
+  </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.sorry-243" data-verso-hover="99">sorry</span></span><span class="inter-text"> -- 你的实现</span></code><p>
                   提示：使用 <code>getUnsolvedGoals</code> 和 <code>logInfo</code>。</p>
                 </section>
               <section>
@@ -1378,16 +1374,16 @@ elab "count_goals" : tactic =&gt; do
                   <strong>练习 4.3：找出 bug</strong></p>
                 <p>
                   下面的 tactic 试图对每个目标尝试 <code>assumption</code>，解决能解决的，保留不能解决的。但它有一个 bug——找出来并修复它。</p>
-                <pre>-- [可运行]
-elab "try_assumption_all" : tactic =&gt; do
-  let goals ← getGoals
-  for g in goals do
-    try
-      evalTactic (← `(tactic| assumption))
-    catch _ =&gt;
-      pure ()
-  -- Bug 在哪里？
-</pre><p>
+                <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.elab-320">elab</span><span class="inter-text"> </span><span class="literal string token" data-binding="" data-verso-hover="101">"try_assumption_all"</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Lean.Parser.Category.tactic" data-verso-hover="17">tactic</span><span class="inter-text"> </span><span class="unknown token" data-binding="">=&gt;</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.do-358">do</span><span class="inter-text">
+  </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.doLetArrow-363">let</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.2113" data-verso-hover="78">goals</span><span class="inter-text"> </span><span class="unknown token" data-binding="">←</span><span class="inter-text"> </span><span class="const token" data-binding="const-Lean.Elab.Tactic.getGoals" data-verso-hover="59">getGoals</span><span class="inter-text">
+  </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.doFor-388" data-verso-hover="63">for</span><span class="inter-text"> </span><span class="has-info warning"><span class="hover-container"><span class="hover-info messages"><code class="verso-message warning"><span class="text"></span><span class="text">unused variable `</span><span class="text">g</span><span class="text">`</span><span class="text">
+</span><span class="text">
+</span><span class="text">Note: </span><span class="text">This linter can be disabled with `set_option </span><span class="text">linter.unusedVariables</span><span class="text"> false`</span></code></span></span><span class="var token" data-binding="var-_uniq.2209" data-verso-hover="18">g</span></span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.doForDecl-392">in</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.2113" data-verso-hover="78">goals</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.doFor-388" data-verso-hover="63">do</span><span class="inter-text">
+    </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.doTry-410">try</span><span class="inter-text">
+      </span><span class="const token" data-binding="const-Lean.Elab.Tactic.evalTactic" data-verso-hover="83">evalTactic</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="unknown token" data-binding="">←</span><span class="inter-text"> </span><span class="unknown token" data-binding="">`(tactic|</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Tactic.assumption-446" data-verso-hover="89">assumption</span><span class="unknown token" data-binding="">)</span><span class="unknown token" data-binding="">)</span><span class="inter-text">
+    </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.doCatch-463">catch</span><span class="inter-text"> </span><span class="unknown token" data-binding="">_</span><span class="inter-text"> </span><span class="unknown token" data-binding="">=&gt;</span><span class="inter-text">
+      </span><span class="const token" data-binding="const-Pure.pure" data-verso-hover="85">pure</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="unknown token" data-binding="">)</span><span class="inter-text">
+  -- Bug 在哪里？</span></code><p>
                   提示：考虑两个问题——（1）<code>evalTactic</code> 默认作用于<strong>主目标</strong>（即目标列表的第一个元素），而不是循环变量 <code>g</code>——所以循环中每次 <code>assumption</code> 操作的未必是你期望的目标；（2）失败时状态有没有被正确恢复？</p>
                 </section>
               <section>
