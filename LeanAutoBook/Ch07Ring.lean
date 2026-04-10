@@ -60,14 +60,14 @@ tag := "horner-normal-form"
 tag := "what-is-horner-nf"
 %%%
 
-多项式 $a_0 + a_1 x + a_2 x^2 + \cdots + a_n x^n$ 的 Horner 形式是：
+多项式 $`a_0 + a_1 x + a_2 x^2 + \cdots + a_n x^n` 的 Horner 形式是：
 
-$$a_0 + x \cdot (a_1 + x \cdot (a_2 + \cdots + x \cdot a_n))$$
+$`a_0 + x \cdot (a_1 + x \cdot (a_2 + \cdots + x \cdot a_n))`
 
 这种嵌套表示有两个优势：
 
 - *唯一性*——同一个多项式只有一种 Horner 范式（在固定变量序下）
-- *高效求值*——只需 $n$ 次乘法 + $n$ 次加法，不需要幂运算
+- *高效求值*——只需 $`n` 次乘法 + $`n` 次加法，不需要幂运算
 
 ## ring 的证明策略
 %%%
@@ -98,11 +98,11 @@ tag := "multivariate-case"
 %%%
 
 对于多变量多项式，`ring` 选定一个变量序（通常按出现顺序），
-然后递归地把系数本身视为"内层"多项式。例如 $2xy + 3x + y$ 以 $x$ 为主变量时：
+然后递归地把系数本身视为"内层"多项式。例如 $`2xy + 3x + y` 以 $`x` 为主变量时：
 
-$$x \cdot (2y + 3) + y$$
+$`x \cdot (2y + 3) + y`
 
-内层系数 $2y + 3$ 和 $y$ 再以 $y$ 为主变量做 Horner 规范化。
+内层系数 $`2y + 3` 和 $`y` 再以 $`y` 为主变量做 Horner 规范化。
 
 # `ring_nf`：只做范式化
 %%%
@@ -307,7 +307,7 @@ tag := "linear-combination"
 %%%
 
 `linear_combination` 是 `ring` 最重要的搭档。
-给定等式假设 $h_1, \ldots, h_k$，找到系数使目标成为这些假设的线性组合 + `ring` 恒等式：
+给定等式假设 $`h_1, \ldots, h_k`，找到系数使目标成为这些假设的线性组合 + `ring` 恒等式：
 
 ```
 example (a b : ℤ) (h1 : a + b = 5) (h2 : a - b = 1) : a = 3 := by

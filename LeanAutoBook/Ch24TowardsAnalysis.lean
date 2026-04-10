@@ -318,7 +318,7 @@ macro "prove_continuous_at" δ:term : tactic =>
 -- [示意] 夹逼定理模板
 macro "squeeze" lower:term upper:term : tactic =>
   `(tactic| (
-    apply tendsto_of_tendsto_of_tendsto_of_le_of_le $lower $upper
+    apply tendsto_of_tendsto_of_tendsto_of_le_of_le $`lower `upper
     <;> first | assumption | intro n; linarith | fun_prop
   ))
 ```
