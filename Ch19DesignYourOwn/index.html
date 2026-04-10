@@ -980,13 +980,24 @@ window.onload = () => {
           ① 不值得  │    ② 考虑
                     │
                  低出错率
-</pre><p>
-                | 象限 | 例子 | 建议 |
-|------|------|------|
-| ① 低重复 × 低出错 | 偶尔用一次的代数化简 | 手写即可 |
-| ② 高重复 × 低出错 | <code>simp</code> 已够用的化简 | 收集 <code>@[simp]</code> 引理 |
-| ③ 低重复 × 高出错 | 复杂的 <code>norm_num</code> 扩展 | 写插件，但投入有限 |
-| ④ 高重复 × 高出错 | 反复手拼非负性/单调性 | 必须自动化 |</p>
+</pre><ul>
+                <li>
+                  <p>
+                    象限：① 低重复 × 低出错 —— 例子：偶尔用一次的代数化简 —— 建议：手写即可</p>
+                  </li>
+                <li>
+                  <p>
+                    象限：② 高重复 × 低出错 —— 例子：<code>simp</code> 已够用的化简 —— 建议：收集 <code>@[simp]</code> 引理</p>
+                  </li>
+                <li>
+                  <p>
+                    象限：③ 低重复 × 高出错 —— 例子：复杂的 <code>norm_num</code> 扩展 —— 建议：写插件，但投入有限</p>
+                  </li>
+                <li>
+                  <p>
+                    象限：④ 高重复 × 高出错 —— 例子：反复手拼非负性/单调性 —— 建议：必须自动化</p>
+                  </li>
+                </ul>
               <p>
                 <code>positivity</code>（第十四章）和 <code>gcongr</code>（第十六章）都诞生于象限 ④。</p>
               </section>
@@ -1041,13 +1052,13 @@ macro "set_reason" : tactic =&gt;
 partial def analyzeSign (e : Expr) : MetaM SignResult := do
   if let some r ← findHypothesis e then return r    -- ❶ 找假设
   match_expr e with
-  | HAdd.hAdd _ _ _ _ a b =&gt;
+- HAdd.hAdd _ _ _ _ a b =&gt;
     combineAdd (← analyzeSign a) (← analyzeSign b)  -- ❷ 递归 + 组合
-  | HMul.hMul _ _ _ _ a b =&gt;
+- HMul.hMul _ _ _ _ a b =&gt;
     combineMul (← analyzeSign a) (← analyzeSign b)
-  | HPow.hPow _ _ _ a n =&gt;
+- HPow.hPow _ _ _ a n =&gt;
     combinePow (← analyzeSign a) n                   -- ▸ 偶数幂→非负
-  | _ =&gt; throwError "positivity: 无法分析 {e}"
+- _ =&gt; throwError "positivity: 无法分析 {e}"
 </pre><p>
                   <strong>适用</strong>：目标可<strong>按表达式结构递归分解</strong>，组合规则明确。
 <strong>局限</strong>：只能处理预定义的构造子。</p>
@@ -1127,9 +1138,9 @@ def searchHypothesis (lhs rhs : Expr) : TacticM Expr := do
 elab "mono_add" : tactic =&gt; withMainContext do
   let target ← getMainTarget
   match_expr target with
-  | LE.le _ _ lhs rhs =&gt;
+- LE.le _ _ lhs rhs =&gt;
     closeMainGoal `mono_add (← proveLE lhs rhs)
-  | _ =&gt; throwError "mono_add: 目标不是 _ ≤ _ 形式"
+- _ =&gt; throwError "mono_add: 目标不是 _ ≤ _ 形式"
 </pre></section>
               <section>
                 <h3 id="mono-add-testing">
@@ -1182,12 +1193,20 @@ trace[mono_add] "分析 {lhs} ≤ {rhs}"
                 20.6. 19.6 组合多种模式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=combining-patterns" title="Permalink">🔗</a></span></h2>
               <p>
                 实际的领域 tactic 常<strong>混合使用</strong>多种模式：</p>
-              <p>
-                | 组合方式 | 例子 | 各模式分工 |
-|---------|------|-----------|
-| 递归 + simp 收尾 | <code>field_simp</code>（第十七章） | 模式 C 消分母 → 模式 A 化简 |
-| 搜索 + 递归子程序 | <code>fun_prop</code>（第十五章） | 模式 B 选规则 → 模式 C 验证 |
-| 前处理 + 核心算法 | <code>linarith</code>（第九章） | <code>push_neg</code> 标准化 → 模式 D 判定 |</p>
+              <ul>
+                <li>
+                  <p>
+                    组合方式：递归 + simp 收尾 —— 例子：<code>field_simp</code>（第十七章） —— 各模式分工：模式 C 消分母 → 模式 A 化简</p>
+                  </li>
+                <li>
+                  <p>
+                    组合方式：搜索 + 递归子程序 —— 例子：<code>fun_prop</code>（第十五章） —— 各模式分工：模式 B 选规则 → 模式 C 验证</p>
+                  </li>
+                <li>
+                  <p>
+                    组合方式：前处理 + 核心算法 —— 例子：<code>linarith</code>（第九章） —— 各模式分工：<code>push_neg</code> 标准化 → 模式 D 判定</p>
+                  </li>
+                </ul>
               <p>
                 <strong>设计原则</strong>：每种模式处理它擅长的部分，
 通过管线（pipeline）串联，不要用一种模式硬撑所有场景。</p>
@@ -1260,8 +1279,7 @@ theorem exists_of_ne_empty (h : s ≠ ∅) : ∃ x, x ∈ s := ...
                 <pre>-- [示意]
 partial def analyze (e : Expr) : MetaM Result := do
   match_expr e with
-  | f a =&gt; analyze a
-  | _ =&gt; analyze e     -- ✗ 对同一个表达式无限递归！
+- f a =&gt; analyze a：_ =&gt; analyze e     -- ✗ 对同一个表达式无限递归！
 </pre><p>
                   <strong>修复</strong>：每个分支要么返回结果，要么对<strong>严格更小</strong>的子表达式递归。</p>
                 </section>
@@ -1325,12 +1343,20 @@ def myLemma := @add_le_add Nat ...
                 本章讨论 <strong>tactic 层面</strong>的设计方法论。
 下一章（第二十章）进入 <strong>Part IV</strong>，介绍反射证明模式——
 把命题反射为可计算的布尔判定，用 <code>native_decide</code> 一步完成。</p>
-              <p>
-                | | 模式 D（逐步构造） | 反射 |
-|---|---|---|
-| 证明构造 | 在 MetaM 中拼装 | 编译期求值 <code>decide</code> |
-| 性能瓶颈 | 证明项大小 | 求值速度 |
-| 典型代表 | <code>ring</code>、<code>omega</code> | <code>Decidable</code> 实例 |</p>
+              <ul>
+                <li>
+                  <p>
+                    证明构造 —— 模式 D（逐步构造）：在 MetaM 中拼装 —— 反射：编译期求值 <code>decide</code></p>
+                  </li>
+                <li>
+                  <p>
+                    性能瓶颈 —— 模式 D（逐步构造）：证明项大小 —— 反射：求值速度</p>
+                  </li>
+                <li>
+                  <p>
+                    典型代表 —— 模式 D（逐步构造）：<code>ring</code>、<code>omega</code> —— 反射：<code>Decidable</code> 实例</p>
+                  </li>
+                </ul>
               <p>
                 如果判定算法可表达为 Lean 可计算函数，
 反射往往比逐步构造简单得多——这是第二十章的主题。</p>
@@ -1392,13 +1418,24 @@ elab "bad_tactic" : tactic =&gt; do
             <section>
               <h2 id="design-summary">
                 20.12. 19.12 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=design-summary" title="Permalink">🔗</a></span></h2>
-              <p>
-                | 模式 | 实现成本 | 能力 | 可扩展性 | 典型代表 |
-|------|---------|------|---------|---------|
-| A：simp 引理集 | 低 | 等式化简 | <code>@[simp]</code> | 领域 simp 集 |
-| B：aesop 规则集 | 低–中 | 多步搜索 | <code>@[aesop]</code> | 集合论推理 |
-| C：递归分解 | 中 | 结构分析 | 插件接口 | <code>positivity</code>、<code>fun_prop</code> |
-| D：完整决策过程 | 高 | 完备判定 | 通常不可扩展 | <code>ring</code>、<code>omega</code> |</p>
+              <ul>
+                <li>
+                  <p>
+                    模式：A：simp 引理集 —— 实现成本：低 —— 能力：等式化简 —— 可扩展性：<code>@[simp]</code> —— 典型代表：领域 simp 集</p>
+                  </li>
+                <li>
+                  <p>
+                    模式：B：aesop 规则集 —— 实现成本：低–中 —— 能力：多步搜索 —— 可扩展性：<code>@[aesop]</code> —— 典型代表：集合论推理</p>
+                  </li>
+                <li>
+                  <p>
+                    模式：C：递归分解 —— 实现成本：中 —— 能力：结构分析 —— 可扩展性：插件接口 —— 典型代表：<code>positivity</code>、<code>fun_prop</code></p>
+                  </li>
+                <li>
+                  <p>
+                    模式：D：完整决策过程 —— 实现成本：高 —— 能力：完备判定 —— 可扩展性：通常不可扩展 —— 典型代表：<code>ring</code>、<code>omega</code></p>
+                  </li>
+                </ul>
               <p>
                 <strong>核心原则</strong>：</p>
               <ul>

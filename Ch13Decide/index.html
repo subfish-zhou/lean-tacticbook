@@ -1231,14 +1231,28 @@ window.onload = () => {
 -- example (n : Nat) : n + 0 = n := by decide  -- ✗ n 不是字面量</span></code><section>
                 <h3 id="tactic-selection-table">
                   14.6.1. 选择速查表<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=tactic-selection-table" title="Permalink">🔗</a></span></h3>
-                <p>
-                  | 场景 | 推荐 tactic | 原因 |
-|------|-------------|------|
-| 小规模有限穷举（&lt; 100 种） | <code>decide</code> | 内核可信，无额外假设 |
-| 大规模有限穷举（&gt; 100 种） | <code>native_decide</code> | 编译执行，快几个数量级 |
-| <code>Nat</code>/<code>Int</code> 线性算术 | <code>omega</code> | 专用 decision procedure |
-| 具体数值计算、素性、整除 | <code>norm_num</code> | meta 层高效归约 + 证书 |
-| 含变量的等式 / 不等式 | <code>simp</code> / <code>ring</code> / <code>linarith</code> | 符号化简 |</p>
+                <ul>
+                  <li>
+                    <p>
+                      场景：小规模有限穷举（&lt; 100 种） —— 推荐 tactic：<code>decide</code> —— 原因：内核可信，无额外假设</p>
+                    </li>
+                  <li>
+                    <p>
+                      场景：大规模有限穷举（&gt; 100 种） —— 推荐 tactic：<code>native_decide</code> —— 原因：编译执行，快几个数量级</p>
+                    </li>
+                  <li>
+                    <p>
+                      场景：<code>Nat</code>/<code>Int</code> 线性算术 —— 推荐 tactic：<code>omega</code> —— 原因：专用 decision procedure</p>
+                    </li>
+                  <li>
+                    <p>
+                      场景：具体数值计算、素性、整除 —— 推荐 tactic：<code>norm_num</code> —— 原因：meta 层高效归约 + 证书</p>
+                    </li>
+                  <li>
+                    <p>
+                      场景：含变量的等式 / 不等式 —— 推荐 tactic：<code>simp</code> / <code>ring</code> / <code>linarith</code> —— 原因：符号化简</p>
+                    </li>
+                  </ul>
                 </section>
               </section>
             <section>
@@ -1345,15 +1359,32 @@ instance (lo hi n : Nat) : Decidable (InRange lo hi n) := sorry
             <section>
               <h2 id="ch13-summary">
                 14.9. 13.9 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch13-summary" title="Permalink">🔗</a></span></h2>
-              <p>
-                | 概念 | 关键点 |
-|------|--------|
-| <code>Decidable</code> | 类型类，编码"可计算的真假判定 + 证据"，是 <code>Prop</code>/<code>Bool</code> 的桥梁 |
-| <code>decide</code> | 内核规约，绝对可信（仅依赖 kernel），但速度受限于解释执行 |
-| <code>native_decide</code> | 编译到原生代码，快几个数量级，但引入 <code>ofReduceBool</code> 公理 |
-| 失败诊断 | 缺实例 → 检查 <code>Decidable</code>；超时 → 换 tactic；含变量 → 先化简；假命题 → 检查逻辑 |
-| 编写实例 | <code>deriving</code>、dependent if、<code>inferInstanceAs</code> 归约、逻辑组合 |
-| 选择原则 | 小穷举 <code>decide</code>，大穷举 <code>native_decide</code>，算术 <code>omega</code>/<code>norm_num</code> |</p>
+              <ul>
+                <li>
+                  <p>
+                    <code>Decidable</code>：类型类，编码"可计算的真假判定 + 证据"，是 <code>Prop</code>/<code>Bool</code> 的桥梁</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>decide</code>：内核规约，绝对可信（仅依赖 kernel），但速度受限于解释执行</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>native_decide</code>：编译到原生代码，快几个数量级，但引入 <code>ofReduceBool</code> 公理</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>失败诊断</code>：缺实例 → 检查 <code>Decidable</code>；超时 → 换 tactic；含变量 → 先化简；假命题 → 检查逻辑</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>编写实例</code>：<code>deriving</code>、dependent if、<code>inferInstanceAs</code> 归约、逻辑组合</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>选择原则</code>：小穷举 <code>decide</code>，大穷举 <code>native_decide</code>，算术 <code>omega</code>/<code>norm_num</code></p>
+                  </li>
+                </ul>
               <p>
                 <code>decide</code> 和 <code>native_decide</code> 是 Lean 自动化的"兜底手段"——
 当问题可以归约为有限计算时，它们总能给出答案。

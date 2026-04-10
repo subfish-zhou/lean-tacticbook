@@ -967,12 +967,20 @@ window.onload = () => {
                 10.1. 全局图景<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=global-overview" title="Permalink">🔗</a></span></h2>
               <p>
                 三个 tactic 解决的问题类型不同，但共享一个思路——把目标归约到某种代数判定过程：</p>
-              <p>
-                | tactic | 输入 | 判定方法 | 外部依赖 |
-|--------|------|----------|----------|
-| <code>linarith</code> | 线性不等式 / 等式 | Farkas 引理 | 无 |
-| <code>nlinarith</code> | 多项式不等式 | Positivstellensatz + <code>linarith</code> | 无 |
-| <code>polyrith</code> | 多项式等式 | Gröbner 基 | Sage 服务器 |</p>
+              <ul>
+                <li>
+                  <p>
+                    tactic：<code>linarith</code> —— 输入：线性不等式 / 等式 —— 判定方法：Farkas 引理 —— 外部依赖：无</p>
+                  </li>
+                <li>
+                  <p>
+                    tactic：<code>nlinarith</code> —— 输入：多项式不等式 —— 判定方法：Positivstellensatz + <code>linarith</code> —— 外部依赖：无</p>
+                  </li>
+                <li>
+                  <p>
+                    tactic：<code>polyrith</code> —— 输入：多项式等式 —— 判定方法：Gröbner 基 —— 外部依赖：Sage 服务器</p>
+                  </li>
+                </ul>
               <p>
                 它们在 Mathlib 中的位置：<code>Mathlib.Tactic.Linarith</code>（linarith, nlinarith）、<code>Mathlib.Tactic.Polyrith</code>（polyrith）。</p>
               <p>
@@ -1265,8 +1273,7 @@ example (x : ℝ) (h : |x| ≤ 1) : -1 ≤ x := by
   linarith  -- ✗ 不理解绝对值
   -- 修复：先拆开绝对值，让每个分支变成线性目标
   cases abs_cases x with
-  | inl h' =&gt; linarith [h'.1, h'.2]
-  | inr h' =&gt; linarith [h'.1, h'.2]
+- inl h' =&gt; linarith [h'.1, h'.2]：inr h' =&gt; linarith [h'.1, h'.2]
 </pre></section>
               <section>
                 <h3 id="metaprogramming-usage">
@@ -1346,12 +1353,20 @@ example (a b : ℚ) (h1 : 3 * a + 2 * b = 12) (h2 : a - b = 1) :
             <section>
               <h2 id="ch09-summary">
                 10.9. 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch09-summary" title="Permalink">🔗</a></span></h2>
-              <p>
-                | tactic | 适用范围 | 原理 | 主要限制 |
-|--------|----------|------|----------|
-| <code>linarith</code> | 有序域上的线性不等式/等式 | Farkas 引理 | 非线性项无法处理 |
-| <code>nlinarith</code> | 多项式不等式 | Positivstellensatz 枚举 | 高次/多变量搜索爆炸 |
-| <code>polyrith</code> | 多项式等式 | Gröbner 基 | 需网络；仅处理等式 |</p>
+              <ul>
+                <li>
+                  <p>
+                    tactic：<code>linarith</code> —— 适用范围：有序域上的线性不等式/等式 —— 原理：Farkas 引理 —— 主要限制：非线性项无法处理</p>
+                  </li>
+                <li>
+                  <p>
+                    tactic：<code>nlinarith</code> —— 适用范围：多项式不等式 —— 原理：Positivstellensatz 枚举 —— 主要限制：高次/多变量搜索爆炸</p>
+                  </li>
+                <li>
+                  <p>
+                    tactic：<code>polyrith</code> —— 适用范围：多项式等式 —— 原理：Gröbner 基 —— 主要限制：需网络；仅处理等式</p>
+                  </li>
+                </ul>
               <p>
                 <strong>实战建议</strong>：</p>
               <ul>

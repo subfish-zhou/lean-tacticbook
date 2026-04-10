@@ -1037,11 +1037,16 @@ example (h : y = g a) : f y = a := by
 </pre><section>
                 <h3 id="grind-vs-simp-attributes">
                   13.3.1. <code>@[grind]</code> vs <code>@[simp]</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=grind-vs-simp-attributes" title="Permalink">🔗</a></span></h3>
-                <p>
-                  | 属性 | 引理用法 | 方向性 |
-|------|----------|--------|
-| <code>@[simp]</code> | 有向重写 lhs → rhs | 单向，lhs 必须是"大"的 |
-| <code>@[grind]</code> | E-matching pattern trigger | 无向，按模式匹配 |</p>
+                <ul>
+                  <li>
+                    <p>
+                      属性：<code>@[simp]</code> —— 引理用法：有向重写 lhs → rhs —— 方向性：单向，lhs 必须是"大"的</p>
+                    </li>
+                  <li>
+                    <p>
+                      属性：<code>@[grind]</code> —— 引理用法：E-matching pattern trigger —— 方向性：无向，按模式匹配</p>
+                    </li>
+                  </ul>
                 <p>
                   一条引理可同时标记 <code>@[simp, grind]</code>，各在各的引擎中生效。</p>
                 </section>
@@ -1088,14 +1093,28 @@ example : ... := by grind
             <section>
               <h2 id="grind-vs-simp-vs-aesop">
                 13.6. 12.6 grind vs simp vs aesop<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=grind-vs-simp-vs-aesop" title="Permalink">🔗</a></span></h2>
-              <p>
-                | 维度 | grind | simp | aesop |
-|------|-------|------|-------|
-| 核心算法 | congruence closure + E-matching | term rewriting | best-first search |
-| 擅长 | 等式传递链、congruence | 化简到 normal form | forward/backward 搜索 |
-| 引理方向 | 无向 | 有向 (lhs → rhs) | 按规则类型 |
-| 量化引理 | E-matching 实例化 | conditional rewrite | <code>apply</code> / <code>intro</code> |
-| 终止机制 | 步数上限 | fixpoint | 深度上限 |</p>
+              <ul>
+                <li>
+                  <p>
+                    维度：核心算法 —— grind：congruence closure + E-matching —— simp：term rewriting —— aesop：best-first search</p>
+                  </li>
+                <li>
+                  <p>
+                    维度：擅长 —— grind：等式传递链、congruence —— simp：化简到 normal form —— aesop：forward/backward 搜索</p>
+                  </li>
+                <li>
+                  <p>
+                    维度：引理方向 —— grind：无向 —— simp：有向 (lhs → rhs) —— aesop：按规则类型</p>
+                  </li>
+                <li>
+                  <p>
+                    维度：量化引理 —— grind：E-matching 实例化 —— simp：conditional rewrite —— aesop：<code>apply</code> / <code>intro</code></p>
+                  </li>
+                <li>
+                  <p>
+                    维度：终止机制 —— grind：步数上限 —— simp：fixpoint —— aesop：深度上限</p>
+                  </li>
+                </ul>
               <p>
                 <strong>用 grind</strong>：等式目标 + 多步等式链；congruence 穿透；自动实例化 <code>∀</code> 引理。
 <strong>不用 grind</strong>：化简 → <code>simp</code>；结构操作 → <code>aesop</code>；纯算术 → <code>omega</code>；命题逻辑 → <code>tauto</code>。</p>
@@ -1294,19 +1313,48 @@ example (h : (a = b ∧ c = d) ∨ (a = d ∧ c = b))
             <section>
               <h2 id="ch12-summary">
                 13.11. 12.11 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch12-summary" title="Permalink">🔗</a></span></h2>
-              <p>
-                | 概念 | 要点 |
-|------|------|
-| grind 定位 | SMT 风格 tactic，擅长等式传递推理 |
-| E-graph | union-find + term DAG，O(n log n) congruence closure |
-| congruence | <code>a = b → f(a) = f(b)</code>，自动穿透任意深度嵌套 |
-| E-matching | 在 E-graph 中搜索量化引理的 pattern 并实例化 |
-| <code>@[grind]</code> | 注册 E-matching trigger，无向（区别于 <code>@[simp]</code>） |
-| <code>grind [l]</code> | 临时传入引理，不污染全局注册，推荐用法 |
-| 配置 | <code>maxSteps</code>、<code>maxEmatch</code>，超限说明目标可能不适合 grind |
-| 主要失败 | 非等式目标、缺引理/展开、E-matching 爆炸、case split、高阶项 |
-| 调试 | <code>trace.grind</code>、<code>trace.grind.ematch</code>、<code>trace.grind.eqc</code> |
-| 组合策略 | 手动拆分分支 + 每分支内 grind 收尾 |</p>
+              <ul>
+                <li>
+                  <p>
+                    <code>grind 定位</code>：SMT 风格 tactic，擅长等式传递推理</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>E-graph</code>：union-find + term DAG，O(n log n) congruence closure</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>congruence</code>：<code>a = b → f(a) = f(b)</code>，自动穿透任意深度嵌套</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>E-matching</code>：在 E-graph 中搜索量化引理的 pattern 并实例化</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>@[grind]</code>：注册 E-matching trigger，无向（区别于 <code>@[simp]</code>）</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>grind [l]</code>：临时传入引理，不污染全局注册，推荐用法</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>配置</code>：<code>maxSteps</code>、<code>maxEmatch</code>，超限说明目标可能不适合 grind</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>主要失败</code>：非等式目标、缺引理/展开、E-matching 爆炸、case split、高阶项</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>调试</code>：<code>trace.grind</code>、<code>trace.grind.ematch</code>、<code>trace.grind.eqc</code></p>
+                  </li>
+                <li>
+                  <p>
+                    <code>组合策略</code>：手动拆分分支 + 每分支内 grind 收尾</p>
+                  </li>
+                </ul>
               <p>
                 <strong>下一章</strong>：<code>decide</code> / <code>native_decide</code>——可判定性与内核计算。
 </p>

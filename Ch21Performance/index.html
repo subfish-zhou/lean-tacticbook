@@ -997,12 +997,20 @@ window.onload = () => {
                 一个 <code>by ...</code> 证明从输入到内核接受，经历三个阶段：</p>
               <pre>源码 ──→ ❶ elaboration ──→ ❷ tactic 执行 ──→ ❸ 内核验证 ──→ 通过
          (语法 → Expr)     (Expr → 证明项)     (检查证明项)
-</pre><p>
-                | 阶段 | 主要开销 | 典型瓶颈 |
-|------|----------|----------|
-| ❶ elaboration | type class synthesis、unification | 深层 typeclass 层级、高阶 unification |
-| ❷ tactic 执行 | <code>simp</code> 重写、<code>aesop</code> 搜索 | 引理集过大、搜索空间爆炸 |
-| ❸ 内核验证 | 检查最终证明项 | 证明项过大（<code>decide</code> 展开、<code>simp</code> 冗长项） |</p>
+</pre><ul>
+                <li>
+                  <p>
+                    阶段：❶ elaboration —— 主要开销：type class synthesis、unification —— 典型瓶颈：深层 typeclass 层级、高阶 unification</p>
+                  </li>
+                <li>
+                  <p>
+                    阶段：❷ tactic 执行 —— 主要开销：<code>simp</code> 重写、<code>aesop</code> 搜索 —— 典型瓶颈：引理集过大、搜索空间爆炸</p>
+                  </li>
+                <li>
+                  <p>
+                    阶段：❸ 内核验证 —— 主要开销：检查最终证明项 —— 典型瓶颈：证明项过大（<code>decide</code> 展开、<code>simp</code> 冗长项）</p>
+                  </li>
+                </ul>
               <p>
                 <strong>关键认知</strong>：大部分"慢证明"的瓶颈在 ❷，
 但 ❸ 也可能成为瓶颈——尤其是反射证明生成的巨大证明项。</p>
@@ -1069,14 +1077,28 @@ set_option trace.Meta.isDefEq true in
 -- ▸ 显示每次 definitional equality 检查
 </pre><p>
                   <strong>常用 trace 选项速查</strong>：</p>
-                <p>
-                  | trace 选项 | 用途 |
-|------------|------|
-| <code>trace.Meta.Tactic.simp.rewrite</code> | simp 应用了哪些引理 |
-| <code>trace.Meta.Tactic.simp.discharge</code> | simp 的 discharge 尝试 |
-| <code>trace.Meta.synthInstance</code> | typeclass synthesis 过程 |
-| <code>trace.Meta.isDefEq</code> | unification 过程（<strong>输出极大，慎用</strong>） |
-| <code>trace.profiler.threshold</code> | 只显示超过阈值的步骤 |</p>
+                <ul>
+                  <li>
+                    <p>
+                      <code>trace.Meta.Tactic.simp.rewrite</code>：simp 应用了哪些引理</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>trace.Meta.Tactic.simp.discharge</code>：simp 的 discharge 尝试</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>trace.Meta.synthInstance</code>：typeclass synthesis 过程</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>trace.Meta.isDefEq</code>：unification 过程（<strong>输出极大，慎用</strong>）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>trace.profiler.threshold</code>：只显示超过阈值的步骤</p>
+                    </li>
+                  </ul>
                 <p>
                   <strong>二分定位</strong>：profiler → 哪个 theorem 慢 → 逐行 sorry → 哪行 tactic 慢 → trace 深入。</p>
                 </section>
@@ -1218,13 +1240,24 @@ for lemma in lemmas do
               <p>
                 Lean 同时承担<strong>证明检查器</strong>和<strong>编程语言</strong>双重角色，
 有两种完全不同的性能关注维度。</p>
-              <p>
-                | | 编译时间 | 运行时间 |
-|---|---|---|
-| 关注对象 | tactic 执行速度 | 编译后程序速度 |
-| 优化手段 | <code>simp only</code>、类型标注、缓存 | 算法选择、内联、尾递归 |
-| 度量工具 | heartbeats、profiler | 基准测试、<code>timeit</code> |
-| 主要场景 | 数学证明库（Mathlib） | 程序验证、可执行代码 |</p>
+              <ul>
+                <li>
+                  <p>
+                    关注对象 —— 编译时间：tactic 执行速度 —— 运行时间：编译后程序速度</p>
+                  </li>
+                <li>
+                  <p>
+                    优化手段 —— 编译时间：<code>simp only</code>、类型标注、缓存 —— 运行时间：算法选择、内联、尾递归</p>
+                  </li>
+                <li>
+                  <p>
+                    度量工具 —— 编译时间：heartbeats、profiler —— 运行时间：基准测试、<code>timeit</code></p>
+                  </li>
+                <li>
+                  <p>
+                    主要场景 —— 编译时间：数学证明库（Mathlib） —— 运行时间：程序验证、可执行代码</p>
+                  </li>
+                </ul>
               <pre>-- [示意] #eval vs #reduce 的区别
 #eval  (List.range 10000).length  -- 快：编译后执行
 #reduce (List.range 10000).length -- 极慢：内核归约（展开每一步）
@@ -1398,20 +1431,52 @@ typecheck 0.3s 也较高——可能是证明项过大，但优先处理 simp。
             <section>
               <h2 id="performance-summary">
                 22.15. 21.12 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=performance-summary" title="Permalink">🔗</a></span></h2>
-              <p>
-                | 概念 | 关键点 |
-|------|--------|
-| 性能三阶段 | elaboration → tactic 执行 → 内核验证 |
-| heartbeats | 平台无关的计算量度量；默认 200000 |
-| profiler | 第一步永远是 profiler——先定位再优化 |
-| trace | 细粒度追踪 simp、typeclass、unification |
-| <code>simp only</code> | 最常见的优化——限制引理集 |
-| 类型标注 | 减少 unification 和 typeclass 搜索 |
-| 证明项大小 | 影响 typecheck 和 .olean 文件大小 |
-| 编译 vs 运行 | 证明库关注编译时间，程序验证两者都关注 |
-| 增量编译 | 细粒度 import、合理的文件依赖图 |
-| 优化原则 | data-driven：先度量，再优化 |
-| 主要陷阱 | heartbeats 军备竞赛、trace 卡 IDE、盲目优化 |</p>
+              <ul>
+                <li>
+                  <p>
+                    <code>性能三阶段</code>：elaboration → tactic 执行 → 内核验证</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>heartbeats</code>：平台无关的计算量度量；默认 200000</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>profiler</code>：第一步永远是 profiler——先定位再优化</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>trace</code>：细粒度追踪 simp、typeclass、unification</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>simp only</code>：最常见的优化——限制引理集</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>类型标注</code>：减少 unification 和 typeclass 搜索</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>证明项大小</code>：影响 typecheck 和 .olean 文件大小</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>编译 vs 运行</code>：证明库关注编译时间，程序验证两者都关注</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>增量编译</code>：细粒度 import、合理的文件依赖图</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>优化原则</code>：data-driven：先度量，再优化</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>主要陷阱</code>：heartbeats 军备竞赛、trace 卡 IDE、盲目优化</p>
+                  </li>
+                </ul>
               <p>
                 <strong>一句话总结</strong>：性能优化的第一原则是<strong>先度量，再行动</strong>——
 profiler 告诉你在哪里花时间，trace 告诉你为什么，然后才是对症下药。</p>

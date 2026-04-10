@@ -1064,15 +1064,32 @@ theorem Classical.em (p : Prop) : p ∨ ¬p := ...
             <section>
               <h2 id="rule-actions">
                 12.4. 11.4 规则动作<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=rule-actions" title="Permalink">🔗</a></span></h2>
-              <p>
-                | 动作 | 说明 | 用途 |
-|------|------|------|
-| <code>apply</code> | apply 目标 | 后向推理 |
-| <code>forward</code> | 从假设推新事实，<strong>保留</strong>原假设 | 丰富上下文 |
-| <code>destruct</code> | 从假设推新事实，<strong>消耗</strong>原假设 | 避免重复 |
-| <code>cases</code> | 对项做 cases | 枚举拆分 |
-| <code>simp</code> | simp 化简 | 仅 <code>norm</code> |
-| <code>tactic</code> | 执行任意 tactic | 灵活慎用 |</p>
+              <ul>
+                <li>
+                  <p>
+                    动作：<code>apply</code> —— 说明：apply 目标 —— 用途：后向推理</p>
+                  </li>
+                <li>
+                  <p>
+                    动作：<code>forward</code> —— 说明：从假设推新事实，<strong>保留</strong>原假设 —— 用途：丰富上下文</p>
+                  </li>
+                <li>
+                  <p>
+                    动作：<code>destruct</code> —— 说明：从假设推新事实，<strong>消耗</strong>原假设 —— 用途：避免重复</p>
+                  </li>
+                <li>
+                  <p>
+                    动作：<code>cases</code> —— 说明：对项做 cases —— 用途：枚举拆分</p>
+                  </li>
+                <li>
+                  <p>
+                    动作：<code>simp</code> —— 说明：simp 化简 —— 用途：仅 <code>norm</code></p>
+                  </li>
+                <li>
+                  <p>
+                    动作：<code>tactic</code> —— 说明：执行任意 tactic —— 用途：灵活慎用</p>
+                  </li>
+                </ul>
               <pre>@[aesop safe apply]
 theorem Or.inl : a → a ∨ b := fun h =&gt; .inl h
 -- ▸ 目标 a ∨ b → 变为 a
@@ -1112,13 +1129,24 @@ macro "my_aesop" : tactic =&gt;
               <section>
                 <h3 id="common-config-options">
                   12.5.3. 常用配置选项摘录<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=common-config-options" title="Permalink">🔗</a></span></h3>
-                <p>
-                  | 选项 | 默认值 | 说明 |
-|------|--------|------|
-| <code>maxDepth</code> | 30 | 搜索树最大深度 |
-| <code>maxRuleApplications</code> | 200 | 规则应用次数上限 |
-| <code>enableSimp</code> | true | norm 阶段是否运行 simp |
-| <code>terminal</code> | false | true = 必须完全关闭目标 |</p>
+                <ul>
+                  <li>
+                    <p>
+                      选项：<code>maxDepth</code> —— 默认值：30 —— 说明：搜索树最大深度</p>
+                    </li>
+                  <li>
+                    <p>
+                      选项：<code>maxRuleApplications</code> —— 默认值：200 —— 说明：规则应用次数上限</p>
+                    </li>
+                  <li>
+                    <p>
+                      选项：<code>enableSimp</code> —— 默认值：true —— 说明：norm 阶段是否运行 simp</p>
+                    </li>
+                  <li>
+                    <p>
+                      选项：<code>terminal</code> —— 默认值：false —— 说明：true = 必须完全关闭目标</p>
+                    </li>
+                  </ul>
                 <blockquote><p>
                     <strong><code>terminal</code> 模式</strong>：生产代码推荐开启——aesop 无法关闭目标就报错，避免"部分成功"隐患。</p>
                   </blockquote></section>
@@ -1245,13 +1273,24 @@ example {α : Type} (a : α) (s t : Set α) (h : a ∈ s) : a ∈ s ∪ t := by 
             <section>
               <h2 id="limitations-and-best-practices">
                 12.9. 11.9 局限与最佳实践<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=limitations-and-best-practices" title="Permalink">🔗</a></span></h2>
-              <p>
-                | 不擅长 | 原因 | 替代 |
-|--------|------|------|
-| 等式推理 | 不做重写链 | <code>simp</code>、<code>ring</code> |
-| 线性算术 | 不做数值决策 | <code>omega</code>、<code>linarith</code> |
-| 深度组合 | 搜索爆炸 | 手动分步 + aesop 收尾 |
-| 高阶 unification | 只做一阶匹配 | <code>exact?</code>、手动 <code>apply</code> |</p>
+              <ul>
+                <li>
+                  <p>
+                    不擅长：等式推理 —— 原因：不做重写链 —— 替代：<code>simp</code>、<code>ring</code></p>
+                  </li>
+                <li>
+                  <p>
+                    不擅长：线性算术 —— 原因：不做数值决策 —— 替代：<code>omega</code>、<code>linarith</code></p>
+                  </li>
+                <li>
+                  <p>
+                    不擅长：深度组合 —— 原因：搜索爆炸 —— 替代：手动分步 + aesop 收尾</p>
+                  </li>
+                <li>
+                  <p>
+                    不擅长：高阶 unification —— 原因：只做一阶匹配 —— 替代：<code>exact?</code>、手动 <code>apply</code></p>
+                  </li>
+                </ul>
               <p>
                 <strong>最佳实践</strong>——"人工搭骨架，aesop 填细节"：</p>
               <pre>theorem complex_theorem : P := by
@@ -1276,14 +1315,28 @@ constructor
             <section>
               <h2 id="ch11-summary">
                 12.11. 11.11 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-summary" title="Permalink">🔗</a></span></h2>
-              <p>
-                | 概念 | 关键点 |
-|------|--------|
-| 搜索架构 | norm → safe → unsafe 三阶段最佳优先搜索 |
-| 规则类型 | <code>norm</code>（规范化）、<code>safe</code>（确定性）、<code>unsafe</code>（分支） |
-| 动作类型 | <code>apply</code>、<code>forward</code>、<code>destruct</code>、<code>cases</code>、<code>simp</code>、<code>tactic</code> |
-| 规则集 | <code>declare_aesop_rule_sets</code> + <code>rule_sets</code> |
-| 调试 | <code>trace.aesop.*</code>、<code>aesop?</code>、Final goals |</p>
+              <ul>
+                <li>
+                  <p>
+                    <code>搜索架构</code>：norm → safe → unsafe 三阶段最佳优先搜索</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>规则类型</code>：<code>norm</code>（规范化）、<code>safe</code>（确定性）、<code>unsafe</code>（分支）</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>动作类型</code>：<code>apply</code>、<code>forward</code>、<code>destruct</code>、<code>cases</code>、<code>simp</code>、<code>tactic</code></p>
+                  </li>
+                <li>
+                  <p>
+                    <code>规则集</code>：<code>declare_aesop_rule_sets</code> + <code>rule_sets</code></p>
+                  </li>
+                <li>
+                  <p>
+                    <code>调试</code>：<code>trace.aesop.*</code>、<code>aesop?</code>、Final goals</p>
+                  </li>
+                </ul>
               </section>
             <section>
               <h2 id="ch11-exercises">

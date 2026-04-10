@@ -998,18 +998,32 @@ Nonzero 状态使得 <code>positivity</code> 能从 <code>x ≠ 0</code> 推出 
               <section>
                 <h3 id="combination-rules">
                   15.2.1. 组合规则<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=combination-rules" title="Permalink">🔗</a></span></h3>
-                <p>
-                  | 操作 | Pos × Pos | Pos × Nn | Nn × Nn | 备注 |
-|------|-----------|----------|---------|------|
-| <code>a + b</code> | Pos | Pos | Nn | 一侧为正即拉正 |
-| <code>a * b</code> | Pos | Nn | Nn | 需两侧均正才保正 |</p>
-                <p>
-                  | 一元操作 | 输出 | 条件 |
-|---------|------|------|
-| <code>a ^ n</code>（偶数） | Nn | 无条件 |
-| <code>a ^ n</code>（奇数） | 保持输入 | 需输入 Nn 或 Pos |
-| <code>\|a\|</code>、<code>‖a‖</code>、<code>sqrt</code> | Nn | 无条件 |
-| <code>exp a</code> | Pos | 无条件 |</p>
+                <ul>
+                  <li>
+                    <p>
+                      操作：<code>a + b</code> —— Pos × Pos：Pos —— Pos × Nn：Pos —— Nn × Nn：Nn —— 备注：一侧为正即拉正</p>
+                    </li>
+                  <li>
+                    <p>
+                      操作：<code>a * b</code> —— Pos × Pos：Pos —— Pos × Nn：Nn —— Nn × Nn：Nn —— 备注：需两侧均正才保正</p>
+                    </li>
+                  <li>
+                    <p>
+                      一元操作：<code>a ^ n</code>（偶数） —— 输出：Nn —— 条件：无条件</p>
+                    </li>
+                  <li>
+                    <p>
+                      一元操作：<code>a ^ n</code>（奇数） —— 输出：保持输入 —— 条件：需输入 Nn 或 Pos</p>
+                    </li>
+                  <li>
+                    <p>
+                      一元操作：<code>\ —— 输出：a\ —— 条件：</code>、<code>‖a‖</code>、<code>sqrt</code> —— Nn —— 无条件</p>
+                    </li>
+                  <li>
+                    <p>
+                      一元操作：<code>exp a</code> —— 输出：Pos —— 条件：无条件</p>
+                    </li>
+                  </ul>
                 </section>
               </section>
             <section>
@@ -1110,7 +1124,7 @@ Nonzero 状态使得 <code>positivity</code> 能从 <code>x ≠ 0</code> 推出 
 def evalAbs : Positivity.PositivityExt where
   eval {u α} _zα _pα e := do
     let .app (.app (.const ``abs _) _) a := e   -- ❶ 模式匹配：e 是 abs a 吗？
-      | throwError "not abs"
+- throwError "not abs"
     return .nonneg (← mkAppM ``abs_nonneg #[a]) -- ❷ 返回 Nonneg + 证明项
 </pre><ul>
                 <li>
@@ -1216,14 +1230,28 @@ example (x : ℝ) (hx : x ≠ 0) : x ^ 2 ≠ 0 := by positivity  -- ✓
               <section>
                 <h3 id="positivity-selection-table">
                   15.7.3. 选择速查表<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=positivity-selection-table" title="Permalink">🔗</a></span></h3>
-                <p>
-                  | 场景 | 推荐 tactic | 原因 |
-|------|-------------|------|
-| <code>0 ≤ e</code> 或 <code>0 &lt; e</code>，结构化表达式 | <code>positivity</code> | 递归分解，利用代数结构 |
-| <code>0 ≤ e</code> 或 <code>0 &lt; e</code>，纯数值 | <code>norm_num</code> | 直接计算 |
-| <code>a ≤ b</code> 一般不等式 | <code>linarith</code> / <code>gcongr</code> | 线性推理或单调性 |
-| 分母 <code>≠ 0</code> | <code>positivity</code>（若可推出为正） | <code>0 &lt; e → e ≠ 0</code> |
-| 乘积 / 除法符号 | <code>positivity</code> | 组合规则直接适用 |</p>
+                <ul>
+                  <li>
+                    <p>
+                      场景：<code>0 ≤ e</code> 或 <code>0 &lt; e</code>，结构化表达式 —— 推荐 tactic：<code>positivity</code> —— 原因：递归分解，利用代数结构</p>
+                    </li>
+                  <li>
+                    <p>
+                      场景：<code>0 ≤ e</code> 或 <code>0 &lt; e</code>，纯数值 —— 推荐 tactic：<code>norm_num</code> —— 原因：直接计算</p>
+                    </li>
+                  <li>
+                    <p>
+                      场景：<code>a ≤ b</code> 一般不等式 —— 推荐 tactic：<code>linarith</code> / <code>gcongr</code> —— 原因：线性推理或单调性</p>
+                    </li>
+                  <li>
+                    <p>
+                      场景：分母 <code>≠ 0</code> —— 推荐 tactic：<code>positivity</code>（若可推出为正） —— 原因：<code>0 &lt; e → e ≠ 0</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      场景：乘积 / 除法符号 —— 推荐 tactic：<code>positivity</code> —— 原因：组合规则直接适用</p>
+                    </li>
+                  </ul>
                 <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.example-2009">example</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.18513" data-verso-hover="246">x</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ</span><span class="unknown token" data-binding="">)</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.18574" data-verso-hover="259">hx</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="typed token" data-binding="" data-verso-hover="246">0</span><span class="inter-text"> </span><span class="unknown token" data-binding="">≤</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.18513" data-verso-hover="246">x</span><span class="unknown token" data-binding="">)</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="typed token" data-binding="" data-verso-hover="246">0</span><span class="inter-text"> </span><span class="unknown token" data-binding="">≤</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.18513" data-verso-hover="246">x</span><span class="inter-text"> </span><span class="unknown token" data-binding="">^</span><span class="inter-text"> </span><span class="typed token" data-binding="" data-verso-hover="25">2</span><span class="inter-text"> </span><span class="unknown token" data-binding="">+</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.18513" data-verso-hover="246">x</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:=</span><span class="inter-text"> </span><span class="tactic"><label for="tactic-state-12340238139950404148-2063-2065-237"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.byTactic-2063" data-verso-hover="27">by</span></label><input type="checkbox" class="tactic-toggle" id="tactic-state-12340238139950404148-2063-2065-237"><span class="tactic-state"><span class="goal"><span class="hypotheses"><span class="hypothesis"><span class="name"><span class="var token" data-binding="var-_uniq.18513" data-verso-hover="246">x</span></span><span class="colon">:</span><span class="type"><span class="inter-text"></span><span class="const token" data-binding="const-Real" data-verso-hover="247">ℝ</span><span class="inter-text"></span></span></span><span class="hypothesis"><span class="name"><span class="var token" data-binding="var-_uniq.18574" data-verso-hover="259">hx</span></span><span class="colon">:</span><span class="type"><span class="inter-text"></span><span class="unknown token" data-binding="">0</span><span class="inter-text"> </span><span class="const token" data-binding="const-LE.le" data-verso-hover="248">≤</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.18513" data-verso-hover="246">x</span></span></span></span><span class="conclusion"><span class="prefix">⊢ </span><span class="type"><span class="inter-text"></span><span class="unknown token" data-binding="">0</span><span class="inter-text"> </span><span class="const token" data-binding="const-LE.le" data-verso-hover="248">≤</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.18513" data-verso-hover="246">x</span><span class="inter-text"> </span><span class="const token" data-binding="const-HPow.hPow" data-verso-hover="235">^</span><span class="inter-text"> </span><span class="unknown token" data-binding="">2</span><span class="inter-text"> </span><span class="const token" data-binding="const-HAdd.hAdd" data-verso-hover="28">+</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.18513" data-verso-hover="246">x</span></span></span></span></span></span><span class="inter-text"> </span><span class="tactic"><label for="tactic-state-7-2066-2076-239"><span class="keyword token" data-binding="kw-occ-Mathlib.Tactic.Positivity.positivity-2066" data-verso-hover="249">positivity</span></label><input type="checkbox" class="tactic-toggle" id="tactic-state-7-2066-2076-239"><span class="tactic-state">All goals completed! 🐙</span></span><span class="inter-text">
 
 </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.example-2078">example</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.19590" data-verso-hover="246">x</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ</span><span class="unknown token" data-binding="">)</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.19651" data-verso-hover="259">hx</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="typed token" data-binding="" data-verso-hover="246">0</span><span class="inter-text"> </span><span class="unknown token" data-binding="">≤</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.19590" data-verso-hover="246">x</span><span class="unknown token" data-binding="">)</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="typed token" data-binding="" data-verso-hover="246">0</span><span class="inter-text"> </span><span class="unknown token" data-binding="">≤</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.19590" data-verso-hover="246">x</span><span class="inter-text"> </span><span class="unknown token" data-binding="">^</span><span class="inter-text"> </span><span class="typed token" data-binding="" data-verso-hover="25">2</span><span class="inter-text"> </span><span class="unknown token" data-binding="">+</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.19590" data-verso-hover="246">x</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:=</span><span class="inter-text"> </span><span class="tactic"><label for="tactic-state-2129191679471449852-2132-2134-240"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.byTactic-2132" data-verso-hover="27">by</span></label><input type="checkbox" class="tactic-toggle" id="tactic-state-2129191679471449852-2132-2134-240"><span class="tactic-state"><span class="goal"><span class="hypotheses"><span class="hypothesis"><span class="name"><span class="var token" data-binding="var-_uniq.19590" data-verso-hover="246">x</span></span><span class="colon">:</span><span class="type"><span class="inter-text"></span><span class="const token" data-binding="const-Real" data-verso-hover="247">ℝ</span><span class="inter-text"></span></span></span><span class="hypothesis"><span class="name"><span class="var token" data-binding="var-_uniq.19651" data-verso-hover="259">hx</span></span><span class="colon">:</span><span class="type"><span class="inter-text"></span><span class="unknown token" data-binding="">0</span><span class="inter-text"> </span><span class="const token" data-binding="const-LE.le" data-verso-hover="248">≤</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.19590" data-verso-hover="246">x</span></span></span></span><span class="conclusion"><span class="prefix">⊢ </span><span class="type"><span class="inter-text"></span><span class="unknown token" data-binding="">0</span><span class="inter-text"> </span><span class="const token" data-binding="const-LE.le" data-verso-hover="248">≤</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.19590" data-verso-hover="246">x</span><span class="inter-text"> </span><span class="const token" data-binding="const-HPow.hPow" data-verso-hover="235">^</span><span class="inter-text"> </span><span class="unknown token" data-binding="">2</span><span class="inter-text"> </span><span class="const token" data-binding="const-HAdd.hAdd" data-verso-hover="28">+</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.19590" data-verso-hover="246">x</span></span></span></span></span></span><span class="inter-text"> </span><span class="tactic"><label for="tactic-state-7-2135-2158-242"><span class="keyword token" data-binding="kw-occ-Mathlib.Tactic.nlinarith-2135" data-verso-hover="272">nlinarith</span><span class="inter-text"> </span><span class="unknown token" data-binding="">[</span><span class="const token" data-binding="const-sq_nonneg" data-verso-hover="273">sq_nonneg</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.19590" data-verso-hover="246">x</span><span class="unknown token" data-binding="">]</span></label><input type="checkbox" class="tactic-toggle" id="tactic-state-7-2135-2158-242"><span class="tactic-state">All goals completed! 🐙</span></span><span class="inter-text">
@@ -1330,17 +1358,37 @@ example (v : ℝ) (m : ℝ) (hm : 0 &lt; m) : 0 ≤ energy v m := by
             <section>
               <h2 id="ch14-summary">
                 15.10. 14.10 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch14-summary" title="Permalink">🔗</a></span></h2>
-              <p>
-                | 概念 | 关键点 |
-|------|--------|
-| 目标形式 | 只处理 <code>0 ≤ e</code> 或 <code>0 &lt; e</code>，不做一般不等式推理 |
-| 三值追踪 | Positive / Nonneg / Nonzero，组合规则覆盖 +、×、^、|·|、exp 等 |
-| 递归分解 | 自底向上分析表达式结构，逐层组合符号状态 |
-| 假设利用 | 自动扫描上下文中 <code>0 &lt; x</code>、<code>0 ≤ x</code>、<code>x ≠ 0</code> 形式的假设 |
-| 插件系统 | <code>@[positivity head]</code> 注册，可为自定义函数扩展 |
-| 主要陷阱 | 减法、奇数幂无假设、自定义函数未展开 |
-| 协作模式 | 为 <code>gcongr</code> / <code>field_simp</code> / <code>div_le_div</code> 提供非负性前提 |
-| 调试 | <code>positivity?</code> 查看证明项，逐步分解定位失败子表达式 |</p>
+              <ul>
+                <li>
+                  <p>
+                    <code>目标形式</code>：只处理 <code>0 ≤ e</code> 或 <code>0 &lt; e</code>，不做一般不等式推理</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>三值追踪</code>：Positive / Nonneg / Nonzero，组合规则覆盖 +、×、^、
+- <code>递归分解</code>：自底向上分析表达式结构，逐层组合符号状态</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>假设利用</code>：自动扫描上下文中 <code>0 &lt; x</code>、<code>0 ≤ x</code>、<code>x ≠ 0</code> 形式的假设</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>插件系统</code>：<code>@[positivity head]</code> 注册，可为自定义函数扩展</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>主要陷阱</code>：减法、奇数幂无假设、自定义函数未展开</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>协作模式</code>：为 <code>gcongr</code> / <code>field_simp</code> / <code>div_le_div</code> 提供非负性前提</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>调试</code>：<code>positivity?</code> 查看证明项，逐步分解定位失败子表达式</p>
+                  </li>
+                </ul>
               <p>
                 <code>positivity</code> 是不等式工具链中的<strong>符号判定专家</strong>——不解不等式，只回答符号。
 理解其能力边界，才能与 <code>linarith</code>、<code>gcongr</code>、<code>nlinarith</code> 有效组合。

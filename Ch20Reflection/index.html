@@ -1009,20 +1009,18 @@ universe、typeclass、unification 等细节。反射走完全不同的路：</p
                 21.2. 20.2 一个最小例子：布尔重言式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=bool-tautology-example" title="Permalink">🔗</a></span></h2>
               <pre>-- [示意] ❶ 语法
 inductive BExpr
-  | var (i : Fin n)
-  | true_ | false_
-  | and (a b : BExpr)
-  | or  (a b : BExpr)
-  | not (a : BExpr)
+- var (i : Fin n)：true_ —— false_
+- var (i : Fin n)：and (a b : BExpr)
+- var (i : Fin n)：or  (a b : BExpr)
+- var (i : Fin n)：not (a : BExpr)
 
 -- [示意] ❷ 语义——给定变量赋值，求值为 Bool
 def BExpr.eval (env : Fin n → Bool) : BExpr → Bool
-  | .var i     =&gt; env i
-  | .true_     =&gt; true
-  | .false_    =&gt; false
-  | .and a b   =&gt; a.eval env && b.eval env
-  | .or  a b   =&gt; a.eval env || b.eval env
-  | .not a     =&gt; !(a.eval env)
+- .var i     =&gt; env i：.true_     =&gt; true
+- .var i     =&gt; env i：.false_    =&gt; false
+- .var i     =&gt; env i：.and a b   =&gt; a.eval env && b.eval env
+- .var i     =&gt; env i：.or  a b   =&gt; a.eval env —— b.eval env
+- .var i     =&gt; env i：.not a     =&gt; !(a.eval env)
 
 -- [示意] ❸ 判定——穷举所有赋值
 def BExpr.isTaut (e : BExpr) : Bool :=
@@ -1052,20 +1050,18 @@ theorem isTaut_sound (e : BExpr) (h : e.isTaut = true) :
                   21.3.1. ❶ 语法 + ❷ 语义<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=iexpr-syntax-semantics" title="Permalink">🔗</a></span></h3>
                 <pre>-- [示意]
 inductive IExpr
-  | lit (n : ℤ)          -- 字面量
-  | var (i : ℕ)          -- 第 i 个变量
-  | add (a b : IExpr)
-  | mul (a b : IExpr)
-  | neg (a : IExpr)
+- lit (n : ℤ)          -- 字面量：var (i : ℕ)          -- 第 i 个变量
+- lit (n : ℤ)          -- 字面量：add (a b : IExpr)
+- lit (n : ℤ)          -- 字面量：mul (a b : IExpr)
+- lit (n : ℤ)          -- 字面量：neg (a : IExpr)
 
 abbrev IEnv := ℕ → ℤ    -- 环境：变量赋值
 
 def IExpr.denote (env : IEnv) : IExpr → ℤ
-  | .lit n     =&gt; n
-  | .var i     =&gt; env i
-  | .add a b   =&gt; a.denote env + b.denote env
-  | .mul a b   =&gt; a.denote env * b.denote env
-  | .neg a     =&gt; -(a.denote env)
+- .lit n     =&gt; n：.var i     =&gt; env i
+- .lit n     =&gt; n：.add a b   =&gt; a.denote env + b.denote env
+- .lit n     =&gt; n：.mul a b   =&gt; a.denote env * b.denote env
+- .lit n     =&gt; n：.neg a     =&gt; -(a.denote env)
 </pre></section>
               <section>
                 <h3 id="iexpr-normalization">
@@ -1074,8 +1070,7 @@ def IExpr.denote (env : IEnv) : IExpr → ℤ
                   选 Horner 形式（<code>a * x + b</code> 的递归表示）作为范式：</p>
                 <pre>-- [示意] Horner Normal Form
 inductive HNF
-  | const (n : ℤ)                        -- 常数
-  | horner (p : HNF) (i : ℕ) (q : HNF)  -- p * x_i + q
+- const (n : ℤ)                        -- 常数：horner (p : HNF) (i : ℕ) (q : HNF)  -- p * x_i + q
 
 def IExpr.toHNF : IExpr → HNF := ...     -- ❶ 转换算法
 def HNF.denote (env : IEnv) : HNF → ℤ := ... -- ❷ 范式的语义
@@ -1098,12 +1093,11 @@ instance : DecidableEq HNF := ...        -- ❸ 结构相等，可判定
 theorem toHNF_sound (e : IExpr) (env : IEnv) :
     e.toHNF.denote env = e.denote env := by
   induction e with                       -- 对语法结构归纳
-  | lit n =&gt; simp [IExpr.toHNF, HNF.denote, IExpr.denote]
-  | add a b iha ihb =&gt;
+- lit n =&gt; simp [IExpr.toHNF, HNF.denote, IExpr.denote]：add a b iha ihb =&gt;
     simp [*, IExpr.toHNF, HNF.denote, IExpr.denote]; ring
-  | mul a b iha ihb =&gt;
+- mul a b iha ihb =&gt;
     simp [*, IExpr.toHNF, HNF.denote, IExpr.denote]; ring
-  | _ =&gt; simp [*, IExpr.toHNF, HNF.denote, IExpr.denote]; ring
+- _ =&gt; simp [*, IExpr.toHNF, HNF.denote, IExpr.denote]; ring
 
 -- 推论：范式相等 → 语义相等（tactic 实际使用的引理）
 theorem eq_of_toHNF_eq (e1 e2 : IExpr) (env : IEnv)
@@ -1163,8 +1157,7 @@ elab "int_ring" : tactic =&gt; do
                   21.5.1. Decidable 的角色<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=decidable-role" title="Permalink">🔗</a></span></h3>
                 <pre>-- [示意] Decidable 的定义
 inductive Decidable (p : Prop) where
-  | isTrue  (h : p)     -- p 成立，附带证明
-  | isFalse (h : ¬p)    -- p 不成立，附带反证
+- isTrue  (h : p)     -- p 成立，附带证明：isFalse (h : ¬p)    -- p 不成立，附带反证
 
 -- decide 的工作原理：
 -- 1. 找到 Decidable p 的实例
@@ -1185,14 +1178,28 @@ example : (3 + 4 : ℕ) = 7 := by decide
 
 example : (10 ^ 20 + 1 : ℕ) ≠ 10 ^ 20 := by native_decide
   -- ▸ 编译为原生代码执行——快但信任编译器
-</pre><p>
-                  | | <code>decide</code> | <code>native_decide</code> |
-|---|---|---|
-| 执行方式 | 内核归约（解释执行） | 编译为原生代码 |
-| 速度 | 慢 | 快（几个数量级） |
-| 可信度 | 最高（内核检查每一步） | 较低（信任编译器） |
-| 适用规模 | 小实例（&lt; 1000 步） | 大实例 |
-| Mathlib 接受度 | 总是接受 | 谨慎使用 |</p>
+</pre><ul>
+                  <li>
+                    <p>
+                      执行方式 —— <code>decide</code>：内核归约（解释执行） —— <code>native_decide</code>：编译为原生代码</p>
+                    </li>
+                  <li>
+                    <p>
+                      速度 —— <code>decide</code>：慢 —— <code>native_decide</code>：快（几个数量级）</p>
+                    </li>
+                  <li>
+                    <p>
+                      可信度 —— <code>decide</code>：最高（内核检查每一步） —— <code>native_decide</code>：较低（信任编译器）</p>
+                    </li>
+                  <li>
+                    <p>
+                      适用规模 —— <code>decide</code>：小实例（&lt; 1000 步） —— <code>native_decide</code>：大实例</p>
+                    </li>
+                  <li>
+                    <p>
+                      Mathlib 接受度 —— <code>decide</code>：总是接受 —— <code>native_decide</code>：谨慎使用</p>
+                    </li>
+                  </ul>
                 <p>
                   <strong>经验法则</strong>：先试 <code>decide</code>；超时则换 <code>native_decide</code>。</p>
                 </section>
@@ -1233,13 +1240,24 @@ example : (10 ^ 20 + 1 : ℕ) ≠ 10 ^ 20 := by native_decide
                   <code>norm_num</code>（第十章）也遵循这个模式：在 MetaM 中做数值计算，
 用反射验证结果。对素性测试等复杂运算，
 把 <code>Nat.Prime 37</code> 转化为可计算的判定函数。</p>
-                <p>
-                  | | 纯反射 | 逐步构造 | 混合 |
-|---|---|---|---|
-| 实现难度 | 低 | 高 | 中 |
-| 性能 | 慢（内核计算） | 快 | 快 |
-| 可信度 | 高 | 中（依赖实现） | 高 |
-| 典型代表 | 教学示例 | — | <code>ring</code>、<code>norm_num</code> |</p>
+                <ul>
+                  <li>
+                    <p>
+                      实现难度 —— 纯反射：低 —— 逐步构造：高 —— 混合：中</p>
+                    </li>
+                  <li>
+                    <p>
+                      性能 —— 纯反射：慢（内核计算） —— 逐步构造：快 —— 混合：快</p>
+                    </li>
+                  <li>
+                    <p>
+                      可信度 —— 纯反射：高 —— 逐步构造：中（依赖实现） —— 混合：高</p>
+                    </li>
+                  <li>
+                    <p>
+                      典型代表 —— 纯反射：教学示例 —— 逐步构造：— —— 混合：<code>ring</code>、<code>norm_num</code></p>
+                    </li>
+                  </ul>
                 <p>
                   <strong>设计建议</strong>：原型阶段用纯反射（快速验证算法正确性），
 性能不足时迁移到混合方案。</p>
@@ -1306,15 +1324,32 @@ example : (List.range 10000).length = 10000 := by decide
                 21.8. 20.8 设计检查清单<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=reflection-design-checklist" title="Permalink">🔗</a></span></h2>
               <p>
                 动手前逐项回答：</p>
-              <p>
-                | 检查项 | 问题 |
-|--------|------|
-| <strong>判定性</strong> | 问题可判定吗？能写出 <code>→ Bool</code> 的函数吗？ |
-| <strong>范式</strong> | 用什么范式？范式相等是否容易判定？ |
-| <strong>正确性</strong> | 范式化保持语义的证明是否可行？（最难的部分） |
-| <strong>quote 范围</strong> | 需要识别哪些构造？不识别的怎么处理？ |
-| <strong>性能</strong> | <code>decide</code> 够用还是需要 <code>native_decide</code> / 混合方案？ |
-| <strong>边界</strong> | 超出能力范围时，错误信息如何提示用户？ |</p>
+              <ul>
+                <li>
+                  <p>
+                    <strong>判定性</strong>：问题可判定吗？能写出 <code>→ Bool</code> 的函数吗？</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>范式</strong>：用什么范式？范式相等是否容易判定？</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>正确性</strong>：范式化保持语义的证明是否可行？（最难的部分）</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>quote 范围</strong>：需要识别哪些构造？不识别的怎么处理？</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>性能</strong>：<code>decide</code> 够用还是需要 <code>native_decide</code> / 混合方案？</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>边界</strong>：超出能力范围时，错误信息如何提示用户？</p>
+                  </li>
+                </ul>
               <p>
                 <strong>正确性引理是整个开发中最耗时的部分</strong>——
 先用小例子验证范式化算法，再投入大量时间写证明。</p>
@@ -1355,12 +1390,10 @@ example : (List.range 10000).length = 10000 := by decide
                   标出以下代码中哪些部分对应 ❶语法、❷语义、❸范式化、❹正确性：</p>
                 <pre>-- [示意]
 inductive PExpr                    -- (?)
-  | var (i : Nat)
-  | add (a b : PExpr)
+- var (i : Nat)：add (a b : PExpr)
 
 def PExpr.eval (env : Nat → ℕ) : PExpr → ℕ     -- (?)
-  | .var i =&gt; env i
-  | .add a b =&gt; a.eval env + b.eval env
+- .var i =&gt; env i：.add a b =&gt; a.eval env + b.eval env
 
 def PExpr.sort : PExpr → PExpr := ...            -- (?)
 
@@ -1400,18 +1433,44 @@ theorem sort_sound (e : PExpr) (env : Nat → ℕ) : -- (?)
             <section>
               <h2 id="reflection-summary">
                 21.11. 20.11 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=reflection-summary" title="Permalink">🔗</a></span></h2>
-              <p>
-                | 概念 | 关键点 |
-|------|--------|
-| 反射核心思想 | 命题 → 可计算数据 → 计算验证 → 正确性引理桥接 |
-| 四步模式 | 语法 → 语义 → 范式化 → 正确性引理 |
-| quote | 把 Lean Expr 编码为归纳类型值；覆盖范围决定能力边界 |
-| <code>decide</code> | 内核归约，慢但可信度最高 |
-| <code>native_decide</code> | 编译执行，快但信任编译器 |
-| 纯反射 vs 混合 | 原型用纯反射，生产用混合（MetaM 范式化 + 反射验证） |
-| 正确性引理 | 最耗时的部分——先用小例子验证算法再投入证明 |
-| 相关章节 | <code>ring</code>（第七章）、<code>norm_num</code>（第十章）、<code>decide</code>（第十三章） |
-| 主要陷阱 | Decidable 缺失、内核超时、quote 不完整、范式化不完备 |</p>
+              <ul>
+                <li>
+                  <p>
+                    <code>反射核心思想</code>：命题 → 可计算数据 → 计算验证 → 正确性引理桥接</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>四步模式</code>：语法 → 语义 → 范式化 → 正确性引理</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>quote</code>：把 Lean Expr 编码为归纳类型值；覆盖范围决定能力边界</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>decide</code>：内核归约，慢但可信度最高</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>native_decide</code>：编译执行，快但信任编译器</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>纯反射 vs 混合</code>：原型用纯反射，生产用混合（MetaM 范式化 + 反射验证）</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>正确性引理</code>：最耗时的部分——先用小例子验证算法再投入证明</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>相关章节</code>：<code>ring</code>（第七章）、<code>norm_num</code>（第十章）、<code>decide</code>（第十三章）</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>主要陷阱</code>：Decidable 缺失、内核超时、quote 不完整、范式化不完备</p>
+                  </li>
+                </ul>
               <p>
                 <strong>一句话总结</strong>：反射把"构造证明的复杂性"转移为"一次性证明正确性引理的复杂性"——
 如果你的问题可判定，反射几乎总是比逐步构造更简单的起点。</p>

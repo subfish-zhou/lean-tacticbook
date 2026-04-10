@@ -1004,11 +1004,11 @@ window.onload = () => {
                   插件的返回类型 <code>NormNum.Result</code> 有三个构造子。
 下面是简化后的核心形状，省略了部分字段；完整定义见 <code>Mathlib.Tactic.NormNum.Core</code>：</p>
                 <pre>inductive Result where
-  | isNat (inst : Expr) (lit : Expr) (proof : Expr)
+- isNat (inst : Expr) (lit : Expr) (proof : Expr)
     -- 表达式 = Nat.cast lit，proof : e = Nat.cast lit
-  | isNegNat (inst : Expr) (lit : Expr) (proof : Expr)
+- isNegNat (inst : Expr) (lit : Expr) (proof : Expr)
     -- 表达式 = -Nat.cast lit
-  | isBool (val : Bool) (proof : Expr)
+- isBool (val : Bool) (proof : Expr)
     -- 命题为 True/False
 </pre><p>
                   <code>isNat</code> 和 <code>isNegNat</code> 把任意数值表达式规范化为<strong>自然数字面量</strong>或其负值，
@@ -1050,19 +1050,48 @@ def evalPrime : NormNumExt where
               <section>
                 <h3 id="builtin-plugins">
                   11.2.3. 内置插件清单<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=builtin-plugins" title="Permalink">🔗</a></span></h3>
-                <p>
-                  | 插件 | 处理的 head symbol | 示例 |
-|------|--------------------|------|
-| <code>evalAdd</code> | <code>HAdd.hAdd</code> | <code>2 + 3 = 5</code> |
-| <code>evalMul</code> | <code>HMul.hMul</code> | <code>6 * 7 = 42</code> |
-| <code>evalPow</code> | <code>HPow.hPow</code> | <code>2 ^ 10 = 1024</code> |
-| <code>evalDiv</code> | <code>HDiv.hDiv</code> | <code>(10 : ℚ) / 3</code> |
-| <code>evalMod</code> | <code>HMod.hMod</code> | <code>17 % 5 = 2</code> |
-| <code>evalPrime</code> | <code>Nat.Prime</code> | <code>Nat.Prime 127</code> |
-| <code>evalGcd</code> | <code>Nat.gcd</code> | <code>Nat.gcd 12 8 = 4</code> |
-| <code>evalDvd</code> | <code>Dvd.dvd</code> | <code>(3 : ℤ) ∣ 12</code> |
-| <code>evalLe</code> | <code>LE.le</code> | <code>(2 : ℝ) ≤ 3</code> |
-| <code>evalLt</code> | <code>LT.lt</code> | <code>(1 : ℚ) &lt; 2</code> |</p>
+                <ul>
+                  <li>
+                    <p>
+                      插件：<code>evalAdd</code> —— 处理的 head symbol：<code>HAdd.hAdd</code> —— 示例：<code>2 + 3 = 5</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      插件：<code>evalMul</code> —— 处理的 head symbol：<code>HMul.hMul</code> —— 示例：<code>6 * 7 = 42</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      插件：<code>evalPow</code> —— 处理的 head symbol：<code>HPow.hPow</code> —— 示例：<code>2 ^ 10 = 1024</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      插件：<code>evalDiv</code> —— 处理的 head symbol：<code>HDiv.hDiv</code> —— 示例：<code>(10 : ℚ) / 3</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      插件：<code>evalMod</code> —— 处理的 head symbol：<code>HMod.hMod</code> —— 示例：<code>17 % 5 = 2</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      插件：<code>evalPrime</code> —— 处理的 head symbol：<code>Nat.Prime</code> —— 示例：<code>Nat.Prime 127</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      插件：<code>evalGcd</code> —— 处理的 head symbol：<code>Nat.gcd</code> —— 示例：<code>Nat.gcd 12 8 = 4</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      插件：<code>evalDvd</code> —— 处理的 head symbol：<code>Dvd.dvd</code> —— 示例：<code>(3 : ℤ) ∣ 12</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      插件：<code>evalLe</code> —— 处理的 head symbol：<code>LE.le</code> —— 示例：<code>(2 : ℝ) ≤ 3</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      插件：<code>evalLt</code> —— 处理的 head symbol：<code>LT.lt</code> —— 示例：<code>(1 : ℚ) &lt; 2</code></p>
+                    </li>
+                  </ul>
                 </section>
               </section>
             <section>
@@ -1104,14 +1133,28 @@ def evalPrime : NormNumExt where
               <section>
                 <h3 id="comparison-with-kernel-computation">
                   11.3.3. 与 kernel computation 的对比<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=comparison-with-kernel-computation" title="Permalink">🔗</a></span></h3>
-                <p>
-                  | | <code>norm_num</code> | <code>decide</code> / <code>native_decide</code> |
-|---|---|---|
-| 计算位置 | meta 层（elaborator） | kernel / 编译器 |
-| 输出 | 证明项（证书） | <code>rfl : decide p = true</code> |
-| 大数性能 | 优秀 | 可能超时 |
-| 可信基 | kernel 验证证书 | 信任 kernel reduction / native code |
-| 可扩展性 | 插件系统 | 需要 <code>Decidable</code> 实例 |</p>
+                <ul>
+                  <li>
+                    <p>
+                      计算位置 —— <code>norm_num</code>：meta 层（elaborator） —— <code>decide</code> / <code>native_decide</code>：kernel / 编译器</p>
+                    </li>
+                  <li>
+                    <p>
+                      输出 —— <code>norm_num</code>：证明项（证书） —— <code>decide</code> / <code>native_decide</code>：<code>rfl : decide p = true</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      大数性能 —— <code>norm_num</code>：优秀 —— <code>decide</code> / <code>native_decide</code>：可能超时</p>
+                    </li>
+                  <li>
+                    <p>
+                      可信基 —— <code>norm_num</code>：kernel 验证证书 —— <code>decide</code> / <code>native_decide</code>：信任 kernel reduction / native code</p>
+                    </li>
+                  <li>
+                    <p>
+                      可扩展性 —— <code>norm_num</code>：插件系统 —— <code>decide</code> / <code>native_decide</code>：需要 <code>Decidable</code> 实例</p>
+                    </li>
+                  </ul>
                 </section>
               </section>
             <section>
@@ -1263,18 +1306,44 @@ example : (2 : ℝ) + 3 = 5 := by norm_num
             <section>
               <h2 id="applicability-quick-reference">
                 11.7. 适用范围速查<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=applicability-quick-reference" title="Permalink">🔗</a></span></h2>
-              <p>
-                | 目标形式 | 推荐 tactic | 原因 |
-|----------|-------------|------|
-| <code>2 + 3 = 5</code> | <code>norm_num</code> | 具体数值等式 |
-| <code>Nat.Prime 127</code> | <code>norm_num</code> | 有内置素性插件 |
-| <code>(3/4 : ℚ) * 4 = 3</code> | <code>norm_num</code> | 有理数算术 |
-| <code>x + 0 = x</code> | <code>simp</code> / <code>ring</code> | 含变量 |
-| <code>x + 1 &gt; x</code> | <code>omega</code> / <code>linarith</code> | 线性不等式 |
-| <code>Nat.Prime 2147483647</code> | <code>norm_num</code> | 大素数，meta 层计算 |
-| <code>2 ^ 32 = 4294967296</code> | <code>norm_num</code> | 幂运算 |
-| <code>n % 2 = 0 ∨ n % 2 = 1</code> | <code>omega</code> | 含变量的模算术 |
-| <code>Nat.sqrt 49 = 7</code> | <code>native_decide</code> | 无 <code>norm_num</code> 插件 |</p>
+              <ul>
+                <li>
+                  <p>
+                    目标形式：<code>2 + 3 = 5</code> —— 推荐 tactic：<code>norm_num</code> —— 原因：具体数值等式</p>
+                  </li>
+                <li>
+                  <p>
+                    目标形式：<code>Nat.Prime 127</code> —— 推荐 tactic：<code>norm_num</code> —— 原因：有内置素性插件</p>
+                  </li>
+                <li>
+                  <p>
+                    目标形式：<code>(3/4 : ℚ) * 4 = 3</code> —— 推荐 tactic：<code>norm_num</code> —— 原因：有理数算术</p>
+                  </li>
+                <li>
+                  <p>
+                    目标形式：<code>x + 0 = x</code> —— 推荐 tactic：<code>simp</code> / <code>ring</code> —— 原因：含变量</p>
+                  </li>
+                <li>
+                  <p>
+                    目标形式：<code>x + 1 &gt; x</code> —— 推荐 tactic：<code>omega</code> / <code>linarith</code> —— 原因：线性不等式</p>
+                  </li>
+                <li>
+                  <p>
+                    目标形式：<code>Nat.Prime 2147483647</code> —— 推荐 tactic：<code>norm_num</code> —— 原因：大素数，meta 层计算</p>
+                  </li>
+                <li>
+                  <p>
+                    目标形式：<code>2 ^ 32 = 4294967296</code> —— 推荐 tactic：<code>norm_num</code> —— 原因：幂运算</p>
+                  </li>
+                <li>
+                  <p>
+                    目标形式：<code>n % 2 = 0 ∨ n % 2 = 1</code> —— 推荐 tactic：<code>omega</code> —— 原因：含变量的模算术</p>
+                  </li>
+                <li>
+                  <p>
+                    目标形式：<code>Nat.sqrt 49 = 7</code> —— 推荐 tactic：<code>native_decide</code> —— 原因：无 <code>norm_num</code> 插件</p>
+                  </li>
+                </ul>
               <p>
                 经验法则：<strong>目标中没有自由变量且涉及算术</strong> → 先试 <code>norm_num</code>。</p>
               </section>
@@ -1331,18 +1400,44 @@ example : (2 : ℝ) ^ 8 - 1 = 255 := by sorry
             <section>
               <h2 id="ch10-summary">
                 11.10. 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch10-summary" title="Permalink">🔗</a></span></h2>
-              <p>
-                | 概念 | 要点 |
-|------|------|
-| 定位 | 具体数值命题的快速证明，无自由变量 |
-| 架构 | 插件注册表，<code>@[norm_num head _]</code> 注册 |
-| 证明策略 | meta 层计算 + 构造 kernel 可验证的证书 |
-| vs <code>decide</code> | meta 计算 vs kernel reduction，大数性能差异巨大 |
-| vs <code>omega</code> | <code>norm_num</code> 不含变量；<code>omega</code> 处理线性整数算术 |
-| vs <code>ring</code> | <code>norm_num</code> 处理具体数值；<code>ring</code> 处理多项式恒等式 |
-| 与 <code>simp</code> 配合 | 作为 discharger 处理数值侧条件 |
-| 扩展 | 实现 <code>NormNumExt</code>，返回 <code>Result</code>，注册到 head symbol |
-| 失败诊断 | <code>trace.Meta.NormNum</code> 查看分派过程 |</p>
+              <ul>
+                <li>
+                  <p>
+                    <code>定位</code>：具体数值命题的快速证明，无自由变量</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>架构</code>：插件注册表，<code>@[norm_num head _]</code> 注册</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>证明策略</code>：meta 层计算 + 构造 kernel 可验证的证书</p>
+                  </li>
+                <li>
+                  <p>
+                    vs decide：meta 计算 vs kernel reduction，大数性能差异巨大</p>
+                  </li>
+                <li>
+                  <p>
+                    vs omega：<code>norm_num</code> 不含变量；<code>omega</code> 处理线性整数算术</p>
+                  </li>
+                <li>
+                  <p>
+                    vs ring：<code>norm_num</code> 处理具体数值；<code>ring</code> 处理多项式恒等式</p>
+                  </li>
+                <li>
+                  <p>
+                    与 simp 配合：作为 discharger 处理数值侧条件</p>
+                  </li>
+                <li>
+                  <p>
+                    扩展：实现 <code>NormNumExt</code>，返回 <code>Result</code>，注册到 head symbol</p>
+                  </li>
+                <li>
+                  <p>
+                    失败诊断：<code>trace.Meta.NormNum</code> 查看分派过程</p>
+                  </li>
+                </ul>
               <p>
                 下一章我们将学习 <code>aesop</code>——一个可配置的前向/后向搜索引擎。
 </p>

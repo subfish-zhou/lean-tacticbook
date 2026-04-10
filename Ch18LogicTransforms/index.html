@@ -975,12 +975,20 @@ window.onload = () => {
 同时把 <code>¬(a &lt; b)</code> 翻译成 <code>b ≤ a</code>——枯燥且容易出错。</p>
               <p>
                 <code>push_neg</code>、<code>contrapose</code>、<code>by_contra</code> 为三类场景设计：</p>
-              <p>
-                | tactic | 一句话 |
-|--------|--------|
-| <code>push_neg</code> | 把 <code>¬</code> 向内推到原子公式 |
-| <code>contrapose</code> | 把 <code>P → Q</code> 变为 <code>¬Q → ¬P</code> |
-| <code>by_contra</code> | 假设目标的否定，转为推导矛盾 |</p>
+              <ul>
+                <li>
+                  <p>
+                    <code>push_neg</code>：把 <code>¬</code> 向内推到原子公式</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>contrapose</code>：把 <code>P → Q</code> 变为 <code>¬Q → ¬P</code></p>
+                  </li>
+                <li>
+                  <p>
+                    <code>by_contra</code>：假设目标的否定，转为推导矛盾</p>
+                  </li>
+                </ul>
               </section>
             <section>
               <h2 id="push-neg">
@@ -1016,16 +1024,36 @@ macro "push_neg" cfg:optConfig loc:(location)? : tactic =&gt;
 </span></code></span></span><span class="tactic"><label for="tactic-state-4721208420887714040-372-380-456"><span class="keyword token" data-binding="kw-occ-Mathlib.Tactic.Push.push_neg-372" data-verso-hover="317">push_neg</span></label><input type="checkbox" class="tactic-toggle" id="tactic-state-4721208420887714040-372-380-456"><span class="tactic-state"><span class="goal"><span class="labeled-case" checked="checked"><label class="case-label"><input type="checkbox" id="--verso-unique-457" checked="checked"><span for="--verso-unique-457" class="goal-name">mpr</span></label><span class="hypotheses"><span class="hypothesis"><span class="name"><span class="var token" data-binding="var-_uniq.4" data-verso-hover="292">f</span></span><span class="colon">:</span><span class="type"><span class="inter-text"></span><span class="const token" data-binding="const-Real" data-verso-hover="247">ℝ</span><span class="inter-text"> </span><span class="unknown token" data-binding="">→</span><span class="inter-text"> </span><span class="const token" data-binding="const-Real" data-verso-hover="247">ℝ</span></span></span><span class="hypothesis"><span class="name"><span class="var token" data-binding="var-_uniq.6" data-verso-hover="246">a</span></span><span class="colon">:</span><span class="type"><span class="inter-text"></span><span class="const token" data-binding="const-Real" data-verso-hover="247">ℝ</span><span class="inter-text"></span></span></span><span class="hypothesis"><span class="name"><span class="var token" data-binding="var-_uniq.1137" data-verso-hover="319">h</span></span><span class="colon">:</span><span class="type"><span class="unknown token" data-binding="">∃</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.1342" data-verso-hover="246">ε</span><span class="inter-text"> </span><span class="unknown token" data-binding="">&gt;</span><span class="inter-text"> </span><span class="unknown token" data-binding="">0</span><span class="unknown token" data-binding="">,</span><span class="inter-text"> </span><span class="unknown token" data-binding="">∀</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.1348" data-verso-hover="246">δ</span><span class="inter-text"> </span><span class="unknown token" data-binding="">&gt;</span><span class="inter-text"> </span><span class="unknown token" data-binding="">0</span><span class="unknown token" data-binding="">,</span><span class="inter-text"> </span><span class="unknown token" data-binding="">∃</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.1350" data-verso-hover="246">x</span><span class="unknown token" data-binding="">,</span><span class="inter-text"> </span><span class="const token" data-binding="const-abs" data-verso-hover="255">|</span><span class="var token" data-binding="var-_uniq.1350" data-verso-hover="246">x</span><span class="inter-text"> </span><span class="const token" data-binding="const-HSub.hSub" data-verso-hover="142">-</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.6" data-verso-hover="246">a</span><span class="const token" data-binding="const-abs" data-verso-hover="255">|</span><span class="inter-text"> </span><span class="const token" data-binding="const-LT.lt" data-verso-hover="200">&lt;</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.1348" data-verso-hover="246">δ</span><span class="inter-text"> </span><span class="const token" data-binding="const-And" data-verso-hover="49">∧</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.1342" data-verso-hover="246">ε</span><span class="inter-text"> </span><span class="const token" data-binding="const-LE.le" data-verso-hover="248">≤</span><span class="inter-text"> </span><span class="const token" data-binding="const-abs" data-verso-hover="255">|</span><span class="var token" data-binding="var-_uniq.4" data-verso-hover="292">f</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.1350" data-verso-hover="246">x</span><span class="inter-text"> </span><span class="const token" data-binding="const-HSub.hSub" data-verso-hover="142">-</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.4" data-verso-hover="292">f</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.6" data-verso-hover="246">a</span><span class="const token" data-binding="const-abs" data-verso-hover="255">|</span></span></span></span><span class="conclusion"><span class="prefix">⊢ </span><span class="type"><span class="unknown token" data-binding="">∃</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.1342" data-verso-hover="246">ε</span><span class="inter-text"> </span><span class="unknown token" data-binding="">&gt;</span><span class="inter-text"> </span><span class="unknown token" data-binding="">0</span><span class="unknown token" data-binding="">,</span><span class="inter-text"> </span><span class="unknown token" data-binding="">∀</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.1348" data-verso-hover="246">δ</span><span class="inter-text"> </span><span class="unknown token" data-binding="">&gt;</span><span class="inter-text"> </span><span class="unknown token" data-binding="">0</span><span class="unknown token" data-binding="">,</span><span class="inter-text"> </span><span class="unknown token" data-binding="">∃</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.1350" data-verso-hover="246">x</span><span class="unknown token" data-binding="">,</span><span class="inter-text"> </span><span class="const token" data-binding="const-abs" data-verso-hover="255">|</span><span class="var token" data-binding="var-_uniq.1350" data-verso-hover="246">x</span><span class="inter-text"> </span><span class="const token" data-binding="const-HSub.hSub" data-verso-hover="142">-</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.6" data-verso-hover="246">a</span><span class="const token" data-binding="const-abs" data-verso-hover="255">|</span><span class="inter-text"> </span><span class="const token" data-binding="const-LT.lt" data-verso-hover="200">&lt;</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.1348" data-verso-hover="246">δ</span><span class="inter-text"> </span><span class="const token" data-binding="const-And" data-verso-hover="49">∧</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.1342" data-verso-hover="246">ε</span><span class="inter-text"> </span><span class="const token" data-binding="const-LE.le" data-verso-hover="248">≤</span><span class="inter-text"> </span><span class="const token" data-binding="const-abs" data-verso-hover="255">|</span><span class="var token" data-binding="var-_uniq.4" data-verso-hover="292">f</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.1350" data-verso-hover="246">x</span><span class="inter-text"> </span><span class="const token" data-binding="const-HSub.hSub" data-verso-hover="142">-</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.4" data-verso-hover="292">f</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.6" data-verso-hover="246">a</span><span class="const token" data-binding="const-abs" data-verso-hover="255">|</span></span></span></span></span></span></span></span><span class="inter-text">
     </span><span class="tactic"><label for="tactic-state-7-385-392-458"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Tactic.exact-385" data-verso-hover="195">exact</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.1137" data-verso-hover="319">h</span></label><input type="checkbox" class="tactic-toggle" id="tactic-state-7-385-392-458"><span class="tactic-state">All goals completed! 🐙</span></span></code><p>
                   变换规则一览：</p>
-                <p>
-                  | 输入 | 输出 |
-|------|------|
-| <code>¬(P ∧ Q)</code> | <code>¬P ∨ ¬Q</code> |
-| <code>¬(P ∨ Q)</code> | <code>¬P ∧ ¬Q</code> |
-| <code>¬(∀ x, P x)</code> | <code>∃ x, ¬P x</code> |
-| <code>¬(∃ x, P x)</code> | <code>∀ x, ¬P x</code> |
-| <code>¬(a ≤ b)</code> | <code>b &lt; a</code> |
-| <code>¬(a &lt; b)</code> | <code>b ≤ a</code> |
-| <code>¬¬P</code> | <code>P</code>（需要 Classical） |</p>
+                <ul>
+                  <li>
+                    <p>
+                      <code>¬(P ∧ Q)</code>：<code>¬P ∨ ¬Q</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>¬(P ∨ Q)</code>：<code>¬P ∧ ¬Q</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>¬(∀ x, P x)</code>：<code>∃ x, ¬P x</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>¬(∃ x, P x)</code>：<code>∀ x, ¬P x</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>¬(a ≤ b)</code>：<code>b &lt; a</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>¬(a &lt; b)</code>：<code>b ≤ a</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>¬¬P</code>：<code>P</code>（需要 Classical）</p>
+                    </li>
+                  </ul>
                 </section>
               <section>
                 <h3 id="push-neg-internals">
@@ -1243,17 +1271,28 @@ example : ¬(∀ x, P x) := by push_neg; sorry
             <section>
               <h2 id="logic-transforms-comparison">
                 19.9. 18.9 与相关 tactic 的比较<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=logic-transforms-comparison" title="Permalink">🔗</a></span></h2>
-              <p>
-                | | <code>push_neg</code> | <code>simp only [not_forall, ...]</code> | 手动 <code>rw</code> |
-|--|-----------|-------------------------------|-----------|
-| 简洁度 | 高 | 中 | 低 |
-| 可控性 | 低（全部展开） | 高（选引理） | 最高 |</p>
-              <p>
-                | | <code>contrapose</code> | <code>by_contra</code> |
-|--|-------------|-------------|
-| 前提 | 目标是蕴含 | 任意 |
-| 构造性 | 是 | 否（排中律） |
-| 产出 | 新蕴含目标 | <code>h : ¬Goal ⊢ False</code> |</p>
+              <ul>
+                <li>
+                  <p>
+                    简洁度 —— <code>push_neg</code>：高 —— <code>simp only [not_forall, ...]</code>：中 —— 手动 <code>rw</code>：低</p>
+                  </li>
+                <li>
+                  <p>
+                    可控性 —— <code>push_neg</code>：低（全部展开） —— <code>simp only [not_forall, ...]</code>：高（选引理） —— 手动 <code>rw</code>：最高</p>
+                  </li>
+                <li>
+                  <p>
+                    前提 —— <code>contrapose</code>：目标是蕴含 —— <code>by_contra</code>：任意</p>
+                  </li>
+                <li>
+                  <p>
+                    构造性 —— <code>contrapose</code>：是 —— <code>by_contra</code>：否（排中律）</p>
+                  </li>
+                <li>
+                  <p>
+                    产出 —— <code>contrapose</code>：新蕴含目标 —— <code>by_contra</code>：<code>h : ¬Goal ⊢ False</code></p>
+                  </li>
+                </ul>
               </section>
             <section>
               <h2 id="logic-transforms-exercises">
@@ -1319,12 +1358,20 @@ example (n : ℕ) (h : ∀ d, d ∣ n → d = 1 ∨ d = n) (hn : n ≥ 2) :
             <section>
               <h2 id="logic-transforms-summary">
                 19.11. 18.11 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=logic-transforms-summary" title="Permalink">🔗</a></span></h2>
-              <p>
-                | tactic | 作用 | 内部机制 | 变体 |
-|--------|------|----------|------|
-| <code>push_neg</code> | 否定下推到原子公式 | 特化 <code>simp</code> + <code>@[push_neg]</code> 引理集 | <code>at h</code>、<code>at *</code> |
-| <code>contrapose</code> | 蕴含 → 逆否 | 逻辑等价变换 | <code>contrapose!</code>（+ push<em>neg） |
-| <code>by_contra</code> | 反证法 | 排中律 <code>Classical.em</code> | <code>by_contra!</code>（+ push</em>neg） |</p>
+              <ul>
+                <li>
+                  <p>
+                    tactic：<code>push_neg</code> —— 作用：否定下推到原子公式 —— 内部机制：特化 <code>simp</code> + <code>@[push_neg]</code> 引理集 —— 变体：<code>at h</code>、<code>at *</code></p>
+                  </li>
+                <li>
+                  <p>
+                    tactic：<code>contrapose</code> —— 作用：蕴含 → 逆否 —— 内部机制：逻辑等价变换 —— 变体：<code>contrapose!</code>（+ push_neg）</p>
+                  </li>
+                <li>
+                  <p>
+                    tactic：<code>by_contra</code> —— 作用：反证法 —— 内部机制：排中律 <code>Classical.em</code> —— 变体：<code>by_contra!</code>（+ push_neg）</p>
+                  </li>
+                </ul>
               <p>
                 <strong>核心要点</strong>：</p>
               <ul>

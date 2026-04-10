@@ -1271,14 +1271,28 @@ example (n : ℕ) (hn : 0 &lt; n) : n / n = 1 := Nat.div_self hn
             <section>
               <h2 id="field-simp-vs-manual">
                 18.8. 17.8 <code>field_simp</code> vs 手动引理<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=field-simp-vs-manual" title="Permalink">🔗</a></span></h2>
-              <p>
-                | 场景 | 推荐方式 | 原因 |
-|------|---------|------|
-| 分式等式（通分后比较） | <code>field_simp; ring</code> | 自动化，不需手动引理 |
-| 分式不等式 | <code>rw [div_le_iff h]</code> 等 | <code>field_simp</code> 对不等式支持有限 |
-| 单个分母消除 | <code>field_simp</code> 或 <code>rw [div_eq_iff h]</code> | 简单情况手动更精确 |
-| ℕ / ℤ 上的除法 | <code>omega</code> / <code>Nat.div_*</code> 引理 | <code>field_simp</code> 不适用 |
-| 嵌套复杂分式 | <code>field_simp; ring</code> | 手动几乎不可能 |</p>
+              <ul>
+                <li>
+                  <p>
+                    场景：分式等式（通分后比较） —— 推荐方式：<code>field_simp; ring</code> —— 原因：自动化，不需手动引理</p>
+                  </li>
+                <li>
+                  <p>
+                    场景：分式不等式 —— 推荐方式：<code>rw [div_le_iff h]</code> 等 —— 原因：<code>field_simp</code> 对不等式支持有限</p>
+                  </li>
+                <li>
+                  <p>
+                    场景：单个分母消除 —— 推荐方式：<code>field_simp</code> 或 <code>rw [div_eq_iff h]</code> —— 原因：简单情况手动更精确</p>
+                  </li>
+                <li>
+                  <p>
+                    场景：ℕ / ℤ 上的除法 —— 推荐方式：<code>omega</code> / <code>Nat.div_*</code> 引理 —— 原因：<code>field_simp</code> 不适用</p>
+                  </li>
+                <li>
+                  <p>
+                    场景：嵌套复杂分式 —— 推荐方式：<code>field_simp; ring</code> —— 原因：手动几乎不可能</p>
+                  </li>
+                </ul>
               </section>
             <section>
               <h2 id="field-simp-exercises">
@@ -1360,17 +1374,40 @@ example (a b : ℝ) /- 补充假设 -/ :
             <section>
               <h2 id="field-simp-summary">
                 18.10. 17.10 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=field-simp-summary" title="Permalink">🔗</a></span></h2>
-              <p>
-                | 概念 | 关键点 |
-|------|--------|
-| 核心功能 | 消除分母，把分式等式化归为多项式等式 |
-| 内部机制 | 特化的 <code>simp</code>，加载 <code>div_add_div</code>、<code>div_eq_iff</code> 等分式引理 |
-| 典型流程 | <code>field_simp</code> → <code>ring</code>（最常见），或 → <code>linarith</code> / <code>nlinarith</code> |
-| 非零条件来源 | 假设 <code>x ≠ 0</code>、推导 <code>0 &lt; x → x ≠ 0</code>、数值 <code>norm_num</code>、显式传入 |
-| 适用范围 | <code>Field</code> / <code>DivisionRing</code> 类型（ℚ、ℝ、ℂ），不适用于 ℕ / ℤ |
-| 主要陷阱 | 缺非零条件、复合分母、ring 后接不等式、ℕ 整除混淆 |
-| 协作 | <code>ring</code>（多项式）、<code>positivity</code>（非零性）、<code>push_cast</code>（类型转换） |
-| 调试 | <code>field_simp?</code> 查看引理、检查 Infoview 剩余目标、显式传入 <code>[h]</code> |</p>
+              <ul>
+                <li>
+                  <p>
+                    <code>核心功能</code>：消除分母，把分式等式化归为多项式等式</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>内部机制</code>：特化的 <code>simp</code>，加载 <code>div_add_div</code>、<code>div_eq_iff</code> 等分式引理</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>典型流程</code>：<code>field_simp</code> → <code>ring</code>（最常见），或 → <code>linarith</code> / <code>nlinarith</code></p>
+                  </li>
+                <li>
+                  <p>
+                    <code>非零条件来源</code>：假设 <code>x ≠ 0</code>、推导 <code>0 &lt; x → x ≠ 0</code>、数值 <code>norm_num</code>、显式传入</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>适用范围</code>：<code>Field</code> / <code>DivisionRing</code> 类型（ℚ、ℝ、ℂ），不适用于 ℕ / ℤ</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>主要陷阱</code>：缺非零条件、复合分母、ring 后接不等式、ℕ 整除混淆</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>协作</code>：<code>ring</code>（多项式）、<code>positivity</code>（非零性）、<code>push_cast</code>（类型转换）</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>调试</code>：<code>field_simp?</code> 查看引理、检查 Infoview 剩余目标、显式传入 <code>[h]</code></p>
+                  </li>
+                </ul>
               <p>
                 <code>field_simp</code> 是代数工具链中的<strong>分母消除专家</strong>——不做多项式推理，
 只做"把分式问题化归为无分母问题"。理解其分工边界，

@@ -1120,13 +1120,24 @@ example (a b : ℕ) : max a b ≥ a := by
                   9.4.1. 转换策略<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=nat-sub-conversion" title="Permalink">🔗</a></span></h3>
                 <p>
                   omega 把 <code>ℕ</code> 表达式翻译到 <code>ℤ</code> 时，遵循以下规则：</p>
-                <p>
-                  | ℕ 表达式 | ℤ 翻译 | 附加约束 |
-|----------|--------|----------|
-| <code>(n : ℕ)</code> | <code>n</code> | <code>n ≥ 0</code> |
-| <code>a - b</code> (Nat) | <code>max(a - b, 0)</code> | — |
-| <code>a / k</code> (Nat) | 整数除法 | <code>0 ≤ a / k</code> |
-| <code>a % k</code> (Nat) | <code>a - k * (a / k)</code> | <code>0 ≤ a % k &lt; k</code> |</p>
+                <ul>
+                  <li>
+                    <p>
+                      ℕ 表达式：<code>(n : ℕ)</code> —— ℤ 翻译：<code>n</code> —— 附加约束：<code>n ≥ 0</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      ℕ 表达式：<code>a - b</code> (Nat) —— ℤ 翻译：<code>max(a - b, 0)</code> —— 附加约束：—</p>
+                    </li>
+                  <li>
+                    <p>
+                      ℕ 表达式：<code>a / k</code> (Nat) —— ℤ 翻译：整数除法 —— 附加约束：<code>0 ≤ a / k</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      ℕ 表达式：<code>a % k</code> (Nat) —— ℤ 翻译：<code>a - k * (a / k)</code> —— 附加约束：<code>0 ≤ a % k &lt; k</code></p>
+                    </li>
+                  </ul>
                 </section>
               <section>
                 <h3 id="nat-sub-examples">
@@ -1269,15 +1280,32 @@ example (xs : List ℕ) (h : xs.length &gt; 2) :
             <section>
               <h2 id="omega-vs-other-tactics">
                 9.7. 8.7 omega 与其他算术 tactic 的对比<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=omega-vs-other-tactics" title="Permalink">🔗</a></span></h2>
-              <p>
-                | tactic | 理论域 | 强项 | 弱项 |
-|--------|--------|------|------|
-| <code>omega</code> | ℕ, ℤ（线性） | 整除、模运算、Nat.sub | 非线性、实数 |
-| <code>linarith</code> | 任意 ordered field | 实数线性、可扩展 | 不懂整除、不处理 Nat.sub |
-| <code>nlinarith</code> | 同上 + 非线性提示 | 非线性（带 hint） | 需要手动提供非线性项 |
-| <code>norm_num</code> | 具体数值 | 计算确定值 | 不处理变量 |
-| <code>decide</code> | Decidable 实例 | 有限类型穷举 | 无限类型 |
-| <code>ring</code> | 交换环 | 多项式等式 | 不等式 |</p>
+              <ul>
+                <li>
+                  <p>
+                    tactic：<code>omega</code> —— 理论域：ℕ, ℤ（线性） —— 强项：整除、模运算、Nat.sub —— 弱项：非线性、实数</p>
+                  </li>
+                <li>
+                  <p>
+                    tactic：<code>linarith</code> —— 理论域：任意 ordered field —— 强项：实数线性、可扩展 —— 弱项：不懂整除、不处理 Nat.sub</p>
+                  </li>
+                <li>
+                  <p>
+                    tactic：<code>nlinarith</code> —— 理论域：同上 + 非线性提示 —— 强项：非线性（带 hint） —— 弱项：需要手动提供非线性项</p>
+                  </li>
+                <li>
+                  <p>
+                    tactic：<code>norm_num</code> —— 理论域：具体数值 —— 强项：计算确定值 —— 弱项：不处理变量</p>
+                  </li>
+                <li>
+                  <p>
+                    tactic：<code>decide</code> —— 理论域：Decidable 实例 —— 强项：有限类型穷举 —— 弱项：无限类型</p>
+                  </li>
+                <li>
+                  <p>
+                    tactic：<code>ring</code> —— 理论域：交换环 —— 强项：多项式等式 —— 弱项：不等式</p>
+                  </li>
+                </ul>
               <p>
                 <strong>选择原则</strong>：ℕ/ℤ 线性 → <code>omega</code>；实数线性 → <code>linarith</code>；
 非线性 → <code>nlinarith</code>；纯数值 → <code>norm_num</code>；多项式等式 → <code>ring</code>。</p>
@@ -1383,17 +1411,40 @@ elab "omega_or_sorry" : tactic =&gt; do
             <section>
               <h2 id="ch08-summary">
                 9.9. 8.9 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-summary" title="Permalink">🔗</a></span></h2>
-              <p>
-                | 概念 | 关键点 |
-|------|--------|
-| 理论基础 | Presburger 算术——整数上只有加法的一阶理论，可判定 |
-| 算法核心 | 变量消去 + dark shadow 整数修正 |
-| 适用范围 | ℕ 和 ℤ 上的线性等式、不等式、整除、模运算 |
-| Nat.sub | 自动处理截断语义，翻译为 max(a-b, 0) |
-| 能力边界 | 变量乘法、指数、实数 → 超出范围 |
-| 失败诊断 | 检查非线性项、未展开定义、缺失假设、不支持的类型 |
-| 编程使用 | <code>evalTactic</code> 直接调用，<code>try</code>/<code>catch</code> 探测性调用 |
-| 与 linarith | omega 处理整数整除，linarith 处理实数有序域 |</p>
+              <ul>
+                <li>
+                  <p>
+                    <code>理论基础</code>：Presburger 算术——整数上只有加法的一阶理论，可判定</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>算法核心</code>：变量消去 + dark shadow 整数修正</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>适用范围</code>：ℕ 和 ℤ 上的线性等式、不等式、整除、模运算</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>Nat.sub</code>：自动处理截断语义，翻译为 max(a-b, 0)</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>能力边界</code>：变量乘法、指数、实数 → 超出范围</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>失败诊断</code>：检查非线性项、未展开定义、缺失假设、不支持的类型</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>编程使用</code>：<code>evalTactic</code> 直接调用，<code>try</code>/<code>catch</code> 探测性调用</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>与 linarith</code>：omega 处理整数整除，linarith 处理实数有序域</p>
+                  </li>
+                </ul>
               <p>
                 下一章将介绍 <code>linarith</code>、<code>nlinarith</code> 和 <code>polyrith</code>——从线性到非线性的算术自动化。
 </p>

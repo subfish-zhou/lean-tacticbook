@@ -1251,13 +1251,24 @@ example (a b c d : ℝ) (h1 : a ≤ b) (h2 : c ≤ d)
             <section>
               <h2 id="gcongr-vs-other-tactics">
                 17.9. 16.9 gcongr vs 其他不等式 tactic<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=gcongr-vs-other-tactics" title="Permalink">🔗</a></span></h2>
-              <p>
-                | 场景 | 推荐 tactic | 原因 |
-|------|-------------|------|
-| <code>f(a) ≤ f(b)</code>，单调函数 | <code>gcongr</code> | 自动搜索单调性引理 |
-| <code>0 ≤ e</code> 或 <code>0 &lt; e</code> | <code>positivity</code> | 符号分析，非单调性 |
-| 线性不等式组合 | <code>linarith</code> | 线性算术 |
-| 非线性不等式 | <code>nlinarith</code> | 非线性算术，可能需要提示 |</p>
+              <ul>
+                <li>
+                  <p>
+                    场景：<code>f(a) ≤ f(b)</code>，单调函数 —— 推荐 tactic：<code>gcongr</code> —— 原因：自动搜索单调性引理</p>
+                  </li>
+                <li>
+                  <p>
+                    场景：<code>0 ≤ e</code> 或 <code>0 &lt; e</code> —— 推荐 tactic：<code>positivity</code> —— 原因：符号分析，非单调性</p>
+                  </li>
+                <li>
+                  <p>
+                    场景：线性不等式组合 —— 推荐 tactic：<code>linarith</code> —— 原因：线性算术</p>
+                  </li>
+                <li>
+                  <p>
+                    场景：非线性不等式 —— 推荐 tactic：<code>nlinarith</code> —— 原因：非线性算术，可能需要提示</p>
+                  </li>
+                </ul>
               </section>
             <section>
               <h2 id="ch16-exercises">
@@ -1333,18 +1344,44 @@ example (a b c d : ℝ) (h1 : a ≤ b) (h2 : c ≤ d)
             <section>
               <h2 id="ch16-summary">
                 17.11. 16.11 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch16-summary" title="Permalink">🔗</a></span></h2>
-              <p>
-                | 概念 | 关键点 |
-|------|--------|
-| 核心功能 | 将 <code>f(a) ≤ f(b)</code> 分解为逐分量的 <code>aᵢ ≤ bᵢ</code> 子目标 |
-| 分解机制 | 对齐两侧结构，定位不同的子表达式，搜索 <code>@[gcongr]</code> 引理 |
-| 引理要求 | 结论为 <code>≤</code>、<code>&lt;</code>、<code>⊆</code> 形式的单调性定理 |
-| 模式模板 | <code>gcongr ?_ * c</code> 显式指定哪些位置变化 |
-| 侧条件 | 乘法/幂需要非负条件，通常由 <code>positivity</code> 或假设关闭 |
-| 主要陷阱 | 结构不匹配、缺侧条件、无注册引理、方向反了 |
-| calc 协作 | 建立不等式链，每步由 <code>gcongr</code> 证明 |
-| positivity 协作 | <code>positivity</code> 提供 <code>0 ≤ a</code> 等侧条件 |
-| 调试 | <code>gcongr?</code> 查看引理，<code>calc</code> 拆步定位，<code>exact?</code> 搜索引理 |</p>
+              <ul>
+                <li>
+                  <p>
+                    <code>核心功能</code>：将 <code>f(a) ≤ f(b)</code> 分解为逐分量的 <code>aᵢ ≤ bᵢ</code> 子目标</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>分解机制</code>：对齐两侧结构，定位不同的子表达式，搜索 <code>@[gcongr]</code> 引理</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>引理要求</code>：结论为 <code>≤</code>、<code>&lt;</code>、<code>⊆</code> 形式的单调性定理</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>模式模板</code>：<code>gcongr ?_ * c</code> 显式指定哪些位置变化</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>侧条件</code>：乘法/幂需要非负条件，通常由 <code>positivity</code> 或假设关闭</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>主要陷阱</code>：结构不匹配、缺侧条件、无注册引理、方向反了</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>calc 协作</code>：建立不等式链，每步由 <code>gcongr</code> 证明</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>positivity 协作</code>：<code>positivity</code> 提供 <code>0 ≤ a</code> 等侧条件</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>调试</code>：<code>gcongr?</code> 查看引理，<code>calc</code> 拆步定位，<code>exact?</code> 搜索引理</p>
+                  </li>
+                </ul>
               <p>
                 <code>gcongr</code> 是不等式工具链中的<strong>结构分解专家</strong>——不做算术推理，
 只做"两侧结构相同时，逐位置传递不等式"。理解其本质，才能与 <code>linarith</code>、<code>positivity</code>、<code>calc</code> 有效组合。

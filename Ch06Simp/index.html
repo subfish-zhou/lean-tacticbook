@@ -1027,13 +1027,24 @@ loop:
                 simp 只会把引理的 <strong>LHS 重写为 RHS</strong>，永远不会反过来。对于 <code>@[simp] theorem foo : A = B</code>，simp 把 <code>A</code> 替换为 <code>B</code>，但不会把 <code>B</code> 替换为 <code>A</code>。</p>
               <p>
                 这决定了 simp lemma 的<strong>编写原则</strong>：</p>
-              <p>
-                | 原则 | 说明 |
-|------|------|
-| LHS 比 RHS 复杂 | 化简应让表达式变"简单" |
-| RHS 不引入新变量 | RHS 的自由变量必须都出现在 LHS 中 |
-| 不能左右对称 | <code>a + b = b + a</code> 会导致无限循环 |
-| 一致的范式方向 | 同一概念的多条引理应朝同一范式化简 |</p>
+              <ul>
+                <li>
+                  <p>
+                    <code>LHS 比 RHS 复杂</code>：化简应让表达式变"简单"</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>RHS 不引入新变量</code>：RHS 的自由变量必须都出现在 LHS 中</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>不能左右对称</code>：<code>a + b = b + a</code> 会导致无限循环</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>一致的范式方向</code>：同一概念的多条引理应朝同一范式化简</p>
+                  </li>
+                </ul>
               <p>
                 如果你需要<strong>反方向</strong>使用某条 simp lemma，可以用 <code>←</code>：</p>
               <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.example-301">example</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.181" data-verso-hover="25">a</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.183" data-verso-hover="25">b</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Nat" data-verso-hover="26">Nat</span><span class="unknown token" data-binding="">)</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.265" data-verso-hover="134">h</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.181" data-verso-hover="25">a</span><span class="inter-text"> </span><span class="unknown token" data-binding="">=</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.183" data-verso-hover="25">b</span><span class="inter-text"> </span><span class="unknown token" data-binding="">+</span><span class="inter-text"> </span><span class="typed token" data-binding="" data-verso-hover="25">1</span><span class="unknown token" data-binding="">)</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.183" data-verso-hover="25">b</span><span class="inter-text"> </span><span class="unknown token" data-binding="">+</span><span class="inter-text"> </span><span class="typed token" data-binding="" data-verso-hover="25">1</span><span class="inter-text"> </span><span class="unknown token" data-binding="">=</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.181" data-verso-hover="25">a</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:=</span><span class="inter-text"> </span><span class="tactic"><label for="tactic-state-3874612314274810251-352-354-18"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.byTactic-352" data-verso-hover="27">by</span></label><input type="checkbox" class="tactic-toggle" id="tactic-state-3874612314274810251-352-354-18"><span class="tactic-state"><span class="goal"><span class="hypotheses"><span class="hypothesis"><span class="name"><span class="var token" data-binding="var-_uniq.181" data-verso-hover="25">a</span></span><span class="colon">:</span><span class="type"><span class="inter-text"></span><span class="const token" data-binding="const-Nat" data-verso-hover="26">ℕ</span><span class="inter-text"></span></span></span><span class="hypothesis"><span class="name"><span class="var token" data-binding="var-_uniq.183" data-verso-hover="25">b</span></span><span class="colon">:</span><span class="type"><span class="inter-text"></span><span class="const token" data-binding="const-Nat" data-verso-hover="26">ℕ</span><span class="inter-text"></span></span></span><span class="hypothesis"><span class="name"><span class="var token" data-binding="var-_uniq.265" data-verso-hover="134">h</span></span><span class="colon">:</span><span class="type"><span class="inter-text"></span><span class="var token" data-binding="var-_uniq.181" data-verso-hover="25">a</span><span class="inter-text"> </span><span class="const token" data-binding="const-Eq" data-verso-hover="29">=</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.183" data-verso-hover="25">b</span><span class="inter-text"> </span><span class="const token" data-binding="const-HAdd.hAdd" data-verso-hover="28">+</span><span class="inter-text"> </span><span class="unknown token" data-binding="">1</span></span></span></span><span class="conclusion"><span class="prefix">⊢ </span><span class="type"><span class="inter-text"></span><span class="var token" data-binding="var-_uniq.183" data-verso-hover="25">b</span><span class="inter-text"> </span><span class="const token" data-binding="const-HAdd.hAdd" data-verso-hover="28">+</span><span class="inter-text"> </span><span class="unknown token" data-binding="">1</span><span class="inter-text"> </span><span class="const token" data-binding="const-Eq" data-verso-hover="29">=</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.181" data-verso-hover="25">a</span></span></span></span></span></span><span class="inter-text">
@@ -1237,17 +1248,40 @@ evalTactic (← `(tactic| simp (config := { failIfUnchanged := false }) \[my_lem
             <section>
               <h2 id="ch06-summary">
                 7.14. 6.14 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch06-summary" title="Permalink">🔗</a></span></h2>
-              <p>
-                | 概念 | 关键点 |
-|------|--------|
-| 核心机制 | 项重写系统，DiscrTree 索引，不动点迭代 |
-| 方向性 | 只从 LHS 到 RHS；用 <code>← lemma</code> 反转 |
-| 引理形式 | 等式、条件等式、iff、命题 |
-| 变体 | <code>simp only</code>（精确）、<code>simp_all</code>（含假设）、<code>dsimp</code>（definitional） |
-| Discharger | 条件引理的前提证明器，可自定义 |
-| 配置 | <code>Simp.Config</code>：maxSteps、contextual、zeta、iota 等 |
-| 调试 | <code>trace.Meta.Tactic.simp.*</code>、<code>simp?</code> |
-| 避坑 | 不标交换律、不引入新变量、<code>simp only</code> 优于裸 <code>simp</code> |</p>
+              <ul>
+                <li>
+                  <p>
+                    <code>核心机制</code>：项重写系统，DiscrTree 索引，不动点迭代</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>方向性</code>：只从 LHS 到 RHS；用 <code>← lemma</code> 反转</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>引理形式</code>：等式、条件等式、iff、命题</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>变体</code>：<code>simp only</code>（精确）、<code>simp_all</code>（含假设）、<code>dsimp</code>（definitional）</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>Discharger</code>：条件引理的前提证明器，可自定义</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>配置</code>：<code>Simp.Config</code>：maxSteps、contextual、zeta、iota 等</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>调试</code>：<code>trace.Meta.Tactic.simp.*</code>、<code>simp?</code></p>
+                  </li>
+                <li>
+                  <p>
+                    <code>避坑</code>：不标交换律、不引入新变量、<code>simp only</code> 优于裸 <code>simp</code></p>
+                  </li>
+                </ul>
               </section>
             <section>
               <h2 id="ch06-exercises">

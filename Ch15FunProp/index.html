@@ -1267,13 +1267,24 @@ example : Continuous (fun x : ℝ =&gt; Real.exp (1 / Real.sin x)) := by
               <section>
                 <h3 id="fun-prop-selection-table">
                   16.6.4. 选择速查表<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=fun-prop-selection-table" title="Permalink">🔗</a></span></h3>
-                <p>
-                  | 场景 | 推荐 tactic | 原因 |
-|------|-------------|------|
-| <code>Continuous f</code>、<code>Differentiable ℝ f</code> 等 | <code>fun_prop</code> | 专门为此设计 |
-| 连续性 + 旧代码兼容 | <code>continuity</code> | 目前仍可用，兼容性可能变化 |
-| <code>0 ≤ e</code> 或 <code>0 &lt; e</code> | <code>positivity</code> | 符号判定，不是函数性质 |
-| 分母 <code>≠ 0</code> 作为侧目标 | <code>positivity</code> / <code>norm_num</code> | 与 <code>disch</code> 配合 |</p>
+                <ul>
+                  <li>
+                    <p>
+                      场景：<code>Continuous f</code>、<code>Differentiable ℝ f</code> 等 —— 推荐 tactic：<code>fun_prop</code> —— 原因：专门为此设计</p>
+                    </li>
+                  <li>
+                    <p>
+                      场景：连续性 + 旧代码兼容 —— 推荐 tactic：<code>continuity</code> —— 原因：目前仍可用，兼容性可能变化</p>
+                    </li>
+                  <li>
+                    <p>
+                      场景：<code>0 ≤ e</code> 或 <code>0 &lt; e</code> —— 推荐 tactic：<code>positivity</code> —— 原因：符号判定，不是函数性质</p>
+                    </li>
+                  <li>
+                    <p>
+                      场景：分母 <code>≠ 0</code> 作为侧目标 —— 推荐 tactic：<code>positivity</code> / <code>norm_num</code> —— 原因：与 <code>disch</code> 配合</p>
+                    </li>
+                  </ul>
                 </section>
               </section>
             <section>
@@ -1364,17 +1375,40 @@ example (f : ℝ → ℝ) : Continuous (fun x =&gt; f x + x) := by fun_prop
             <section>
               <h2 id="ch15-summary">
                 16.9. 15.9 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch15-summary" title="Permalink">🔗</a></span></h2>
-              <p>
-                | 概念 | 关键点 |
-|------|--------|
-| 目标形式 | <code>P f</code>，其中 <code>P</code> 是已注册的函数性质 |
-| 工作原理 | 函数分解 + <code>@[fun_prop]</code> 规则搜索 + 递归证明 |
-| 统一框架 | 新代码统一用 <code>fun_prop</code>，旧 tactic 兼容性可能随版本变化 |
-| 三类引理 | 基本函数、组合规则、带条件规则 |
-| Lambda 分解 | 理解 lambda 结构，这是与 <code>aesop</code> 的核心区别 |
-| 主要陷阱 | 自定义函数未展开、分母非零条件、非 lambda 形式 |
-| <code>disch</code> 参数 | 指定侧目标处理策略（<code>assumption</code> / <code>positivity</code> / <code>norm_num</code>） |
-| 调试 | <code>set_option trace.Meta.Tactic.fun_prop true</code> 查看搜索过程 |</p>
+              <ul>
+                <li>
+                  <p>
+                    <code>目标形式</code>：<code>P f</code>，其中 <code>P</code> 是已注册的函数性质</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>工作原理</code>：函数分解 + <code>@[fun_prop]</code> 规则搜索 + 递归证明</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>统一框架</code>：新代码统一用 <code>fun_prop</code>，旧 tactic 兼容性可能随版本变化</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>三类引理</code>：基本函数、组合规则、带条件规则</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>Lambda 分解</code>：理解 lambda 结构，这是与 <code>aesop</code> 的核心区别</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>主要陷阱</code>：自定义函数未展开、分母非零条件、非 lambda 形式</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>disch</code> 参数：指定侧目标处理策略（<code>assumption</code> / <code>positivity</code> / <code>norm_num</code>）</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>调试</code>：<code>set_option trace.Meta.Tactic.fun_prop true</code> 查看搜索过程</p>
+                  </li>
+                </ul>
               <p>
                 <code>fun_prop</code> 是分析证明中的<strong>函数性质专家</strong>——不做计算，只回答"这个函数是否满足某性质"。
 理解其分解机制和引理注册系统，是高效使用它的关键。

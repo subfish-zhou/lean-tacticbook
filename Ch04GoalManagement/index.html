@@ -1058,8 +1058,7 @@ elab "my_tactic_all" : tactic =&gt; do
 elab "swap" : tactic =&gt; do
   let goals ← getGoals
   match goals with
-  | g1 :: g2 :: rest =&gt; setGoals (g2 :: g1 :: rest)
-  | _ =&gt; throwError "swap requires at least 2 goals"
+- g1 :: g2 :: rest =&gt; setGoals (g2 :: g1 :: rest)：_ =&gt; throwError "swap requires at least 2 goals"
 </pre><p>
                   模式 3 展示了目标列表操作的灵活性：你可以任意重新排列目标的顺序。实际上 Lean 内置的 <code>rotate_left</code>、<code>rotate_right</code>、<code>swap</code> 等 tactic 就是这样实现的——纯粹的列表操作，不涉及任何证明项的构造。</p>
                 </section>
@@ -1076,8 +1075,7 @@ elab "swap" : tactic =&gt; do
 def focus (tac : TacticM Unit) : TacticM Unit := do
   let goals ← getGoals
   match goals with
-  | [] =&gt; throwError "no goals"
-  | main :: rest =&gt;
+- [] =&gt; throwError "no goals"：main :: rest =&gt;
     setGoals [main]        -- 暂时隐藏其余目标
     tac                     -- 执行 tactic，它只能看到 main
     let newGoals ← getGoals -- tac 可能解决了 main，也可能产生了新子目标
@@ -1400,17 +1398,40 @@ elab "first_success" : tactic =&gt; do
             <section>
               <h2 id="summary">
                 5.10. 4.9 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=summary" title="Permalink">🔗</a></span></h2>
-              <p>
-                | 操作 | API |
-|------|-----|
-| 获取/设置目标列表 | <code>getGoals</code> / <code>setGoals</code> |
-| 获取未解决的目标 | <code>getUnsolvedGoals</code> |
-| 只看主目标 | <code>getMainGoal</code> / <code>getMainTarget</code> |
-| 聚焦 | <code>focus tac</code> |
-| 保存/恢复 | <code>saveState</code> / <code>restoreState</code> |
-| 试探性执行 | <code>tryTactic?</code> |
-| 调用其他 tactic | <code>evalTactic (← `(tactic| ...))</code> |
-| 安全上下文切换 | <code>withMainContext do</code> / <code>g.withContext do</code> |</p>
+              <ul>
+                <li>
+                  <p>
+                    <code>获取/设置目标列表</code>：<code>getGoals</code> / <code>setGoals</code></p>
+                  </li>
+                <li>
+                  <p>
+                    <code>获取未解决的目标</code>：<code>getUnsolvedGoals</code></p>
+                  </li>
+                <li>
+                  <p>
+                    <code>只看主目标</code>：<code>getMainGoal</code> / <code>getMainTarget</code></p>
+                  </li>
+                <li>
+                  <p>
+                    <code>聚焦</code>：<code>focus tac</code></p>
+                  </li>
+                <li>
+                  <p>
+                    <code>保存/恢复</code>：<code>saveState</code> / <code>restoreState</code></p>
+                  </li>
+                <li>
+                  <p>
+                    <code>试探性执行</code>：<code>tryTactic?</code></p>
+                  </li>
+                <li>
+                  <p>
+                    调用其他 tactic：evalTactic</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>安全上下文切换</code>：<code>withMainContext do</code> / <code>g.withContext do</code></p>
+                  </li>
+                </ul>
               <p>
                 <strong>核心原则</strong>：</p>
               <ul>

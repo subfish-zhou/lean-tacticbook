@@ -977,14 +977,28 @@ CAS 做 Gröbner 基计算、SMT 求解器做线性算术——
             <section>
               <h2 id="why-external-tools">
                 23.1. 22.1 为什么对接外部工具<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=why-external-tools" title="Permalink">🔗</a></span></h2>
-              <p>
-                | 问题域 | 外部工具 | 为什么 Lean 不自己做 |
-|--------|----------|---------------------|
-| 命题 SAT | CaDiCaL、Kissat | CDCL 算法 + 启发式需百万行优化代码 |
-| SMT | Z3、cvc5 | 理论组合框架极其复杂 |
-| 符号计算 | Sage、Mathematica | Gröbner 基、积分、级数求和 |
-| ITP 桥接 | Coq、Isabelle | 复用其他证明助手的引理库 |
-| 证明搜索 | LLM（GPT、Claude） | 启发式 tactic 建议 |</p>
+              <ul>
+                <li>
+                  <p>
+                    问题域：命题 SAT —— 外部工具：CaDiCaL、Kissat —— 为什么 Lean 不自己做：CDCL 算法 + 启发式需百万行优化代码</p>
+                  </li>
+                <li>
+                  <p>
+                    问题域：SMT —— 外部工具：Z3、cvc5 —— 为什么 Lean 不自己做：理论组合框架极其复杂</p>
+                  </li>
+                <li>
+                  <p>
+                    问题域：符号计算 —— 外部工具：Sage、Mathematica —— 为什么 Lean 不自己做：Gröbner 基、积分、级数求和</p>
+                  </li>
+                <li>
+                  <p>
+                    问题域：ITP 桥接 —— 外部工具：Coq、Isabelle —— 为什么 Lean 不自己做：复用其他证明助手的引理库</p>
+                  </li>
+                <li>
+                  <p>
+                    问题域：证明搜索 —— 外部工具：LLM（GPT、Claude） —— 为什么 Lean 不自己做：启发式 tactic 建议</p>
+                  </li>
+                </ul>
               <p>
                 核心张力：外部工具能<strong>快速给出答案</strong>，但 Lean 的保证依赖<strong>内核检查</strong>。
 设计问题归结为：<strong>如何利用外部计算能力而不破坏信任模型？</strong></p>
@@ -1066,13 +1080,24 @@ axiom smt_oracle : ∀ p : Prop, Decidable p
 </pre><section>
                 <h3 id="oracle-vs-native-decide">
                   23.3.1. Oracle vs <code>native_decide</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=oracle-vs-native-decide" title="Permalink">🔗</a></span></h3>
-                <p>
-                  | | <code>native_decide</code> | Oracle（<code>sorry</code>/自定义公理） |
-|---|---|---|
-| 逻辑层面 | <strong>不引入新公理</strong> | 引入不可验证的假设 |
-| 可信基础 | Lean 内核 + 编译器 | Lean + 外部工具 |
-| 失败时 | 类型错误 | 可能引入矛盾 |
-| Mathlib | 谨慎使用 | 不接受 |</p>
+                <ul>
+                  <li>
+                    <p>
+                      逻辑层面 —— <code>native_decide</code>：<strong>不引入新公理</strong> —— Oracle（<code>sorry</code>/自定义公理）：引入不可验证的假设</p>
+                    </li>
+                  <li>
+                    <p>
+                      可信基础 —— <code>native_decide</code>：Lean 内核 + 编译器 —— Oracle（<code>sorry</code>/自定义公理）：Lean + 外部工具</p>
+                    </li>
+                  <li>
+                    <p>
+                      失败时 —— <code>native_decide</code>：类型错误 —— Oracle（<code>sorry</code>/自定义公理）：可能引入矛盾</p>
+                    </li>
+                  <li>
+                    <p>
+                      Mathlib —— <code>native_decide</code>：谨慎使用 —— Oracle（<code>sorry</code>/自定义公理）：不接受</p>
+                    </li>
+                  </ul>
                 <p>
                   <strong><code>native_decide</code> 不是 oracle</strong>——它在已信任的编译环境中做更快的判定计算。</p>
                 </section>
@@ -1135,11 +1160,10 @@ elab "external_solve" : tactic =&gt; do
   let smt2 := encodeGoal goal          -- ❶ 编码
   let result ← callSolver smt2         -- ❷ 调用（IO 操作）
   match parseSolverOutput result with   -- ❸ 解析
-  | .sat cert =&gt;
+- .sat cert =&gt;
     let proof ← verifyCertificate cert goal  -- ❹ 验证证书
     closeMainGoal proof
-  | .unsat   =&gt; throwError "solver says unsat"
-  | .unknown =&gt; throwError "solver returned unknown"
+- .unsat   =&gt; throwError "solver says unsat"：.unknown =&gt; throwError "solver returned unknown"
 </pre></section>
               </section>
             <section>
@@ -1205,15 +1229,32 @@ elab "llm_suggest" : tactic =&gt; do
             <section>
               <h2 id="three-modes-comparison">
                 23.7. 22.7 三种模式对比<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=three-modes-comparison" title="Permalink">🔗</a></span></h2>
-              <p>
-                | | 证书模式 | Oracle 模式 | LLM 辅助 |
-|---|---|---|---|
-| <strong>安全性</strong> | 高 | 低 | 高 |
-| <strong>TCB</strong> | Lean 内核 | Lean + 外部工具 | Lean 内核 |
-| <strong>确定性</strong> | 确定 | 确定 | 不确定 |
-| <strong>适用</strong> | SAT/SMT、Gröbner | 开发迭代 | 探索性证明 |
-| <strong>Mathlib</strong> | 接受 | 不接受 | 结果可接受 |
-| <strong>代表</strong> | <code>polyrith</code>、<code>bv_decide</code> | <code>sorry</code> 工作流 | LeanDojo、ReProver |</p>
+              <ul>
+                <li>
+                  <p>
+                    <strong>安全性</strong> —— 证书模式：高 —— Oracle 模式：低 —— LLM 辅助：高</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>TCB</strong> —— 证书模式：Lean 内核 —— Oracle 模式：Lean + 外部工具 —— LLM 辅助：Lean 内核</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>确定性</strong> —— 证书模式：确定 —— Oracle 模式：确定 —— LLM 辅助：不确定</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>适用</strong> —— 证书模式：SAT/SMT、Gröbner —— Oracle 模式：开发迭代 —— LLM 辅助：探索性证明</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>Mathlib</strong> —— 证书模式：接受 —— Oracle 模式：不接受 —— LLM 辅助：结果可接受</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>代表</strong> —— 证书模式：<code>polyrith</code>、<code>bv_decide</code> —— Oracle 模式：<code>sorry</code> 工作流 —— LLM 辅助：LeanDojo、ReProver</p>
+                  </li>
+                </ul>
               </section>
             <section>
               <h2 id="practical-considerations">
@@ -1301,16 +1342,36 @@ LLM tactic 需 API key → 优雅降级，给出清晰错误
             <section>
               <h2 id="external-design-checklist">
                 23.10. 22.10 设计检查清单<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=external-design-checklist" title="Permalink">🔗</a></span></h2>
-              <p>
-                | 检查项 | 问题 |
-|--------|------|
-| <strong>信任模型</strong> | 证书模式还是 oracle？生产代码必须用证书模式 |
-| <strong>编码范围</strong> | 需要编码哪些构造？不识别的如何处理？ |
-| <strong>证书格式</strong> | 返回什么格式？如何在 Lean 中验证？ |
-| <strong>可用性</strong> | 工具不可用时的 fallback？ |
-| <strong>可复现性</strong> | 证书缓存？CI 能否不依赖外部服务？ |
-| <strong>性能</strong> | 编码 + 调用 + 验证的总时间可接受？ |
-| <strong>错误信息</strong> | 各种失败场景是否有清晰提示？ |</p>
+              <ul>
+                <li>
+                  <p>
+                    <strong>信任模型</strong>：证书模式还是 oracle？生产代码必须用证书模式</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>编码范围</strong>：需要编码哪些构造？不识别的如何处理？</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>证书格式</strong>：返回什么格式？如何在 Lean 中验证？</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>可用性</strong>：工具不可用时的 fallback？</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>可复现性</strong>：证书缓存？CI 能否不依赖外部服务？</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>性能</strong>：编码 + 调用 + 验证的总时间可接受？</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>错误信息</strong>：各种失败场景是否有清晰提示？</p>
+                  </li>
+                </ul>
               </section>
             <section>
               <h2 id="external-exercises">
@@ -1361,18 +1422,44 @@ LLM tactic 需 API key → 优雅降级，给出清晰错误
             <section>
               <h2 id="external-summary">
                 23.12. 22.12 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=external-summary" title="Permalink">🔗</a></span></h2>
-              <p>
-                | 概念 | 关键点 |
-|------|--------|
-| 外部工具的价值 | 利用专门求解器补充 Lean 内部 tactic |
-| 证书模式 | 外部工具给证书，Lean 验证——外部工具不在 TCB 中 |
-| Oracle 模式 | 直接信任外部结果——不安全，仅限开发迭代 |
-| <code>native_decide</code> ≠ oracle | 不引入新公理，只是更快的判定计算 |
-| <code>IO.Process</code> API | <code>spawn</code>（流式）和 <code>output</code>（一次性）两种方式 |
-| 编码/解码 | 覆盖范围决定工具能力边界（同反射的 quote） |
-| LLM 辅助 | LLM 提供候选，Lean 验证——安全但不确定 |
-| 可复现性 | 缓存证书，CI 不依赖外部服务 |
-| 主要陷阱 | 工具不可用、编码不全、oracle 矛盾、证书膨胀 |</p>
+              <ul>
+                <li>
+                  <p>
+                    <code>外部工具的价值</code>：利用专门求解器补充 Lean 内部 tactic</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>证书模式</code>：外部工具给证书，Lean 验证——外部工具不在 TCB 中</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>Oracle 模式</code>：直接信任外部结果——不安全，仅限开发迭代</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>native_decide</code> ≠ oracle：不引入新公理，只是更快的判定计算</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>IO.Process</code> API：<code>spawn</code>（流式）和 <code>output</code>（一次性）两种方式</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>编码/解码</code>：覆盖范围决定工具能力边界（同反射的 quote）</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>LLM 辅助</code>：LLM 提供候选，Lean 验证——安全但不确定</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>可复现性</code>：缓存证书，CI 不依赖外部服务</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>主要陷阱</code>：工具不可用、编码不全、oracle 矛盾、证书膨胀</p>
+                  </li>
+                </ul>
               <p>
                 <strong>一句话总结</strong>：对接外部工具的核心原则是<strong>计算外包，验证内留</strong>——
 让专门的求解器做它擅长的计算，但证明正确性由 Lean 内核担保。</p>
