@@ -45,11 +45,9 @@ tag := "performance-model"
          (语法 → Expr)     (Expr → 证明项)     (检查证明项)
 ```
 
-| 阶段 | 主要开销 | 典型瓶颈 |
-|------|----------|----------|
-| ❶ elaboration | type class synthesis、unification | 深层 typeclass 层级、高阶 unification |
-| ❷ tactic 执行 | `simp` 重写、`aesop` 搜索 | 引理集过大、搜索空间爆炸 |
-| ❸ 内核验证 | 检查最终证明项 | 证明项过大（`decide` 展开、`simp` 冗长项） |
+- 阶段：❶ elaboration —— 主要开销：type class synthesis、unification —— 典型瓶颈：深层 typeclass 层级、高阶 unification
+- 阶段：❷ tactic 执行 —— 主要开销：`simp` 重写、`aesop` 搜索 —— 典型瓶颈：引理集过大、搜索空间爆炸
+- 阶段：❸ 内核验证 —— 主要开销：检查最终证明项 —— 典型瓶颈：证明项过大（`decide` 展开、`simp` 冗长项）
 
 *关键认知*：大部分"慢证明"的瓶颈在 ❷，
 但 ❸ 也可能成为瓶颈——尤其是反射证明生成的巨大证明项。
@@ -131,13 +129,11 @@ set_option trace.Meta.isDefEq true in
 
 *常用 trace 选项速查*：
 
-| trace 选项 | 用途 |
-|------------|------|
-| `trace.Meta.Tactic.simp.rewrite` | simp 应用了哪些引理 |
-| `trace.Meta.Tactic.simp.discharge` | simp 的 discharge 尝试 |
-| `trace.Meta.synthInstance` | typeclass synthesis 过程 |
-| `trace.Meta.isDefEq` | unification 过程（*输出极大，慎用*） |
-| `trace.profiler.threshold` | 只显示超过阈值的步骤 |
+- `trace.Meta.Tactic.simp.rewrite`：simp 应用了哪些引理
+- `trace.Meta.Tactic.simp.discharge`：simp 的 discharge 尝试
+- `trace.Meta.synthInstance`：typeclass synthesis 过程
+- `trace.Meta.isDefEq`：unification 过程（*输出极大，慎用*）
+- `trace.profiler.threshold`：只显示超过阈值的步骤
 
 *二分定位*：profiler → 哪个 theorem 慢 → 逐行 sorry → 哪行 tactic 慢 → trace 深入。
 
@@ -317,12 +313,10 @@ tag := "compile-vs-runtime"
 Lean 同时承担*证明检查器*和*编程语言*双重角色，
 有两种完全不同的性能关注维度。
 
-| | 编译时间 | 运行时间 |
-|---|---|---|
-| 关注对象 | tactic 执行速度 | 编译后程序速度 |
-| 优化手段 | `simp only`、类型标注、缓存 | 算法选择、内联、尾递归 |
-| 度量工具 | heartbeats、profiler | 基准测试、`timeit` |
-| 主要场景 | 数学证明库（Mathlib） | 程序验证、可执行代码 |
+- 关注对象 —— 编译时间：tactic 执行速度 —— 运行时间：编译后程序速度
+- 优化手段 —— 编译时间：`simp only`、类型标注、缓存 —— 运行时间：算法选择、内联、尾递归
+- 度量工具 —— 编译时间：heartbeats、profiler —— 运行时间：基准测试、`timeit`
+- 主要场景 —— 编译时间：数学证明库（Mathlib） —— 运行时间：程序验证、可执行代码
 
 ```
 -- [示意] #eval vs #reduce 的区别
@@ -544,19 +538,17 @@ tag := "exercise-performance-tradeoffs"
 tag := "performance-summary"
 %%%
 
-| 概念 | 关键点 |
-|------|--------|
-| 性能三阶段 | elaboration → tactic 执行 → 内核验证 |
-| heartbeats | 平台无关的计算量度量；默认 200000 |
-| profiler | 第一步永远是 profiler——先定位再优化 |
-| trace | 细粒度追踪 simp、typeclass、unification |
-| `simp only` | 最常见的优化——限制引理集 |
-| 类型标注 | 减少 unification 和 typeclass 搜索 |
-| 证明项大小 | 影响 typecheck 和 .olean 文件大小 |
-| 编译 vs 运行 | 证明库关注编译时间，程序验证两者都关注 |
-| 增量编译 | 细粒度 import、合理的文件依赖图 |
-| 优化原则 | data-driven：先度量，再优化 |
-| 主要陷阱 | heartbeats 军备竞赛、trace 卡 IDE、盲目优化 |
+- `性能三阶段`：elaboration → tactic 执行 → 内核验证
+- `heartbeats`：平台无关的计算量度量；默认 200000
+- `profiler`：第一步永远是 profiler——先定位再优化
+- `trace`：细粒度追踪 simp、typeclass、unification
+- `simp only`：最常见的优化——限制引理集
+- `类型标注`：减少 unification 和 typeclass 搜索
+- `证明项大小`：影响 typecheck 和 .olean 文件大小
+- `编译 vs 运行`：证明库关注编译时间，程序验证两者都关注
+- `增量编译`：细粒度 import、合理的文件依赖图
+- `优化原则`：data-driven：先度量，再优化
+- `主要陷阱`：heartbeats 军备竞赛、trace 卡 IDE、盲目优化
 
 *一句话总结*：性能优化的第一原则是*先度量，再行动*——
 profiler 告诉你在哪里花时间，trace 告诉你为什么，然后才是对症下药。

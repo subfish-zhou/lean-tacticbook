@@ -22,11 +22,9 @@ tag := "global-overview"
 
 三个 tactic 解决的问题类型不同，但共享一个思路——把目标归约到某种代数判定过程：
 
-| tactic | 输入 | 判定方法 | 外部依赖 |
-|--------|------|----------|----------|
-| `linarith` | 线性不等式 / 等式 | Farkas 引理 | 无 |
-| `nlinarith` | 多项式不等式 | Positivstellensatz + `linarith` | 无 |
-| `polyrith` | 多项式等式 | Gröbner 基 | Sage 服务器 |
+- tactic：`linarith` —— 输入：线性不等式 / 等式 —— 判定方法：Farkas 引理 —— 外部依赖：无
+- tactic：`nlinarith` —— 输入：多项式不等式 —— 判定方法：Positivstellensatz + `linarith` —— 外部依赖：无
+- tactic：`polyrith` —— 输入：多项式等式 —— 判定方法：Gröbner 基 —— 外部依赖：Sage 服务器
 
 它们在 Mathlib 中的位置：`Mathlib.Tactic.Linarith`（linarith, nlinarith）、`Mathlib.Tactic.Polyrith`（polyrith）。
 
@@ -349,8 +347,7 @@ example (x : ℝ) (h : |x| ≤ 1) : -1 ≤ x := by
   linarith  -- ✗ 不理解绝对值
   -- 修复：先拆开绝对值，让每个分支变成线性目标
   cases abs_cases x with
-  | inl h' => linarith [h'.1, h'.2]
-  | inr h' => linarith [h'.1, h'.2]
+- inl h' => linarith [h'.1, h'.2]：inr h' => linarith [h'.1, h'.2]
 ```
 
 ## 在 meta 编程中调用
@@ -456,11 +453,9 @@ example (a b : ℚ) (h1 : 3 * a + 2 * b = 12) (h2 : a - b = 1) :
 tag := "ch09-summary"
 %%%
 
-| tactic | 适用范围 | 原理 | 主要限制 |
-|--------|----------|------|----------|
-| `linarith` | 有序域上的线性不等式/等式 | Farkas 引理 | 非线性项无法处理 |
-| `nlinarith` | 多项式不等式 | Positivstellensatz 枚举 | 高次/多变量搜索爆炸 |
-| `polyrith` | 多项式等式 | Gröbner 基 | 需网络；仅处理等式 |
+- tactic：`linarith` —— 适用范围：有序域上的线性不等式/等式 —— 原理：Farkas 引理 —— 主要限制：非线性项无法处理
+- tactic：`nlinarith` —— 适用范围：多项式不等式 —— 原理：Positivstellensatz 枚举 —— 主要限制：高次/多变量搜索爆炸
+- tactic：`polyrith` —— 适用范围：多项式等式 —— 原理：Gröbner 基 —— 主要限制：需网络；仅处理等式
 
 *实战建议*：
 

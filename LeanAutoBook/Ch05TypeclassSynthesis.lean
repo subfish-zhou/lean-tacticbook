@@ -102,8 +102,7 @@ tag := "step-recursive-search"
 -- [示意] 有前提的实例
 instance [Add α] : Add (Option α) where
   add
-    | some a, some b => some (Add.add a b)
-    | _, _ => none
+- some a, some b => some (Add.add a b)：_, _ => none
 ```
 
 搜索 `Add (Option Nat)` 时，Lean 发现需要先找 `Add Nat`，触发递归：
@@ -198,8 +197,7 @@ elab "smart_decide" : tactic => withMainContext do
   let target ← getMainTarget
   let decType ← mkAppM ``Decidable #[target]
   match ← synthInstance? decType with
-  | some _ => logInfo "目标可判定，使用 decide"
-  | none   => logInfo "目标不可判定，需要其他方法"
+- some _ => logInfo "目标可判定，使用 decide"：none   => logInfo "目标不可判定，需要其他方法"
 ```
 
 ## `isInstance`：检查声明是否是实例
@@ -226,14 +224,13 @@ tag := "practical-check-commutativity"
 elab "check_comm" : tactic => withMainContext do
   let target ← getMainTarget
   let some (α, lhs, _rhs) := target.eq?
-    | throwError "目标不是等式"
+- throwError "目标不是等式"
   match lhs with
-  | .app (.app f _a) _b =>
+- .app (.app f _a) _b =>
     let commType ← mkAppM ``Commutative #[f]
     match ← synthInstance? commType with
-    | some _ => logInfo "运算满足交换律！"
-    | none   => logInfo "未找到交换律实例"
-  | _ => throwError "左侧不是二元运算应用的形式"
+- some _ => logInfo "运算满足交换律！"：none   => logInfo "未找到交换律实例"
+- some _ => logInfo "运算满足交换律！"：_ => throwError "左侧不是二元运算应用的形式"
 ```
 
 这展示了典型模式：从目标提取类型 → `mkAppM` 构造搜索目标 → `synthInstance?` 探测 → 根据结果分支。
@@ -260,11 +257,9 @@ let eqns ← Meta.getEqnsFor? declName
 -- eqns : Option (Array Name)
 ```
 
-| 需求 | 用什么 |
-|------|--------|
-| 查找 type class 实例 | `synthInstance` / `synthInstance?` |
-| 按表达式形状匹配引理 | `DiscrTree.getMatch` |
-| 获取函数展开方程 | `getEqnsFor?` |
+- `查找 type class 实例`：`synthInstance` / `synthInstance?`
+- `按表达式形状匹配引理`：`DiscrTree.getMatch`
+- `获取函数展开方程`：`getEqnsFor?`
 
 # 5.6 控制 Synthesis 行为
 %%%
@@ -479,16 +474,14 @@ tag := "exercise-5-4"
 tag := "ch05-summary"
 %%%
 
-| 概念 | 关键点 | 何时用到 |
-|------|--------|----------|
-| Type class synthesis | tabled resolution + 优先级 | 涉及 `[...]` 参数时 |
-| `synthInstance` | 搜索实例，失败报错 | 确定实例必须存在 |
-| `synthInstance?` | 失败返回 `none` | 探测/分支策略 |
-| 优先级 | `@[instance N]`，N 越大越优先 | 控制候选选择顺序 |
-| `withOptions` | 临时调整搜索参数 | 搜索预算不足 |
-| `withNewLocalInstance` | 临时注册局部实例 | 把 hypothesis 变成实例 |
-| DiscrTree | 按表达式骨架索引引理 | `simp`/`aesop` 式匹配 |
-| `trace.Meta.synthInstance` | 打印搜索过程 | 诊断 synthesis 问题 |
+- 概念：Type class synthesis —— 关键点：tabled resolution + 优先级 —— 何时用到：涉及 `[...]` 参数时
+- 概念：`synthInstance` —— 关键点：搜索实例，失败报错 —— 何时用到：确定实例必须存在
+- 概念：`synthInstance?` —— 关键点：失败返回 `none` —— 何时用到：探测/分支策略
+- 概念：优先级 —— 关键点：`@[instance N]`，N 越大越优先 —— 何时用到：控制候选选择顺序
+- 概念：`withOptions` —— 关键点：临时调整搜索参数 —— 何时用到：搜索预算不足
+- 概念：`withNewLocalInstance` —— 关键点：临时注册局部实例 —— 何时用到：把 hypothesis 变成实例
+- 概念：DiscrTree —— 关键点：按表达式骨架索引引理 —— 何时用到：`simp`/`aesop` 式匹配
+- 概念：`trace.Meta.synthInstance` —— 关键点：打印搜索过程 —— 何时用到：诊断 synthesis 问题
 
 *三条实用原则*：
 

@@ -38,12 +38,10 @@ tag := "when-domain-automation"
                  低出错率
 ```
 
-| 象限 | 例子 | 建议 |
-|------|------|------|
-| ① 低重复 × 低出错 | 偶尔用一次的代数化简 | 手写即可 |
-| ② 高重复 × 低出错 | `simp` 已够用的化简 | 收集 `@[simp]` 引理 |
-| ③ 低重复 × 高出错 | 复杂的 `norm_num` 扩展 | 写插件，但投入有限 |
-| ④ 高重复 × 高出错 | 反复手拼非负性/单调性 | 必须自动化 |
+- 象限：① 低重复 × 低出错 —— 例子：偶尔用一次的代数化简 —— 建议：手写即可
+- 象限：② 高重复 × 低出错 —— 例子：`simp` 已够用的化简 —— 建议：收集 `@[simp]` 引理
+- 象限：③ 低重复 × 高出错 —— 例子：复杂的 `norm_num` 扩展 —— 建议：写插件，但投入有限
+- 象限：④ 高重复 × 高出错 —— 例子：反复手拼非负性/单调性 —— 建议：必须自动化
 
 `positivity`（第十四章）和 `gcongr`（第十六章）都诞生于象限 ④。
 
@@ -111,13 +109,13 @@ tag := "pattern-c-recursive"
 partial def analyzeSign (e : Expr) : MetaM SignResult := do
   if let some r ← findHypothesis e then return r    -- ❶ 找假设
   match_expr e with
-  | HAdd.hAdd _ _ _ _ a b =>
+- HAdd.hAdd _ _ _ _ a b =>
     combineAdd (← analyzeSign a) (← analyzeSign b)  -- ❷ 递归 + 组合
-  | HMul.hMul _ _ _ _ a b =>
+- HMul.hMul _ _ _ _ a b =>
     combineMul (← analyzeSign a) (← analyzeSign b)
-  | HPow.hPow _ _ _ a n =>
+- HPow.hPow _ _ _ a n =>
     combinePow (← analyzeSign a) n                   -- ▸ 偶数幂→非负
-  | _ => throwError "positivity: 无法分析 {e}"
+- _ => throwError "positivity: 无法分析 {e}"
 ```
 
 *适用*：目标可*按表达式结构递归分解*，组合规则明确。
@@ -212,9 +210,9 @@ def searchHypothesis (lhs rhs : Expr) : TacticM Expr := do
 elab "mono_add" : tactic => withMainContext do
   let target ← getMainTarget
   match_expr target with
-  | LE.le _ _ lhs rhs =>
+- LE.le _ _ lhs rhs =>
     closeMainGoal `mono_add (← proveLE lhs rhs)
-  | _ => throwError "mono_add: 目标不是 _ ≤ _ 形式"
+- _ => throwError "mono_add: 目标不是 _ ≤ _ 形式"
 ```
 
 ## 第四步：测试
@@ -281,11 +279,9 @@ tag := "combining-patterns"
 
 实际的领域 tactic 常*混合使用*多种模式：
 
-| 组合方式 | 例子 | 各模式分工 |
-|---------|------|-----------|
-| 递归 + simp 收尾 | `field_simp`（第十七章） | 模式 C 消分母 → 模式 A 化简 |
-| 搜索 + 递归子程序 | `fun_prop`（第十五章） | 模式 B 选规则 → 模式 C 验证 |
-| 前处理 + 核心算法 | `linarith`（第九章） | `push_neg` 标准化 → 模式 D 判定 |
+- 组合方式：递归 + simp 收尾 —— 例子：`field_simp`（第十七章） —— 各模式分工：模式 C 消分母 → 模式 A 化简
+- 组合方式：搜索 + 递归子程序 —— 例子：`fun_prop`（第十五章） —— 各模式分工：模式 B 选规则 → 模式 C 验证
+- 组合方式：前处理 + 核心算法 —— 例子：`linarith`（第九章） —— 各模式分工：`push_neg` 标准化 → 模式 D 判定
 
 *设计原则*：每种模式处理它擅长的部分，
 通过管线（pipeline）串联，不要用一种模式硬撑所有场景。
@@ -376,8 +372,7 @@ tag := "design-fail-nontermination"
 -- [示意]
 partial def analyze (e : Expr) : MetaM Result := do
   match_expr e with
-  | f a => analyze a
-  | _ => analyze e     -- ✗ 对同一个表达式无限递归！
+- f a => analyze a：_ => analyze e     -- ✗ 对同一个表达式无限递归！
 ```
 
 *修复*：每个分支要么返回结果，要么对*严格更小*的子表达式递归。
@@ -433,11 +428,9 @@ tag := "bridge-to-next-chapter"
 下一章（第二十章）进入 *Part IV*，介绍反射证明模式——
 把命题反射为可计算的布尔判定，用 `native_decide` 一步完成。
 
-| | 模式 D（逐步构造） | 反射 |
-|---|---|---|
-| 证明构造 | 在 MetaM 中拼装 | 编译期求值 `decide` |
-| 性能瓶颈 | 证明项大小 | 求值速度 |
-| 典型代表 | `ring`、`omega` | `Decidable` 实例 |
+- 证明构造 —— 模式 D（逐步构造）：在 MetaM 中拼装 —— 反射：编译期求值 `decide`
+- 性能瓶颈 —— 模式 D（逐步构造）：证明项大小 —— 反射：求值速度
+- 典型代表 —— 模式 D（逐步构造）：`ring`、`omega` —— 反射：`Decidable` 实例
 
 如果判定算法可表达为 Lean 可计算函数，
 反射往往比逐步构造简单得多——这是第二十章的主题。
@@ -518,12 +511,10 @@ tag := "design-exercise-4"
 tag := "design-summary"
 %%%
 
-| 模式 | 实现成本 | 能力 | 可扩展性 | 典型代表 |
-|------|---------|------|---------|---------|
-| A：simp 引理集 | 低 | 等式化简 | `@[simp]` | 领域 simp 集 |
-| B：aesop 规则集 | 低–中 | 多步搜索 | `@[aesop]` | 集合论推理 |
-| C：递归分解 | 中 | 结构分析 | 插件接口 | `positivity`、`fun_prop` |
-| D：完整决策过程 | 高 | 完备判定 | 通常不可扩展 | `ring`、`omega` |
+- 模式：A：simp 引理集 —— 实现成本：低 —— 能力：等式化简 —— 可扩展性：`@[simp]` —— 典型代表：领域 simp 集
+- 模式：B：aesop 规则集 —— 实现成本：低–中 —— 能力：多步搜索 —— 可扩展性：`@[aesop]` —— 典型代表：集合论推理
+- 模式：C：递归分解 —— 实现成本：中 —— 能力：结构分析 —— 可扩展性：插件接口 —— 典型代表：`positivity`、`fun_prop`
+- 模式：D：完整决策过程 —— 实现成本：高 —— 能力：完备判定 —— 可扩展性：通常不可扩展 —— 典型代表：`ring`、`omega`
 
 *核心原则*：
 

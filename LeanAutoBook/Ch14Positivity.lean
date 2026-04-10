@@ -67,17 +67,13 @@ Nonzero 状态使得 `positivity` 能从 `x ≠ 0` 推出 `x ^ 2 > 0`。
 tag := "combination-rules"
 %%%
 
-| 操作 | Pos × Pos | Pos × Nn | Nn × Nn | 备注 |
-|------|-----------|----------|---------|------|
-| `a + b` | Pos | Pos | Nn | 一侧为正即拉正 |
-| `a * b` | Pos | Nn | Nn | 需两侧均正才保正 |
+- 操作：`a + b` —— Pos × Pos：Pos —— Pos × Nn：Pos —— Nn × Nn：Nn —— 备注：一侧为正即拉正
+- 操作：`a * b` —— Pos × Pos：Pos —— Pos × Nn：Nn —— Nn × Nn：Nn —— 备注：需两侧均正才保正
 
-| 一元操作 | 输出 | 条件 |
-|---------|------|------|
-| `a ^ n`（偶数） | Nn | 无条件 |
-| `a ^ n`（奇数） | 保持输入 | 需输入 Nn 或 Pos |
-| `\|a\|`、`‖a‖`、`sqrt` | Nn | 无条件 |
-| `exp a` | Pos | 无条件 |
+- 一元操作：`a ^ n`（偶数） —— 输出：Nn —— 条件：无条件
+- 一元操作：`a ^ n`（奇数） —— 输出：保持输入 —— 条件：需输入 Nn 或 Pos
+- 一元操作：`\ —— 输出：a\ —— 条件：`、`‖a‖`、`sqrt` —— Nn —— 无条件
+- 一元操作：`exp a` —— 输出：Pos —— 条件：无条件
 
 # 14.3 递归分解的执行过程
 %%%
@@ -189,7 +185,7 @@ tag := "plugin-extension-system"
 def evalAbs : Positivity.PositivityExt where
   eval {u α} _zα _pα e := do
     let .app (.app (.const ``abs _) _) a := e   -- ❶ 模式匹配：e 是 abs a 吗？
-      | throwError "not abs"
+- throwError "not abs"
     return .nonneg (← mkAppM ``abs_nonneg #[a]) -- ❷ 返回 Nonneg + 证明项
 ```
 
@@ -324,13 +320,11 @@ example (x : ℝ) (hx : 0 < x) : x / (x + 1) < 1 := by
 tag := "positivity-selection-table"
 %%%
 
-| 场景 | 推荐 tactic | 原因 |
-|------|-------------|------|
-| `0 ≤ e` 或 `0 < e`，结构化表达式 | `positivity` | 递归分解，利用代数结构 |
-| `0 ≤ e` 或 `0 < e`，纯数值 | `norm_num` | 直接计算 |
-| `a ≤ b` 一般不等式 | `linarith` / `gcongr` | 线性推理或单调性 |
-| 分母 `≠ 0` | `positivity`（若可推出为正） | `0 < e → e ≠ 0` |
-| 乘积 / 除法符号 | `positivity` | 组合规则直接适用 |
+- 场景：`0 ≤ e` 或 `0 < e`，结构化表达式 —— 推荐 tactic：`positivity` —— 原因：递归分解，利用代数结构
+- 场景：`0 ≤ e` 或 `0 < e`，纯数值 —— 推荐 tactic：`norm_num` —— 原因：直接计算
+- 场景：`a ≤ b` 一般不等式 —— 推荐 tactic：`linarith` / `gcongr` —— 原因：线性推理或单调性
+- 场景：分母 `≠ 0` —— 推荐 tactic：`positivity`（若可推出为正） —— 原因：`0 < e → e ≠ 0`
+- 场景：乘积 / 除法符号 —— 推荐 tactic：`positivity` —— 原因：组合规则直接适用
 
 ```anchor positivityComparison
 example (x : ℝ) (hx : 0 ≤ x) : 0 ≤ x ^ 2 + x := by positivity
@@ -478,16 +472,14 @@ example (x : ℝ) (hx : 2 ≤ x) : 0 < x ^ 2 - x := by
 tag := "ch14-summary"
 %%%
 
-| 概念 | 关键点 |
-|------|--------|
-| 目标形式 | 只处理 `0 ≤ e` 或 `0 < e`，不做一般不等式推理 |
-| 三值追踪 | Positive / Nonneg / Nonzero，组合规则覆盖 +、×、^、\|·\|、exp 等 |
-| 递归分解 | 自底向上分析表达式结构，逐层组合符号状态 |
-| 假设利用 | 自动扫描上下文中 `0 < x`、`0 ≤ x`、`x ≠ 0` 形式的假设 |
-| 插件系统 | `@[positivity head]` 注册，可为自定义函数扩展 |
-| 主要陷阱 | 减法、奇数幂无假设、自定义函数未展开 |
-| 协作模式 | 为 `gcongr` / `field_simp` / `div_le_div` 提供非负性前提 |
-| 调试 | `positivity?` 查看证明项，逐步分解定位失败子表达式 |
+- `目标形式`：只处理 `0 ≤ e` 或 `0 < e`，不做一般不等式推理
+- `三值追踪`：Positive / Nonneg / Nonzero，组合规则覆盖 +、×、^、\
+- `递归分解`：自底向上分析表达式结构，逐层组合符号状态
+- `假设利用`：自动扫描上下文中 `0 < x`、`0 ≤ x`、`x ≠ 0` 形式的假设
+- `插件系统`：`@[positivity head]` 注册，可为自定义函数扩展
+- `主要陷阱`：减法、奇数幂无假设、自定义函数未展开
+- `协作模式`：为 `gcongr` / `field_simp` / `div_le_div` 提供非负性前提
+- `调试`：`positivity?` 查看证明项，逐步分解定位失败子表达式
 
 `positivity` 是不等式工具链中的*符号判定专家*——不解不等式，只回答符号。
 理解其能力边界，才能与 `linarith`、`gcongr`、`nlinarith` 有效组合。

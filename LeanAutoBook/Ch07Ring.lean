@@ -143,12 +143,10 @@ example (x : ℤ) (h : (x + 1) ^ 2 = 9) : x ^ 2 + 2 * x = 8 := by
 tag := "ring-nf-vs-ring"
 %%%
 
-| 场景 | 推荐 tactic |
-|------|------------|
-| 证明 `LHS = RHS`，两边都是多项式 | `ring` |
-| 化简后交给其他 tactic | `ring_nf` 然后接后续 tactic |
-| 化简假设中的代数表达式 | `ring_nf at h` |
-| 只想看化简结果（探索性） | `ring_nf` |
+- `证明 `LHS = RHS`，两边都是多项式`：`ring`
+- `化简后交给其他 tactic`：`ring_nf` 然后接后续 tactic
+- `化简假设中的代数表达式`：`ring_nf at h`
+- `只想看化简结果（探索性）`：`ring_nf`
 
 经验法则：如果你认为等式纯粹是代数恒等式，先用 `ring`。
 如果 `ring` 失败，再考虑 `ring_nf` + 其他 tactic 的组合。
@@ -163,12 +161,10 @@ tag := "supported-algebraic-structures"
 tag := "structure-overview"
 %%%
 
-| 结构 | 典型类型 | 注意事项 |
-|------|---------|---------|
-| 交换环 `CommRing` | `ℤ`, `ℚ`, `ℝ`, `ℂ`, `ZMod n` | 完整支持 |
-| 交换半环 `CommSemiring` | `ℕ` | 减法受限（见 7.5） |
-| 交换代数 | `R[X]`（多项式环） | 系数环需是 `CommRing` |
-| 域 `Field` | `ℚ`, `ℝ`, `ℂ` | 不处理除法（用 `field_simp` + `ring`） |
+- 结构：交换环 `CommRing` —— 典型类型：`ℤ`, `ℚ`, `ℝ`, `ℂ`, `ZMod n` —— 注意事项：完整支持
+- 结构：交换半环 `CommSemiring` —— 典型类型：`ℕ` —— 注意事项：减法受限（见 7.5）
+- 结构：交换代数 —— 典型类型：`R[X]`（多项式环） —— 注意事项：系数环需是 `CommRing`
+- 结构：域 `Field` —— 典型类型：`ℚ`, `ℝ`, `ℂ` —— 注意事项：不处理除法（用 `field_simp` + `ring`）
 
 ## ℕ 上的减法陷阱
 %%%
@@ -374,7 +370,7 @@ elab "ring_diagnose" : tactic => withMainContext do
   let target ← goal.getType
   let some (_, _, lhs, rhs) := target.eq?
     --  eq? 返回 (level, type, lhs, rhs)；非等式返回 none
-    | throwError "ring_diagnose: goal is not an equality"
+- throwError "ring_diagnose: goal is not an equality"
   logInfo m!"LHS: {lhs}"
   logInfo m!"RHS: {rhs}"
   try
@@ -509,14 +505,12 @@ example (n : ℕ) : (2 * n + 1) ^ 2 - 1 = 4 * n * (n + 1) := by
 tag := "ch07-summary"
 %%%
 
-| 概念 | 关键点 |
-|------|--------|
-| `ring` 原理 | 规范化为 Horner 范式，做纯语法比较 |
-| 适用范围 | 交换（半）环上的多项式恒等式 |
-| `ring_nf` | 只做范式化，不要求相等；可作用于假设 |
-| `linear_combination` | 利用等式假设 + `ring` 证明依赖假设的等式 |
-| `field_simp` + `ring` | 先消分母再证多项式等式 |
-| `push_cast` + `ring` | 先统一类型转换再证等式 |
-| 常见失败 | 不等式、假设依赖、函数不透明、ℕ 减法、除法、类型转换 |
+- `ring` 原理：规范化为 Horner 范式，做纯语法比较
+- `适用范围`：交换（半）环上的多项式恒等式
+- `ring_nf`：只做范式化，不要求相等；可作用于假设
+- `linear_combination`：利用等式假设 + `ring` 证明依赖假设的等式
+- `field_simp` + `ring`：先消分母再证多项式等式
+- `push_cast` + `ring`：先统一类型转换再证等式
+- `常见失败`：不等式、假设依赖、函数不透明、ℕ 减法、除法、类型转换
 
 下一章：`omega`——线性整数/自然数算术的完备决策过程。

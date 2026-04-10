@@ -33,11 +33,9 @@ tag := "logic-transforms-problem"
 
 `push_neg`、`contrapose`、`by_contra` 为三类场景设计：
 
-| tactic | 一句话 |
-|--------|--------|
-| `push_neg` | 把 `¬` 向内推到原子公式 |
-| `contrapose` | 把 `P → Q` 变为 `¬Q → ¬P` |
-| `by_contra` | 假设目标的否定，转为推导矛盾 |
+- `push_neg`：把 `¬` 向内推到原子公式
+- `contrapose`：把 `P → Q` 变为 `¬Q → ¬P`
+- `by_contra`：假设目标的否定，转为推导矛盾
 
 # 18.2 `push_neg`：否定下推
 %%%
@@ -67,15 +65,13 @@ example (f : ℝ → ℝ) (a : ℝ) :
 
 变换规则一览：
 
-| 输入 | 输出 |
-|------|------|
-| `¬(P ∧ Q)` | `¬P ∨ ¬Q` |
-| `¬(P ∨ Q)` | `¬P ∧ ¬Q` |
-| `¬(∀ x, P x)` | `∃ x, ¬P x` |
-| `¬(∃ x, P x)` | `∀ x, ¬P x` |
-| `¬(a ≤ b)` | `b < a` |
-| `¬(a < b)` | `b ≤ a` |
-| `¬¬P` | `P`（需要 Classical） |
+- `¬(P ∧ Q)`：`¬P ∨ ¬Q`
+- `¬(P ∨ Q)`：`¬P ∧ ¬Q`
+- `¬(∀ x, P x)`：`∃ x, ¬P x`
+- `¬(∃ x, P x)`：`∀ x, ¬P x`
+- `¬(a ≤ b)`：`b < a`
+- `¬(a < b)`：`b ≤ a`
+- `¬¬P`：`P`（需要 Classical）
 
 ## 内部机制
 %%%
@@ -331,16 +327,12 @@ example : P → Q := by
 tag := "logic-transforms-comparison"
 %%%
 
-| | `push_neg` | `simp only [not_forall, ...]` | 手动 `rw` |
-|--|-----------|-------------------------------|-----------|
-| 简洁度 | 高 | 中 | 低 |
-| 可控性 | 低（全部展开） | 高（选引理） | 最高 |
+- 简洁度 —— `push_neg`：高 —— `simp only [not_forall, ...]`：中 —— 手动 `rw`：低
+- 可控性 —— `push_neg`：低（全部展开） —— `simp only [not_forall, ...]`：高（选引理） —— 手动 `rw`：最高
 
-| | `contrapose` | `by_contra` |
-|--|-------------|-------------|
-| 前提 | 目标是蕴含 | 任意 |
-| 构造性 | 是 | 否（排中律） |
-| 产出 | 新蕴含目标 | `h : ¬Goal ⊢ False` |
+- 前提 —— `contrapose`：目标是蕴含 —— `by_contra`：任意
+- 构造性 —— `contrapose`：是 —— `by_contra`：否（排中律）
+- 产出 —— `contrapose`：新蕴含目标 —— `by_contra`：`h : ¬Goal ⊢ False`
 
 # 18.10 练习
 %%%
@@ -433,11 +425,9 @@ example (a b : ℝ) (hab : a < b) : ∃ q : ℚ, a < ↑q ∧ ↑q < b := by
 tag := "logic-transforms-summary"
 %%%
 
-| tactic | 作用 | 内部机制 | 变体 |
-|--------|------|----------|------|
-| `push_neg` | 否定下推到原子公式 | 特化 `simp` + `@[push_neg]` 引理集 | `at h`、`at *` |
-| `contrapose` | 蕴含 → 逆否 | 逻辑等价变换 | `contrapose!`（+ push_neg） |
-| `by_contra` | 反证法 | 排中律 `Classical.em` | `by_contra!`（+ push_neg） |
+- tactic：`push_neg` —— 作用：否定下推到原子公式 —— 内部机制：特化 `simp` + `@[push_neg]` 引理集 —— 变体：`at h`、`at *`
+- tactic：`contrapose` —— 作用：蕴含 → 逆否 —— 内部机制：逻辑等价变换 —— 变体：`contrapose!`（+ push\_neg）
+- tactic：`by_contra` —— 作用：反证法 —— 内部机制：排中律 `Classical.em` —— 变体：`by_contra!`（+ push\_neg）
 
 *核心要点*：
 - `push_neg` 的能力取决于 `@[push_neg]` 引理集——自定义类型需注册

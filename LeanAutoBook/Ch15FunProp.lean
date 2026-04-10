@@ -361,12 +361,10 @@ example : Continuous (fun x : ℝ => Real.exp (-(x ^ 2) / 2)) := by fun_prop
 tag := "fun-prop-selection-table"
 %%%
 
-| 场景 | 推荐 tactic | 原因 |
-|------|-------------|------|
-| `Continuous f`、`Differentiable ℝ f` 等 | `fun_prop` | 专门为此设计 |
-| 连续性 + 旧代码兼容 | `continuity` | 目前仍可用，兼容性可能变化 |
-| `0 ≤ e` 或 `0 < e` | `positivity` | 符号判定，不是函数性质 |
-| 分母 `≠ 0` 作为侧目标 | `positivity` / `norm_num` | 与 `disch` 配合 |
+- 场景：`Continuous f`、`Differentiable ℝ f` 等 —— 推荐 tactic：`fun_prop` —— 原因：专门为此设计
+- 场景：连续性 + 旧代码兼容 —— 推荐 tactic：`continuity` —— 原因：目前仍可用，兼容性可能变化
+- 场景：`0 ≤ e` 或 `0 < e` —— 推荐 tactic：`positivity` —— 原因：符号判定，不是函数性质
+- 场景：分母 `≠ 0` 作为侧目标 —— 推荐 tactic：`positivity` / `norm_num` —— 原因：与 `disch` 配合
 
 # 15.7 进阶：注册自定义引理
 %%%
@@ -480,16 +478,14 @@ example : Continuous (fun x : ℝ => (Real.exp x - 1) / Real.exp x) := by
 tag := "ch15-summary"
 %%%
 
-| 概念 | 关键点 |
-|------|--------|
-| 目标形式 | `P f`，其中 `P` 是已注册的函数性质 |
-| 工作原理 | 函数分解 + `@[fun_prop]` 规则搜索 + 递归证明 |
-| 统一框架 | 新代码统一用 `fun_prop`，旧 tactic 兼容性可能随版本变化 |
-| 三类引理 | 基本函数、组合规则、带条件规则 |
-| Lambda 分解 | 理解 lambda 结构，这是与 `aesop` 的核心区别 |
-| 主要陷阱 | 自定义函数未展开、分母非零条件、非 lambda 形式 |
-| `disch` 参数 | 指定侧目标处理策略（`assumption` / `positivity` / `norm_num`） |
-| 调试 | `set_option trace.Meta.Tactic.fun_prop true` 查看搜索过程 |
+- `目标形式`：`P f`，其中 `P` 是已注册的函数性质
+- `工作原理`：函数分解 + `@[fun_prop]` 规则搜索 + 递归证明
+- `统一框架`：新代码统一用 `fun_prop`，旧 tactic 兼容性可能随版本变化
+- `三类引理`：基本函数、组合规则、带条件规则
+- `Lambda 分解`：理解 lambda 结构，这是与 `aesop` 的核心区别
+- `主要陷阱`：自定义函数未展开、分母非零条件、非 lambda 形式
+- `disch` 参数：指定侧目标处理策略（`assumption` / `positivity` / `norm_num`）
+- `调试`：`set_option trace.Meta.Tactic.fun_prop true` 查看搜索过程
 
 `fun_prop` 是分析证明中的*函数性质专家*——不做计算，只回答"这个函数是否满足某性质"。
 理解其分解机制和引理注册系统，是高效使用它的关键。

@@ -73,20 +73,18 @@ tag := "bool-tautology-example"
 ```
 -- [示意] ❶ 语法
 inductive BExpr
-  | var (i : Fin n)
-  | true_ | false_
-  | and (a b : BExpr)
-  | or  (a b : BExpr)
-  | not (a : BExpr)
+- var (i : Fin n)：true_ —— false_
+- var (i : Fin n)：and (a b : BExpr)
+- var (i : Fin n)：or  (a b : BExpr)
+- var (i : Fin n)：not (a : BExpr)
 
 -- [示意] ❷ 语义——给定变量赋值，求值为 Bool
 def BExpr.eval (env : Fin n → Bool) : BExpr → Bool
-  | .var i     => env i
-  | .true_     => true
-  | .false_    => false
-  | .and a b   => a.eval env && b.eval env
-  | .or  a b   => a.eval env || b.eval env
-  | .not a     => !(a.eval env)
+- .var i     => env i：.true_     => true
+- .var i     => env i：.false_    => false
+- .var i     => env i：.and a b   => a.eval env && b.eval env
+- .var i     => env i：.or  a b   => a.eval env —— b.eval env
+- .var i     => env i：.not a     => !(a.eval env)
 
 -- [示意] ❸ 判定——穷举所有赋值
 def BExpr.isTaut (e : BExpr) : Bool :=
@@ -122,20 +120,18 @@ tag := "iexpr-syntax-semantics"
 ```
 -- [示意]
 inductive IExpr
-  | lit (n : ℤ)          -- 字面量
-  | var (i : ℕ)          -- 第 i 个变量
-  | add (a b : IExpr)
-  | mul (a b : IExpr)
-  | neg (a : IExpr)
+- lit (n : ℤ)          -- 字面量：var (i : ℕ)          -- 第 i 个变量
+- lit (n : ℤ)          -- 字面量：add (a b : IExpr)
+- lit (n : ℤ)          -- 字面量：mul (a b : IExpr)
+- lit (n : ℤ)          -- 字面量：neg (a : IExpr)
 
 abbrev IEnv := ℕ → ℤ    -- 环境：变量赋值
 
 def IExpr.denote (env : IEnv) : IExpr → ℤ
-  | .lit n     => n
-  | .var i     => env i
-  | .add a b   => a.denote env + b.denote env
-  | .mul a b   => a.denote env * b.denote env
-  | .neg a     => -(a.denote env)
+- .lit n     => n：.var i     => env i
+- .lit n     => n：.add a b   => a.denote env + b.denote env
+- .lit n     => n：.mul a b   => a.denote env * b.denote env
+- .lit n     => n：.neg a     => -(a.denote env)
 ```
 
 ## ❸ 范式化
@@ -148,8 +144,7 @@ tag := "iexpr-normalization"
 ```
 -- [示意] Horner Normal Form
 inductive HNF
-  | const (n : ℤ)                        -- 常数
-  | horner (p : HNF) (i : ℕ) (q : HNF)  -- p * x_i + q
+- const (n : ℤ)                        -- 常数：horner (p : HNF) (i : ℕ) (q : HNF)  -- p * x_i + q
 
 def IExpr.toHNF : IExpr → HNF := ...     -- ❶ 转换算法
 def HNF.denote (env : IEnv) : HNF → ℤ := ... -- ❷ 范式的语义
@@ -169,12 +164,11 @@ tag := "iexpr-soundness"
 theorem toHNF_sound (e : IExpr) (env : IEnv) :
     e.toHNF.denote env = e.denote env := by
   induction e with                       -- 对语法结构归纳
-  | lit n => simp [IExpr.toHNF, HNF.denote, IExpr.denote]
-  | add a b iha ihb =>
+- lit n => simp [IExpr.toHNF, HNF.denote, IExpr.denote]：add a b iha ihb =>
     simp [*, IExpr.toHNF, HNF.denote, IExpr.denote]; ring
-  | mul a b iha ihb =>
+- mul a b iha ihb =>
     simp [*, IExpr.toHNF, HNF.denote, IExpr.denote]; ring
-  | _ => simp [*, IExpr.toHNF, HNF.denote, IExpr.denote]; ring
+- _ => simp [*, IExpr.toHNF, HNF.denote, IExpr.denote]; ring
 
 -- 推论：范式相等 → 语义相等（tactic 实际使用的引理）
 theorem eq_of_toHNF_eq (e1 e2 : IExpr) (env : IEnv)
@@ -247,8 +241,7 @@ tag := "decidable-role"
 ```
 -- [示意] Decidable 的定义
 inductive Decidable (p : Prop) where
-  | isTrue  (h : p)     -- p 成立，附带证明
-  | isFalse (h : ¬p)    -- p 不成立，附带反证
+- isTrue  (h : p)     -- p 成立，附带证明：isFalse (h : ¬p)    -- p 不成立，附带反证
 
 -- decide 的工作原理：
 -- 1. 找到 Decidable p 的实例
@@ -275,13 +268,11 @@ example : (10 ^ 20 + 1 : ℕ) ≠ 10 ^ 20 := by native_decide
   -- ▸ 编译为原生代码执行——快但信任编译器
 ```
 
-| | `decide` | `native_decide` |
-|---|---|---|
-| 执行方式 | 内核归约（解释执行） | 编译为原生代码 |
-| 速度 | 慢 | 快（几个数量级） |
-| 可信度 | 最高（内核检查每一步） | 较低（信任编译器） |
-| 适用规模 | 小实例（< 1000 步） | 大实例 |
-| Mathlib 接受度 | 总是接受 | 谨慎使用 |
+- 执行方式 —— `decide`：内核归约（解释执行） —— `native_decide`：编译为原生代码
+- 速度 —— `decide`：慢 —— `native_decide`：快（几个数量级）
+- 可信度 —— `decide`：最高（内核检查每一步） —— `native_decide`：较低（信任编译器）
+- 适用规模 —— `decide`：小实例（< 1000 步） —— `native_decide`：大实例
+- Mathlib 接受度 —— `decide`：总是接受 —— `native_decide`：谨慎使用
 
 *经验法则*：先试 `decide`；超时则换 `native_decide`。
 
@@ -336,12 +327,10 @@ tag := "hybrid-approach"
 用反射验证结果。对素性测试等复杂运算，
 把 `Nat.Prime 37` 转化为可计算的判定函数。
 
-| | 纯反射 | 逐步构造 | 混合 |
-|---|---|---|---|
-| 实现难度 | 低 | 高 | 中 |
-| 性能 | 慢（内核计算） | 快 | 快 |
-| 可信度 | 高 | 中（依赖实现） | 高 |
-| 典型代表 | 教学示例 | — | `ring`、`norm_num` |
+- 实现难度 —— 纯反射：低 —— 逐步构造：高 —— 混合：中
+- 性能 —— 纯反射：慢（内核计算） —— 逐步构造：快 —— 混合：快
+- 可信度 —— 纯反射：高 —— 逐步构造：中（依赖实现） —— 混合：高
+- 典型代表 —— 纯反射：教学示例 —— 逐步构造：— —— 混合：`ring`、`norm_num`
 
 *设计建议*：原型阶段用纯反射（快速验证算法正确性），
 性能不足时迁移到混合方案。
@@ -430,14 +419,12 @@ tag := "reflection-design-checklist"
 
 动手前逐项回答：
 
-| 检查项 | 问题 |
-|--------|------|
-| *判定性* | 问题可判定吗？能写出 `→ Bool` 的函数吗？ |
-| *范式* | 用什么范式？范式相等是否容易判定？ |
-| *正确性* | 范式化保持语义的证明是否可行？（最难的部分） |
-| *quote 范围* | 需要识别哪些构造？不识别的怎么处理？ |
-| *性能* | `decide` 够用还是需要 `native_decide` / 混合方案？ |
-| *边界* | 超出能力范围时，错误信息如何提示用户？ |
+- *判定性*：问题可判定吗？能写出 `→ Bool` 的函数吗？
+- *范式*：用什么范式？范式相等是否容易判定？
+- *正确性*：范式化保持语义的证明是否可行？（最难的部分）
+- *quote 范围*：需要识别哪些构造？不识别的怎么处理？
+- *性能*：`decide` 够用还是需要 `native_decide` / 混合方案？
+- *边界*：超出能力范围时，错误信息如何提示用户？
 
 *正确性引理是整个开发中最耗时的部分*——
 先用小例子验证范式化算法，再投入大量时间写证明。
@@ -476,12 +463,10 @@ tag := "exercise-identify-four-steps"
 ```
 -- [示意]
 inductive PExpr                    -- (?)
-  | var (i : Nat)
-  | add (a b : PExpr)
+- var (i : Nat)：add (a b : PExpr)
 
 def PExpr.eval (env : Nat → ℕ) : PExpr → ℕ     -- (?)
-  | .var i => env i
-  | .add a b => a.eval env + b.eval env
+- .var i => env i：.add a b => a.eval env + b.eval env
 
 def PExpr.sort : PExpr → PExpr := ...            -- (?)
 
@@ -531,17 +516,15 @@ tag := "exercise-design-soundness"
 tag := "reflection-summary"
 %%%
 
-| 概念 | 关键点 |
-|------|--------|
-| 反射核心思想 | 命题 → 可计算数据 → 计算验证 → 正确性引理桥接 |
-| 四步模式 | 语法 → 语义 → 范式化 → 正确性引理 |
-| quote | 把 Lean Expr 编码为归纳类型值；覆盖范围决定能力边界 |
-| `decide` | 内核归约，慢但可信度最高 |
-| `native_decide` | 编译执行，快但信任编译器 |
-| 纯反射 vs 混合 | 原型用纯反射，生产用混合（MetaM 范式化 + 反射验证） |
-| 正确性引理 | 最耗时的部分——先用小例子验证算法再投入证明 |
-| 相关章节 | `ring`（第七章）、`norm_num`（第十章）、`decide`（第十三章） |
-| 主要陷阱 | Decidable 缺失、内核超时、quote 不完整、范式化不完备 |
+- `反射核心思想`：命题 → 可计算数据 → 计算验证 → 正确性引理桥接
+- `四步模式`：语法 → 语义 → 范式化 → 正确性引理
+- `quote`：把 Lean Expr 编码为归纳类型值；覆盖范围决定能力边界
+- `decide`：内核归约，慢但可信度最高
+- `native_decide`：编译执行，快但信任编译器
+- `纯反射 vs 混合`：原型用纯反射，生产用混合（MetaM 范式化 + 反射验证）
+- `正确性引理`：最耗时的部分——先用小例子验证算法再投入证明
+- `相关章节`：`ring`（第七章）、`norm_num`（第十章）、`decide`（第十三章）
+- `主要陷阱`：Decidable 缺失、内核超时、quote 不完整、范式化不完备
 
 *一句话总结*：反射把"构造证明的复杂性"转移为"一次性证明正确性引理的复杂性"——
 如果你的问题可判定，反射几乎总是比逐步构造更简单的起点。

@@ -118,8 +118,7 @@ elab "my_tactic_all" : tactic => do
 elab "swap" : tactic => do
   let goals ← getGoals
   match goals with
-  | g1 :: g2 :: rest => setGoals (g2 :: g1 :: rest)
-  | _ => throwError "swap requires at least 2 goals"
+- g1 :: g2 :: rest => setGoals (g2 :: g1 :: rest)：_ => throwError "swap requires at least 2 goals"
 ```
 
 模式 3 展示了目标列表操作的灵活性：你可以任意重新排列目标的顺序。实际上 Lean 内置的 `rotate_left`、`rotate_right`、`swap` 等 tactic 就是这样实现的——纯粹的列表操作，不涉及任何证明项的构造。
@@ -139,8 +138,7 @@ tag := "focus"
 def focus (tac : TacticM Unit) : TacticM Unit := do
   let goals ← getGoals
   match goals with
-  | [] => throwError "no goals"
-  | main :: rest =>
+- [] => throwError "no goals"：main :: rest =>
     setGoals [main]        -- 暂时隐藏其余目标
     tac                     -- 执行 tactic，它只能看到 main
     let newGoals ← getGoals -- tac 可能解决了 main，也可能产生了新子目标
@@ -520,16 +518,14 @@ elab "first_success" : tactic => do
 tag := "summary"
 %%%
 
-| 操作 | API |
-|------|-----|
-| 获取/设置目标列表 | `getGoals` / `setGoals` |
-| 获取未解决的目标 | `getUnsolvedGoals` |
-| 只看主目标 | `getMainGoal` / `getMainTarget` |
-| 聚焦 | `focus tac` |
-| 保存/恢复 | `saveState` / `restoreState` |
-| 试探性执行 | `tryTactic?` |
-| 调用其他 tactic | `` evalTactic (← `(tactic| ...)) `` |
-| 安全上下文切换 | `withMainContext do` / `g.withContext do` |
+- `获取/设置目标列表`：`getGoals` / `setGoals`
+- `获取未解决的目标`：`getUnsolvedGoals`
+- `只看主目标`：`getMainGoal` / `getMainTarget`
+- `聚焦`：`focus tac`
+- `保存/恢复`：`saveState` / `restoreState`
+- `试探性执行`：`tryTactic?`
+- 调用其他 tactic：evalTactic
+- `安全上下文切换`：`withMainContext do` / `g.withContext do`
 
 *核心原则*：
 

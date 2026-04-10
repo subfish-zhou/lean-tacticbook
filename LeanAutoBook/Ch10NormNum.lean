@@ -69,11 +69,11 @@ tag := "result-type"
 
 ```
 inductive Result where
-  | isNat (inst : Expr) (lit : Expr) (proof : Expr)
+- isNat (inst : Expr) (lit : Expr) (proof : Expr)
     -- 表达式 = Nat.cast lit，proof : e = Nat.cast lit
-  | isNegNat (inst : Expr) (lit : Expr) (proof : Expr)
+- isNegNat (inst : Expr) (lit : Expr) (proof : Expr)
     -- 表达式 = -Nat.cast lit
-  | isBool (val : Bool) (proof : Expr)
+- isBool (val : Bool) (proof : Expr)
     -- 命题为 True/False
 ```
 
@@ -109,18 +109,16 @@ def evalPrime : NormNumExt where
 tag := "builtin-plugins"
 %%%
 
-| 插件 | 处理的 head symbol | 示例 |
-|------|--------------------|------|
-| `evalAdd` | `HAdd.hAdd` | `2 + 3 = 5` |
-| `evalMul` | `HMul.hMul` | `6 * 7 = 42` |
-| `evalPow` | `HPow.hPow` | `2 ^ 10 = 1024` |
-| `evalDiv` | `HDiv.hDiv` | `(10 : ℚ) / 3` |
-| `evalMod` | `HMod.hMod` | `17 % 5 = 2` |
-| `evalPrime` | `Nat.Prime` | `Nat.Prime 127` |
-| `evalGcd` | `Nat.gcd` | `Nat.gcd 12 8 = 4` |
-| `evalDvd` | `Dvd.dvd` | `(3 : ℤ) ∣ 12` |
-| `evalLe` | `LE.le` | `(2 : ℝ) ≤ 3` |
-| `evalLt` | `LT.lt` | `(1 : ℚ) < 2` |
+- 插件：`evalAdd` —— 处理的 head symbol：`HAdd.hAdd` —— 示例：`2 + 3 = 5`
+- 插件：`evalMul` —— 处理的 head symbol：`HMul.hMul` —— 示例：`6 * 7 = 42`
+- 插件：`evalPow` —— 处理的 head symbol：`HPow.hPow` —— 示例：`2 ^ 10 = 1024`
+- 插件：`evalDiv` —— 处理的 head symbol：`HDiv.hDiv` —— 示例：`(10 : ℚ) / 3`
+- 插件：`evalMod` —— 处理的 head symbol：`HMod.hMod` —— 示例：`17 % 5 = 2`
+- 插件：`evalPrime` —— 处理的 head symbol：`Nat.Prime` —— 示例：`Nat.Prime 127`
+- 插件：`evalGcd` —— 处理的 head symbol：`Nat.gcd` —— 示例：`Nat.gcd 12 8 = 4`
+- 插件：`evalDvd` —— 处理的 head symbol：`Dvd.dvd` —— 示例：`(3 : ℤ) ∣ 12`
+- 插件：`evalLe` —— 处理的 head symbol：`LE.le` —— 示例：`(2 : ℝ) ≤ 3`
+- 插件：`evalLt` —— 处理的 head symbol：`LT.lt` —— 示例：`(1 : ℚ) < 2`
 
 # 证明构造策略
 %%%
@@ -173,13 +171,11 @@ tag := "primality-example"
 tag := "comparison-with-kernel-computation"
 %%%
 
-| | `norm_num` | `decide` / `native_decide` |
-|---|---|---|
-| 计算位置 | meta 层（elaborator） | kernel / 编译器 |
-| 输出 | 证明项（证书） | `rfl : decide p = true` |
-| 大数性能 | 优秀 | 可能超时 |
-| 可信基 | kernel 验证证书 | 信任 kernel reduction / native code |
-| 可扩展性 | 插件系统 | 需要 `Decidable` 实例 |
+- 计算位置 —— `norm_num`：meta 层（elaborator） —— `decide` / `native_decide`：kernel / 编译器
+- 输出 —— `norm_num`：证明项（证书） —— `decide` / `native_decide`：`rfl : decide p = true`
+- 大数性能 —— `norm_num`：优秀 —— `decide` / `native_decide`：可能超时
+- 可信基 —— `norm_num`：kernel 验证证书 —— `decide` / `native_decide`：信任 kernel reduction / native code
+- 可扩展性 —— `norm_num`：插件系统 —— `decide` / `native_decide`：需要 `Decidable` 实例
 
 # 编写自定义插件
 %%%
@@ -352,17 +348,15 @@ example : (2 : ℝ) + 3 = 5 := by norm_num
 tag := "applicability-quick-reference"
 %%%
 
-| 目标形式 | 推荐 tactic | 原因 |
-|----------|-------------|------|
-| `2 + 3 = 5` | `norm_num` | 具体数值等式 |
-| `Nat.Prime 127` | `norm_num` | 有内置素性插件 |
-| `(3/4 : ℚ) * 4 = 3` | `norm_num` | 有理数算术 |
-| `x + 0 = x` | `simp` / `ring` | 含变量 |
-| `x + 1 > x` | `omega` / `linarith` | 线性不等式 |
-| `Nat.Prime 2147483647` | `norm_num` | 大素数，meta 层计算 |
-| `2 ^ 32 = 4294967296` | `norm_num` | 幂运算 |
-| `n % 2 = 0 ∨ n % 2 = 1` | `omega` | 含变量的模算术 |
-| `Nat.sqrt 49 = 7` | `native_decide` | 无 `norm_num` 插件 |
+- 目标形式：`2 + 3 = 5` —— 推荐 tactic：`norm_num` —— 原因：具体数值等式
+- 目标形式：`Nat.Prime 127` —— 推荐 tactic：`norm_num` —— 原因：有内置素性插件
+- 目标形式：`(3/4 : ℚ) * 4 = 3` —— 推荐 tactic：`norm_num` —— 原因：有理数算术
+- 目标形式：`x + 0 = x` —— 推荐 tactic：`simp` / `ring` —— 原因：含变量
+- 目标形式：`x + 1 > x` —— 推荐 tactic：`omega` / `linarith` —— 原因：线性不等式
+- 目标形式：`Nat.Prime 2147483647` —— 推荐 tactic：`norm_num` —— 原因：大素数，meta 层计算
+- 目标形式：`2 ^ 32 = 4294967296` —— 推荐 tactic：`norm_num` —— 原因：幂运算
+- 目标形式：`n % 2 = 0 ∨ n % 2 = 1` —— 推荐 tactic：`omega` —— 原因：含变量的模算术
+- 目标形式：`Nat.sqrt 49 = 7` —— 推荐 tactic：`native_decide` —— 原因：无 `norm_num` 插件
 
 经验法则：*目标中没有自由变量且涉及算术* → 先试 `norm_num`。
 
@@ -435,16 +429,14 @@ example : (2 : ℝ) ^ 8 - 1 = 255 := by sorry
 tag := "ch10-summary"
 %%%
 
-| 概念 | 要点 |
-|------|------|
-| 定位 | 具体数值命题的快速证明，无自由变量 |
-| 架构 | 插件注册表，`@[norm_num head _]` 注册 |
-| 证明策略 | meta 层计算 + 构造 kernel 可验证的证书 |
-| vs `decide` | meta 计算 vs kernel reduction，大数性能差异巨大 |
-| vs `omega` | `norm_num` 不含变量；`omega` 处理线性整数算术 |
-| vs `ring` | `norm_num` 处理具体数值；`ring` 处理多项式恒等式 |
-| 与 `simp` 配合 | 作为 discharger 处理数值侧条件 |
-| 扩展 | 实现 `NormNumExt`，返回 `Result`，注册到 head symbol |
-| 失败诊断 | `trace.Meta.NormNum` 查看分派过程 |
+- `定位`：具体数值命题的快速证明，无自由变量
+- `架构`：插件注册表，`@[norm_num head _]` 注册
+- `证明策略`：meta 层计算 + 构造 kernel 可验证的证书
+- vs decide：meta 计算 vs kernel reduction，大数性能差异巨大
+- vs omega：`norm_num` 不含变量；`omega` 处理线性整数算术
+- vs ring：`norm_num` 处理具体数值；`ring` 处理多项式恒等式
+- 与 simp 配合：作为 discharger 处理数值侧条件
+- 扩展：实现 `NormNumExt`，返回 `Result`，注册到 head symbol
+- 失败诊断：`trace.Meta.NormNum` 查看分派过程
 
 下一章我们将学习 `aesop`——一个可配置的前向/后向搜索引擎。

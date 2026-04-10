@@ -358,13 +358,11 @@ example (a b : ℝ) (ha : a ≠ 0) (hb : b ≠ 0) (hab : a + b ≠ 0) :
 tag := "field-simp-vs-manual"
 %%%
 
-| 场景 | 推荐方式 | 原因 |
-|------|---------|------|
-| 分式等式（通分后比较） | `field_simp; ring` | 自动化，不需手动引理 |
-| 分式不等式 | `rw [div_le_iff h]` 等 | `field_simp` 对不等式支持有限 |
-| 单个分母消除 | `field_simp` 或 `rw [div_eq_iff h]` | 简单情况手动更精确 |
-| ℕ / ℤ 上的除法 | `omega` / `Nat.div_*` 引理 | `field_simp` 不适用 |
-| 嵌套复杂分式 | `field_simp; ring` | 手动几乎不可能 |
+- 场景：分式等式（通分后比较） —— 推荐方式：`field_simp; ring` —— 原因：自动化，不需手动引理
+- 场景：分式不等式 —— 推荐方式：`rw [div_le_iff h]` 等 —— 原因：`field_simp` 对不等式支持有限
+- 场景：单个分母消除 —— 推荐方式：`field_simp` 或 `rw [div_eq_iff h]` —— 原因：简单情况手动更精确
+- 场景：ℕ / ℤ 上的除法 —— 推荐方式：`omega` / `Nat.div_*` 引理 —— 原因：`field_simp` 不适用
+- 场景：嵌套复杂分式 —— 推荐方式：`field_simp; ring` —— 原因：手动几乎不可能
 
 # 17.9 练习
 %%%
@@ -473,16 +471,14 @@ example (x : ℝ) (hx : x ≠ 0) (h : 1 / x + x = 5 / 2) :
 tag := "field-simp-summary"
 %%%
 
-| 概念 | 关键点 |
-|------|--------|
-| 核心功能 | 消除分母，把分式等式化归为多项式等式 |
-| 内部机制 | 特化的 `simp`，加载 `div_add_div`、`div_eq_iff` 等分式引理 |
-| 典型流程 | `field_simp` → `ring`（最常见），或 → `linarith` / `nlinarith` |
-| 非零条件来源 | 假设 `x ≠ 0`、推导 `0 < x → x ≠ 0`、数值 `norm_num`、显式传入 |
-| 适用范围 | `Field` / `DivisionRing` 类型（ℚ、ℝ、ℂ），不适用于 ℕ / ℤ |
-| 主要陷阱 | 缺非零条件、复合分母、ring 后接不等式、ℕ 整除混淆 |
-| 协作 | `ring`（多项式）、`positivity`（非零性）、`push_cast`（类型转换） |
-| 调试 | `field_simp?` 查看引理、检查 Infoview 剩余目标、显式传入 `[h]` |
+- `核心功能`：消除分母，把分式等式化归为多项式等式
+- `内部机制`：特化的 `simp`，加载 `div_add_div`、`div_eq_iff` 等分式引理
+- `典型流程`：`field_simp` → `ring`（最常见），或 → `linarith` / `nlinarith`
+- `非零条件来源`：假设 `x ≠ 0`、推导 `0 < x → x ≠ 0`、数值 `norm_num`、显式传入
+- `适用范围`：`Field` / `DivisionRing` 类型（ℚ、ℝ、ℂ），不适用于 ℕ / ℤ
+- `主要陷阱`：缺非零条件、复合分母、ring 后接不等式、ℕ 整除混淆
+- `协作`：`ring`（多项式）、`positivity`（非零性）、`push_cast`（类型转换）
+- `调试`：`field_simp?` 查看引理、检查 Infoview 剩余目标、显式传入 `[h]`
 
 `field_simp` 是代数工具链中的*分母消除专家*——不做多项式推理，
 只做"把分式问题化归为无分母问题"。理解其分工边界，

@@ -32,13 +32,11 @@ CAS 做 Gröbner 基计算、SMT 求解器做线性算术——
 tag := "why-external-tools"
 %%%
 
-| 问题域 | 外部工具 | 为什么 Lean 不自己做 |
-|--------|----------|---------------------|
-| 命题 SAT | CaDiCaL、Kissat | CDCL 算法 + 启发式需百万行优化代码 |
-| SMT | Z3、cvc5 | 理论组合框架极其复杂 |
-| 符号计算 | Sage、Mathematica | Gröbner 基、积分、级数求和 |
-| ITP 桥接 | Coq、Isabelle | 复用其他证明助手的引理库 |
-| 证明搜索 | LLM（GPT、Claude） | 启发式 tactic 建议 |
+- 问题域：命题 SAT —— 外部工具：CaDiCaL、Kissat —— 为什么 Lean 不自己做：CDCL 算法 + 启发式需百万行优化代码
+- 问题域：SMT —— 外部工具：Z3、cvc5 —— 为什么 Lean 不自己做：理论组合框架极其复杂
+- 问题域：符号计算 —— 外部工具：Sage、Mathematica —— 为什么 Lean 不自己做：Gröbner 基、积分、级数求和
+- 问题域：ITP 桥接 —— 外部工具：Coq、Isabelle —— 为什么 Lean 不自己做：复用其他证明助手的引理库
+- 问题域：证明搜索 —— 外部工具：LLM（GPT、Claude） —— 为什么 Lean 不自己做：启发式 tactic 建议
 
 核心张力：外部工具能*快速给出答案*，但 Lean 的保证依赖*内核检查*。
 设计问题归结为：*如何利用外部计算能力而不破坏信任模型？*
@@ -128,12 +126,10 @@ axiom smt_oracle : ∀ p : Prop, Decidable p
 tag := "oracle-vs-native-decide"
 %%%
 
-| | `native_decide` | Oracle（`sorry`/自定义公理） |
-|---|---|---|
-| 逻辑层面 | *不引入新公理* | 引入不可验证的假设 |
-| 可信基础 | Lean 内核 + 编译器 | Lean + 外部工具 |
-| 失败时 | 类型错误 | 可能引入矛盾 |
-| Mathlib | 谨慎使用 | 不接受 |
+- 逻辑层面 —— `native_decide`：*不引入新公理* —— Oracle（`sorry`/自定义公理）：引入不可验证的假设
+- 可信基础 —— `native_decide`：Lean 内核 + 编译器 —— Oracle（`sorry`/自定义公理）：Lean + 外部工具
+- 失败时 —— `native_decide`：类型错误 —— Oracle（`sorry`/自定义公理）：可能引入矛盾
+- Mathlib —— `native_decide`：谨慎使用 —— Oracle（`sorry`/自定义公理）：不接受
 
 *`native_decide` 不是 oracle*——它在已信任的编译环境中做更快的判定计算。
 
@@ -212,11 +208,10 @@ elab "external_solve" : tactic => do
   let smt2 := encodeGoal goal          -- ❶ 编码
   let result ← callSolver smt2         -- ❷ 调用（IO 操作）
   match parseSolverOutput result with   -- ❸ 解析
-  | .sat cert =>
+- .sat cert =>
     let proof ← verifyCertificate cert goal  -- ❹ 验证证书
     closeMainGoal proof
-  | .unsat   => throwError "solver says unsat"
-  | .unknown => throwError "solver returned unknown"
+- .unsat   => throwError "solver says unsat"：.unknown => throwError "solver returned unknown"
 ```
 
 # 22.5 编码与解码
@@ -301,14 +296,12 @@ LLM 可能生成：             应对：
 tag := "three-modes-comparison"
 %%%
 
-| | 证书模式 | Oracle 模式 | LLM 辅助 |
-|---|---|---|---|
-| *安全性* | 高 | 低 | 高 |
-| *TCB* | Lean 内核 | Lean + 外部工具 | Lean 内核 |
-| *确定性* | 确定 | 确定 | 不确定 |
-| *适用* | SAT/SMT、Gröbner | 开发迭代 | 探索性证明 |
-| *Mathlib* | 接受 | 不接受 | 结果可接受 |
-| *代表* | `polyrith`、`bv_decide` | `sorry` 工作流 | LeanDojo、ReProver |
+- *安全性* —— 证书模式：高 —— Oracle 模式：低 —— LLM 辅助：高
+- *TCB* —— 证书模式：Lean 内核 —— Oracle 模式：Lean + 外部工具 —— LLM 辅助：Lean 内核
+- *确定性* —— 证书模式：确定 —— Oracle 模式：确定 —— LLM 辅助：不确定
+- *适用* —— 证书模式：SAT/SMT、Gröbner —— Oracle 模式：开发迭代 —— LLM 辅助：探索性证明
+- *Mathlib* —— 证书模式：接受 —— Oracle 模式：不接受 —— LLM 辅助：结果可接受
+- *代表* —— 证书模式：`polyrith`、`bv_decide` —— Oracle 模式：`sorry` 工作流 —— LLM 辅助：LeanDojo、ReProver
 
 # 22.8 实践考量
 %%%
@@ -419,15 +412,13 @@ tag := "failure-certificate-bloat"
 tag := "external-design-checklist"
 %%%
 
-| 检查项 | 问题 |
-|--------|------|
-| *信任模型* | 证书模式还是 oracle？生产代码必须用证书模式 |
-| *编码范围* | 需要编码哪些构造？不识别的如何处理？ |
-| *证书格式* | 返回什么格式？如何在 Lean 中验证？ |
-| *可用性* | 工具不可用时的 fallback？ |
-| *可复现性* | 证书缓存？CI 能否不依赖外部服务？ |
-| *性能* | 编码 + 调用 + 验证的总时间可接受？ |
-| *错误信息* | 各种失败场景是否有清晰提示？ |
+- *信任模型*：证书模式还是 oracle？生产代码必须用证书模式
+- *编码范围*：需要编码哪些构造？不识别的如何处理？
+- *证书格式*：返回什么格式？如何在 Lean 中验证？
+- *可用性*：工具不可用时的 fallback？
+- *可复现性*：证书缓存？CI 能否不依赖外部服务？
+- *性能*：编码 + 调用 + 验证的总时间可接受？
+- *错误信息*：各种失败场景是否有清晰提示？
 
 # 22.11 练习
 %%%
@@ -493,17 +484,15 @@ tag := "exercise-encoding-signatures"
 tag := "external-summary"
 %%%
 
-| 概念 | 关键点 |
-|------|--------|
-| 外部工具的价值 | 利用专门求解器补充 Lean 内部 tactic |
-| 证书模式 | 外部工具给证书，Lean 验证——外部工具不在 TCB 中 |
-| Oracle 模式 | 直接信任外部结果——不安全，仅限开发迭代 |
-| `native_decide` ≠ oracle | 不引入新公理，只是更快的判定计算 |
-| `IO.Process` API | `spawn`（流式）和 `output`（一次性）两种方式 |
-| 编码/解码 | 覆盖范围决定工具能力边界（同反射的 quote） |
-| LLM 辅助 | LLM 提供候选，Lean 验证——安全但不确定 |
-| 可复现性 | 缓存证书，CI 不依赖外部服务 |
-| 主要陷阱 | 工具不可用、编码不全、oracle 矛盾、证书膨胀 |
+- `外部工具的价值`：利用专门求解器补充 Lean 内部 tactic
+- `证书模式`：外部工具给证书，Lean 验证——外部工具不在 TCB 中
+- `Oracle 模式`：直接信任外部结果——不安全，仅限开发迭代
+- `native_decide` ≠ oracle：不引入新公理，只是更快的判定计算
+- `IO.Process` API：`spawn`（流式）和 `output`（一次性）两种方式
+- `编码/解码`：覆盖范围决定工具能力边界（同反射的 quote）
+- `LLM 辅助`：LLM 提供候选，Lean 验证——安全但不确定
+- `可复现性`：缓存证书，CI 不依赖外部服务
+- `主要陷阱`：工具不可用、编码不全、oracle 矛盾、证书膨胀
 
 *一句话总结*：对接外部工具的核心原则是*计算外包，验证内留*——
 让专门的求解器做它擅长的计算，但证明正确性由 Lean 内核担保。

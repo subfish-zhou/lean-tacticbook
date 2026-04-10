@@ -105,10 +105,8 @@ example (h : y = g a) : f y = a := by
 tag := "grind-vs-simp-attributes"
 %%%
 
-| 属性 | 引理用法 | 方向性 |
-|------|----------|--------|
-| `@[simp]` | 有向重写 lhs → rhs | 单向，lhs 必须是"大"的 |
-| `@[grind]` | E-matching pattern trigger | 无向，按模式匹配 |
+- 属性：`@[simp]` —— 引理用法：有向重写 lhs → rhs —— 方向性：单向，lhs 必须是"大"的
+- 属性：`@[grind]` —— 引理用法：E-matching pattern trigger —— 方向性：无向，按模式匹配
 
 一条引理可同时标记 `@[simp, grind]`，各在各的引擎中生效。
 
@@ -175,13 +173,11 @@ example {α : Type*} {a b c : α} (h : a = b ∧ b = c) : a = c := by
 tag := "grind-vs-simp-vs-aesop"
 %%%
 
-| 维度 | grind | simp | aesop |
-|------|-------|------|-------|
-| 核心算法 | congruence closure + E-matching | term rewriting | best-first search |
-| 擅长 | 等式传递链、congruence | 化简到 normal form | forward/backward 搜索 |
-| 引理方向 | 无向 | 有向 (lhs → rhs) | 按规则类型 |
-| 量化引理 | E-matching 实例化 | conditional rewrite | `apply` / `intro` |
-| 终止机制 | 步数上限 | fixpoint | 深度上限 |
+- 维度：核心算法 —— grind：congruence closure + E-matching —— simp：term rewriting —— aesop：best-first search
+- 维度：擅长 —— grind：等式传递链、congruence —— simp：化简到 normal form —— aesop：forward/backward 搜索
+- 维度：引理方向 —— grind：无向 —— simp：有向 (lhs → rhs) —— aesop：按规则类型
+- 维度：量化引理 —— grind：E-matching 实例化 —— simp：conditional rewrite —— aesop：`apply` / `intro`
+- 维度：终止机制 —— grind：步数上限 —— simp：fixpoint —— aesop：深度上限
 
 *用 grind*：等式目标 + 多步等式链；congruence 穿透；自动实例化 `∀` 引理。
 *不用 grind*：化简 → `simp`；结构操作 → `aesop`；纯算术 → `omega`；命题逻辑 → `tauto`。
@@ -456,17 +452,15 @@ example (h : (a = b ∧ c = d) ∨ (a = d ∧ c = b))
 tag := "ch12-summary"
 %%%
 
-| 概念 | 要点 |
-|------|------|
-| grind 定位 | SMT 风格 tactic，擅长等式传递推理 |
-| E-graph | union-find + term DAG，O(n log n) congruence closure |
-| congruence | `a = b → f(a) = f(b)`，自动穿透任意深度嵌套 |
-| E-matching | 在 E-graph 中搜索量化引理的 pattern 并实例化 |
-| `@[grind]` | 注册 E-matching trigger，无向（区别于 `@[simp]`） |
-| `grind [l]` | 临时传入引理，不污染全局注册，推荐用法 |
-| 配置 | `maxSteps`、`maxEmatch`，超限说明目标可能不适合 grind |
-| 主要失败 | 非等式目标、缺引理/展开、E-matching 爆炸、case split、高阶项 |
-| 调试 | `trace.grind`、`trace.grind.ematch`、`trace.grind.eqc` |
-| 组合策略 | 手动拆分分支 + 每分支内 grind 收尾 |
+- `grind 定位`：SMT 风格 tactic，擅长等式传递推理
+- `E-graph`：union-find + term DAG，O(n log n) congruence closure
+- `congruence`：`a = b → f(a) = f(b)`，自动穿透任意深度嵌套
+- `E-matching`：在 E-graph 中搜索量化引理的 pattern 并实例化
+- `@[grind]`：注册 E-matching trigger，无向（区别于 `@[simp]`）
+- `grind [l]`：临时传入引理，不污染全局注册，推荐用法
+- `配置`：`maxSteps`、`maxEmatch`，超限说明目标可能不适合 grind
+- `主要失败`：非等式目标、缺引理/展开、E-matching 爆炸、case split、高阶项
+- `调试`：`trace.grind`、`trace.grind.ematch`、`trace.grind.eqc`
+- `组合策略`：手动拆分分支 + 每分支内 grind 收尾
 
 *下一章*：`decide` / `native_decide`——可判定性与内核计算。

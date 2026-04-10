@@ -129,14 +129,12 @@ theorem Classical.em (p : Prop) : p ∨ ¬p := ...
 tag := "rule-actions"
 %%%
 
-| 动作 | 说明 | 用途 |
-|------|------|------|
-| `apply` | apply 目标 | 后向推理 |
-| `forward` | 从假设推新事实，*保留*原假设 | 丰富上下文 |
-| `destruct` | 从假设推新事实，*消耗*原假设 | 避免重复 |
-| `cases` | 对项做 cases | 枚举拆分 |
-| `simp` | simp 化简 | 仅 `norm` |
-| `tactic` | 执行任意 tactic | 灵活慎用 |
+- 动作：`apply` —— 说明：apply 目标 —— 用途：后向推理
+- 动作：`forward` —— 说明：从假设推新事实，*保留*原假设 —— 用途：丰富上下文
+- 动作：`destruct` —— 说明：从假设推新事实，*消耗*原假设 —— 用途：避免重复
+- 动作：`cases` —— 说明：对项做 cases —— 用途：枚举拆分
+- 动作：`simp` —— 说明：simp 化简 —— 用途：仅 `norm`
+- 动作：`tactic` —— 说明：执行任意 tactic —— 用途：灵活慎用
 
 ```
 @[aesop safe apply]
@@ -191,12 +189,10 @@ macro "my_aesop" : tactic =>
 tag := "common-config-options"
 %%%
 
-| 选项 | 默认值 | 说明 |
-|------|--------|------|
-| `maxDepth` | 30 | 搜索树最大深度 |
-| `maxRuleApplications` | 200 | 规则应用次数上限 |
-| `enableSimp` | true | norm 阶段是否运行 simp |
-| `terminal` | false | true = 必须完全关闭目标 |
+- 选项：`maxDepth` —— 默认值：30 —— 说明：搜索树最大深度
+- 选项：`maxRuleApplications` —— 默认值：200 —— 说明：规则应用次数上限
+- 选项：`enableSimp` —— 默认值：true —— 说明：norm 阶段是否运行 simp
+- 选项：`terminal` —— 默认值：false —— 说明：true = 必须完全关闭目标
 
 > *`terminal` 模式*：生产代码推荐开启——aesop 无法关闭目标就报错，避免"部分成功"隐患。
 
@@ -352,12 +348,10 @@ tag := "failure-forward-rule-cycles"
 tag := "limitations-and-best-practices"
 %%%
 
-| 不擅长 | 原因 | 替代 |
-|--------|------|------|
-| 等式推理 | 不做重写链 | `simp`、`ring` |
-| 线性算术 | 不做数值决策 | `omega`、`linarith` |
-| 深度组合 | 搜索爆炸 | 手动分步 + aesop 收尾 |
-| 高阶 unification | 只做一阶匹配 | `exact?`、手动 `apply` |
+- 不擅长：等式推理 —— 原因：不做重写链 —— 替代：`simp`、`ring`
+- 不擅长：线性算术 —— 原因：不做数值决策 —— 替代：`omega`、`linarith`
+- 不擅长：深度组合 —— 原因：搜索爆炸 —— 替代：手动分步 + aesop 收尾
+- 不擅长：高阶 unification —— 原因：只做一阶匹配 —— 替代：`exact?`、手动 `apply`
 
 *最佳实践*——"人工搭骨架，aesop 填细节"：
 
@@ -391,13 +385,11 @@ constructor
 tag := "ch11-summary"
 %%%
 
-| 概念 | 关键点 |
-|------|--------|
-| 搜索架构 | norm → safe → unsafe 三阶段最佳优先搜索 |
-| 规则类型 | `norm`（规范化）、`safe`（确定性）、`unsafe`（分支） |
-| 动作类型 | `apply`、`forward`、`destruct`、`cases`、`simp`、`tactic` |
-| 规则集 | `declare_aesop_rule_sets` + `rule_sets` |
-| 调试 | `trace.aesop.*`、`aesop?`、Final goals |
+- `搜索架构`：norm → safe → unsafe 三阶段最佳优先搜索
+- `规则类型`：`norm`（规范化）、`safe`（确定性）、`unsafe`（分支）
+- `动作类型`：`apply`、`forward`、`destruct`、`cases`、`simp`、`tactic`
+- `规则集`：`declare_aesop_rule_sets` + `rule_sets`
+- `调试`：`trace.aesop.*`、`aesop?`、Final goals
 
 # 练习
 %%%

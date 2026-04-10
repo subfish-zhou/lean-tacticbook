@@ -102,12 +102,10 @@ simp 只会把引理的 *LHS 重写为 RHS*，永远不会反过来。对于 `@[
 
 这决定了 simp lemma 的*编写原则*：
 
-| 原则 | 说明 |
-|------|------|
-| LHS 比 RHS 复杂 | 化简应让表达式变"简单" |
-| RHS 不引入新变量 | RHS 的自由变量必须都出现在 LHS 中 |
-| 不能左右对称 | `a + b = b + a` 会导致无限循环 |
-| 一致的范式方向 | 同一概念的多条引理应朝同一范式化简 |
+- `LHS 比 RHS 复杂`：化简应让表达式变"简单"
+- `RHS 不引入新变量`：RHS 的自由变量必须都出现在 LHS 中
+- `不能左右对称`：`a + b = b + a` 会导致无限循环
+- `一致的范式方向`：同一概念的多条引理应朝同一范式化简
 
 如果你需要*反方向*使用某条 simp lemma，可以用 `←`：
 
@@ -397,16 +395,14 @@ example : True ∧ (0 + 1 = 1) := by
 tag := "ch06-summary"
 %%%
 
-| 概念 | 关键点 |
-|------|--------|
-| 核心机制 | 项重写系统，DiscrTree 索引，不动点迭代 |
-| 方向性 | 只从 LHS 到 RHS；用 `← lemma` 反转 |
-| 引理形式 | 等式、条件等式、iff、命题 |
-| 变体 | `simp only`（精确）、`simp_all`（含假设）、`dsimp`（definitional） |
-| Discharger | 条件引理的前提证明器，可自定义 |
-| 配置 | `Simp.Config`：maxSteps、contextual、zeta、iota 等 |
-| 调试 | `trace.Meta.Tactic.simp.*`、`simp?` |
-| 避坑 | 不标交换律、不引入新变量、`simp only` 优于裸 `simp` |
+- `核心机制`：项重写系统，DiscrTree 索引，不动点迭代
+- `方向性`：只从 LHS 到 RHS；用 `← lemma` 反转
+- `引理形式`：等式、条件等式、iff、命题
+- `变体`：`simp only`（精确）、`simp_all`（含假设）、`dsimp`（definitional）
+- `Discharger`：条件引理的前提证明器，可自定义
+- `配置`：`Simp.Config`：maxSteps、contextual、zeta、iota 等
+- `调试`：`trace.Meta.Tactic.simp.*`、`simp?`
+- `避坑`：不标交换律、不引入新变量、`simp only` 优于裸 `simp`
 
 # 6.15 练习
 %%%

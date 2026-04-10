@@ -306,13 +306,11 @@ example (n : Nat) : n + 0 = n := by simp
 tag := "tactic-selection-table"
 %%%
 
-| 场景 | 推荐 tactic | 原因 |
-|------|-------------|------|
-| 小规模有限穷举（< 100 种） | `decide` | 内核可信，无额外假设 |
-| 大规模有限穷举（> 100 种） | `native_decide` | 编译执行，快几个数量级 |
-| `Nat`/`Int` 线性算术 | `omega` | 专用 decision procedure |
-| 具体数值计算、素性、整除 | `norm_num` | meta 层高效归约 + 证书 |
-| 含变量的等式 / 不等式 | `simp` / `ring` / `linarith` | 符号化简 |
+- 场景：小规模有限穷举（< 100 种） —— 推荐 tactic：`decide` —— 原因：内核可信，无额外假设
+- 场景：大规模有限穷举（> 100 种） —— 推荐 tactic：`native_decide` —— 原因：编译执行，快几个数量级
+- 场景：`Nat`/`Int` 线性算术 —— 推荐 tactic：`omega` —— 原因：专用 decision procedure
+- 场景：具体数值计算、素性、整除 —— 推荐 tactic：`norm_num` —— 原因：meta 层高效归约 + 证书
+- 场景：含变量的等式 / 不等式 —— 推荐 tactic：`simp` / `ring` / `linarith` —— 原因：符号化简
 
 # 13.7 实战模式与调试
 %%%
@@ -465,14 +463,12 @@ instance (lo hi n : Nat) : Decidable (InRange lo hi n) := sorry
 tag := "ch13-summary"
 %%%
 
-| 概念 | 关键点 |
-|------|--------|
-| `Decidable` | 类型类，编码"可计算的真假判定 + 证据"，是 `Prop`/`Bool` 的桥梁 |
-| `decide` | 内核规约，绝对可信（仅依赖 kernel），但速度受限于解释执行 |
-| `native_decide` | 编译到原生代码，快几个数量级，但引入 `ofReduceBool` 公理 |
-| 失败诊断 | 缺实例 → 检查 `Decidable`；超时 → 换 tactic；含变量 → 先化简；假命题 → 检查逻辑 |
-| 编写实例 | `deriving`、dependent if、`inferInstanceAs` 归约、逻辑组合 |
-| 选择原则 | 小穷举 `decide`，大穷举 `native_decide`，算术 `omega`/`norm_num` |
+- `Decidable`：类型类，编码"可计算的真假判定 + 证据"，是 `Prop`/`Bool` 的桥梁
+- `decide`：内核规约，绝对可信（仅依赖 kernel），但速度受限于解释执行
+- `native_decide`：编译到原生代码，快几个数量级，但引入 `ofReduceBool` 公理
+- `失败诊断`：缺实例 → 检查 `Decidable`；超时 → 换 tactic；含变量 → 先化简；假命题 → 检查逻辑
+- `编写实例`：`deriving`、dependent if、`inferInstanceAs` 归约、逻辑组合
+- `选择原则`：小穷举 `decide`，大穷举 `native_decide`，算术 `omega`/`norm_num`
 
 `decide` 和 `native_decide` 是 Lean 自动化的"兜底手段"——
 当问题可以归约为有限计算时，它们总能给出答案。
