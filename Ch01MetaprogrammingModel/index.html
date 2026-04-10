@@ -1237,28 +1237,26 @@ open Lean Elab Tactic Meta
                 <strong>注意</strong>：<code>trace_goal</code> 只打印信息、不改变目标，所以 Lean 可能会显示 <code>"tactic does nothing"</code> 的 linter 警告。这不是 bug——tactic 确实运行了，只是没有修改 goal 状态。忽略这个警告即可。</p>
               <p>
                 再写一个稍复杂的：<code>exact_if_rfl</code>，如果目标是 <code>a = a</code> 就用 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-rfl" data-verso-hover="31">rfl</span></code> 关闭，否则报错。</p>
-              <pre>elab "exact_if_rfl" : tactic =&gt; do
-  let goal ← getMainGoal
-  let goalType ← goal.getType
+              <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.elab-572">elab</span><span class="inter-text"> </span><span class="literal string token" data-binding="" data-verso-hover="32">"exact_if_rfl"</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Lean.Parser.Category.tactic" data-verso-hover="17">tactic</span><span class="inter-text"> </span><span class="unknown token" data-binding="">=&gt;</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.do-604">do</span><span class="inter-text">
+  </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.doLetArrow-609">let</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.3405" data-verso-hover="18">goal</span><span class="inter-text"> </span><span class="unknown token" data-binding="">←</span><span class="inter-text"> </span><span class="const token" data-binding="const-Lean.Elab.Tactic.getMainGoal" data-verso-hover="19">getMainGoal</span><span class="inter-text">
+  </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.doLetArrow-636">let</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.3576" data-verso-hover="20">goalType</span><span class="inter-text"> </span><span class="unknown token" data-binding="">←</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.3405" data-verso-hover="18">goal</span><span class="unknown token" data-binding="">.</span><span class="const token" data-binding="const-Lean.MVarId.getType" data-verso-hover="21">getType</span><span class="inter-text">
   -- 检查目标是否是 a = a 的形式
-  let_expr Eq _ lhs rhs := goalType | throwTacticEx `exact_if_rfl goal "goal is not an equality"
-  if ← isDefEq lhs rhs then
-    goal.assign (← mkEqRefl lhs)  -- 构造 rfl 证明项
-  else
-    throwTacticEx `exact_if_rfl goal "sides are not definitionally equal"
-</pre></section>
+  </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.doLetExpr-711">let_expr</span><span class="inter-text"> </span><span class="const token" data-binding="const-Eq" data-verso-hover="29">Eq</span><span class="inter-text"> </span><span class="unknown token" data-binding="">_</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.3581" data-verso-hover="20">lhs</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.3583" data-verso-hover="20">rhs</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:=</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.3576" data-verso-hover="20">goalType</span><span class="inter-text"> </span><span class="unknown token" data-binding="">|</span><span class="inter-text"> </span><span class="const token" data-binding="const-Lean.Meta.throwTacticEx" data-verso-hover="33">throwTacticEx</span><span class="inter-text"> </span><span class="unknown token" data-binding="">`exact_if_rfl</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.3405" data-verso-hover="18">goal</span><span class="inter-text"> </span><span class="literal string token" data-binding="" data-verso-hover="34">"goal is not an equality"</span><span class="inter-text">
+  </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.doIf-808">if</span><span class="inter-text"> </span><span class="unknown token" data-binding="">←</span><span class="inter-text"> </span><span class="const token" data-binding="const-Lean.Meta.isDefEq" data-verso-hover="11">isDefEq</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.3581" data-verso-hover="20">lhs</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.3583" data-verso-hover="20">rhs</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.doIf-808">then</span><span class="inter-text">
+    </span><span class="var token" data-binding="var-_uniq.3405" data-verso-hover="18">goal</span><span class="unknown token" data-binding="">.</span><span class="const token" data-binding="const-Lean.MVarId.assign" data-verso-hover="35">assign</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="unknown token" data-binding="">←</span><span class="inter-text"> </span><span class="const token" data-binding="const-Lean.Meta.mkEqRefl" data-verso-hover="36">mkEqRefl</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.3581" data-verso-hover="20">lhs</span><span class="unknown token" data-binding="">)</span><span class="inter-text">  -- 构造 rfl 证明项
+  </span><span class="keyword token" data-binding="kw-occ-null-898">else</span><span class="inter-text">
+    </span><span class="const token" data-binding="const-Lean.Meta.throwTacticEx" data-verso-hover="33">throwTacticEx</span><span class="inter-text"> </span><span class="unknown token" data-binding="">`exact_if_rfl</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.3405" data-verso-hover="18">goal</span><span class="inter-text"> </span><span class="literal string token" data-binding="" data-verso-hover="37">"sides are not definitionally equal"</span></code></section>
             <section>
               <h2 id="monad-lifting">
                 2.6. 层次之间的穿越<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=monad-lifting" title="Permalink">🔗</a></span></h2>
               <p>
                 有时你需要从 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Elab.Tactic.TacticM" data-verso-hover="14">TacticM</span></code> 调用 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Meta.MetaM" data-verso-hover="6">MetaM</span></code> 的函数。由于 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Elab.Tactic.TacticM" data-verso-hover="14">TacticM</span></code> 包含了 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Meta.MetaM" data-verso-hover="6">MetaM</span></code>，可以直接调用：</p>
-              <pre>elab "show_type" : tactic =&gt; do
-  let goal ← getMainGoal
+              <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.elab-1027">elab</span><span class="inter-text"> </span><span class="literal string token" data-binding="" data-verso-hover="38">"show_type"</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Lean.Parser.Category.tactic" data-verso-hover="17">tactic</span><span class="inter-text"> </span><span class="unknown token" data-binding="">=&gt;</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.do-1056">do</span><span class="inter-text">
+  </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.doLetArrow-1061">let</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.8491" data-verso-hover="18">goal</span><span class="inter-text"> </span><span class="unknown token" data-binding="">←</span><span class="inter-text"> </span><span class="const token" data-binding="const-Lean.Elab.Tactic.getMainGoal" data-verso-hover="19">getMainGoal</span><span class="inter-text">
   -- inferType 是 MetaM 函数，可以直接在 TacticM 中调用
-  let goalType ← goal.getType
-  let typeOfType ← inferType goalType  -- Expr 的类型
-  logInfo m!"Goal type's type: {← ppExpr typeOfType}"
-</pre><p>
+  </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.doLetArrow-1156">let</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.8662" data-verso-hover="20">goalType</span><span class="inter-text"> </span><span class="unknown token" data-binding="">←</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.8491" data-verso-hover="18">goal</span><span class="unknown token" data-binding="">.</span><span class="const token" data-binding="const-Lean.MVarId.getType" data-verso-hover="21">getType</span><span class="inter-text">
+  </span><span class="keyword token" data-binding="kw-occ-Lean.Parser.Term.doLetArrow-1188">let</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.8697" data-verso-hover="20">typeOfType</span><span class="inter-text"> </span><span class="unknown token" data-binding="">←</span><span class="inter-text"> </span><span class="const token" data-binding="const-Lean.Meta.inferType" data-verso-hover="10">inferType</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.8662" data-verso-hover="20">goalType</span><span class="inter-text">  -- Expr 的类型
+  </span><span class="const token" data-binding="const-Lean.logInfo" data-verso-hover="24">logInfo</span><span class="inter-text"> </span><span class="keyword token" data-binding="kw-occ-Lean.termM!_-1255">m!</span><span class="unknown token" data-binding="">"Goal type's type: {</span><span class="unknown token" data-binding="">←</span><span class="inter-text"> </span><span class="const token" data-binding="const-Lean.Meta.ppExpr" data-verso-hover="23">ppExpr</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.8697" data-verso-hover="20">typeOfType</span><span class="unknown token" data-binding="">}"</span></code><p>
                 反过来，在 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Meta.MetaM" data-verso-hover="6">MetaM</span></code> 中运行 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Elab.Tactic.TacticM" data-verso-hover="14">TacticM</span></code> 代码，需要手动提供目标：</p>
               <pre>def runTacticInMeta (mvarId : MVarId) (tac : TacticM Unit) : MetaM (List MVarId) :=
   Lean.Elab.Tactic.run mvarId tac
@@ -1269,7 +1267,7 @@ open Lean Elab Tactic Meta
               <ul>
                 <li>
                   <p>
-                    <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Core.CoreM" data-verso-hover="5">CoreM</span></code>：核心状态为 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Environment" data-verso-hover="32">Environment</span></code>、<code>NameGenerator</code>，典型操作为查询定义、生成名字</p>
+                    <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Core.CoreM" data-verso-hover="5">CoreM</span></code>：核心状态为 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Environment" data-verso-hover="39">Environment</span></code>、<code>NameGenerator</code>，典型操作为查询定义、生成名字</p>
                   </li>
                 <li>
                   <p>
@@ -1330,7 +1328,7 @@ elab_rules : tactic
                 <h3 id="failure-goal-assign">
                   2.8.3. 失败 3：<code>goal.assign</code> 之后还有目标报错<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-goal-assign" title="Permalink">🔗</a></span></h3>
                 <p>
-                  <code>goal.assign e</code> 只关闭了 <code>goal</code> 这一个目标，但 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Elab.Tactic.setGoals" data-verso-hover="33">setGoals</span></code> 里还留着它。正确做法：赋值后 <code>return</code>（让框架自动清理），或者手动从 goals 列表中移除。</p>
+                  <code>goal.assign e</code> 只关闭了 <code>goal</code> 这一个目标，但 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Elab.Tactic.setGoals" data-verso-hover="40">setGoals</span></code> 里还留着它。正确做法：赋值后 <code>return</code>（让框架自动清理），或者手动从 goals 列表中移除。</p>
                 </section>
               <section>
                 <h3 id="failure-isdefeq-side-effect">
@@ -1405,7 +1403,7 @@ example : (42 : Nat) = 42 := by close_rfl
                 <ul>
                   <li>
                     <p>
-                      <strong>错误 1</strong> 是 proof term 构造错误——<code>Eq.refl</code> 需要显式传入类型和值两个参数（用 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.mkApp2" data-verso-hover="34">mkApp2</span></code>）</p>
+                      <strong>错误 1</strong> 是 proof term 构造错误——<code>Eq.refl</code> 需要显式传入类型和值两个参数（用 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.mkApp2" data-verso-hover="41">mkApp2</span></code>）</p>
                     </li>
                   <li>
                     <p>
@@ -1429,7 +1427,7 @@ example (h : n = m) : n = m := by my_rfl       -- 应失败
 </pre><p>
                   最后一个例子解释：这里的命题 <code>n = m</code> 当然是可证的（用 <code>exact h</code> 就行），但 <code>my_rfl</code> 只能关闭「两侧定义等价」的等式目标，它不会搜索假设中的 <code>h</code>。<strong>tactic 的失败不代表命题假，只代表这个 tactic 的适用边界到了</strong>。这种边界意识在后面设计和选用 tactic 时非常重要。</p>
                 <p>
-                  下一章，我们深入 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Expr" data-verso-hover="35">Expr</span></code>——Lean 4 中所有项的内部表示。
+                  下一章，我们深入 <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-Lean.Expr" data-verso-hover="42">Expr</span></code>——Lean 4 中所有项的内部表示。
 </p>
                 </section>
               </section>
