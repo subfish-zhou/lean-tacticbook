@@ -1,1 +1,1 @@
-window.docContents[118].resolve({"/Ch24TowardsAnalysis/#bottleneck-analysis":{"contents":"\n\n\n\n\n\n","context":"Lean 4 自动化内幕\u0009第二十四章 迈向分析自动化","header":"25.3. 24.3 瓶颈分析","id":"/Ch24TowardsAnalysis/#bottleneck-analysis"}});
+window.docContents[118].resolve({"/Ch24TowardsAnalysis/#bottleneck-analysis":{"contents":"\n\n\n\n\n\n","context":"Lean 4 自动化内幕\u0009迈向分析自动化","header":"25.3. 24.3 瓶颈分析","id":"/Ch24TowardsAnalysis/#bottleneck-analysis"}});

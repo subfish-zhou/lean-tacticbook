@@ -1,1 +1,1 @@
-window.docContents[244].resolve({"/Ch21Performance/#proof-term-size":{"contents":"\n\n\n\n","context":"Lean 4 自动化内幕\u0009第二十一章 性能工程","header":"22.11. 21.8 证明项大小与增量编译","id":"/Ch21Performance/#proof-term-size"}});
+window.docContents[244].resolve({"/Ch21Performance/#proof-term-size":{"contents":"\n\n\n\n","context":"Lean 4 自动化内幕\u0009性能工程","header":"22.11. 21.8 证明项大小与增量编译","id":"/Ch21Performance/#proof-term-size"}});

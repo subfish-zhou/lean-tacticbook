@@ -1,1 +1,1 @@
-window.docContents[53].resolve({"/Ch00Setup/#create-project":{"contents":"这一步非常重要——本书大部分示例依赖 Mathlib 库。如果你直接新建一个 .lean 文件写 import Mathlib，会报错。\n\n\n\n\n\n\n\n","context":"Lean 4 自动化内幕\u0009第零章 环境与运行约定","header":"1.3. 创建本书的配套项目","id":"/Ch00Setup/#create-project"}});
+window.docContents[53].resolve({"/Ch00Setup/#create-project":{"contents":"这一步非常重要——本书大部分示例依赖 Mathlib 库。如果你直接新建一个 .lean 文件写 import Mathlib，会报错。\n\n\n\n\n\n\n\n","context":"Lean 4 自动化内幕\u0009环境与运行约定","header":"1.3. 创建本书的配套项目","id":"/Ch00Setup/#create-project"}});

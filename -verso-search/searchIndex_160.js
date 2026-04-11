@@ -1,1 +1,1 @@
-window.docContents[160].resolve({"/Ch11Aesop/#rule-types":{"contents":"\n\n\n\n\n\n","context":"Lean 4 自动化内幕\u0009第十一章 aesop：可配置的搜索引擎","header":"12.3. 11.3 规则类型","id":"/Ch11Aesop/#rule-types"}});
+window.docContents[160].resolve({"/Ch11Aesop/#rule-types":{"contents":"\n\n\n\n\n\n","context":"Lean 4 自动化内幕\u0009aesop：可配置的搜索引擎","header":"12.3. 11.3 规则类型","id":"/Ch11Aesop/#rule-types"}});

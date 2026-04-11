@@ -1,1 +1,1 @@
-window.docContents[113].resolve({"/Ch13Decide/#pattern-finite-case-verification":{"contents":"\n\n","context":"Lean 4 自动化内幕\u0009第十三章 decide 与  native_decide ：有限计算判定\u000913.7 实战模式与调试","header":"14.7.1. 模式 1：有限案例验证","id":"/Ch13Decide/#pattern-finite-case-verification"}});
+window.docContents[113].resolve({"/Ch13Decide/#pattern-finite-case-verification":{"contents":"\n\n","context":"Lean 4 自动化内幕\u0009decide 与  native_decide ：有限计算判定\u000913.7 实战模式与调试","header":"14.7.1. 模式 1：有限案例验证","id":"/Ch13Decide/#pattern-finite-case-verification"}});

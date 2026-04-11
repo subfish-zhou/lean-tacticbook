@@ -1,1 +1,1 @@
-window.docContents[197].resolve({"/Ch06Simp/#ch06-common-failure-patterns":{"contents":"\n\n\n\n\n\n\n\n","context":"Lean 4 自动化内幕\u0009第六章 simp：重写引擎","header":"7.10. 6.10 常见失败模式","id":"/Ch06Simp/#ch06-common-failure-patterns"}});
+window.docContents[197].resolve({"/Ch06Simp/#ch06-common-failure-patterns":{"contents":"\n\n\n\n\n\n\n\n","context":"Lean 4 自动化内幕\u0009simp：重写引擎","header":"7.10. 6.10 常见失败模式","id":"/Ch06Simp/#ch06-common-failure-patterns"}});

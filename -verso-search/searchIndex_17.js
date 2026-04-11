@@ -1,1 +1,1 @@
-window.docContents[17].resolve({"/Ch21Performance/#optimizing-unification":{"contents":"\n\n\n\n","context":"Lean 4 自动化内幕\u0009第二十一章 性能工程","header":"22.7. 21.5 优化 Unification 和 Elaboration","id":"/Ch21Performance/#optimizing-unification"}});
+window.docContents[17].resolve({"/Ch21Performance/#optimizing-unification":{"contents":"\n\n\n\n","context":"Lean 4 自动化内幕\u0009性能工程","header":"22.7. 21.5 优化 Unification 和 Elaboration","id":"/Ch21Performance/#optimizing-unification"}});
