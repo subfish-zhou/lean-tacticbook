@@ -13,489 +13,1455 @@ file := "Ch08Omega"
 tag := "ch08-omega"
 %%%
 
-*本章目标*：理解 `omega` 的理论基础、能力边界和常见失败模式，
-学会在 tactic 编程中正确使用它。
+**本章目标**：前半章掌握 `omega` 的用法、能力边界与调试技巧；后半章从 Lean 4 真实源码层面拆解 omega 的完整实现——入口调用链、核心数据结构、预处理管线、消元算法、证明项构造——面向想深入理解内部机制的读者。
 
-# 8.1 omega 解决什么问题
+`omega` 是 Lean 4 内置的 **Presburger 算术**决策过程，完全在 Lean 核心实现，不依赖 Mathlib。它能自动证明关于 `Nat` 和 `Int` 的**线性算术**命题——即只涉及加法、常数乘法和比较的等式与不等式。实现基于 William Pugh 的 Omega Test（1991），但做了面向程序验证的工程化取舍：实现了最常用的 real shadow（Fourier-Motzkin 消元），未实现 dark shadow 和 grey shadow——在实际编程验证中几乎不会遇到需要它们的场景。
+
+# 用法详解
 %%%
-tag := "omega-what-it-solves"
+tag := "ch08-usage"
 %%%
 
-`omega` 是 Lean 4 内置的 *Presburger 算术* 决策过程。
-它能自动证明关于 `ℕ` 和 `ℤ` 的*线性算术*命题——
-即只涉及加法、常数乘法和比较的等式与不等式。
+## omega 解决什么问题
+%%%
+tag := "ch08-what-omega-solves"
+%%%
+
+omega 判定**整数线性算术**——变量取值在 `Nat` 或 `Int` 上，运算只涉及加法、常数乘法、比较、整除和取模：
 
 ```
 -- 基本不等式
-example (n : ℕ) : n + 1 > n := by
-  omega                          -- ⊢ n + 1 > n，线性，直接判定
+example (n : Nat) : n + 1 > n := by omega
 
 -- 整数线性约束
-example (a b : ℤ) (h : a < b) : a + 1 ≤ b := by
-  omega                          -- 从 h : a < b 推出 a + 1 ≤ b
+example (a b : Int) (h : a < b) : a + 1 ≤ b := by omega
 
 -- 多变量线性组合
-example (x y : ℕ) (h1 : x ≤ 10) (h2 : y ≤ 10) : x + y ≤ 20 := by
-  omega                          -- 把 h1, h2 收集为线性约束系统
+example (x y : Nat) (h1 : x ≤ 10) (h2 : y ≤ 10) : x + y ≤ 20 := by omega
+
+-- 整除与模运算
+example (n : Int) (h : n % 2 = 0) : ∃ k, n = 2 * k := by omega
+
+-- Nat 截断减法
+example (n : Nat) : n - (n + 1) = 0 := by omega
+
+-- min / max
+example (a b : Nat) : max a b ≥ a := by omega
 ```
 
-"Presburger 算术" 是整数上只允许加法和比较（不允许变量间乘法）的一阶理论。
-Presburger 在 1929 年证明了该理论的*可判定性*，
-意味着存在算法能判定任意 Presburger 公式的真假。
-`omega` tactic 实现的正是这样一个决策过程。
-
-# 8.2 理论基础：Omega 算法
+## omega 不能做什么
 %%%
-tag := "omega-theory"
+tag := "ch08-omega-limitations"
 %%%
 
-Lean 4 使用的 omega 算法基于 Pugh (1991)。
-核心思路：把目标和假设归约为整数线性不等式系统，
-通过*变量消去*判定系统是否有解。
+omega 的边界清晰——超出线性算术的命题一律拒绝：
 
-## 变量消去
+- **变量乘法**（非线性）：`x * y = 0` 涉及两个变量相乘，omega 无法处理
+- **指数 / 幂运算**：`2 ^ n ≥ 1` 不是线性的，需要归纳法
+- **实数或其他域**：omega 只处理 `Nat`、`Int` 和 `Fin n`
+- **未展开的定义**：omega 不会展开自定义定义，需要先 `unfold` 或 `simp only [...]`
+
+## Nat / Int / Fin 的处理
 %%%
-tag := "variable-elimination"
-%%%
-
-给定不等式系统 `{aᵢ x + bᵢ y + ⋯ ≤ cᵢ}`，算法逐步消去变量：
-
-1. *选择变量* x
-2. *分离约束*：找到所有关于 x 的下界 `ℓⱼ ≤ x` 和上界 `x ≤ uₖ`
-3. *组合*：对每对 `(ℓⱼ, uₖ)`，生成新约束 `ℓⱼ ≤ uₖ`
-4. *整数修正*：对整数情形，添加 "dark shadow" 约束以保证精确性
-5. *递归*：对消去后的系统重复以上步骤
-
-当所有变量被消去后，系统退化为常数不等式。
-如果出现矛盾（如 $`0 \leq -1`），则原系统无整数解——目标得证。
-
-## 与 Fourier-Motzkin 消去的区别
-%%%
-tag := "fourier-motzkin-difference"
+tag := "ch08-nat-int-fin"
 %%%
 
-Fourier-Motzkin 消去适用于*实数*，只做步骤 1-3。
-omega 算法额外处理*整数约束*（步骤 4），
-因为实数解存在不意味着整数解存在：
+omega 内部统一在 `Int` 域上工作。所有 `Nat` 表达式都被提升（cast）到 `Int`，附加非负约束 `0 ≤ ↑x`。
+
+**Nat 截断减法**是特殊难点：`3 - 5 = 0` 在 `Nat` 上成立，但在 `Int` 上 `3 - 5 = -2`。omega 通过**二分法**处理——对每个 `↑(a - b : Nat)`，生成析取：
+
+- 情况 1：`b ≤ a → ↑(a - b) = ↑a - ↑b`
+- 情况 2：`a < b → ↑(a - b) = 0`
 
 ```
--- x + y = 1, x + y = 2 在实数上无解，整数上也无解
--- 但 2x = 3 在实数上有解 x = 1.5，整数上无解
-example : ¬ ∃ x : ℤ, 2 * x = 3 := by
-  omega                          -- omega 知道 2x = 3 无整数解
+-- omega 知道截断减法的完整语义
+example (n m : Nat) (h : m ≤ n) : n - m + m = n := by omega
+example (a b : Nat) : a - b ≤ a := by omega
 ```
 
-## Lean 中的执行流程
+**整数除法和取模**：`x / k`（`k` 为正常数）被注册为新原子 `α`，生成约束 `k * α ≤ x < k * α + k`。取模 `x % k` 改写为 `x - (x / k) * k`。
+
+**Fin n**：`Fin n` 的值被提升到 `Nat`，自动添加 `0 ≤ x.val` 和 `x.val < n` 约束。但 `Fin` 的模算术运算（如 `Fin` 上的加法）需要先用 `simp [Fin.val_add]` 展开。
+
+## 配置选项
 %%%
-tag := "lean-execution-flow"
+tag := "ch08-config"
 %%%
 
-1. *收集*：从 `LocalContext` 自动提取所有线性算术假设
-2. *规范化*：统一到 ℤ 域，处理 Nat.sub，化为标准形 $`a_1 x_1 + \cdots \leq c`
-3. *判定*：运行 omega 算法
-4. *输出*：矛盾 → 构造证明项关闭目标；有解 → 报错并给出反例
-
-# 8.3 omega 的能力范围
-%%%
-tag := "omega-capabilities"
-%%%
-
-## 能处理的命题
-%%%
-tag := "omega-can-handle"
-%%%
+omega 的行为通过 `OmegaConfig` 控制：
 
 ```
--- [1] 线性等式与不等式
-example (a b c : ℤ) (h : a + b ≤ c) : a ≤ c - b := by
-  omega                          -- 线性重排
+-- 关闭 Nat 减法二分（避免指数爆炸）
+omega (config := { splitNatSub := false })
 
--- [2] 常数系数乘法（不是变量乘变量）
-example (x : ℤ) (h : 3 * x ≤ 9) : x ≤ 3 := by
-  omega                          -- 3 * x 中 3 是常数，OK
-
--- [3] 整除与模运算
-example (n : ℤ) (h : n % 2 = 0) : ∃ k, n = 2 * k := by
-  omega                          -- omega 理解 % 的语义
-
--- [4] 析取（通过分支搜索）
-example (n : ℕ) : n % 2 = 0 ∨ n % 2 = 1 := by
-  omega                          -- 穷举 n mod 2 的可能值
-
--- [5] Nat 的截断减法
-example (n : ℕ) : n - n = 0 := by
-  omega                          -- 知道 Nat.sub 截断到 0
-
--- [6] max / min
-example (a b : ℕ) : max a b ≥ a := by
-  omega                          -- omega 展开 max 的定义
+-- 关闭所有 case split，只做纯线性判定
+omega (config := { splitDisjunctions := false, splitNatSub := false,
+                    splitNatAbs := false, splitMinMax := false })
 ```
 
-## 不能处理的命题
+四个配置项：`splitDisjunctions`（析取 case split）、`splitNatSub`（Nat 减法二分）、`splitNatAbs`（Int.natAbs 二分）、`splitMinMax`（展开 min/max）。默认全部为 `true`。
+
+## omega 与 linarith 的区别
 %%%
-tag := "omega-cannot-handle"
+tag := "ch08-omega-vs-linarith"
 %%%
+
+omega 和 Mathlib 的 `linarith` 都处理线性算术，但定位不同：
+
+| 维度 | omega | linarith |
+|------|-------|----------|
+| 所在位置 | Lean 核心 | Mathlib |
+| 数域 | Int、Nat、Fin | 任意线性有序域（R、Q、Z 等） |
+| 整除性 | 支持（`k ∣ x`、`x % k`） | 不支持 |
+| Nat 减法 | 自动二分处理 | 不处理 |
+| 实数 | 不支持 | 支持 |
+
+**选择原则**：Nat/Int 线性 + 整除 → `omega`；实数线性 → `linarith`；非线性 → `nlinarith`。
 
 ```
--- [1] 变量乘法（非线性）
--- example (x y : ℤ) (h : x * y = 0) : x = 0 ∨ y = 0 := by omega
--- ✗ omega 不处理 x * y（两个变量相乘）
+-- omega 的强项：整除推理（linarith 做不到）
+example (a b : Int) (h : a % 2 = 0) (h2 : b % 2 = 0) :
+    (a + b) % 2 = 0 := by omega
 
--- [2] 指数 / 幂运算
--- example (n : ℕ) : 2 ^ n ≥ 1 := by omega
--- ✗ 2 ^ n 不是线性的，需要归纳法
-
--- [3] 实数或其他域
--- example (x : ℝ) : x + 1 > x := by omega
--- ✗ omega 只处理 ℕ 和 ℤ
-
--- [4] 带量词交替的复杂公式
--- ∀ x, ∃ y, P(x, y) 形式的嵌套量词超出处理范围
+-- linarith 的强项：实数域（omega 做不到）
+-- example (x : Real) (h : x > 0) : x + 1 > 1 := by linarith
 ```
 
-# 8.4 Nat.sub 的特殊处理
+## 与其他 tactic 的组合
 %%%
-tag := "nat-sub-handling"
-%%%
-
-自然数减法是截断的：`a - b = 0` 当 `a < b`。
-这让 `ℕ` 上的推理比 `ℤ` 复杂，但 `omega` 内置了对此的处理。
-
-## 转换策略
-%%%
-tag := "nat-sub-conversion"
+tag := "ch08-omega-combos"
 %%%
 
-omega 把 `ℕ` 表达式翻译到 `ℤ` 时，遵循以下规则：
-
-- ℕ 表达式：`(n : ℕ)` —— ℤ 翻译：`n` —— 附加约束：`n ≥ 0`
-- ℕ 表达式：`a - b` (Nat) —— ℤ 翻译：`max(a - b, 0)` —— 附加约束：—
-- ℕ 表达式：`a / k` (Nat) —— ℤ 翻译：整数除法 —— 附加约束：`0 ≤ a / k`
-- ℕ 表达式：`a % k` (Nat) —— ℤ 翻译：`a - k * (a / k)` —— 附加约束：`0 ≤ a % k < k`
-
-## 示例
-%%%
-tag := "nat-sub-examples"
-%%%
+omega 经常作为"收尾"tactic 出现：
 
 ```
--- 截断减法的典型场景
-example (n m : ℕ) (h : m ≤ n) : n - m + m = n := by
-  omega                          -- h : m ≤ n 保证不截断
+-- 先简化，再 omega
+-- simp <;> try omega
 
-example (n : ℕ) (h : n ≥ 1) : n - 1 + 1 = n := by
-  omega                          -- h 保证 n - 1 不截断
-
--- omega 知道截断的全部语义
-example (n : ℕ) : n - (n + 1) = 0 := by
-  omega                          -- n < n + 1，截断到 0
-
--- 不需要前置条件也能处理
-example (a b : ℕ) : a - b ≤ a := by
-  omega                          -- 无论是否截断都成立
-```
-
-# 8.5 常见失败模式
-%%%
-tag := "common-failure-modes"
-%%%
-
-理解 omega 何时会失败，以及*为什么*失败，是高效使用它的关键。
-
-## 失败模式 1：非线性项
-%%%
-tag := "failure-nonlinear"
-%%%
-
-```
--- omega 拒绝包含变量乘法的目标
-example (n : ℕ) (h : n * n = 4) : n = 2 := by
-  omega  -- ✗ omega does not handle multiplication of variables
-         -- 修复：nlinarith 或 interval_cases + omega
-```
-
-*诊断*：错误信息通常包含 "omega does not handle" 或
-"could not prove"。检查目标和假设中是否有变量间相乘的项。
-
-## 失败模式 2：目标中有不支持的类型
-%%%
-tag := "failure-unsupported-type"
-%%%
-
-```
--- omega 只支持 ℕ 和 ℤ
-example (x : Fin 5) (h : x.val < 3) : x.val + 2 < 5 := by
-  omega  -- ✓ x.val : ℕ，omega 可以处理
-         -- 但如果目标直接涉及 Fin 的运算（取模），可能失败
-```
-
-*诊断*：如果 omega 报错说无法处理某个表达式，
-检查是否需要先用 `simp` 或手动 `show` 把类型转换为 ℕ/ℤ。
-
-## 失败模式 3：假设不足
-%%%
-tag := "failure-insufficient-hypotheses"
-%%%
-
-```
--- omega 只使用上下文中已有的假设
-example (n : ℕ) : n - 1 + 1 = n := by
-  omega  -- ✗ 需要 n ≥ 1 但上下文中没有
-         -- omega 会给出反例：n = 0
-```
-
-*诊断*：omega 的报错通常会给出反例。
-检查反例是否暴露了缺失的前置条件。
-
-## 失败模式 4：隐藏在定义背后的线性关系
-%%%
-tag := "failure-hidden-definition"
-%%%
-
-```
-def myDouble (n : ℕ) := 2 * n
-
--- omega 不会展开自定义定义
-example (n : ℕ) : myDouble n ≥ n := by
-  omega  -- ✗ omega 看到的是 myDouble n，不知道它等于 2 * n
-         -- 修复：先 unfold myDouble，再 omega
-```
-
-*诊断*：如果目标"看起来"是线性的但 omega 失败，
-检查是否有未展开的定义。用 `unfold` 或 `simp only [myDouble]` 先展开。
-
-## 失败模式 5：变量太多导致超时
-%%%
-tag := "failure-too-many-variables"
-%%%
-
-omega 算法的复杂度随变量数指数增长。
-虽然实际中很少触发，但当假设中包含大量不相关变量时，
-omega 可能显著变慢。
-
-```
--- 如果上下文有 20+ 个线性假设，omega 可能变慢
--- 修复：在调用前用 clear 清除不相关假设
-example (a b c d e f : ℕ)
-    (h1 : a ≤ b) (h2 : b ≤ c) (h3 : c ≤ d)
-    (h4 : d ≤ e) (h5 : e ≤ f) : a ≤ f := by
-  omega                          -- 变量不多，正常工作
-```
-
-# 8.6 在 tactic 编程中使用 omega
-%%%
-tag := "omega-in-tactic-programming"
-%%%
-
-## 直接调用
-%%%
-tag := "omega-direct-call"
-%%%
-
-```
--- 在 tactic block 中调用
-evalTactic (← `(tactic| omega))
-```
-
-这是最简单的方式：生成 `omega` 的 syntax 对象，然后执行它。
-如果 omega 无法关闭目标，`evalTactic` 会抛出异常。
-
-## 探测性调用
-%%%
-tag := "omega-probing-call"
-%%%
-
-有时你想*尝试* omega 但不希望失败中断流程：
-
-```
--- 尝试用 omega 关闭目标，失败则返回 false
-def tryOmega (goal : MVarId) : MetaM Bool := do
-  try
-    let (remaining, _) ←              -- remaining : 剩余子目标列表
-      Lean.Elab.runTactic goal         -- 在 goal 上运行 tactic
-        (← `(tactic| omega))
-    return remaining.isEmpty           -- 全部关闭则返回 true
-  catch _ =>
-    return false                       -- omega 失败，静默返回 false
-```
-
-## 与其他 tactic 组合
-%%%
-tag := "omega-combining-tactics"
-%%%
-
-omega 经常作为 "收尾" tactic 出现在组合策略中：
-
-```
--- 先简化，再尝试 omega
-macro "simp_omega" : tactic =>
-  `(tactic| (simp <;> try omega))
+-- 作为 simp 的 discharger
+-- simp (discharger := omega)
 
 -- 在 decide 策略中作为后备
-macro "auto_arith" : tactic =>
-  `(tactic| first | omega | norm_num | simp [Nat.add_comm])
+-- first | omega | norm_num | simp
 ```
 
-## 在 discharger 中使用
-%%%
-tag := "omega-as-discharger"
-%%%
+omega 会自动扫描 `LocalContext` 中所有线性算术假设，**无需手动指定**。但自定义定义不会被展开——调用前先 `unfold` 或 `simp only [...]`。
 
-许多 tactic 接受 discharger 参数来关闭 side goal。
-omega 是线性算术 side goal 的理想 discharger：
-
-```
--- simp 产生的算术 side goal 由 omega 关闭
-example (xs : List ℕ) (h : xs.length > 2) :
-    xs.length - 1 > 0 := by
-  simp (config := { decide := false }) at *
-  omega                          -- 关闭 simp 留下的算术目标
-```
-
-# 8.7 omega 与其他算术 tactic 的对比
+# 源码全景
 %%%
-tag := "omega-vs-other-tactics"
+tag := "ch08-source-overview"
 %%%
 
-- tactic：`omega` —— 理论域：ℕ, ℤ（线性） —— 强项：整除、模运算、Nat.sub —— 弱项：非线性、实数
-- tactic：`linarith` —— 理论域：任意 ordered field —— 强项：实数线性、可扩展 —— 弱项：不懂整除、不处理 Nat.sub
-- tactic：`nlinarith` —— 理论域：同上 + 非线性提示 —— 强项：非线性（带 hint） —— 弱项：需要手动提供非线性项
-- tactic：`norm_num` —— 理论域：具体数值 —— 强项：计算确定值 —— 弱项：不处理变量
-- tactic：`decide` —— 理论域：Decidable 实例 —— 强项：有限类型穷举 —— 弱项：无限类型
-- tactic：`ring` —— 理论域：交换环 —— 强项：多项式等式 —— 弱项：不等式
+omega 的源码分布在两个目录：`Lean/Elab/Tactic/Omega/`（tactic 层与算法）和 `Init/Omega/`（数据结构与引理）。核心文件：
 
-*选择原则*：ℕ/ℤ 线性 → `omega`；实数线性 → `linarith`；
-非线性 → `nlinarith`；纯数值 → `norm_num`；多项式等式 → `ring`。
+| 文件 | 内容 | 行数 |
+|------|------|------|
+| `Frontend.lean` | tactic 入口、预处理管线、`omegaImpl`、case split | ~714 |
+| `Core.lean` | `Problem`、`Fact`、`Justification`、消元算法 | ~578 |
+| `OmegaM.lean` | `OmegaM` monad、原子管理、缓存 | ~262 |
+| `MinNatAbs.lean` | 系数分析辅助（困难等式选择） | ~150 |
 
-## 组合示例
+omega 的工程复杂度远超核心消元算法。复杂度来自三个方面：**(a)** 命题翻译层——把 Lean 语法世界的命题逐步降解为约束求解器的内部表示；**(b)** Nat/Int/Fin 语义桥接——截断减法、整数除法、Fin 模算术的精确翻译；**(c)** 延迟证明构造——`Justification` 追踪每一步推导的来源，最终构造可检查的证明项。
+
+## 架构全景图
 %%%
-tag := "combination-examples"
+tag := "ch08-architecture"
 %%%
 
 ```
--- 非线性目标，omega 不行，用 nlinarith
-example (n : ℕ) (h : n ≥ 2) : n * n ≥ 4 := by
-  nlinarith [sq_nonneg (n - 2)]
+用户层
+┌─────────────────────────────────────────────────────┐
+│  omega                                              │
+│  omega (config := { splitNatSub := false })         │
+└─────────┬───────────────────────────────────────────┘
+          │
+Tactic 层 (TacticM)
+┌─────────┴───────────────────────────────────────────┐
+│  evalOmega                                          │
+│  · 先尝试 assumption                                │
+│  · 解析配置                                          │
+│  · omegaTactic                                      │
+│    · falseOrByContra (转化目标为 False)              │
+│    · 收集局部假设                                    │
+│    · 调用 omega (MetaM 入口)                         │
+└─────────┬───────────────────────────────────────────┘
+          │
+Meta 层 (OmegaM)
+┌─────────┴───────────────────────────────────────────┐
+│  omegaImpl  ←── 主循环                              │
+│  ├── processFacts (预处理)                           │
+│  │   └── addFact (命题分类)                          │
+│  │       └── asLinearCombo (线性化)                  │
+│  ├── Problem.elimination (消元)                     │
+│  │   ├── solveEqualities (等式消元)                  │
+│  │   └── fourierMotzkin (FM 消元)                   │
+│  └── splitDisjunction (析取 case split)             │
+│      └── omegaImpl (递归)                            │
+└─────────────────────────────────────────────────────┘
 
--- omega 处理模运算（linarith 做不到）
-example (a b : ℤ) (h : a % 2 = 0) (h2 : b % 2 = 0) :
-    (a + b) % 2 = 0 := by
-  omega                          -- omega 的整除推理能力
-
--- omega 自动展开 Nat.succ
-example (n : ℕ) (h : Nat.succ n > 3) : n ≥ 3 := by
-  omega                          -- 知道 Nat.succ n = n + 1
+数据层
+┌─────────────────────────────────────────────────────┐
+│  Coeffs (稠密系数向量)                               │
+│  LinearCombo { const, coeffs }                      │
+│  Constraint { lowerBound, upperBound }              │
+│  Fact { coeffs, constraint, justification }         │
+│  Problem { assumptions, constraints, equalities }   │
+│  MetaProblem { problem, facts, disjunctions }       │
+└─────────────────────────────────────────────────────┘
 ```
 
-## 实用技巧
+# 核心数据结构
 %%%
-tag := "practical-tips"
+tag := "ch08-data-structures"
 %%%
 
-omega 会自动扫描 `LocalContext` 中所有线性算术假设，
-*无需手动指定*。但自定义定义不会被展开——
-调用前先 `unfold` 或 `simp only [...]`。
+## Coeffs：稠密系数向量
+%%%
+tag := "ch08-coeffs"
+%%%
 
-`norm_num` 擅长具体计算（如 `100 * 99 / 2 = 4950`），
-`omega` 擅长带变量的线性推理。两者互补，几乎不重叠。
+最底层是 `IntList`（`List Int` 的类型别名），用于稠密表示整数系数向量。`Coeffs` 是 `IntList` 的类型别名，超出列表长度的位置视为 0。核心运算定义在 `Init/Omega/IntList.lean` 和 `Init/Omega/Coeffs.lean`：
 
-# 8.8 练习
+```
+-- [Lean 4 v4.30.0-rc1, Init/Omega/IntList.lean]
+abbrev IntList := List Int
+abbrev Coeffs := IntList
+
+def get (xs : IntList) (i : Nat) : Int := xs[i]?.getD 0
+
+-- 点积——约束求值的核心
+def dot (xs ys : IntList) : Int := (xs * ys).sum
+
+-- 线性组合——FM 消元的基本操作
+def combo (a : Int) (xs : IntList) (b : Int) (ys : IntList) : IntList :=
+  List.zipWithAll (fun x y => a * x.getD 0 + b * y.getD 0) xs ys
+```
+
+其他操作包括 `neg`、`smul`（标量乘法）、`sdiv`（带符号除法）、`gcd`（所有元素绝对值的最大公因数）、`bmod`（平衡取模）等。
+
+## LinearCombo：线性组合
+%%%
+tag := "ch08-linear-combo"
+%%%
+
+`LinearCombo` 表示一个**常数项 + 系数向量**的线性表达式：
+
+```
+-- [Lean 4 v4.30.0-rc1, Init/Omega/LinearCombo.lean]
+structure LinearCombo where
+  const : Int := 0       -- 常数项
+  coeffs : Coeffs := []  -- 各原子的系数
+```
+
+语义：`const + Σᵢ coeffs[i] * atoms[i]`。算术运算（`add`、`sub`、`neg`）逐分量操作。**乘法只在一个因子是常数时有效**——代码在使用前检查 `xl.coeffs.isZero ∨ yl.coeffs.isZero`。
+
+## Constraint：约束的上下界
+%%%
+tag := "ch08-constraint"
+%%%
+
+`Constraint` 用一对可选的上下界表示约束：
+
+```
+-- [Lean 4 v4.30.0-rc1, Init/Omega/Constraint.lean]
+structure Constraint where
+  lowerBound : Option Int
+  upperBound : Option Int
+```
+
+语义是 `lowerBound ≤ value ≤ upperBound`，`none` 表示无约束。预定义特殊约束：
+
+```
+-- [Lean 4 v4.30.0-rc1, Init/Omega/Constraint.lean]
+def trivial    : Constraint := ⟨none, none⟩       -- 无约束
+def impossible : Constraint := ⟨some 1, some 0⟩   -- 不可满足（1 ≤ x ≤ 0）
+def exact (r : Int) : Constraint := ⟨some r, some r⟩  -- 等式（x = r）
+```
+
+关键操作：
+
+```
+-- [Lean 4 v4.30.0-rc1, Init/Omega/Constraint.lean]
+-- 合取（取更紧的界）
+def combine (x y : Constraint) : Constraint where
+  lowerBound := Option.merge max x.lowerBound y.lowerBound
+  upperBound := Option.merge min x.upperBound y.upperBound
+
+-- 线性组合
+def combo (a : Int) (x : Constraint) (b : Int) (y : Constraint) : Constraint :=
+  add (scale a x) (scale b y)
+
+-- 不可满足判定
+def isImpossible (c : Constraint) : Bool :=
+  match c.lowerBound, c.upperBound with
+  | some l, some u => u < l
+  | _, _ => false
+```
+
+`combine` 是同系数约束合并的核心——把两个约束取交集（更紧的界）。`combo` 是 Fourier-Motzkin 消元的基本操作——两个约束的线性组合。
+
+## Justification：推导树
+%%%
+tag := "ch08-justification"
+%%%
+
+`Justification` 是一个归纳类型，记录约束的推导历史。它的索引类型参数精确追踪约束和系数，保证证明项构造的类型安全：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:42-59]
+inductive Justification : Constraint → Coeffs → Type
+  | assumption (s : Constraint) (x : Coeffs) (i : Nat) : Justification s x
+  | tidy (j : Justification s c) :
+      Justification (tidyConstraint s c) (tidyCoeffs s c)
+  | combine {s t c} (j : Justification s c) (k : Justification t c) :
+      Justification (s.combine t) c
+  | combo {s t x y} (a : Int) (j : Justification s x)
+                     (b : Int) (k : Justification t y) :
+      Justification (Constraint.combo a s b t) (Coeffs.combo a x b y)
+  | bmod (m : Nat) (r : Int) (i : Nat) {x}
+      (j : Justification (.exact r) x) :
+      Justification (.exact (Int.bmod r m)) (bmod_coeffs m i x)
+```
+
+各构造子对应不同的推导步骤：
+
+| 构造子 | 含义 |
+|--------|------|
+| `assumption` | 来自原始假设 `Problem.assumptions[i]` |
+| `tidy` | 约束规范化（GCD 除法、系数归正） |
+| `combine` | 同系数约束的合取（取更紧界） |
+| `combo` | 两个约束的线性组合（Fourier-Motzkin 的核心操作） |
+| `bmod` | 平衡取模（处理困难等式消元） |
+
+**关键设计**：omega 不在搜索过程中构造 Lean 证明项——先在 `Justification` 中记录推导树，只有找到矛盾后才调用 `Justification.proof` 转化为 `Expr`。这种**延迟证明构造**避免了为最终不需要的搜索分支生成证明。
+
+## Fact 与 Problem
+%%%
+tag := "ch08-fact-and-problem"
+%%%
+
+`Fact` 把约束、系数和推导绑定在一起：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:129-136]
+structure Fact where
+  coeffs : Coeffs
+  constraint : Constraint
+  justification : Justification constraint coeffs
+```
+
+`Problem` 是约束求解器的核心状态：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:167-195]
+structure Problem where
+  assumptions : Array Proof := ∅
+  numVars : Nat := 0
+  constraints : Std.HashMap Coeffs Fact := ∅
+  equalities : Std.HashSet Coeffs := ∅
+  eliminations : List (Fact × Nat × Int) := []
+  possible : Bool := true
+  proveFalse? : Option Proof := none
+  proveFalse?_spec : possible || proveFalse?.isSome := by rfl
+  explanation? : Thunk String := ""
+```
+
+设计要点：
+
+- **以 `Coeffs` 为键的 HashMap**：同系数约束自动合并（通过 `combine` 取更紧界）
+- **`equalities` 集合**：追踪等式以便优先消元
+- **`possible` + `proveFalse?` 不变量**：一旦发现矛盾就停止，`proveFalse?_spec` 在类型层面保证这个不变量
+- **`eliminations` 列表**：记录已用于消元的等式，新约束入库时需要 `replayEliminations` 重放
+
+`MetaProblem` 在 `Problem` 之上加了预处理队列：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:59-69]
+structure MetaProblem where
+  problem : Problem := {}
+  facts : List Expr := []
+  disjunctions : List Expr := []
+  processedFacts : Std.HashSet Expr := ∅
+```
+
+`facts` 是待处理的假设队列，`disjunctions` 是待 case split 的析取，`processedFacts` 做去重。
+
+# 预处理：命题翻译
+%%%
+tag := "ch08-preprocessing"
+%%%
+
+omega 的预处理分两步：**命题分类**（`addFact`）和**表达式线性化**（`asLinearCombo`）。
+
+## 入口：evalOmega
+%%%
+tag := "ch08-eval-omega"
+%%%
+
+omega 的 tactic 入口定义在 `Frontend.lean`：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:703-710]
+@[builtin_tactic Lean.Parser.Tactic.omega]
+def evalOmega : Tactic
+  | `(tactic| omega%$tk $cfg:optConfig) => do
+    Meta.withReducibleAndInstances (evalAssumption tk) <|> do
+    let cfg ← elabOmegaConfig cfg
+    omegaTactic cfg
+  | _ => throwUnsupportedSyntax
+```
+
+注意第一行的 `evalAssumption`：omega 会**先尝试 `assumption`**——如果目标已经在假设中，直接结束，避免启动重型算法。这种"短路"模式是高效 tactic 设计的常见手法。
+
+`omegaTactic` 做三件关键的事：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:680-696]
+def omegaTactic (cfg : OmegaConfig) : TacticM Unit := do
+  recordExtraModUse (isMeta := false) `Init.Omega
+  liftMetaFinishingTactic fun g => do
+    if debug.terminalTacticsAsSorry.get (← getOptions) then
+      g.admit
+    else
+      let some g ← g.falseOrByContra | return ()
+      g.withContext do
+        let type ← g.getType
+        let g' ← mkFreshExprSyntheticOpaqueMVar type
+        let hyps := (← getLocalHyps).toList
+        trace[omega] "analyzing {hyps.length} hypotheses:\n\
+          {← hyps.mapM inferType}"
+        omega hyps g'.mvarId! cfg
+        let e ← mkAuxTheorem type
+          (← instantiateMVarsProfiling g') (zetaDelta := true)
+        g.assign e
+```
+
+1. **`falseOrByContra`**：把目标转化为 `False`——omega 通过矛盾法证明
+2. **收集假设**：`getLocalHyps` 获取所有局部假设
+3. **`mkAuxTheorem` 封装**：omega 的证明项通常非常大，封装为辅助定义避免拖慢类型检查
+
+## 命题分类：addFact
+%%%
+tag := "ch08-add-fact"
+%%%
+
+`addFact` 对每个假设进行模式匹配，把数学命题分类并翻译为线性约束：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:425-508]
+partial def addFact (p : MetaProblem) (h : Expr) :
+    OmegaM (MetaProblem × Nat) := do
+  if ! p.problem.possible then return (p, 0)
+  let t ← instantiateMVars (← whnfR (← inferType h))
+  match t with
+  | .forallE _ x y _ =>
+    if ← pure t.isArrow <&&> isProp x <&&> isProp y then
+      -- 蕴含 p → q 转化为析取 ¬p ∨ q
+      p.addFact (mkApp4 (.const ``Decidable.not_or_of_imp []) x y
+        (.app (.const ``Classical.propDecidable []) x) h)
+    ...
+  | .app _ _ =>
+    match_expr t with
+    | Eq α x y => ...       -- 等式
+    | LE.le α _ x y => ...  -- ≤
+    | LT.lt α _ x y => ...  -- <
+    | Not p => ...           -- ¬
+    | And p q => ...         -- ∧
+    | Or _ _ => ...          -- ∨（加入析取队列）
+    | Dvd.dvd α _ x y => ...-- ∣
+    ...
+```
+
+各类命题的转化方式：
+
+| 输入命题 | 转化为 | 说明 |
+|----------|--------|------|
+| `x = y` (Int) | `x - y = 0` | 等式 → 常数约束 |
+| `x = y` (Nat) | `↑x - ↑y = 0` | 提升到 Int |
+| `x ≤ y` (Int) | `0 ≤ y - x` | 不等式 → 下界约束 |
+| `x < y` (Int) | `0 ≤ y - x - 1` | 严格 → 非严格 |
+| `x ≠ y` | `x < y ∨ x > y` | 不等 → 析取 |
+| `p ∧ q` | 拆分为两个独立假设 | 合取直接拆分 |
+| `p ∨ q` | 加入析取队列 | 延后 case split |
+| `k ∣ x` | `x % k = 0` | 整除 → 模约束 |
+| `¬(k ∣ x)` | `x % k > 0` | 不整除 → 模正约束 |
+| `p → q` | `¬p ∨ q` | 蕴含 → 析取 |
+
+**关键细节**：所有 Nat 运算都被提升到 Int 处理。`addFact` 自动把 `Nat` 类型的等式/不等式通过 `Int.ofNat` 提升，然后在 Int 域上工作。
+
+析取的处理是**延迟的**——先加入 `disjunctions` 队列，等核心消元无法找到矛盾时再做 case split。这种策略避免了不必要的分支搜索。
+
+对于否定假设，`pushNot` 函数把否定推入内部：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:371-420]
+def pushNot (h P : Expr) : MetaM (Option Expr) := do
+  let P ← whnfR P
+  match P with
+  | .app _ _ =>
+    match_expr P with
+    | LT.lt α _ x y => match_expr α with
+      | Nat => return some (mkApp3 (.const ``Nat.le_of_not_lt []) x y h)
+      | Int => return some (mkApp3 (.const ``Int.le_of_not_lt []) x y h)
+      ...
+    | LE.le α _ x y => match_expr α with
+      | Nat => return some (mkApp3 (.const ``Nat.lt_of_not_le []) x y h)
+      ...
+    | Eq α x y => match_expr α with
+      | Nat => return some
+          (mkApp3 (.const ``Nat.lt_or_gt_of_ne []) x y h)
+      ...
+    | Not P =>
+      return some (mkApp3 (.const ``Decidable.of_not_not []) P
+        (.app (.const ``Classical.propDecidable []) P) h)
+    ...
+```
+
+`¬(x < y)` 变为 `y ≤ x`，`¬(x = y)` 变为 `x < y ∨ x > y`（析取），`¬¬P` 变为 `P`。
+
+## 表达式线性化：asLinearCombo
+%%%
+tag := "ch08-as-linear-combo"
+%%%
+
+`asLinearComboImpl` 递归地把一个整数表达式转化为 `LinearCombo`，返回三元组 `(LinearCombo, Proof, NewFacts)`：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:131-241]
+partial def asLinearComboImpl (e : Expr) :
+    OmegaM (LinearCombo × OmegaM Expr × List Expr) := do
+  match groundInt? e with
+  | some i =>
+    -- 地面整数常量：直接作为常数项
+    let lc := {const := i}
+    return ⟨lc, mkEvalRflProof e lc, ∅⟩
+  | none => ...
+    match e.getAppFnArgs with
+  | (``HAdd.hAdd, #[_, _, _, _, e₁, e₂]) => do
+    -- 加法：递归分解，合并系数
+    let (l₁, prf₁, facts₁) ← asLinearCombo e₁
+    let (l₂, prf₂, facts₂) ← asLinearCombo e₂
+    ...
+    pure (l₁ + l₂, prf, facts₁ ++ facts₂)
+  | (``HSub.hSub, #[_, _, _, _, e₁, e₂]) => do
+    -- 减法：类似加法
+    ...
+  | (``HMul.hMul, #[_, _, _, _, x, y]) =>
+    -- 乘法：仅当一个因子是常数时展开
+    let (xl, ...) ← asLinearCombo x
+    let (yl, ...) ← asLinearCombo y
+    if xl.coeffs.isZero ∨ yl.coeffs.isZero then
+      pure (LinearCombo.mul xl yl, ...)
+    else
+      mkAtomLinearCombo e  -- 非线性乘法 → 当作原子
+  | (``HMod.hMod, #[_, _, _, _, n, k]) =>
+    -- 取模：改写为 x - (x / k) * k
+    match groundNat? k with
+    | some k' => do rewrite ... (mkApp2 (.const ``Int.emod_def []) n k')
+    | none => mkAtomLinearCombo e
+  | (``HDiv.hDiv, #[_, _, _, _, x, z]) =>
+    -- 除以常数 → 新原子 + 界约束
+    ...
+  | _ => mkAtomLinearCombo e  -- 无法分解 → 新原子
+```
+
+**Nat → Int 的提升**（`handleNatCast`）把各种 Nat 运算推入 cast 内部：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:255-298]
+  handleNatCast (e i n : Expr) : ... := do
+    match n.getAppFnArgs with
+    | (``Nat.succ, #[n]) =>
+        rewrite e (.app (.const ``Int.natCast_succ []) n)
+    | (``HAdd.hAdd, #[_, _, _, _, a, b]) =>
+        rewrite e (mkApp2 (.const ``Int.natCast_add []) a b)
+    | (``HMul.hMul, #[_, _, _, _, a, b]) =>
+        -- ↑(a * b) → ↑a * ↑b，并添加非负约束
+        let (lc, prf, r) ←
+          rewrite e (mkApp2 (.const ``Int.natCast_mul []) a b)
+        pure (lc, prf,
+          r.insert (mkApp2 (.const ``Int.ofNat_mul_nonneg []) a b))
+    | (``HDiv.hDiv, #[_, _, _, _, a, b]) =>
+        rewrite e (mkApp2 (.const ``Int.natCast_ediv []) a b)
+    | (``HMod.hMod, #[_, _, _, _, a, b]) =>
+        rewrite e (mkApp2 (.const ``Int.natCast_emod []) a b)
+    ...
+```
+
+`↑(a + b)` 变为 `↑a + ↑b`，`↑(a * b)` 变为 `↑a * ↑b` 并附加非负约束。这种"提升推入"（push cast inward）使 omega 能在纯 Int 域工作。
+
+## processFacts：批量预处理
+%%%
+tag := "ch08-process-facts"
+%%%
+
+`processFacts` 反复从队列中取出假设调用 `addFact`，直到队列为空：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:515-527]
+partial def processFacts (p : MetaProblem) :
+    OmegaM (MetaProblem × Nat) := do
+  match p.facts with
+  | [] => pure (p, 0)
+  | h :: t =>
+    if p.processedFacts.contains h then
+      processFacts { p with facts := t }
+    else
+      let (p₁, n₁) ← MetaProblem.addFact { p with
+        facts := t
+        processedFacts := p.processedFacts.insert h } h
+      let (p₂, n₂) ← p₁.processFacts
+      return (p₂, n₁ + n₂)
+```
+
+去重通过 `processedFacts : HashSet Expr` 实现——同一个假设不会被处理两次。注意 `addFact` 可能生成新的假设（如 Nat 提升的非负约束），这些新假设会被追加到队列头部，确保完整处理。
+
+# 消元算法
+%%%
+tag := "ch08-elimination"
+%%%
+
+预处理完成后，`Problem` 包含一组线性约束。核心算法分两阶段：**等式消元** → **Fourier-Motzkin 消元**。
+
+## 算法主循环
+%%%
+tag := "ch08-main-loop"
+%%%
+
+`runOmega` 和 `elimination` 是互相递归的：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:555-573]
+partial def runOmega (p : Problem) : OmegaM Problem := do
+  trace[omega] "Running omega on:\n{p}"
+  if p.possible then
+    let p' ← p.solveEqualities
+    elimination p'
+  else
+    return p
+
+partial def elimination (p : Problem) : OmegaM Problem :=
+  if p.possible then
+    if p.isEmpty then
+      return p
+    else do
+      trace[omega] "Running Fourier-Motzkin elimination on:\n{p}"
+      runOmega (← p.fourierMotzkin)
+  else
+    return p
+```
+
+流程：先用等式消元消去所有等式约束，然后做一轮 FM 消元（消去一个变量），递归。直到问题为空（所有变量被消去）或发现矛盾。
+
+## 等式消元
+%%%
+tag := "ch08-equality-elimination"
+%%%
+
+等式约束（上下界相等）可以直接用来消去一个变量，是优先处理的。
+
+**选择等式**——`selectEquality` 从 `equalities` 集合中选择最优等式：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:289-300]
+def selectEquality (p : Problem) : Option (Coeffs × Nat) :=
+  p.equalities.fold (init := none) fun
+  | none, c => (c, c.minNatAbs)
+  | some (r, m), c =>
+    if 2 ≤ m then
+      let m' := c.minNatAbs
+      if (m' < m || m' = m && c.maxNatAbs < r.maxNatAbs) then
+        (c, m')
+      else
+        (r, m)
+    else
+      (r, m)
+```
+
+优先选系数绝对值最小的等式——理想情况是 ±1，这是"简单等式"。
+
+### 简单等式消元（系数为 ±1）
+%%%
+tag := "ch08-easy-equality"
+%%%
+
+如果变量 `xᵢ` 的系数是 ±1，可以直接求解 `xᵢ = -(c₀ + c₂·x₂ + ...)`，然后代入所有其他约束：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:316-331]
+def solveEasyEquality (p : Problem) (c : Coeffs) : Problem :=
+  let i := c.findIdx? (·.natAbs = 1) |>.getD 0
+  let sign := c.get i |> Int.sign
+  match p.constraints[c]? with
+  | some f =>
+    let init :=
+    { assumptions := p.assumptions
+      eliminations := (f, i, sign) :: p.eliminations }
+    p.constraints.fold (init := init) fun p' coeffs g =>
+      match Coeffs.get coeffs i with
+      | 0 =>
+        p'.addConstraint g
+      | ci =>
+        let k := -1 * sign * ci
+        p'.addConstraint (Fact.combo k f 1 g).tidy
+  | _ => p
+```
+
+找到系数为 ±1 的变量 `xᵢ`，用等式把它从所有约束中代入消去。消元结果记录在 `eliminations` 列表中，之后新加入的约束需要 `replayEliminations` 重放这些消元。
+
+### 困难等式消元（平衡取模）
+%%%
+tag := "ch08-hard-equality"
+%%%
+
+当所有系数绝对值都大于 1 时，使用**平衡取模**（balanced mod, bmod）技巧。设最小系数绝对值为 `m-1`，取 `m = minNatAbs + 1`：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:340-356]
+def dealWithHardEquality (p : Problem) (c : Coeffs) :
+    OmegaM Problem :=
+  match p.constraints[c]? with
+  | some ⟨_, ⟨some r, some r'⟩, j⟩ => do
+    let m := c.minNatAbs + 1
+    let x := mkApp3 (.const ``bmod_div_term [])
+      (toExpr m) (toExpr c) (← atomsCoeffs)
+    let (i, facts?) ← lookup x
+    if hr : r' = r then
+      match facts? with
+      | none => throwError
+          "When solving hard equality, new atom had been seen before!"
+      | some facts => if ! facts.isEmpty then
+        throwError
+          "When solving hard equality, unexpected new facts!"
+      return p.addConstraint
+        { coeffs := _, constraint := _,
+          justification := (hr ▸ j).bmod m r i }
+    else
+      throwError "Invalid constraint, expected an equation."
+  | _ => return p
+```
+
+思路：对等式 `r + c₀·x₀ + c₁·x₁ + ... = 0` 做 bmod m，得到新等式 `bmod(r,m) + bmod(c₀,m)·x₀ + ... = m·α`，其中 `α` 是新变量。由于 `bmod(m-1, m)` 的值为 ±1，原来系数最小的变量在新等式中系数变为 ±1——困难等式变成了简单等式。
+
+虽然引入了新变量，但词典序 `(minNatAbs, maxNatAbs)` 严格递减，保证终止。
+
+`solveEqualities` 循环处理所有等式：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:369-374]
+partial def solveEqualities (p : Problem) : OmegaM Problem :=
+  if p.possible then
+    match p.selectEquality with
+    | some (c, m) => do (← p.solveEquality c m).solveEqualities
+    | none => return p
+  else return p
+```
+
+## MinNatAbs：辅助系数分析
+%%%
+tag := "ch08-min-nat-abs"
+%%%
+
+困难等式消元依赖 `minNatAbs`——系数列表中最小的非零绝对值。它定义在 `MinNatAbs.lean`：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/MinNatAbs.lean:41]
+def nonzeroMinimum (xs : List Nat) : Nat :=
+  xs.filter (· ≠ 0) |>.min? |>.getD 0
+
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/MinNatAbs.lean:134]
+def minNatAbs (xs : List Int) : Nat :=
+  xs.map Int.natAbs |> nonzeroMinimum
+```
+
+该文件还包含 `minNatAbs` 的完整形式化性质证明（`minNatAbs_eq_zero_iff`、`minNatAbs_eq_nonzero_iff`、`nonzeroMinimum_le` 等），这些引理用于保证等式消元的终止性和正确性。
+
+## Fourier-Motzkin 消元
+%%%
+tag := "ch08-fourier-motzkin"
+%%%
+
+等式消元后，剩下的约束都是不等式。Fourier-Motzkin 消元选一个变量，把涉及它的约束配对消去。
+
+### 步骤 1：分类约束
+%%%
+tag := "ch08-fm-classify"
+%%%
+
+`fourierMotzkinData` 对每个变量分类所有约束：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:481-503]
+def fourierMotzkinData (p : Problem) :
+    Array FourierMotzkinData := Id.run do
+  let n := p.numVars
+  let mut data : Array FourierMotzkinData :=
+    (List.range p.numVars).foldl
+      (fun a i => a.push { var := i}) #[]
+  for (_, f@⟨xs, s, _⟩) in p.constraints do
+    for i in *...n do
+      let x := Coeffs.get xs i
+      data := data.modify i fun d =>
+        if x = 0 then
+          { d with irrelevant := f :: d.irrelevant }
+        else Id.run do
+          let s' := s.scale x
+          let mut d' := d
+          if s'.lowerBound.isSome then
+            d' := { d' with
+              lowerBounds := (f, x) :: d'.lowerBounds
+              lowerExact := d'.lowerExact && x.natAbs = 1 }
+          if s'.upperBound.isSome then
+            d' := { d' with
+              upperBounds := (f, x) :: d'.upperBounds
+              upperExact := d'.upperExact && x.natAbs = 1 }
+          return d'
+  return data
+```
+
+对每个变量 `xᵢ`，约束被分为三类：
+
+| 分类 | 条件 | 含义 |
+|------|------|------|
+| 下界 (lower) | `coeffs[i] > 0` | 给出 `xᵢ` 的下界 |
+| 上界 (upper) | `coeffs[i] < 0` | 给出 `xᵢ` 的上界 |
+| 无关 (irrelevant) | `coeffs[i] = 0` | 不含 `xᵢ` |
+
+`FourierMotzkinData` 还记录 `lowerExact` 和 `upperExact`——所有系数是否为 ±1。如果是，消元是**精确的**（real shadow = dark shadow），不会引入伪解。
+
+### 步骤 2：选择变量
+%%%
+tag := "ch08-fm-select"
+%%%
+
+`fourierMotzkinSelect` 选择消去"代价"最小的变量：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:511-532]
+def fourierMotzkinSelect (data : Array FourierMotzkinData) :
+    MetaM FourierMotzkinData := do
+  let data := data.filter fun d => ¬ d.isEmpty
+  trace[omega] "Selecting variable to eliminate from \
+    (idx, size, exact) triples:\n\
+    {data.map fun d => (d.var, d.size, d.exact)}"
+  let mut bestIdx := 0
+  let mut bestSize := data[0]!.size
+  let mut bestExact := data[0]!.exact
+  if bestSize = 0 then return data[0]!
+  for h : i in 1...data.size do
+    let exact := data[i].exact
+    let size := data[i].size
+    if size = 0 || !bestExact && exact
+        || (bestExact == exact) && size < bestSize then
+      if size = 0 then return data[i]
+      bestIdx := i
+      bestExact := exact
+      bestSize := size
+  return data[bestIdx]!
+```
+
+优先级：
+
+1. **size = 0**：所有约束都与该变量无关，免费消去
+2. **精确消元**（exact = true）：所有系数为 ±1，不引入伪解
+3. **最小乘积**：`|lower| × |upper|` 最小，生成最少新约束
+
+### 步骤 3：消元
+%%%
+tag := "ch08-fm-eliminate"
+%%%
+
+对每对 (下界, 上界) 做线性组合消去选定变量：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:538-548]
+def fourierMotzkin (p : Problem) : MetaM Problem := do
+  let data := p.fourierMotzkinData
+  let ⟨_, irrelevant, lower, upper, _, _⟩ ←
+    fourierMotzkinSelect data
+  let mut r : Problem :=
+    { assumptions := p.assumptions,
+      eliminations := p.eliminations }
+  for f in irrelevant do
+    r := r.insertConstraint f
+  for ⟨f, b⟩ in lower do
+    for ⟨g, a⟩ in upper do
+      r := r.addConstraint (Fact.combo a f (-b) g).tidy
+  return r
+```
+
+新约束数 = `|lower| × |upper|`——这就是 FM 的复杂度瓶颈，每消一个变量约束数可能平方增长。但实际问题中约束通常稀疏，增长可控。
+
+每个新约束都经过 `tidy` 规范化：**(1)** 令首个非零系数为正；**(2)** 除以所有系数的 GCD（常数项取整保持整数正确性）；**(3)** 如果已有同系数约束，用 `combine` 取更紧界。
+
+## 约束插入与矛盾检测
+%%%
+tag := "ch08-constraint-insertion"
+%%%
+
+`addConstraint` 是约束入库的核心——同系数约束自动合并：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:254-278]
+def addConstraint (p : Problem) : Fact → Problem
+  | f@⟨x, s, j⟩ =>
+    if p.possible then
+      match p.constraints[x]? with
+      | none =>
+        match s with
+        | .trivial => p
+        | _ => p.insertConstraint f
+      | some ⟨x', t, k⟩ =>
+        if h : x = x' then
+          let r := s.combine t
+          if r = t then p           -- 旧约束已经更紧
+          else if r = s then
+            p.insertConstraint ⟨x, s, j⟩  -- 新约束严格更紧
+          else
+            p.insertConstraint
+              ⟨x, s.combine t, j.combine (h ▸ k)⟩
+        else p
+    else p
+```
+
+`insertConstraint` 在插入时检查矛盾——如果约束的 `isImpossible` 返回 `true`（`upperBound < lowerBound`），问题立即标记为不可满足：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:231-248]
+def insertConstraint (p : Problem) : Fact → Problem
+  | f@⟨x, s, j⟩ =>
+    if s.isImpossible then
+      { p with
+        possible := false
+        proveFalse? := some (proveFalse j p.assumptions)
+        explanation? := Thunk.mk fun _ => j.toString
+        proveFalse?_spec := rfl }
+    else
+      { p with
+        numVars := max p.numVars x.length
+        constraints := p.constraints.insert x f
+        proveFalse?_spec := p.proveFalse?_spec
+        equalities :=
+        if f.constraint.isExact then p.equalities.insert x
+        else p.equalities }
+```
+
+# 证明构造
+%%%
+tag := "ch08-proof-construction"
+%%%
+
+omega 的证明构造采用**延迟策略**：先在 `Justification` 中记录推导树，只有找到矛盾后才转化为 Lean 证明项。
+
+## Justification → Proof
+%%%
+tag := "ch08-justification-to-proof"
+%%%
+
+`Justification.proof` 递归地把推导树转化为 `Expr`：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:117-124]
+def proof (v : Expr) (assumptions : Array Proof) :
+    Justification s c → Proof
+  | assumption s c i => assumptions[i]!
+  | @tidy s c j =>
+      return tidyProof s c v (← proof v assumptions j)
+  | @combine s t c j k =>
+    return combineProof s t c v
+      (← proof v assumptions j) (← proof v assumptions k)
+  | @combo s t x y a j b k =>
+    return comboProof s t a x b y v
+      (← proof v assumptions j) (← proof v assumptions k)
+  | @bmod m r i x j => do
+      bmodProof m r i x v (← proof v assumptions j)
+```
+
+每个构造子对应一个证明项构造函数：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:88-112]
+def tidyProof (s : Constraint) (x : Coeffs)
+    (v prf : Expr) : Expr :=
+  mkApp4 (.const ``tidy_sat []) (toExpr s) (toExpr x) v prf
+
+def combineProof (s t : Constraint) (x : Coeffs)
+    (v ps pt : Expr) : Expr :=
+  mkApp6 (.const ``Constraint.combine_sat' [])
+    (toExpr s) (toExpr t) (toExpr x) v ps pt
+
+def comboProof (s t : Constraint) (a : Int) (x : Coeffs)
+    (b : Int) (y : Coeffs) (v px py : Expr) : Expr :=
+  mkApp9 (.const ``combo_sat' [])
+    (toExpr s) (toExpr t) (toExpr a) (toExpr x)
+    (toExpr b) (toExpr y) v px py
+```
+
+## proveFalse：从矛盾到 False
+%%%
+tag := "ch08-prove-false"
+%%%
+
+最终的 `False` 证明通过 `Constraint.not_sat'_of_isImpossible` 引理构造：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:218-225]
+def proveFalse {s x} (j : Justification s x)
+    (assumptions : Array Proof) : Proof := do
+  let v := ← atomsCoeffs
+  let prf ← j.proof v assumptions
+  let x := toExpr x
+  let s := toExpr s
+  let impossible ←
+    mkDecideProof (← mkEq
+      (mkApp (.const ``Constraint.isImpossible []) s)
+      (.const ``true []))
+  return mkApp5
+    (.const ``Constraint.not_sat'_of_isImpossible [])
+    s impossible x v prf
+```
+
+逻辑链条：
+
+1. `prf` 证明 `s.sat' x atoms`（矛盾约束在当前原子赋值下成立）
+2. `impossible` 通过 `decide` 证明 `s.isImpossible = true`
+3. `not_sat'_of_isImpossible` 结合两者导出 `False`
+
+证明项通常非常大（嵌套的 `combo_sat'`、`tidy_sat` 和 `decide`），所以 `omegaTactic` 用 `mkAuxTheorem` 封装为辅助定义，避免拖慢后续类型检查。
+
+# OmegaM monad
+%%%
+tag := "ch08-omega-monad"
+%%%
+
+omega 使用多层 monad 栈管理状态。
+
+## Monad 栈结构
+%%%
+tag := "ch08-monad-stack"
+%%%
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/OmegaM.lean:49-71]
+structure Context where
+  cfg : OmegaConfig
+
+structure State where
+  atoms : Std.HashMap Expr Nat := {}
+
+abbrev OmegaM' :=
+  StateRefT State (ReaderT Context CanonM)
+
+@[expose] def Cache : Type :=
+  Std.HashMap Expr (LinearCombo × OmegaM' Expr)
+
+abbrev OmegaM := StateRefT Cache OmegaM'
+```
+
+两层状态分别管理：**State.atoms**（`Expr → Nat` 映射，通过 `CanonM` 保证 defeq 的表达式映射到同一编号）和 **Cache**（子表达式 → `(LinearCombo, Proof)` 的缓存，避免重复分析）。
+
+整个 monad 栈通过 `OmegaM.run` 初始化和运行：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/OmegaM.lean:74-75]
+def OmegaM.run (m : OmegaM α) (cfg : OmegaConfig) : MetaM α :=
+  m.run' (∅ : Std.HashMap ..) |>.run' {} { cfg } |>.run'
+```
+
+## 原子管理：lookup
+%%%
+tag := "ch08-lookup"
+%%%
+
+当遇到无法进一步分解的表达式时，omega 把它注册为一个**原子**：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/OmegaM.lean:247-260]
+def lookup (e : Expr) :
+    OmegaM (Nat × Option (List Expr)) := do
+  let c ← getThe State
+  let e ← canon e
+  match c.atoms[e]? with
+  | some i => return (i, none)
+  | none =>
+  trace[omega] "New atom: {e}"
+  let facts ← analyzeAtom e
+  if ← isTracingEnabledFor `omega then
+    unless facts.isEmpty do
+      trace[omega] "New facts: \
+        {← facts.mapM fun e => inferType e}"
+  let i ← modifyGetThe State fun c =>
+    (c.atoms.size,
+     { c with atoms := c.atoms.insert e c.atoms.size })
+  return (i, some facts)
+```
+
+`canon e` 先做规范化（处理 definitional equality），然后查找。如果是新原子，调用 `analyzeAtom` 生成附加约束。
+
+## analyzeAtom：原子约束生成
+%%%
+tag := "ch08-analyze-atom"
+%%%
+
+`analyzeAtom` 根据原子的结构自动生成额外的线性约束：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/OmegaM.lean:166-235]
+def analyzeAtom (e : Expr) : OmegaM (List Expr) := do
+  match e.getAppFnArgs with
+  | (``Nat.cast, #[.const ``Int [], _, e']) =>
+    -- ↑(x : Nat) 非负
+    let mut r :=
+      [Expr.app (.const ``Int.natCast_nonneg []) e']
+    match (← cfg).splitNatSub, e'.getAppFnArgs with
+      | true, (``HSub.hSub, #[_, _, _, _, a, b]) =>
+        -- ↑(a - b : Nat) 二分
+        r := r.insert
+          (mkApp2 (.const ``Int.ofNat_sub_dichotomy []) a b)
+      | _, (``Int.natAbs, #[x]) =>
+        r := r.insert
+          (mkApp (.const ``Int.le_natAbs []) x)
+        r := r.insert
+          (mkApp (.const ``Int.neg_le_natAbs []) x)
+      | _, (``Fin.val, #[n, i]) =>
+        r := r.insert (mkApp2 (.const ``Fin.isLt []) n i)
+      ...
+    return r
+  | (``HDiv.hDiv, #[_, _, _, _, x, k]) =>
+    -- x / k 的界约束
+    match natCast? k with
+    | some _ =>
+      pure [mkApp3 (.const ``Int.mul_ediv_self_le [])
+              x k ...,
+            mkApp3 (.const ``Int.lt_mul_ediv_self_add [])
+              x k ...]
+    ...
+  | (``Min.min, #[_, _, x, y]) =>
+    pure [mkApp2 (.const ``Int.min_le_left []) x y,
+          mkApp2 (.const ``Int.min_le_right []) x y]
+  | (``Max.max, #[_, _, x, y]) =>
+    pure [mkApp2 (.const ``Int.le_max_left []) x y,
+          mkApp2 (.const ``Int.le_max_right []) x y]
+  ...
+```
+
+| 原子类型 | 生成的约束 |
+|----------|-----------|
+| `↑(x : Nat)` | `0 ≤ ↑x` |
+| `x / k` | `k * (x/k) ≤ x < k * (x/k) + k` |
+| `x % k` | `0 ≤ x % k < k` |
+| `↑(a - b : Nat)` | 二分：`b ≤ a ∧ result = a - b` 或 `a < b ∧ result = 0` |
+| `Int.natAbs a` | `a ≤ natAbs a` 且 `-a ≤ natAbs a` |
+| `min a b` | `min a b ≤ a` 且 `min a b ≤ b` |
+| `max a b` | `a ≤ max a b` 且 `b ≤ max a b` |
+| `Fin.val i` | `i.val < n` |
+
+这些自动生成的约束是 omega 能处理 Nat 减法、绝对值、min/max 等非线性构造的关键——它们把超出线性算术的构造"线性化"。
+
+## 缓存与事务
+%%%
+tag := "ch08-cache-transactions"
+%%%
+
+`asLinearCombo` 使用缓存避免重复分析同一子表达式：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:105-114]
+partial def asLinearCombo (e : Expr) :
+    OmegaM (LinearCombo × OmegaM Expr × List Expr) := do
+  let cache ← get
+  match cache.get? e with
+  | some (lc, prf) =>
+    return (lc, prf, ∅)
+  | none =>
+    let (lc, proof, r) ← asLinearComboImpl e
+    modifyThe Cache fun cache =>
+      (cache.insert e (lc, proof.run' cache))
+    pure (lc, proof, r)
+```
+
+`commitWhen` 提供事务性操作——用于乘法处理时的试探性分析。如果两个因子都有非零系数（非线性乘法），回滚状态，把整个乘积当作原子：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/OmegaM.lean:92-99]
+def commitWhen (t : OmegaM (α × Bool)) : OmegaM α := do
+  let state ← getThe State
+  let cache ← getThe Cache
+  let (a, r) ← t
+  if !r then do
+    modifyThe State fun _ => state
+    modifyThe Cache fun _ => cache
+  pure a
+```
+
+# omegaImpl 与析取处理
+%%%
+tag := "ch08-omega-impl"
+%%%
+
+`omegaImpl` 是 omega 的算法主循环：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:649-664]
+partial def omegaImpl (m : MetaProblem) : OmegaM Expr := do
+  let (m, _) ← m.processFacts
+  guard m.facts.isEmpty
+  let p := m.problem
+  trace[omega] "Extracted linear arithmetic problem:\n\
+    Atoms: {← atomsList}\n{p}"
+  let p' ← if p.possible then p.elimination else pure p
+  trace[omega] "After elimination:\n\
+    Atoms: {← atomsList}\n{p'}"
+  match h₁ : p'.possible, h₂ : p'.proveFalse?,
+      p'.proveFalse?_spec with
+  | true, _, _ =>
+    splitDisjunction m
+  | false, .some prf, _ =>
+    trace[omega] "Justification:\n{p'.explanation?.get}"
+    let prf ← instantiateMVars (← prf)
+    return prf
+  | false, none, h₃ => by simp [h₁, h₂] at h₃
+```
+
+流程：**(1)** 预处理所有假设（`processFacts`）；**(2)** 消元求解（`elimination`）；**(3)** 如果发现矛盾，返回 `False` 证明；如果未发现矛盾，尝试 case split。
+
+析取处理通过 `splitDisjunction`——逐个拆分析取，在每个分支中递归调用 `omegaImpl`：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:620-646]
+partial def splitDisjunction (m : MetaProblem) :
+    OmegaM Expr := do
+  match m.disjunctions with
+  | [] => throwError "omega could not prove the goal:\n\
+      {← formatErrorMessage m.problem}"
+  | h :: t => do
+    let hType ← whnfD (← inferType h)
+    let_expr Or hType₁ hType₂ := hType | ...
+    -- 分支 1：假设 h₁ : P
+    let p?₁ ← withoutModifyingState do
+      withLocalDeclD `h₁ hType₁ fun h₁ => do
+        let m₁ := { m with facts := [h₁], disjunctions := t }
+        let (m₁, n) ← m₁.processFacts
+        if 0 < n then
+          some (← omegaImpl m₁ >>= mkLambdaFVars #[h₁])
+        else none
+    -- 分支 2：假设 h₂ : Q（类似）
+    ...
+    -- 合并：Or.elim h proof₁ proof₂
+```
+
+**优化**：尝试分支 1 时使用 `withoutModifyingState`——如果分支 1 没有贡献新约束（`n = 0`），跳过这个析取。这避免了无用的 case split。
+
+析取处理是递归的——每个分支内可能产生新析取需要进一步 split，最坏情况下是指数级的。这就是为什么 Nat 减法太多时 omega 会超时。
+
+# 调试手册
+%%%
+tag := "ch08-debugging"
+%%%
+
+## trace 开关
+%%%
+tag := "ch08-trace"
+%%%
+
+omega 提供详细的 trace 输出：
+
+```
+set_option trace.omega true in
+example : ... := by omega
+```
+
+trace 输出涵盖：
+
+- 假设分析：`"adding fact: ..."`
+- 新原子发现：`"New atom: ..."`
+- 自动生成的约束：`"New facts: ..."`
+- 提取的线性问题：`"Extracted linear arithmetic problem: ..."`
+- 变量选择：`"Selecting variable to eliminate from ..."`
+- 消元后的问题：`"After elimination: ..."`
+- Case split：`"Case splitting on ..."`
+- 矛盾发现：`"omega found a contradiction"`
+
+## 常见失败模式
+%%%
+tag := "ch08-failure-modes"
+%%%
+
+**模式 1：omega 成功但很慢**
+
+症状：trace 中出现大量嵌套 case split。原因：Nat 减法或 min/max 引入了过多二分（n 个产生 2^n 种情况）。修复：手动 `have` 确定不等式后再 `omega`；或 `omega (config := { splitNatSub := false })`。
+
+**模式 2：omega 报 "could not prove the goal"**
+
+症状：报错并给出可能的反例。原因：目标涉及非线性乘法、缺少假设、或 `a * b` 与 `b * a` 被视为不同原子。修复：检查反例，补充假设或改用 `nlinarith`。
+
+**模式 3：非线性项被当作原子**
+
+症状：`x * y ≤ z * w` 中 omega 把 `x * y` 和 `z * w` 当作独立原子。原因：`asLinearCombo` 只在一个因子是常数时展开乘法。修复：用 `nlinarith` 或手动 `have`。
+
+**模式 4：Fin 的模算术**
+
+症状：`Fin n` 上的加法不被正确处理。原因：omega 把 `Fin.val` 提升到 Nat 但不处理模算术。修复：`simp [Fin.val_add]` 先展开，再 `omega`。
+
+**模式 5：未展开的定义**
+
+症状：目标"看起来"是线性的但 omega 失败。原因：自定义定义未展开。修复：`unfold myDef` 或 `simp only [myDef]` 后再 `omega`。
+
+## 错误信息解读
+%%%
+tag := "ch08-error-messages"
+%%%
+
+omega 失败时的错误信息格式：
+
+```
+omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  a ≥ 0
+  -a + b ≤ 1
+where
+  a := ↑n
+  b := ↑m
+```
+
+"可能反例"是从剩余约束中推导的赋值——展示的是"omega 看到的世界"。它能帮你判断是缺假设、目标不可证、还是预处理丢失了关键信息。注意这只是线性约束系统的满足赋值，不一定是原始命题的真反例。
+
+错误信息的生成逻辑在 `formatErrorMessage` 中：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:533-548]
+def formatErrorMessage (p : Problem) :
+    OmegaM MessageData := do
+  if p.possible then
+    if p.isEmpty then
+      return m!"No usable constraints found. ..."
+    else
+      let as ← atoms
+      return .ofLazyM (es := as) do
+        let mask ← mentioned as p.constraints
+        let names ← varNames mask
+        return m!"a possible counterexample may satisfy \
+          the constraints\n"
+          ++ m!"{prettyConstraints names p.constraints}\n\
+               where\n{prettyAtoms names as mask}"
+  else
+    return "it is trivially solvable"
+```
+
+如果看到 `"No usable constraints found"`，说明 omega 完全无法从假设和目标中提取线性算术信息——通常是类型不匹配或定义未展开。
+
+# Omega Test 的理论背景
+%%%
+tag := "ch08-theory"
+%%%
+
+omega tactic 实现的是 Omega Test 的变种。经典 Omega Test 基于三个"影子"（shadow）：
+
+| 影子 | 含义 | Lean 实现 |
+|------|------|-----------|
+| Real shadow | Fourier-Motzkin 消元（当作实数） | 已实现 |
+| Dark shadow | 加强的 FM 约束（考虑整数间隙） | 未实现 |
+| Grey shadow | 枚举整数解候选 | 未实现 |
+
+Real shadow 是必要条件——如果不可满足，原问题一定不可满足。但 real shadow 可满足不代表存在整数解——当系数不全为 ±1 时，FM 消元可能引入非整数解。
+
+**为什么通常够用**：实际编程验证中，大多数线性约束的系数都是 ±1 或小常数（如数组索引界 `0 ≤ i < n`）。这种情况下 real shadow 就足够了。omega 的变量选择启发式也优先选精确消元（系数为 ±1），进一步保证了 real shadow 的充分性。
+
+源码中 `Lean/Elab/Tactic/Omega.lean` 的模块文档详细讨论了三个影子的理论：
+
+```
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega.lean:101-166]
+-- 实现注释节选：
+-- Currently we do not implement either the dark or grey shadows,
+-- and thus if the real shadow is satisfiable we must fail...
+-- In practical problems, it appears to be relatively rare that
+-- we fail because of not handling the dark and grey shadows.
+-- Fortunately, in many cases it is possible to choose a variable
+-- to eliminate such that the real and dark shadows coincide,
+-- and the grey shadows are empty.
+```
+
+# 练习
 %%%
 tag := "ch08-exercises"
 %%%
 
 ## 练习 1：基础线性推理
 %%%
-tag := "exercise-8-1"
+tag := "ch08-exercise-1"
 %%%
 
-判断以下哪些目标 `omega` 能直接证明，并尝试证明它们。
+判断以下哪些目标 `omega` 能直接证明，并尝试证明：
 
 ```
--- (a) 能否用 omega 证明？
-example (n : ℕ) (h : n > 0) : 2 * n ≥ 2 := by
+-- (a)
+example (n : Nat) (h : n > 0) : 2 * n ≥ 2 := by
   sorry
 
--- (b) 能否用 omega 证明？
-example (a b : ℤ) (h1 : a + b = 10) (h2 : a - b = 4) : a = 7 := by
+-- (b)
+example (a b : Int) (h1 : a + b = 10) (h2 : a - b = 4) :
+    a = 7 := by
   sorry
 
--- (c) 能否用 omega 证明？
-example (n : ℕ) : n * (n + 1) / 2 ≥ 0 := by
+-- (c) 包含变量乘法
+example (n : Nat) : n * (n + 1) / 2 ≥ 0 := by
   sorry
 
--- (d) 能否用 omega 证明？
-example (x : ℤ) (h : x % 3 = 0) : x % 6 = 0 ∨ x % 6 = 3 := by
+-- (d)
+example (x : Int) (h : x % 3 = 0) :
+    x % 6 = 0 ∨ x % 6 = 3 := by
   sorry
 ```
 
-*提示*：(a) 和 (d) 是线性的，(b) 看起来线性但检查一下解，
-(c) 包含变量乘法。
+提示：(a) 和 (d) 是线性的，omega 能直接处理；(b) 检查解是否正确（a = 7, b = 3）；(c) 包含 `n * (n + 1)` 变量乘法。
 
 ## 练习 2：诊断失败
 %%%
-tag := "exercise-8-2"
+tag := "ch08-exercise-2"
 %%%
 
-以下每个 `omega` 调用都会失败。解释失败原因，并给出修复方案。
+以下每个 `omega` 调用都会失败。解释失败原因，给出修复方案：
 
 ```
--- (a) 为什么失败？如何修复？
-example (n : ℕ) : n ^ 2 ≥ 0 := by
-  omega
+-- (a) 非线性项
+example (n : Nat) : n ^ 2 ≥ 0 := by
+  omega  -- ✗
 
--- (b) 为什么失败？如何修复？
-def triple (n : ℕ) := 3 * n
-example (n : ℕ) : triple n ≥ n := by
-  omega
+-- (b) 未展开的定义
+def triple (n : Nat) := 3 * n
+example (n : Nat) : triple n ≥ n := by
+  omega  -- ✗
 
--- (c) 为什么失败？如何修复？
-example (n : ℕ) : n - 3 + 3 = n := by
-  omega
+-- (c) 缺少前置条件
+example (n : Nat) : n - 1 + 1 = n := by
+  omega  -- ✗
 ```
 
-*提示*：(a) 非线性项，(b) 未展开的定义，(c) 缺少前置条件。
+提示：(a) 用 `positivity` 或 `exact Nat.zero_le _`；(b) 先 `unfold triple`；(c) 需要 `n ≥ 1` 假设。
 
-## 练习 3：tactic 编程
+## 练习 3：trace 分析
 %%%
-tag := "exercise-8-3"
+tag := "ch08-exercise-3"
 %%%
 
-编写一个 tactic `omega_or_sorry`，尝试用 omega 关闭目标，
-如果失败则用 `sorry` 关闭并在 info log 中输出警告。
+对以下目标开启 `set_option trace.omega true`，观察 trace 输出，回答问题：
 
 ```
--- 骨架
-elab "omega_or_sorry" : tactic => do
-  sorry -- 你的实现
+example (a b : Nat) (h : a + b = 10) : a ≤ 10 := by
+  omega
 ```
 
-*提示*：使用 `try`/`catch` 包裹 `evalTactic`，
-在 `catch` 分支中调用 `logWarning` 后再执行 `sorry`。
+问题：
+
+1. omega 发现了哪些原子？
+2. 预处理后生成了哪些约束？
+3. 消元过程中选择了哪个变量消去？
 
 ## 练习 4：omega 与 linarith 的边界
 %%%
-tag := "exercise-8-4"
+tag := "ch08-exercise-4"
 %%%
 
-找出一个命题，使得 `omega` 能证明但 `linarith` 不能，
-以及一个命题，使得 `linarith` 能证明但 `omega` 不能。
-解释原因。
+找出一个命题使得 `omega` 能证明但 `linarith` 不能，以及一个命题使得 `linarith` 能证明但 `omega` 不能。解释原因。
 
-*提示*：考虑整除性（omega 的强项）和实数域（linarith 的强项）。
-
-# 8.9 小结
-%%%
-tag := "ch08-summary"
-%%%
-
-- `理论基础`：Presburger 算术——整数上只有加法的一阶理论，可判定
-- `算法核心`：变量消去 + dark shadow 整数修正
-- `适用范围`：ℕ 和 ℤ 上的线性等式、不等式、整除、模运算
-- `Nat.sub`：自动处理截断语义，翻译为 max(a-b, 0)
-- `能力边界`：变量乘法、指数、实数 → 超出范围
-- `失败诊断`：检查非线性项、未展开定义、缺失假设、不支持的类型
-- `编程使用`：`evalTactic` 直接调用，`try`/`catch` 探测性调用
-- `与 linarith`：omega 处理整数整除，linarith 处理实数有序域
-
-下一章将介绍 `linarith`、`nlinarith` 和 `polyrith`——从线性到非线性的算术自动化。
+提示：考虑整除性（omega 的强项）和实数域（linarith 的强项）。
