@@ -1,0 +1,1 @@
+window.docContents[86].resolve({"/Ch11Aesop/#ch11-config":{"contents":"\n\n\n\n\n\n","context":"Lean 4 自动化内幕\u0009aesop：可配置的启发式搜索\u0009用法详解","header":"12.1.6. 配置 aesop","id":"/Ch11Aesop/#ch11-config"}});

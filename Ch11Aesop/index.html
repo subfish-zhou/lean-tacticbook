@@ -10,7 +10,7 @@
 })()</script>
     <base href="./../"><meta charset="utf-8">
     <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
-    <title>aesop：可配置的搜索引擎</title><link rel="stylesheet" href="book.css">
+    <title>aesop：可配置的启发式搜索</title><link rel="stylesheet" href="book.css">
     <link rel="stylesheet" href="verso-vars.css">
     <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js" integrity="sha384-zbcZAIxlvJtNE3Dp5nxLXdXtXyxwOdnILY1TDPVmKFhl4r4nSUG1r8bcFXGVa4Te" crossorigin="anonymous"></script>
     <script src="-verso-search/elasticlunr.min.js"></script>
@@ -945,11 +945,11 @@ window.onload = () => {
             <div class="split-toc book">
               <div class="title">
                 <label for="--verso-manual-toc-----bookRoot" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-----bookRoot" checked="checked"></label><span class="">Table of Contents</span></div>
-              <table><tr class="numbered"><td class="num">1.</td><td><a href="Ch00Setup/#ch00-setup">环境与运行约定</a></td></tr><tr class="numbered"><td class="num">2.</td><td><a href="Ch01MetaprogrammingModel/#ch01-metaprogramming-model">Lean 4 元编程模型</a></td></tr><tr class="numbered"><td class="num">3.</td><td><a href="Ch02Expr/#ch02-expr">Expr：Lean 4 的内部表示</a></td></tr><tr class="numbered"><td class="num">4.</td><td><a href="Ch03FirstTactic/#ch03-first-tactic">编写你的第一个 Tactic</a></td></tr><tr class="numbered"><td class="num">5.</td><td><a href="Ch04GoalManagement/#ch04-goal-management">目标管理</a></td></tr><tr class="numbered"><td class="num">6.</td><td><a href="Ch05TypeclassSynthesis/#ch05-typeclass-synthesis">Type Class Synthesis</a></td></tr><tr class="numbered"><td class="num">7.</td><td><a href="Ch06Simp/#ch06-simp">simp——化简的瑞士军刀</a></td></tr><tr class="numbered"><td class="num">8.</td><td><a href="Ch07Ring/#ch07-ring">ring 和 <code>ring_nf</code>：代数范式化</a></td></tr><tr class="numbered"><td class="num">9.</td><td><a href="Ch08Omega/#ch08-omega">omega：Presburger 算术决策过程</a></td></tr><tr class="numbered"><td class="num">10.</td><td><a href="Ch09Linarith/#ch09-linarith">linarith、nlinarith 与 polyrith</a></td></tr><tr class="numbered"><td class="num">11.</td><td><a href="Ch10NormNum/#ch10-norm-num"><code>norm_num</code>：数值计算框架</a></td></tr><tr class="current numbered"><td class="num">12.</td><td><a href="Ch11Aesop/#ch11-aesop">aesop：可配置的搜索引擎</a></td></tr><tr class="numbered"><td class="num">13.</td><td><a href="Ch12Grind/#ch12-grind">grind：E-matching 与 Congruence Closure</a></td></tr><tr class="numbered"><td class="num">14.</td><td><a href="Ch13Decide/#ch13-decide">decide 与 <code>native_decide</code>：有限计算判定</a></td></tr><tr class="numbered"><td class="num">15.</td><td><a href="Ch14Positivity/#ch14-positivity">positivity：符号非负性推理</a></td></tr><tr class="numbered"><td class="num">16.</td><td><a href="Ch15FunProp/#ch15-fun-prop"><code>fun_prop</code>：函数性质的自动证明</a></td></tr><tr class="numbered"><td class="num">17.</td><td><a href="Ch16Gcongr/#ch16-gcongr">gcongr：广义合同性</a></td></tr><tr class="numbered"><td class="num">18.</td><td><a href="Ch17FieldSimp/#ch17-field-simp"><code>field_simp</code>：分式化简</a></td></tr><tr class="numbered"><td class="num">19.</td><td><a href="Ch18LogicTransforms/#ch18-logic-transforms">push<em>neg、contrapose、by</em>contra</a></td></tr><tr class="numbered"><td class="num">20.</td><td><a href="Ch19DesignYourOwn/#ch19-design-your-own">设计你自己的领域自动化</a></td></tr><tr class="numbered"><td class="num">21.</td><td><a href="Ch20Reflection/#ch20-reflection">反射证明模式</a></td></tr><tr class="numbered"><td class="num">22.</td><td><a href="Ch21Performance/#ch21-performance">性能工程</a></td></tr><tr class="numbered"><td class="num">23.</td><td><a href="Ch22ExternalTools/#ch22-external-tools">对接外部工具</a></td></tr><tr class="numbered"><td class="num">24.</td><td><a href="Ch23Methodology/#ch23-methodology">从证明模式到自动化：方法论</a></td></tr><tr class="numbered"><td class="num">25.</td><td><a href="Ch24TowardsAnalysis/#ch24-towards-analysis">迈向分析自动化</a></td></tr></table></div>
+              <table><tr class="numbered"><td class="num">1.</td><td><a href="Ch00Setup/#ch00-setup">环境与运行约定</a></td></tr><tr class="numbered"><td class="num">2.</td><td><a href="Ch01MetaprogrammingModel/#ch01-metaprogramming-model">Lean 4 元编程模型</a></td></tr><tr class="numbered"><td class="num">3.</td><td><a href="Ch02Expr/#ch02-expr">Expr：Lean 4 的内部表示</a></td></tr><tr class="numbered"><td class="num">4.</td><td><a href="Ch03FirstTactic/#ch03-first-tactic">编写你的第一个 Tactic</a></td></tr><tr class="numbered"><td class="num">5.</td><td><a href="Ch04GoalManagement/#ch04-goal-management">目标管理</a></td></tr><tr class="numbered"><td class="num">6.</td><td><a href="Ch05TypeclassSynthesis/#ch05-typeclass-synthesis">Type Class Synthesis</a></td></tr><tr class="numbered"><td class="num">7.</td><td><a href="Ch06Simp/#ch06-simp">simp——化简的瑞士军刀</a></td></tr><tr class="numbered"><td class="num">8.</td><td><a href="Ch07Ring/#ch07-ring">ring 和 <code>ring_nf</code>：代数范式化</a></td></tr><tr class="numbered"><td class="num">9.</td><td><a href="Ch08Omega/#ch08-omega">omega：Presburger 算术决策过程</a></td></tr><tr class="numbered"><td class="num">10.</td><td><a href="Ch09Linarith/#ch09-linarith">linarith、nlinarith 与 polyrith</a></td></tr><tr class="numbered"><td class="num">11.</td><td><a href="Ch10NormNum/#ch10-norm-num"><code>norm_num</code>：数值计算框架</a></td></tr><tr class="current numbered"><td class="num">12.</td><td><a href="Ch11Aesop/#ch11-aesop">aesop：可配置的启发式搜索</a></td></tr><tr class="numbered"><td class="num">13.</td><td><a href="Ch12Grind/#ch12-grind">grind：E-matching 与 Congruence Closure</a></td></tr><tr class="numbered"><td class="num">14.</td><td><a href="Ch13Decide/#ch13-decide">decide 与 <code>native_decide</code>：有限计算判定</a></td></tr><tr class="numbered"><td class="num">15.</td><td><a href="Ch14Positivity/#ch14-positivity">positivity：符号非负性推理</a></td></tr><tr class="numbered"><td class="num">16.</td><td><a href="Ch15FunProp/#ch15-fun-prop"><code>fun_prop</code>：函数性质的自动证明</a></td></tr><tr class="numbered"><td class="num">17.</td><td><a href="Ch16Gcongr/#ch16-gcongr">gcongr：广义合同性</a></td></tr><tr class="numbered"><td class="num">18.</td><td><a href="Ch17FieldSimp/#ch17-field-simp"><code>field_simp</code>：分式化简</a></td></tr><tr class="numbered"><td class="num">19.</td><td><a href="Ch18LogicTransforms/#ch18-logic-transforms">push<em>neg、contrapose、by</em>contra</a></td></tr><tr class="numbered"><td class="num">20.</td><td><a href="Ch19DesignYourOwn/#ch19-design-your-own">设计你自己的领域自动化</a></td></tr><tr class="numbered"><td class="num">21.</td><td><a href="Ch20Reflection/#ch20-reflection">反射证明模式</a></td></tr><tr class="numbered"><td class="num">22.</td><td><a href="Ch21Performance/#ch21-performance">性能工程</a></td></tr><tr class="numbered"><td class="num">23.</td><td><a href="Ch22ExternalTools/#ch22-external-tools">对接外部工具</a></td></tr><tr class="numbered"><td class="num">24.</td><td><a href="Ch23Methodology/#ch23-methodology">从证明模式到自动化：方法论</a></td></tr><tr class="numbered"><td class="num">25.</td><td><a href="Ch24TowardsAnalysis/#ch24-towards-analysis">迈向分析自动化</a></td></tr></table></div>
             <div class="split-toc">
               <div class="title">
-                <label for="--verso-manual-toc-ch11-aesop" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch11-aesop" checked="checked"></label><span class="number">12.</span> <span class="current"><a href="Ch11Aesop/#ch11-aesop">aesop：可配置的搜索引擎</a></span></div>
-              <table><tr class="numbered"><td class="num">12.1.</td><td><a href="Ch11Aesop/#aesop-what-it-solves">11.1 aesop 解决什么问题</a></td></tr><tr class="numbered"><td class="num">12.2.</td><td><a href="Ch11Aesop/#search-architecture">11.2 搜索架构</a></td></tr><tr class="numbered"><td class="num">12.3.</td><td><a href="Ch11Aesop/#rule-types">11.3 规则类型</a></td></tr><tr class="numbered"><td class="num">12.4.</td><td><a href="Ch11Aesop/#rule-actions">11.4 规则动作</a></td></tr><tr class="numbered"><td class="num">12.5.</td><td><a href="Ch11Aesop/#configuring-aesop">11.5 配置 aesop</a></td></tr><tr class="numbered"><td class="num">12.6.</td><td><a href="Ch11Aesop/#finset-rule-set-example">11.6 案例：Finset 的 aesop 规则集</a></td></tr><tr class="numbered"><td class="num">12.7.</td><td><a href="Ch11Aesop/#debugging-aesop">11.7 调试 aesop</a></td></tr><tr class="numbered"><td class="num">12.8.</td><td><a href="Ch11Aesop/#ch11-common-failure-patterns">11.8 常见失败模式</a></td></tr><tr class="numbered"><td class="num">12.9.</td><td><a href="Ch11Aesop/#limitations-and-best-practices">11.9 局限与最佳实践</a></td></tr><tr class="numbered"><td class="num">12.10.</td><td><a href="Ch11Aesop/#combining-with-other-tactics">11.10 与其他 tactic 组合</a></td></tr><tr class="numbered"><td class="num">12.11.</td><td><a href="Ch11Aesop/#ch11-summary">11.11 小结</a></td></tr><tr class="numbered"><td class="num">12.12.</td><td><a href="Ch11Aesop/#ch11-exercises">练习</a></td></tr></table></div>
+                <label for="--verso-manual-toc-ch11-aesop" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch11-aesop" checked="checked"></label><span class="number">12.</span> <span class="current"><a href="Ch11Aesop/#ch11-aesop">aesop：可配置的启发式搜索</a></span></div>
+              <table><tr class="numbered"><td class="num">12.1.</td><td><a href="Ch11Aesop/#ch11-usage">用法详解</a></td></tr><tr class="numbered"><td class="num">12.2.</td><td><a href="Ch11Aesop/#ch11-source-overview">源码全景</a></td></tr><tr class="numbered"><td class="num">12.3.</td><td><a href="Ch11Aesop/#ch11-search-tree">搜索树：三层节点</a></td></tr><tr class="numbered"><td class="num">12.4.</td><td><a href="Ch11Aesop/#ch11-search-monad">搜索单子 SearchM</a></td></tr><tr class="numbered"><td class="num">12.5.</td><td><a href="Ch11Aesop/#ch11-search-loop">搜索主循环</a></td></tr><tr class="numbered"><td class="num">12.6.</td><td><a href="Ch11Aesop/#ch11-normalization">规范化阶段</a></td></tr><tr class="numbered"><td class="num">12.7.</td><td><a href="Ch11Aesop/#ch11-rule-system">规则系统</a></td></tr><tr class="numbered"><td class="num">12.8.</td><td><a href="Ch11Aesop/#ch11-script-generation">脚本生成</a></td></tr><tr class="numbered"><td class="num">12.9.</td><td><a href="Ch11Aesop/#ch11-debugging">调试手册</a></td></tr><tr class="numbered"><td class="num">12.10.</td><td><a href="Ch11Aesop/#ch11-extension-points">扩展点</a></td></tr><tr class="numbered"><td class="num">12.11.</td><td><a href="Ch11Aesop/#ch11-design-decisions">关键设计决策总结</a></td></tr><tr class="numbered"><td class="num">12.12.</td><td><a href="Ch11Aesop/#ch11-exercises">练习</a></td></tr></table></div>
             </div>
           </div>
         <div class="last"></div>
@@ -959,15 +959,22 @@ window.onload = () => {
             <a class="local-button active" href="Ch10NormNum/#ch10-norm-num" rel="prev" title="11. norm_num：数值计算框架"><span class="arrow">←</span><span class="where">11. norm_num：数值计算框架</span></a><a class="local-button active" href="Ch12Grind/#ch12-grind" rel="next" title="13. grind：E-matching 与 Congruence Closure"><span class="where">13. grind：E-matching 与 Congruence Closure</span><span class="arrow">→</span></a></nav>
           <section>
             <h1>
-              12. aesop：可配置的搜索引擎<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-aesop" title="Permalink">🔗</a></span></h1>
+              12. aesop：可配置的启发式搜索<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-aesop" title="Permalink">🔗</a></span></h1>
             <p>
-              <strong>本章目标</strong>：理解 <code>aesop</code> 的搜索架构，学会配置规则集、编写自定义规则，并能诊断搜索失败。</p>
+              <strong>本章目标</strong>：前半章掌握 <code>aesop</code> 家族的用法、规则配置与调试技巧；后半章从 Aesop 真实源码层面拆解完整实现——搜索树数据结构、best-first 主循环、三类规则系统、规范化阶段、脚本生成——面向想深入理解内部机制的读者。</p>
+            <p>
+              <code>aesop</code>（Automated Extensible Search for Obvious Proofs）是 Lean 4 / Mathlib 中最灵活的自动化 tactic，实现<strong>可配置的最佳优先搜索</strong>在规则集上做前向/后向推理。作者是 Jannis Limperg，作为 Mathlib 的依赖发布，源码在 <code>.lake/packages/aesop/</code> 中。</p>
+            <p>
+              <strong>定位说明</strong>：aesop 的设计哲学与 <code>simp</code>、<code>omega</code> 有本质不同。<code>simp</code> 是确定性的重写引擎——给定引理集和表达式，重写路径基本唯一。<code>omega</code> 是判定过程——在线性算术的完备片段内保证有解就找到。<code>aesop</code> 既不是确定性重写，也不是完备判定——它是一个<strong>可配置的启发式搜索框架</strong>，用 best-first search 在用户定义的规则空间中寻找证明。它的核心价值不在于算法的数学深度，而在于将搜索策略、规则管理、proof reconstruction 三者精巧地组合成一个可扩展的自动化平台。</p>
             <section>
-              <h2 id="aesop-what-it-solves">
-                12.1. 11.1 aesop 解决什么问题<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=aesop-what-it-solves" title="Permalink">🔗</a></span></h2>
-              <p>
-                <code>aesop</code>（Automated Extensible Search for Obvious Proofs）是 Lean 4 / Mathlib 中最灵活的自动化 tactic，实现<strong>可配置的最佳优先搜索</strong>在规则集上做前向/后向推理。</p>
-              <pre>-- 逻辑推理：aesop 的主场
+              <h2 id="ch11-usage">
+                12.1. 用法详解<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-usage" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="ch11-what-aesop-solves">
+                  12.1.1. aesop 解决什么问题<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-what-aesop-solves" title="Permalink">🔗</a></span></h3>
+                <p>
+                  aesop 擅长<strong>逻辑推理</strong>和<strong>结构操作</strong>——<code>intro</code>、<code>apply</code>、<code>cases</code>、<code>constructor</code>、<code>assumption</code> 等组合搜索：</p>
+                <pre>-- 逻辑推理：aesop 的主场
 example (P Q R : Prop) (h1 : P → Q) (h2 : Q → R) (hp : P) : R := by
   aesop                       -- ▸ apply h2, apply h1, exact hp
 
@@ -978,146 +985,169 @@ example (P Q : Prop) (h : P ∧ Q) : Q ∧ P := by
 example : List.length ([] : List Nat) = 0 := by
   aesop                       -- ▸ norm 阶段 simp 直接化简
 </pre><p>
-                <strong>与 <code>simp</code> 的区别</strong>：<code>simp</code> 是重写引擎（等式/iff 替换）；<code>aesop</code> 是搜索引擎（<code>intro</code>、<code>apply</code>、<code>cases</code>、<code>constructor</code> 等结构操作）。两者互补不互替。</p>
-              <blockquote><p>
-                  <strong>类型标注提醒</strong>：涉及 <code>Set</code>、<code>Finset</code> 等 typeclass 密集类型时，必须显式标注</p>
-                </blockquote><blockquote><p>
-                  （如 <code>s t : Set α</code>），否则 elaboration 卡在 typeclass synthesis——这不是 aesop 的问题。</p>
-                </blockquote></section>
-            <section>
-              <h2 id="search-architecture">
-                12.2. 11.2 搜索架构<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=search-architecture" title="Permalink">🔗</a></span></h2>
-              <p>
-                aesop 对每个目标执行三阶段搜索：</p>
-              <ol start="1">
-                <li>
-                  <p>
-                    <strong>Normalization</strong>：执行 <code>norm</code> 规则，将目标化为标准形式。</p>
-                  </li>
-                <li>
-                  <p>
-                    <strong>Safe rules</strong>：执行 <code>safe</code> 规则——保证不引入死路，直接应用不分支。</p>
-                  </li>
-                <li>
-                  <p>
-                    <strong>Unsafe rules</strong>：尝试 <code>unsafe</code> 规则，每条产生一个搜索分支。</p>
-                  </li>
-                </ol>
-              <pre>目标: a ∈ s ∩ t → a ∈ s
+                  <strong>与 <strong><code>simp</code> 的区别</strong></strong>：<code>simp</code> 是重写引擎（等式/iff 替换）；<code>aesop</code> 是搜索引擎（结构操作组合）。两者互补不互替。</p>
+                <p>
+                  <strong>类型标注提醒</strong>：涉及 <code>Set</code>、<code>Finset</code> 等 typeclass 密集类型时，必须显式标注（如 <code>s t : Set α</code>），否则 elaboration 卡在 typeclass synthesis——这不是 aesop 的问题。</p>
+                </section>
+              <section>
+                <h3 id="ch11-aesop-limitations">
+                  12.1.2. aesop 不能做什么<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-aesop-limitations" title="Permalink">🔗</a></span></h3>
+                <p>
+                  aesop 是启发式搜索，不是决策过程。即使目标在当前规则集下"理论上可证"，aesop 也可能找不到证明：</p>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>等式推理</strong>：不做重写链——用 <code>simp</code>、<code>ring</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>线性算术</strong>：不做数值决策——用 <code>omega</code>、<code>linarith</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>深度组合</strong>：搜索爆炸——手动分步 + aesop 收尾</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>高阶 unification</strong>：只做一阶匹配——用 <code>exact?</code>、手动 <code>apply</code></p>
+                    </li>
+                  </ul>
+                <p>
+                  搜索失败通常不是 bug，而是需要调整规则集或搜索参数。</p>
+                </section>
+              <section>
+                <h3 id="ch11-aesop-family">
+                  12.1.3. aesop 家族：aesop / aesop? / aesop_nonterminal<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-aesop-family" title="Permalink">🔗</a></span></h3>
+                <p>
+                  | 变体 | 行为 |
+|------|------|
+| <code>aesop</code> | 默认非 terminal——未完全证明时返回剩余目标 |
+| <code>aesop?</code> | 同 <code>aesop</code>，但输出 <code>Try this:</code> 脚本建议 |
+| <code>aesop (config := { terminal := true })</code> | 必须完全证明，否则报错 |</p>
+                <p>
+                  <strong><strong><code>aesop?</code> 的用途</strong></strong>：生成可复制的 tactic 脚本。输出是<strong>稳定的手写证明</strong>，适合替换到正式代码中——编译更快、跨版本稳定、可读性更好。</p>
+                </section>
+              <section>
+                <h3 id="ch11-rule-types">
+                  12.1.4. 规则类型：norm / safe / unsafe<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-rule-types" title="Permalink">🔗</a></span></h3>
+                <p>
+                  aesop 对每个目标执行三阶段搜索：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <strong>Normalization</strong>：执行 <code>norm</code> 规则，将目标化为标准形式</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>Safe rules</strong>：执行 <code>safe</code> 规则——匹配即 commit，不分支不回溯</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>Unsafe rules</strong>：尝试 <code>unsafe</code> 规则，每条产生一个搜索分支</p>
+                    </li>
+                  </ol>
+                <pre>目标: a ∈ s ∩ t → a ∈ s
   ├─ [norm] simp → 无变化
   ├─ [safe] intro h               ← 假设 h : a ∈ s ∩ t
   │   └─ [safe] exact h.1 → ✅   ← And.left 取出
   └─ (unsafe 分支未展开)
-</pre><p>
-                <strong>最佳优先</strong>：unsafe 规则有 <code>successProbability</code> 得分，优先队列展开高分分支。
-<strong>有界搜索</strong>：<code>maxRuleApplications</code>（默认 200）和 <code>maxDepth</code>（默认 30）防止爆炸。</p>
-              </section>
-            <section>
-              <h2 id="rule-types">
-                12.3. 11.3 规则类型<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=rule-types" title="Permalink">🔗</a></span></h2>
-              <section>
-                <h3 id="aesop-norm-rules">
-                  12.3.1. <code>@[aesop norm]</code> — 规范化规则<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=aesop-norm-rules" title="Permalink">🔗</a></span></h3>
-                <p>
-                  每个搜索节点开头运行，将目标化为标准形式：</p>
-                <pre>@[aesop norm simp]
+</pre><section>
+                  <h4 id="ch11-norm-rules">
+                    12.1.4.1. <code>@[aesop norm]</code> — 规范化规则<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-norm-rules" title="Permalink">🔗</a></span></h4>
+                  <p>
+                    每个搜索节点开头运行，将目标化为标准形式。典型构建器是 <code>simp</code> 和 <code>unfold</code>：</p>
+                  <pre>@\[aesop norm simp]
 theorem List.length_nil : ([] : List α).length = 0 := by simp
 -- ▸ 效果 = 每个节点插入 simp only [List.length_nil]
 
-@[aesop norm tactic (rule_sets := [Arith])]
-def omega_norm : Aesop.RuleTac := fun _ =&gt; `(tactic| omega)
--- ▸ norm 阶段尝试 omega
-</pre></section>
-              <section>
-                <h3 id="aesop-safe-rules">
-                  12.3.2. <code>@[aesop safe]</code> — 安全规则<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=aesop-safe-rules" title="Permalink">🔗</a></span></h3>
-                <p>
-                  适用时直接执行，不分支不回溯：</p>
-                <pre>@[aesop safe apply]
+@\[aesop norm unfold]
+def myDef := 42
+-- ▸ norm 阶段展开 myDef
+</pre><p>
+                    优先级用整数标注——penalty 越小越先执行。penalty &lt; 0 的 norm 规则在 simp 之前运行，penalty ≥ 0 的在 simp 之后。</p>
+                  </section>
+                <section>
+                  <h4 id="ch11-safe-rules">
+                    12.1.4.2. <code>@[aesop safe]</code> — 安全规则<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-safe-rules" title="Permalink">🔗</a></span></h4>
+                  <p>
+                    适用时直接 commit——<strong>不分支、不回溯</strong>。这是 aesop 最重要的搜索空间裁剪机制：</p>
+                  <pre>@\[aesop safe apply]
 theorem And.intro {a b : Prop} (ha : a) (hb : b) : a ∧ b := ⟨ha, hb⟩
 -- ▸ 目标 P ∧ Q 时立即 apply
 
-@[aesop safe forward]
+@\[aesop safe forward]
 theorem Set.mem_of_mem_inter_left : a ∈ s ∩ t → a ∈ s := And.left
 -- ▸ 假设有 h : a ∈ s ∩ t 时，自动添加 a ∈ s
-</pre><blockquote><p>
-                    <strong>经验法则</strong>：只有<strong>必定不丢失信息</strong>时才标 <code>safe</code>。</p>
-                  </blockquote><p>
-                  优先级用整数标注（越大越先）：<code>@[aesop safe 100 apply]</code>。</p>
-                </section>
-              <section>
-                <h3 id="aesop-unsafe-rules">
-                  12.3.3. <code>@[aesop unsafe N%]</code> — 不安全规则<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=aesop-unsafe-rules" title="Permalink">🔗</a></span></h3>
-                <p>
-                  可能失败，需要回溯。百分比影响搜索优先级：</p>
-                <pre>@[aesop unsafe 70% apply]
+</pre><p>
+                    <strong>经验法则</strong>：只有<strong>必定不丢失信息</strong>时才标 <code>safe</code>。优先级用整数标注（penalty 越小越先执行）：<code>@\[aesop safe 1 apply]</code>。</p>
+                  <p>
+                    <strong>术语澄清</strong>：safe / unsafe 的区别<strong>不是</strong>"这条规则逻辑上是否安全"——所有规则都是 sound 的。区别在于<strong>搜索控制语义</strong>：safe 意味着"采纳这一步几乎不会后悔"，unsafe 意味着"这一步有用但可能需要撤回"。</p>
+                  </section>
+                <section>
+                  <h4 id="ch11-unsafe-rules">
+                    12.1.4.3. <code>@[aesop unsafe N%]</code> — 不安全规则<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-unsafe-rules" title="Permalink">🔗</a></span></h4>
+                  <p>
+                    可能失败，需要回溯。百分比影响搜索优先级：</p>
+                  <pre>@\[aesop unsafe 70% apply]
 theorem mem_inter_iff : a ∈ s ∩ t ↔ a ∈ s ∧ a ∈ t := Iff.rfl
 -- ▸ 70% 优先于 50% 展开
 
-@[aesop unsafe 20% apply]
+@\[aesop unsafe 20% apply]
 theorem Classical.em (p : Prop) : p ∨ ¬p := ...
 -- ▸ 低优先级后备
 </pre><p>
-                  百分比指南：80–100% 几乎总有效；50–80% 通常有效；20–50% 偶尔有效；&lt;20% 极少有效。</p>
+                    百分比指南：80–100% 几乎总有效；50–80% 通常有效；20–50% 偶尔有效；&lt;20% 极少有效。成功概率沿搜索路径<strong>累乘</strong>：根目标 100%，经过 <code>unsafe 80%</code> 变为 0.8，再经过 <code>unsafe 50%</code> 变为 0.4。</p>
+                  </section>
                 </section>
-              </section>
-            <section>
-              <h2 id="rule-actions">
-                12.4. 11.4 规则动作<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=rule-actions" title="Permalink">🔗</a></span></h2>
-              <ul>
-                <li>
-                  <p>
-                    动作：<code>apply</code> —— 说明：apply 目标 —— 用途：后向推理</p>
-                  </li>
-                <li>
-                  <p>
-                    动作：<code>forward</code> —— 说明：从假设推新事实，<strong>保留</strong>原假设 —— 用途：丰富上下文</p>
-                  </li>
-                <li>
-                  <p>
-                    动作：<code>destruct</code> —— 说明：从假设推新事实，<strong>消耗</strong>原假设 —— 用途：避免重复</p>
-                  </li>
-                <li>
-                  <p>
-                    动作：<code>cases</code> —— 说明：对项做 cases —— 用途：枚举拆分</p>
-                  </li>
-                <li>
-                  <p>
-                    动作：<code>simp</code> —— 说明：simp 化简 —— 用途：仅 <code>norm</code></p>
-                  </li>
-                <li>
-                  <p>
-                    动作：<code>tactic</code> —— 说明：执行任意 tactic —— 用途：灵活慎用</p>
-                  </li>
-                </ul>
-              <pre>@[aesop safe apply]
+              <section>
+                <h3 id="ch11-rule-builders">
+                  12.1.5. 规则动作（Builder）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-rule-builders" title="Permalink">🔗</a></span></h3>
+                <p>
+                  构建器决定规则如何应用到目标或假设上：</p>
+                <p>
+                  | 构建器 | 行为 | 用途 |
+|--------|------|------|
+| <code>apply</code> | apply 定理到目标 | 后向推理 |
+| <code>forward</code> | 从假设推新事实，<strong>保留</strong>原假设 | 丰富上下文 |
+| <code>destruct</code> | 从假设推新事实，<strong>消耗</strong>原假设 | 避免重复 |
+| <code>cases</code> | 对项做 cases | 枚举拆分 |
+| <code>constructors</code> | 应用归纳类型的构造子 | 构造证明 |
+| <code>simp</code> | 添加到 norm simp 集 | 仅 <code>norm</code> 阶段 |
+| <code>unfold</code> | norm 阶段展开定义 | 仅 <code>norm</code> 阶段 |
+| <code>tactic</code> | 执行任意 tactic | 灵活慎用 |
+| <code>default</code> | 自动选择 | 省略构建器时的默认行为 |</p>
+                <p>
+                  <code>default</code> 构建器根据声明类型自动选择：归纳类型 → <code>constructors</code>；命题 → <code>apply</code>（safe/unsafe）或 <code>simp</code>（norm）。这就是为什么 <code>@\[aesop safe]</code> 不需要显式指定构建器。</p>
+                <pre>@\[aesop safe apply]
 theorem Or.inl : a → a ∨ b := fun h =&gt; .inl h
--- ▸ 目标 a ∨ b → 变为 a
 
-@[aesop unsafe 50% tactic]
+@\[aesop unsafe 50% tactic]
 def try_ring : Aesop.RuleTac := fun _ =&gt; `(tactic| ring)
 -- ▸ 搜索中尝试 ring，失败回溯
 </pre></section>
-            <section>
-              <h2 id="configuring-aesop">
-                12.5. 11.5 配置 aesop<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=configuring-aesop" title="Permalink">🔗</a></span></h2>
               <section>
-                <h3 id="inline-configuration">
-                  12.5.1. 内联配置<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=inline-configuration" title="Permalink">🔗</a></span></h3>
-                <pre>-- 限制搜索深度
-aesop (config := { maxDepth := 10 })
+                <h3 id="ch11-config">
+                  12.1.6. 配置 aesop<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-config" title="Permalink">🔗</a></span></h3>
+                <section>
+                  <h4 id="ch11-inline-config">
+                    12.1.6.1. 内联配置<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-inline-config" title="Permalink">🔗</a></span></h4>
+                  <pre>-- 限制搜索深度
+aesop (config := { maxRuleApplicationDepth := 10 })
 
 -- 临时添加/移除规则
 aesop (add safe apply my_lemma)
 aesop (add unsafe 60% apply another_lemma)
 aesop (erase Aesop.BuiltinRules.assumption)
-</pre></section>
-              <section>
-                <h3 id="rule-sets">
-                  12.5.2. 规则集<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=rule-sets" title="Permalink">🔗</a></span></h3>
-                <pre>declare_aesop_rule_sets [MyDomain]           -- 1. 声明
 
-@[aesop safe apply (rule_sets := [MyDomain])]
+-- simp 配置
+aesop (simp_config := { decide := false })
+</pre></section>
+                <section>
+                  <h4 id="ch11-rule-sets">
+                    12.1.6.2. 规则集<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-rule-sets" title="Permalink">🔗</a></span></h4>
+                  <pre>declare_aesop_rule_sets [MyDomain]           -- 1. 声明
+
+@\[aesop safe apply (rule_sets := [MyDomain])]
 theorem my_key_lemma : ... := ...             -- 2. 注册
 
 example : ... := by
@@ -1125,183 +1155,46 @@ example : ... := by
 
 macro "my_aesop" : tactic =&gt;
   `(tactic| aesop (rule_sets := [MyDomain]))  -- 4. 简化调用
-</pre></section>
-              <section>
-                <h3 id="common-config-options">
-                  12.5.3. 常用配置选项摘录<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=common-config-options" title="Permalink">🔗</a></span></h3>
-                <ul>
-                  <li>
-                    <p>
-                      选项：<code>maxDepth</code> —— 默认值：30 —— 说明：搜索树最大深度</p>
-                    </li>
-                  <li>
-                    <p>
-                      选项：<code>maxRuleApplications</code> —— 默认值：200 —— 说明：规则应用次数上限</p>
-                    </li>
-                  <li>
-                    <p>
-                      选项：<code>enableSimp</code> —— 默认值：true —— 说明：norm 阶段是否运行 simp</p>
-                    </li>
-                  <li>
-                    <p>
-                      选项：<code>terminal</code> —— 默认值：false —— 说明：true = 必须完全关闭目标</p>
-                    </li>
-                  </ul>
-                <blockquote><p>
-                    <strong><code>terminal</code> 模式</strong>：生产代码推荐开启——aesop 无法关闭目标就报错，避免"部分成功"隐患。</p>
-                  </blockquote></section>
-              </section>
-            <section>
-              <h2 id="finset-rule-set-example">
-                12.6. 11.6 案例：Finset 的 aesop 规则集<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=finset-rule-set-example" title="Permalink">🔗</a></span></h2>
-              <pre>-- Mathlib 中 Finset 规则（简化版）
-@[aesop safe apply (rule_sets := [Finset])]
-theorem Finset.mem_union : a ∈ s ∪ t ↔ a ∈ s ∨ a ∈ t := ...
-
-@[aesop safe apply (rule_sets := [Finset])]
-theorem Finset.mem_inter : a ∈ s ∩ t ↔ a ∈ s ∧ a ∈ t := ...
-
-@[aesop unsafe 70% apply (rule_sets := [Finset])]
-theorem Finset.subset_union_left : s ⊆ s ∪ t := ...
-
--- 使用效果
-example (h : a ∈ s) : a ∈ s ∪ (t ∩ u) := by
-  aesop (rule_sets := [Finset])
-  -- 1. [safe]   mem_union.mpr → 目标: a ∈ s ∨ a ∈ t ∩ u
-  -- 2. [unsafe] Or.inl        → 目标: a ∈ s
-  -- 3. [safe]   exact h       → ✅
-</pre></section>
-            <section>
-              <h2 id="debugging-aesop">
-                12.7. 11.7 调试 aesop<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=debugging-aesop" title="Permalink">🔗</a></span></h2>
-              <section>
-                <h3 id="ch11-trace-options">
-                  12.7.1. trace 选项<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-trace-options" title="Permalink">🔗</a></span></h3>
-                <pre>set_option trace.aesop true in       -- 完整搜索过程
-set_option trace.aesop.ruleSet true in -- 只看规则集
-</pre><blockquote><p>
-                    trace option 名称随版本变化。报 "unknown option" 时试 <code>trace.aesop</code> 查看子选项。</p>
-                  </blockquote></section>
-              <section>
-                <h3 id="reading-error-messages">
-                  12.7.2. 阅读错误信息<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=reading-error-messages" title="Permalink">🔗</a></span></h3>
-                <pre>aesop: failed to prove the goal after exhaustive search.
-  Searched 47 nodes, max depth reached: 15
-  Final goals:  ⊢ a ∈ t
-</pre><ul>
-                  <li>
-                    <p>
-                      <strong>Searched N nodes</strong>：太少 = 规则不够，太多 = 规则太泛</p>
-                    </li>
-                  <li>
-                    <p>
-                      <strong>max depth reached</strong>：考虑增加 <code>maxDepth</code></p>
-                    </li>
-                  <li>
-                    <p>
-                      <strong>Final goals</strong>："差了哪一步"的线索</p>
-                    </li>
-                  </ul>
-                </section>
-              <section>
-                <h3 id="aesop-suggest">
-                  12.7.3. <code>aesop?</code> — 提取证明脚本<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=aesop-suggest" title="Permalink">🔗</a></span></h3>
-                <pre>example {α : Type} (a : α) (s t : Set α) (h : a ∈ s) : a ∈ s ∪ t := by
-  aesop?   -- ▸ Try this: exact Set.mem_union_left t h
 </pre><p>
-                  输出是<strong>稳定的手写证明</strong>。推荐替换场景：编译速度、跨版本稳定、可读性。</p>
-                </section>
-              </section>
-            <section>
-              <h2 id="ch11-common-failure-patterns">
-                12.8. 11.8 常见失败模式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-common-failure-patterns" title="Permalink">🔗</a></span></h2>
-              <section>
-                <h3 id="failure-insufficient-type-info">
-                  12.8.1. 失败 1：类型信息不足<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-insufficient-type-info" title="Permalink">🔗</a></span></h3>
-                <pre>-- ❌ a, s, t 类型未知
--- example (a : _) (s t : _) (h : a ∈ s) : a ∈ s ∪ t := by aesop
--- ✅ 显式标注
-example {α : Type} (a : α) (s t : Set α) (h : a ∈ s) : a ∈ s ∪ t := by aesop
-</pre><p>
-                  <strong>诊断</strong>：目标简单但失败 → 检查 metavariable（<code>?m</code>）或未解析 typeclass。</p>
-                </section>
-              <section>
-                <h3 id="failure-missing-rules">
-                  12.8.2. 失败 2：缺少关键规则<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-missing-rules" title="Permalink">🔗</a></span></h3>
-                <pre>-- ❌ 默认规则集没有 Nat.add_comm
--- example (n m : Nat) : n + m = m + n := by aesop
--- ✅ 方案 A：aesop (add safe simp Nat.add_comm)
--- ✅ 方案 B（更好）：这本来就不是 aesop 的活 → omega
-</pre><p>
-                  <strong>诊断</strong>：查 Final goals → 确认缺什么引理 → <code>add</code> 补充。
-但更重要的判断是：<strong>这个目标是否属于 aesop 的能力范围？</strong> 等式推理、算术、重写链等目标即使补了规则也事倍功半——应直接换用 <code>omega</code>、<code>ring</code>、<code>simp</code> 等专用 tactic。</p>
-                </section>
-              <section>
-                <h3 id="failure-search-space-explosion">
-                  12.8.3. 失败 3：搜索空间爆炸<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-search-space-explosion" title="Permalink">🔗</a></span></h3>
-                <pre>-- ❌ 超时
--- example : deeply_nested_prop := by aesop
--- ✅ 手动 have 关键步骤 + 限制深度
--- example : deeply_nested_prop := by
---   have key := key_lemma
---   aesop (config := { maxDepth := 10 })
-</pre><p>
-                  <strong>诊断</strong>：大量节点仍失败 → unsafe 分支太多。
-策略：<code>have</code> 中间步骤 / 降低 <code>maxRuleApplications</code> / <code>erase</code> 不相关规则。</p>
-                </section>
-              <section>
-                <h3 id="failure-safe-rules-too-aggressive">
-                  12.8.4. 失败 4：safe 规则过度激进<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-safe-rules-too-aggressive" title="Permalink">🔗</a></span></h3>
-                <pre>-- ❌ destruct 消耗假设丢失信息
--- @[aesop safe destruct]
--- theorem bad : P ∨ Q → True := fun _ =&gt; trivial
--- ✅ 改为 forward 或降级 unsafe
-</pre><p>
-                  <strong>诊断</strong>：假设充足仍失败 → <code>trace.aesop</code> 检查 safe 规则是否"吃掉"有用假设。</p>
-                </section>
-              <section>
-                <h3 id="failure-forward-rule-cycles">
-                  12.8.5. 失败 5：forward 规则循环<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-forward-rule-cycles" title="Permalink">🔗</a></span></h3>
-                <pre>-- ❌ 互相触发产生无限新假设
--- @[aesop safe forward] theorem fwd  : R a b → R b a := ...
--- @[aesop safe forward] theorem back : R b a → R a b := ...
--- ✅ 只保留一个方向，或改用 destruct
-</pre><p>
-                  <strong>诊断</strong>：超时或 <code>maxRuleApplications</code> 耗尽 → 检查 forward 规则是否形成环。</p>
-                </section>
-              </section>
-            <section>
-              <h2 id="limitations-and-best-practices">
-                12.9. 11.9 局限与最佳实践<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=limitations-and-best-practices" title="Permalink">🔗</a></span></h2>
-              <ul>
-                <li>
+                    <code>default := false</code> 表示规则集默认不启用，需要在 <code>aesop</code> 调用时显式列出。这允许构建领域特定的规则库而不影响通用的 <code>aesop</code>。</p>
+                  </section>
+                <section>
+                  <h4 id="ch11-common-options">
+                    12.1.6.3. 常用配置选项<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-common-options" title="Permalink">🔗</a></span></h4>
                   <p>
-                    不擅长：等式推理 —— 原因：不做重写链 —— 替代：<code>simp</code>、<code>ring</code></p>
-                  </li>
-                <li>
+                    | 选项 | 默认值 | 说明 |
+|------|--------|------|
+| <code>strategy</code> | <code>bestFirst</code> | 搜索策略（也可 <code>depthFirst</code> / <code>breadthFirst</code>） |
+| <code>maxRuleApplicationDepth</code> | 30 | 单分支最大深度 |
+| <code>maxRuleApplications</code> | 200 | 总规则应用数上限 |
+| <code>maxGoals</code> | 0（无限） | 总目标数上限 |
+| <code>maxNormIterations</code> | 100 | 规范化最大迭代 |
+| <code>terminal</code> | false | true = 必须完全证明 |
+| <code>enableSimp</code> | true | norm 阶段是否运行 simp |
+| <code>useSimpAll</code> | true | 使用 <code>simp_all</code> vs <code>simp at *</code> |
+| <code>useDefaultSimpSet</code> | true | 是否包含全局 <code>@\[simp]</code> 集 |</p>
                   <p>
-                    不擅长：线性算术 —— 原因：不做数值决策 —— 替代：<code>omega</code>、<code>linarith</code></p>
-                  </li>
-                <li>
-                  <p>
-                    不擅长：深度组合 —— 原因：搜索爆炸 —— 替代：手动分步 + aesop 收尾</p>
-                  </li>
-                <li>
-                  <p>
-                    不擅长：高阶 unification —— 原因：只做一阶匹配 —— 替代：<code>exact?</code>、手动 <code>apply</code></p>
-                  </li>
-                </ul>
-              <p>
-                <strong>最佳实践</strong>——"人工搭骨架，aesop 填细节"：</p>
-              <pre>theorem complex_theorem : P := by
-  obtain ⟨a, ha⟩ := existence_lemma    -- 人工：关键存在性
-  have key : Q := crucial_step a ha     -- 人工：关键步骤
-  aesop                                  -- aesop：收尾
-</pre></section>
-            <section>
-              <h2 id="combining-with-other-tactics">
-                12.10. 11.10 与其他 tactic 组合<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=combining-with-other-tactics" title="Permalink">🔗</a></span></h2>
-              <pre>-- simp + aesop：先化简再搜索
+                    <strong><strong><code>terminal</code> 模式</strong></strong>：生产代码推荐开启——aesop 无法关闭目标就报错，避免"部分成功"隐患。</p>
+                  </section>
+                </section>
+              <section>
+                <h3 id="ch11-comparison">
+                  12.1.7. 与 simp / omega / auto 的区别<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-comparison" title="Permalink">🔗</a></span></h3>
+                <p>
+                  | 维度 | aesop | simp | omega | tauto/itauto |
+|------|-------|------|-------|-------------|
+| 类型 | 启发式搜索 | 确定性重写 | 判定过程 | 固定回溯 |
+| 操作 | apply/cases/intro... | 等式改写 | 线性消元 | 命题逻辑 |
+| 可扩展 | 完全（规则集） | 有（<code>@[simp]</code>） | 无 | 无 |
+| 概率引导 | 有 | 无 | 不适用 | 无 |
+| 完备性 | 无 | 在其片段内 | 在 Presburger 内 | 在命题逻辑内 |</p>
+                <p>
+                  与 Isabelle 的 <code>auto</code> 相比，aesop 的最大特点是<strong>概率引导的 best-first search</strong>（而非固定的 depth-first）和<strong>显式的三类规则分类</strong>（norm / safe / unsafe）。</p>
+                </section>
+              <section>
+                <h3 id="ch11-combos">
+                  12.1.8. 与其他 tactic 组合<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-combos" title="Permalink">🔗</a></span></h3>
+                <pre>-- simp + aesop：先化简再搜索
 simp only [some_def]; aesop
 
 -- aesop 作为后备
@@ -1311,39 +1204,1126 @@ first | decide | aesop
 constructor
 · omega    -- 算术
 · aesop    -- 逻辑
+</pre><p>
+                  <strong>最佳实践</strong>——"人工搭骨架，aesop 填细节"：</p>
+                <pre>theorem complex_theorem : P := by
+  obtain ⟨a, ha⟩ := existence_lemma    -- 人工：关键存在性
+  have key : Q := crucial_step a ha     -- 人工：关键步骤
+  aesop                                  -- aesop：收尾
 </pre></section>
+              </section>
             <section>
-              <h2 id="ch11-summary">
-                12.11. 11.11 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-summary" title="Permalink">🔗</a></span></h2>
-              <ul>
-                <li>
+              <h2 id="ch11-source-overview">
+                12.2. 源码全景<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-source-overview" title="Permalink">🔗</a></span></h2>
+              <p>
+                aesop 的源码分布在 <code>Aesop/</code> 目录下。核心文件：</p>
+              <p>
+                | 文件 | 内容 | 行数 |
+|------|------|------|
+| <code>Main.lean</code> | tactic 入口 <code>evalAesop</code> | ~48 |
+| <code>Search/Main.lean</code> | 搜索主循环 <code>searchLoop</code> | ~291 |
+| <code>Search/Expansion.lean</code> | 目标展开 <code>expandGoal</code> | ~267 |
+| <code>Tree/Data.lean</code> | 搜索树数据结构（Goal/Rapp/MVarCluster） | ~925 |
+| <code>Rule.lean</code> | 规则类型定义 | ~210 |
+| <code>RuleSet.lean</code> | 规则集层次 | ~616 |
+| <code>Frontend/RuleExpr.lean</code> | <code>@\[aesop]</code> 属性解析 | ~618 |
+| <code>Script/Main.lean</code> | 脚本生成 | ~84 |
+| <code>Options/Public.lean</code> | 配置选项 | ~211 |</p>
+              <p>
+                aesop 的工程复杂度远超核心搜索算法本身。复杂度主要来自三个方面：</p>
+              <p>
+                <strong>(a) 搜索空间控制。</strong> 三类规则分类、成功概率累乘、深度/总量限制、安全规则的 commit 语义——这些机制共同构成搜索空间裁剪策略。</p>
+              <p>
+                <strong>(b) Metavariable 耦合。</strong> Lean 4 的 metavariable 语义使得搜索树中不同目标之间可能存在隐式耦合。aesop 引入 <code>MVarCluster</code> 显式追踪这种耦合。每个搜索节点还必须保存独立的 <code>Meta.SavedState</code>。</p>
+              <p>
+                <strong>(c) Proof reconstruction。</strong> aesop 必须从成功的搜索路径中提取 Lean 内核可检查的证明项。<code>aesop?</code> 还需要将搜索轨迹翻译为人可读的 tactic 脚本。</p>
+              <section>
+                <h3 id="ch11-architecture">
+                  12.2.1. 架构全景图<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-architecture" title="Permalink">🔗</a></span></h3>
+                <pre>┌─────────────────────────────────────────────────────────┐
+│                    用户接口层                             │
+│  aesop / aesop?  ──→  TacticConfig.parse                │
+│  @\[aesop]        ──→  AttrConfig.elab                   │
+│  declare_aesop_rule_sets / add_aesop_rules              │
+└────────────┬────────────────────────────────────────────┘
+             ▼
+┌─────────────────────────────────────────────────────────┐
+│                    规则管理层                             │
+│  GlobalRuleSet ←── @\[aesop] 注册                        │
+│  mkLocalRuleSet (合并多个 GlobalRuleSet → LocalRuleSet)  │
+│  Index (DiscrTree 索引：target / hyps / unindexed)      │
+└────────────┬────────────────────────────────────────────┘
+             ▼
+┌─────────────────────────────────────────────────────────┐
+│                    搜索引擎层                             │
+│  search → SearchM.run → searchLoop                      │
+│            ┌──────────┼──────────┐                       │
+│            ▼          ▼          ▼                       │
+│      checkProven  expandGoal  checkLimits                │
+│                       │                                  │
+│            ┌──────────┼──────────┐                       │
+│            ▼          ▼          ▼                       │
+│       normalize   runSafe    runUnsafe                   │
+└────────────┬────────────────────────────────────────────┘
+             ▼
+┌─────────────────────────────────────────────────────────┐
+│                    搜索树层                               │
+│  Goal (OR) ←→ Rapp (AND) ←→ MVarCluster                │
+│  状态传播：自底向上 (proven / unprovable)                  │
+│  IO.Ref：原地可变更新                                     │
+└────────────┬────────────────────────────────────────────┘
+             ▼
+┌─────────────────────────────────────────────────────────┐
+│                    输出层                                 │
+│  extractProof → 证明项（MetaM 赋值 mvar）               │
+│  extractScript → tactic 脚本（aesop?）                  │
+│  expandSafePrefix → 剩余目标（部分证明）                  │
+└─────────────────────────────────────────────────────────┘
+</pre><p>
+                  <strong>推荐源码阅读顺序</strong>：如果你准备对照源码阅读本章后半部分，建议按以下顺序：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <code>Aesop/Rule/Name.lean</code> — 先读命名体系。<code>PhaseName</code>、<code>BuilderName</code>、<code>RuleName</code> 是理解整个系统的"词汇表"</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>Aesop/Rule/Basic.lean</code> + <code>Aesop/RuleTac/Descr.lean</code> — 规则结构与 tactic 描述</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>Aesop/RuleSet.lean</code> — 规则集层次</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>Aesop/Tree/Data.lean</code> — 搜索树节点的互递归定义</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>Aesop/Search/Expansion.lean</code> — <code>expandGoal</code> 是搜索的核心单步</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>Aesop/Search/Main.lean</code> — 主循环 <code>searchLoop</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>Aesop/Frontend/Attribute.lean</code> + <code>Aesop/Frontend/Tactic.lean</code> — 用户接口层</p>
+                    </li>
+                  </ol>
+                </section>
+              <section>
+                <h3 id="ch11-eval-aesop">
+                  12.2.2. 入口：evalAesop<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-eval-aesop" title="Permalink">🔗</a></span></h3>
+                <p>
+                  当你写下 <code>aesop</code> 或 <code>aesop?</code>，Lean 的 elaborator 经过以下调用链把它交给搜索引擎。入口定义在 <code>Aesop/Main.lean</code>：</p>
+                <pre>-- [Aesop, Aesop/Main.lean:20-47]
+@\[tactic Frontend.Parser.aesopTactic, tactic Frontend.Parser.aesopTactic?]
+meta def evalAesop : Tactic := λ stx =&gt; do
+  let goal ← getMainGoal
+  goal.withContext do
+    let (solved, stats) ← go stx goal |&gt;.run ∅
+    ...
+where
+  go (stx : Syntax) (goal : MVarId) : StateRefT Stats TacticM Bool :=
+      ...
+      let config ← Frontend.TacticConfig.parse stx goal
+      let ruleSet ← config.getRuleSet goal
+      let (goals, stats) ←
+        search goal ruleSet config.options config.simpConfig
+          config.simpConfigSyntax? (← getStats)
+      replaceMainGoal goals.toList
+      ...
+</pre><p>
+                  <code>evalAesop</code> 做三件事：(1) 解析 tactic 语法为 <code>TacticConfig</code>；(2) 从环境构建 <code>LocalRuleSet</code>；(3) 调用 <code>search</code> 进入搜索引擎。其中 <code>TacticConfig.parse</code> 处理 <code>(add ...)</code> / <code>(erase ...)</code> / <code>(rule_sets := [...])</code> / <code>(config := ...)</code> 等子句。</p>
+                <pre>用户写 `aesop (add safe apply foo)`
+  → Parser 生成 Syntax
+    → TacticConfig.parse (解析 clause)
+      → getRuleSet (合并全局+局部规则 → LocalRuleSet)
+        → search (MetaM 层入口)
+          → SearchM.run (初始化搜索树+队列)
+            → searchLoop (best-first search 主循环)
+              → expandGoal (规范化+规则应用)
+</pre></section>
+              </section>
+            <section>
+              <h2 id="ch11-search-tree">
+                12.3. 搜索树：三层节点<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-search-tree" title="Permalink">🔗</a></span></h2>
+              <p>
+                aesop 的搜索树是一个 <strong>AND-OR 树</strong>，由三种互递归的节点类型组成。这是理解整个搜索过程的基础。</p>
+              <section>
+                <h3 id="ch11-tree-data">
+                  12.3.1. Goal / Rapp / MVarCluster 的真实定义<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-tree-data" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Aesop, Aesop/Tree/Data.lean:316-352]
+structure GoalData (Rapp MVarCluster : Type) : Type where
+  id : GoalId
+  parent : IO.Ref MVarCluster
+  children : Array (IO.Ref Rapp)        -- 子节点：规则应用
+  state : GoalState                     -- unknown/provenByRuleApplication/
+                                        -- provenByNormalization/unprovable
+  preNormGoal : MVarId                  -- 规范化前的目标
+  normalizationState : NormalizationState
+  mvars : UnorderedArraySet MVarId      -- 未赋值的 metavariable
+  successProbability : Percent          -- 累积成功概率
+  unsafeQueue : UnsafeQueue             -- 待尝试的 unsafe 规则队列
+  failedRapps : Array RegularRule       -- 已失败的规则（避免重试）
+  depth : Nat
+  addedInIteration : Iteration
+  lastExpandedInIteration : Iteration
+  forwardState : ForwardState           -- 前向推理状态
+  forwardRuleMatches : ForwardRuleMatches
+  unsafeRulesSelected : Bool
+  ...
+</pre><pre>-- [Aesop, Aesop/Tree/Data.lean:362-384]
+structure RappData (Goal MVarCluster : Type) : Type where
+  id : RappId
+  parent : IO.Ref Goal
+  children : Array (IO.Ref MVarCluster) -- 子节点：MVar 簇
+  state : NodeState                     -- proven | unprovable | unknown
+  appliedRule : RegularRule             -- 应用的规则
+  scriptSteps? : Option (Array Script.LazyStep)
+  originalSubgoals : Array MVarId
+  successProbability : Percent
+  metaState : Meta.SavedState           -- 规则应用后的 meta 状态快照
+  introducedMVars : UnorderedArraySet MVarId
+  assignedMVars : UnorderedArraySet MVarId
+  ...
+</pre><pre>-- [Aesop, Aesop/Tree/Data.lean:354-359]
+structure MVarClusterData (Goal Rapp : Type) : Type where
+  parent? : Option (IO.Ref Rapp)        -- 根簇无父节点
+  goals : Array (IO.Ref Goal)           -- 共享 mvar 的目标组
+  isIrrelevant : Bool
+  state : NodeState
+</pre></section>
+              <section>
+                <h3 id="ch11-and-or-semantics">
+                  12.3.2. AND-OR 语义<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-and-or-semantics" title="Permalink">🔗</a></span></h3>
+                <pre>Goal (OR 节点) ── 只要一个子 Rapp proven → Goal proven
+  ├── Rapp₁ (AND 节点) ── 所有子 MVarCluster proven → Rapp proven
+  │     └── MVarCluster₁ ── 所有子 Goal proven → MVarCluster proven
+  │           ├── Goal₁₁
+  │           └── Goal₁₂
+  └── Rapp₂ (AND 节点)
+        └── MVarCluster₂
+              └── Goal₂₁
+</pre><ul>
+                  <li>
+                    <p>
+                      <strong>Goal 是 OR 节点</strong>：多条规则都可以证明同一个目标，只要一条成功即可</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>Rapp 是 AND 节点</strong>：一条规则应用后产生的所有子目标都必须证明</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>MVarCluster 是分组节点</strong>：将共享 metavariable 的子目标聚合在一起</p>
+                    </li>
+                  </ul>
+                <p>
+                  <strong>为什么需要 MVarCluster？</strong> 在 Lean 4 中，一条规则可能产生多个子目标，它们通过 metavariable 隐式耦合。例如 <code>apply And.intro</code> 对目标 <code>⊢ ?a ∧ ?a</code> 产生两个子目标 <code>⊢ ?a</code>（左）和 <code>⊢ ?a</code>（右），共享同一个 metavar <code>?a</code>。如果搜索先在左子目标上赋值 <code>?a := True</code>，那么右子目标也变成 <code>⊢ True</code>。MVarCluster 将这种耦合显式化，确保一侧的赋值能正确传播到另一侧。</p>
+                </section>
+              <section>
+                <h3 id="ch11-unsafe-inductive">
+                  12.3.3. unsafe inductive 实现<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-unsafe-inductive" title="Permalink">🔗</a></span></h3>
+                <p>
+                  由于三个类型互递归，Lean 4 的归纳类型系统无法直接表达。aesop 使用 <code>unsafe inductive</code> + <code>opaque</code> 的惯用模式：</p>
+                <pre>-- [Aesop, Aesop/Tree/Data.lean:386-395]
+mutual
+  unsafe inductive GoalUnsafe
+    | mk (d : GoalData RappUnsafe MVarClusterUnsafe)
+  unsafe inductive MVarClusterUnsafe
+    | mk (d : MVarClusterData GoalUnsafe RappUnsafe)
+  unsafe inductive RappUnsafe
+    | mk (d : RappData GoalUnsafe MVarClusterUnsafe)
+end
+</pre><p>
+                  通过 <code>TreeSpec</code> 和 <code>opaque tree : TreeSpec</code> 包装，对外暴露安全的 <code>Goal</code>、<code>Rapp</code>、<code>MVarCluster</code> 类型。树中的节点通过 <code>IO.Ref</code>（可变引用）连接，使得状态更新可以原地修改而不需要函数式更新整棵树。</p>
+                <pre>-- [Aesop, Aesop/Tree/Data.lean:426-433]
+def Goal        := tree.Goal
+def Rapp        := tree.Rapp
+def MVarCluster := tree.MVarCluster
+
+abbrev GoalRef        := IO.Ref Goal
+abbrev RappRef        := IO.Ref Rapp
+abbrev MVarClusterRef := IO.Ref MVarCluster
+</pre></section>
+              <section>
+                <h3 id="ch11-node-state">
+                  12.3.4. 节点状态与传播<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-node-state" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Aesop, Aesop/Tree/Data.lean:198-253]
+inductive GoalState
+  | unknown                    -- 尚未确定
+  | provenByRuleApplication    -- 被某条规则的搜索路径证明
+  | provenByNormalization      -- 在规范化阶段被直接证明
+  | unprovable                 -- 所有规则都失败
+</pre><p>
+                  状态自底向上传播：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      叶子 Goal 被证明 → 其 MVarCluster 检查是否所有 Goal 都 proven</p>
+                    </li>
+                  <li>
+                    <p>
+                      MVarCluster 所有 Goal proven → 其父 Rapp 检查所有 MVarCluster</p>
+                    </li>
+                  <li>
+                    <p>
+                      Rapp 所有 MVarCluster proven → 其父 Goal 标记 proven</p>
+                    </li>
+                  <li>
+                    <p>
+                      Goal 所有子 Rapp unprovable → Goal 标记 unprovable</p>
+                    </li>
+                  </ol>
+                <p>
+                  <code>GoalState</code> 比通用的 <code>NodeState</code>（proven/unprovable/unknown）更细——区分了 <code>provenByRuleApplication</code> 和 <code>provenByNormalization</code>，这个区分对脚本生成至关重要。</p>
+                </section>
+              <section>
+                <h3 id="ch11-priority">
+                  12.3.5. 优先级计算<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-priority" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>priority</code> 不是简单的成功概率——它受未赋值 metavariable 数量的惩罚：</p>
+                <pre>-- [Aesop, Aesop/Tree/Data.lean:863-864]
+def priority (g : Goal) : Percent :=
+  g.successProbability * unificationGoalPenalty ^ g.mvars.size
+</pre><p>
+                  直觉是"目标越具体，越容易证明"。含未赋值 metavar 的目标被降权，搜索引擎优先处理形态确定的目标。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch11-search-monad">
+                12.4. 搜索单子 SearchM<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-search-monad" title="Permalink">🔗</a></span></h2>
+              <p>
+                aesop 的搜索逻辑运行在专用的 monad 栈 <code>SearchM</code> 中：</p>
+              <pre>-- [Aesop, Aesop/Search/SearchM.lean]
+abbrev SearchM Q [Aesop.Queue Q] :=
+  ReaderT SearchM.Context $ StateRefT (SearchM.State Q) $
+    StateRefT TreeM.State BaseM
+</pre><p>
+                | 层 | 类型 | 职责 |
+|----|------|------|
+| 最外层 | <code>ReaderT SearchM.Context</code> | 只读访问规则集、simp 上下文、选项 |
+| 中间层 | <code>StateRefT (SearchM.State Q)</code> | 可变的迭代计数、搜索队列 |
+| 内层 | <code>StateRefT TreeM.State</code> | 可变的搜索树状态 |
+| 基础 | <code>BaseM</code> | 底层是 <code>MetaM</code> 的变体 |</p>
+              <pre>-- Context 包含只读配置
+structure Context where
+  ruleSet : LocalRuleSet
+  normSimpContext : NormSimpContext
+  options : Aesop.Options'
+
+-- State 包含可变搜索状态
+structure State (Q) [Aesop.Queue Q] where
+  iteration : Iteration
+  queue : Q
+  maxRuleApplicationDepthReached : Bool
+</pre><p>
+                <code>SearchM.run</code> 负责初始化：创建包含根目标的搜索树、从规则集中的 simp 引理构建 <code>NormSimpContext</code>、将根目标入队。</p>
+              <p>
+                <code>search</code> 函数是 <code>SearchM</code> 层的入口：</p>
+              <pre>-- [Aesop, Aesop/Search/Main.lean:268-289]
+def search (goal : MVarId) (ruleSet? : Option LocalRuleSet := none)
+     (options : Aesop.Options := {}) (simpConfig : Simp.Config := {})
+     (simpConfigSyntax? : Option Term := none) (stats : Stats := {}) :
+     MetaM (Array MVarId × Stats) := do
+  goal.checkNotAssigned `aesop
+  let options ← options.toOptions'
+  let ruleSet ← match ruleSet? with
+    | none =&gt; ...              -- 从环境获取默认规则集
+    | some ruleSet =&gt; pure ruleSet
+  let ⟨Q, _⟩ := options.queue  -- 根据策略选择队列类型
+  let go : SearchM Q _ := do
+    try searchLoop
+    finally
+      collectGoalStatsIfEnabled
+      freeTree                  -- 释放搜索树内存
+  let ((goals, _, _), stats) ←
+    go.run ruleSet options simpConfig simpConfigSyntax? goal |&gt;.run stats
+  return (goals, stats)
+</pre><p>
+                注意 <code>finally</code> 中的 <code>freeTree</code>——搜索树通过 <code>IO.Ref</code> 互相连接，形成循环引用，无法被 GC 自动回收，需要显式释放。</p>
+              <section>
+                <h3 id="ch11-search-queue">
+                  12.4.1. 搜索队列：优先级与策略<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-search-queue" title="Permalink">🔗</a></span></h3>
+                <pre>-- Queue 类型类支持多种搜索策略
+class Queue (Q : Type) where
+  init : BaseIO Q
+  addGoals : Q → Array GoalRef → BaseIO Q
+  popGoal : Q → BaseIO (Option GoalRef × Q)
+</pre><p>
+                  三种策略：</p>
+                <p>
+                  | 策略 | 队列类型 | 底层数据结构 | 特征 |
+|------|----------|-------------|------|
+| <code>bestFirst</code>（默认） | <code>BestFirstQueue</code> | <code>BinomialHeap</code> | 概率引导 |
+| <code>depthFirst</code> | <code>LIFOQueue</code> | <code>Array</code>（栈） | 深度优先 |
+| <code>breadthFirst</code> | <code>FIFOQueue</code> | <code>Array</code>（队列） | 广度优先 |</p>
+                <p>
+                  默认的 best-first 队列按三级字典序排列目标优先级：</p>
+                <pre>-- [Aesop, Aesop/Search/Queue.lean]
+-- 1. priority 更高的目标优先（高成功概率的路径先探索）
+-- 2. 上次展开迭代更早的目标优先（公平性，防饥饿）
+-- 3. 添加迭代更早的目标优先（稳定性）
+protected def le (g h : ActiveGoal) : Bool :=
+  g.priority &gt; h.priority ||
+    (g.priority == h.priority &&
+      (g.lastExpandedInIteration ≤ h.lastExpandedInIteration ||
+        ...))
+</pre><p>
+                  <strong>注意</strong>：best-first 不是在寻找"最短证明"或"最低成本证明"——它是在启发式意义上优先展开"看起来更可能成功"的分支。搜索一旦找到任意一条完整证明路径就终止，不保证该路径是最优的。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch11-search-loop">
+                12.5. 搜索主循环<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-search-loop" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="ch11-search-loop-impl">
+                  12.5.1. searchLoop：best-first search<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-search-loop-impl" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Aesop, Aesop/Search/Main.lean:251-266]
+partial def searchLoop : SearchM Q (Array MVarId) :=
+  withIncRecDepth do
+    checkSystem "aesop"
+    if let (some err) ← checkRootUnprovable then
+      handleNonfatalError err
+    else if ← finishIfProven then
+      return #[]
+    else if let (some err) ← checkGoalLimit then
+      handleNonfatalError err
+    else if let (some err) ← checkRappLimit then
+      handleNonfatalError err
+    else
+      expandNextGoal
+      checkInvariantsIfEnabled
+      incrementIteration
+      searchLoop
+</pre><p>
+                  每次迭代执行五步检查 + 一步展开：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <code>checkRootUnprovable</code>：根节点是否已被标记 unprovable（exhaustive search 失败）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>finishIfProven</code>：根节点是否已 proven（成功，提取证明并返回）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>checkGoalLimit</code>：总目标数是否超过 <code>maxGoals</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>checkRappLimit</code>：总规则应用数是否超过 <code>maxRuleApplications</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>expandNextGoal</code>：从队列弹出优先级最高的目标并展开</p>
+                    </li>
+                  <li>
+                    <p>
+                      尾递归</p>
+                    </li>
+                  </ol>
+                <p>
+                  搜索终止的三种情况：根目标 proven（成功返回空目标列表）、根目标 unprovable（尝试安全前缀后报错）、超过资源限制（尝试安全前缀）。</p>
+                </section>
+              <section>
+                <h3 id="ch11-expand-next-goal">
+                  12.5.2. expandNextGoal：弹出并展开<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-expand-next-goal" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Aesop, Aesop/Search/Main.lean:39-62]
+def expandNextGoal : SearchM Q Unit := do
+  let gref ← nextActiveGoal           -- 从队列弹出优先级最高的活跃目标
+  ...
+  let maxRappDepth := (← read).options.maxRuleApplicationDepth
+  if maxRappDepth != 0 && (← gref.get).depth &gt;= maxRappDepth then
+    gref.markForcedUnprovable          -- 深度超限 → 标记不可证
+    setMaxRuleApplicationDepthReached
+    return .failed
+  let result ← expandGoal gref        -- 核心：展开目标
+  ...
+  if ← (← gref.get).isActive then
+    enqueueGoals #[gref]               -- 目标仍然活跃 → 重新入队
+</pre><p>
+                  注意：如果目标仍然活跃（例如 unsafe 规则队列未用完），它会被<strong>重新入队</strong>——下次弹出时从上次停下的地方继续尝试 unsafe 规则。</p>
+                </section>
+              <section>
+                <h3 id="ch11-expand-goal">
+                  12.5.3. expandGoal：三阶段展开<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-expand-goal" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>expandGoal</code> 是搜索的核心单步——对一个目标依次执行规范化、安全规则、不安全规则：</p>
+                <pre>-- [Aesop, Aesop/Search/Expansion.lean:228-265]
+def expandGoal (gref : GoalRef) : SearchM Q RuleResult := do
+  -- 阶段 1：规范化
+  let provedByNorm ←
+    withAesopTraceNode .steps fmtNorm (normalizeGoalIfNecessary gref)
+  if provedByNorm then return .proved #[]
+
+  -- 阶段 2：安全规则
+  let safeResult ←
+    withAesopTraceNode .steps fmtSafe (runFirstSafeRule gref)
+  match safeResult with
+  | .succeeded newRapps =&gt; return .succeeded newRapps
+  | .proved newRapps =&gt; return .proved newRapps
+  | .failed postponedSafeRules =&gt; doUnsafe postponedSafeRules
+  | .skipped =&gt; doUnsafe #[]
+  where
+    -- 阶段 3：不安全规则
+    doUnsafe (postponedSafeRules : Array PostponedSafeRule) :
+        SearchM Q RuleResult := do
+      withAesopTraceNode .steps fmtUnsafe do
+        runFirstUnsafeRule postponedSafeRules gref
+</pre><p>
+                  三阶段的逻辑：</p>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>规范化</strong>先行：确保目标处于标准形态，改善后续规则的 DiscrTree 索引匹配</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>安全规则</strong>优先于不安全规则：匹配即 commit，大幅裁剪搜索空间</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>不安全规则</strong>最后：按成功概率排序逐个尝试</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="ch11-safe-commit">
+                  12.5.4. 安全规则的 commit 与推迟语义<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-safe-commit" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Aesop, Aesop/Search/Expansion.lean:179-196]
+def runFirstSafeRule (gref : GoalRef) : SearchM Q SafeRulesResult := do
+  if (← gref.get).unsafeRulesSelected then return .skipped
+  gref.updateForwardState .safe
+  let g ← gref.get
+  let rules ← selectSafeRules g
+  let mut postponedRules := {}
+  for r in rules do
+    let result ← runSafeRule gref r
+    match result with
+    | .regular .failed =&gt; continue                -- 失败：尝试下一条
+    | .regular (.proved newRapps) =&gt; return .proved newRapps   -- 成功：commit
+    | .regular (.succeeded newRapps) =&gt; return .succeeded newRapps
+    | .postponed r =&gt; postponedRules := postponedRules.push r  -- 推迟
+  return .failed postponedRules
+</pre><p>
+                  <strong>推迟机制</strong>：如果一条安全规则会赋值父目标的 metavariable（即影响搜索树中其他目标），它不会立即 commit，而是被"推迟"到 unsafe 阶段处理。这是安全和灵活性之间的精巧折中——参见 <code>runSafeRule</code> 中的检查：</p>
+                <pre>-- [Aesop, Aesop/Search/Expansion.lean:132-154]
+def runSafeRule (parentRef : GoalRef) (matchResult : IndexMatchResult SafeRule) :
+    SearchM Q SafeRuleResult := do
+  ...
+      let anyParentMVarAssigned ← rapps.anyM λ rapp =&gt; do
+        rapp.postState.runMetaM' do
+          parentMVars.anyM (·.isAssignedOrDelayedAssigned)
+      if anyParentMVarAssigned then
+        aesop_trace[steps] "Safe rule assigned metavariables, so we postpone it"
+        return .postponed ⟨rule, output⟩
+      else
+        return .regular (← addRapps parentRef (.safe rule) rapps)
+</pre></section>
+              <section>
+                <h3 id="ch11-unsafe-execution">
+                  12.5.5. 不安全规则的选择与执行<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-unsafe-execution" title="Permalink">🔗</a></span></h3>
+                <p>
+                  不安全规则按成功概率排序，与推迟的安全规则一起放入 <code>UnsafeQueue</code>，逐个尝试：</p>
+                <pre>-- [Aesop, Aesop/Search/Expansion.lean:203-227]
+partial def runFirstUnsafeRule (postponedSafeRules : Array PostponedSafeRule)
+    (parentRef : GoalRef) : SearchM Q RuleResult := do
+  parentRef.updateForwardState .unsafe
+  let queue ← selectUnsafeRules postponedSafeRules parentRef
+  let (remainingQueue, result) ← loop queue
+  parentRef.modify λ g =&gt; g.setUnsafeQueue remainingQueue
+  if remainingQueue.isEmpty then
+    ...
+    if ← pure (! parent.state.isProven) &lt;&&&gt; parent.isUnprovableNoCache then
+      parentRef.markUnprovable
+  return result
+  where
+    loop (queue : UnsafeQueue) : SearchM Q (UnsafeQueue × RuleResult) := do
+      let (some (r, queue)) := Subarray.popHead? queue
+        | return (queue, RuleResult.failed)
+      match r with
+      | .unsafeRule r =&gt;
+        let result ← runUnsafeRule parentRef r
+        match result with
+        | .proved .. =&gt; return (queue, result)
+        | .succeeded .. =&gt; return (queue, result)
+        | .failed =&gt; loop queue
+      | .postponedSafeRule r =&gt;
+        return (queue, ← applyPostponedSafeRule r parentRef)
+</pre><p>
+                  注意 <code>remainingQueue</code> 会保存回 Goal 节点——下次展开同一目标时，从上次停下的地方继续尝试。队列为空且无 proven 子节点时，目标被标记为 <code>unprovable</code>。</p>
+                </section>
+              <section>
+                <h3 id="ch11-safe-prefix">
+                  12.5.6. 安全前缀：优雅退化<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-safe-prefix" title="Permalink">🔗</a></span></h3>
+                <p>
+                  当搜索未能找到完整证明（超限或 unprovable）时，aesop 不立即放弃——它调用 <code>handleNonfatalError</code>：</p>
+                <pre>-- [Aesop, Aesop/Search/Main.lean:229-249]
+def handleNonfatalError (err : MessageData) : SearchM Q (Array MVarId) := do
+  let safeExpansionSuccess ← expandSafePrefix   -- 从根开始展开所有安全规则
+  let safeGoals ← extractSafePrefix             -- 提取安全前缀剩余目标
+  ...
+  if opts.terminal then
+    throwAesopEx ...                             -- terminal 模式：必须完全证明
+  if ! (← treeHasProgress) then
+    throwAesopEx ... "made no progress"          -- 无进展：报错
+  safeGoals.mapM (clearForwardImplDetailHyps ·)  -- 返回剩余目标
+</pre><p>
+                  安全前缀的意义：即使 aesop 无法完全证明目标，它仍会尽可能应用安全规则来简化目标——返回的剩余目标可以供用户手动处理。这就是 <code>aesop</code> 默认非 terminal 模式的行为。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch11-normalization">
+                12.6. 规范化阶段<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-normalization" title="Permalink">🔗</a></span></h2>
+              <p>
+                在尝试规则之前，aesop 先对目标进行规范化——可能直接证明目标或简化目标形式以改善索引匹配。</p>
+              <section>
+                <h3 id="ch11-norm-four-steps">
+                  12.6.1. 四步不动点循环<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-norm-four-steps" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Aesop, Aesop/Search/Expansion/Norm.lean]
+partial def normalizeGoalMVar (goal : MVarId)
+    (mvars : UnorderedArraySet MVarId) : NormM NormSeqResult := do
+  let mut normSteps := #[
+    NormStep.runPreSimpRules mvars,    -- ① penalty &lt; 0 的 norm 规则
+    NormStep.unfold,                    -- ② 展开 @\[aesop unfold] 定义
+    NormStep.simp mvarsHashSet,         -- ③ simp / simp_all
+    NormStep.runPostSimpRules mvars     -- ④ penalty ≥ 0 的 norm 规则
+  ]
+  runNormSteps goal normSteps ...
+</pre><p>
+                  | 步骤 | 执行内容 | 典型用途 |
+|------|---------|---------|
+| ① Pre-simp norm 规则 | penalty &lt; 0 的 norm 规则 | 在 simp 之前做必要的预处理 |
+| ② Unfold | 展开 <code>@\[aesop unfold]</code> 定义 | 暴露内部结构给 simp |
+| ③ Simp | 调用 <code>simp</code> 或 <code>simp_all</code> | 主要的化简手段 |
+| ④ Post-simp norm 规则 | penalty ≥ 0 的 norm 规则 | simp 之后的清理工作 |</p>
+                <p>
+                  <code>runNormSteps</code> 循环执行这四步，直到所有步骤都 <code>unchanged</code> 或达到 <code>maxNormIterations</code>（默认 100）。</p>
+                </section>
+              <section>
+                <h3 id="ch11-normalization-state">
+                  12.6.2. NormalizationState 缓存<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-normalization-state" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Aesop, Aesop/Tree/Data.lean:256-262]
+inductive NormalizationState
+  | notNormal                     -- 尚未规范化
+  | normal (postGoal ...) (script ...)      -- 规范化后的目标
+  | provenByNormalization (postState ...) (script ...)  -- 规范化直接证明
+</pre><p>
+                  每个目标只规范化一次——结果缓存在 <code>NormalizationState</code> 中。如果目标被重新入队（例如因为 unsafe 规则队列未用完），不会重复规范化。</p>
+                <p>
+                  规范化阶段的 simp 使用独立的引理集——由 <code>@\[aesop norm simp]</code> 标注的引理加上（可选的）全局 <code>@\[simp]</code> 集。配置选项 <code>useDefaultSimpSet</code> 控制是否包含全局 <code>@\[simp]</code> 集，<code>useSimpAll</code> 控制使用 <code>simp_all</code> 还是 <code>simp at *</code>。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch11-rule-system">
+                12.7. 规则系统<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-rule-system" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="ch11-rule-structure">
+                  12.7.1. Rule 结构与 RuleName<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-rule-structure" title="Permalink">🔗</a></span></h3>
+                <p>
+                  每条规则由名称、索引模式、附加信息和 tactic 描述组成。三类规则共用同一个参数化结构 <code>Rule α</code>：</p>
+                <pre>-- [Aesop, Aesop/Rule.lean:20-39]
+structure NormRuleInfo where
+  penalty : Int                        -- 越小越先执行
+abbrev NormRule := Rule NormRuleInfo
+
+-- [Aesop, Aesop/Rule.lean:59-77]
+structure SafeRuleInfo where
+  penalty : Int
+  safety : Safety                      -- safe | almostSafe
+abbrev SafeRule := Rule SafeRuleInfo
+
+-- [Aesop, Aesop/Rule.lean:83-103]
+structure UnsafeRuleInfo where
+  successProbability : Percent         -- 成功概率
+abbrev UnsafeRule := Rule UnsafeRuleInfo
+</pre><p>
+                  <code>RegularRule</code> 是 safe 和 unsafe 的联合类型，用于搜索树节点中记录应用的规则：</p>
+                <pre>-- [Aesop, Aesop/Rule.lean:108-146]
+inductive RegularRule
+  | safe (r : SafeRule)
+  | «unsafe» (r : UnsafeRule)
+
+def successProbability : RegularRule → Percent
+  | safe _ =&gt; Percent.hundred          -- safe 规则概率视为 100%
+  | «unsafe» r =&gt; r.extra.successProbability
+</pre><p>
+                  <code>RuleName</code> 是四维标识——同一个声明可以在不同阶段注册为不同规则：</p>
+                <pre>-- 四维组合确保唯一性
+structure RuleName where
+  name : Name             -- 声明名（如 `Nat.add_zero`）
+  builder : BuilderName   -- 构建方式（apply / cases / forward / ...）
+  phase : PhaseName        -- 阶段（norm / safe / unsafe）
+  scope : ScopeName        -- 作用域（global / local）
+</pre></section>
+              <section>
+                <h3 id="ch11-rule-set-hierarchy">
+                  12.7.2. BaseRuleSet / GlobalRuleSet / LocalRuleSet<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-rule-set-hierarchy" title="Permalink">🔗</a></span></h3>
+                <p>
+                  规则集分三层。<code>BaseRuleSet</code> 是核心存储，<code>GlobalRuleSet</code> 和 <code>LocalRuleSet</code> 在其上扩展：</p>
+                <pre>-- [Aesop, Aesop/RuleSet.lean:29-80]
+structure BaseRuleSet where
+  normRules : Index NormRuleInfo       -- DiscrTree 索引
+  unsafeRules : Index UnsafeRuleInfo
+  safeRules : Index SafeRuleInfo
+  unfoldRules : PHashMap Name (Option Name)
+  forwardRules : ForwardIndex          -- 前向规则单独索引
+  forwardRuleNames : PHashSet RuleName
+  rulePatterns : RulePatternIndex
+  erased : PHashSet RuleName           -- 已擦除的规则
+  ruleNames : PHashMap Name (UnorderedArraySet RuleName)  -- 名称缓存
+</pre><pre>-- [Aesop, Aesop/RuleSet.lean:88-128]
+structure GlobalRuleSet extends BaseRuleSet where
+  simpTheorems : SimpTheorems          -- norm 阶段的 simp 引理
+  simprocs : Simprocs
+
+structure LocalRuleSet extends BaseRuleSet where
+  simpTheoremsArray : Array (Name × SimpTheorems)
+  simprocsArray : Array (Name × Simprocs)
+  localNormSimpRules : Array LocalNormSimpRule
+</pre><p>
+                  <strong>GlobalRuleSet</strong> 通过 <code>@\[aesop]</code> 属性注册，存储在环境扩展中，跨文件持久。<strong>LocalRuleSet</strong> 是每次 <code>aesop</code> 调用时从多个全局规则集合并而来的临时结构——合并过程中会应用 <code>add</code> 和 <code>erase</code> 子句。</p>
+                <p>
+                  合并过程在 <code>mkLocalRuleSet</code> 中：</p>
+                <pre>-- [Aesop, Aesop/RuleSet.lean:580-614]
+def mkLocalRuleSet (rss : Array (GlobalRuleSet × Name × Name))
+    (options : Options') : CoreM LocalRuleSet := do
+  let mut result := ∅
+  let simpTheorems ← getSimpTheorems
+  ...
+  for (rs, simpExtName, simprocExtName) in rss do
+    result := { result with
+      toBaseRuleSet := result.toBaseRuleSet.merge rs.toBaseRuleSet
+      simpTheoremsArray :=
+        result.simpTheoremsArray.push (simpExtName, rs.simpTheorems)
+      ...
+    }
+  ...
+</pre></section>
+              <section>
+                <h3 id="ch11-indexing">
+                  12.7.3. IndexingMode 与 DiscrTree 索引<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-indexing" title="Permalink">🔗</a></span></h3>
+                <p>
+                  规则通过 <code>IndexingMode</code> 指定如何被索引以实现高效匹配：</p>
+                <pre>-- IndexingMode 的主要变体
+inductive IndexingMode
+  | unindexed                              -- 不索引（每个目标都会考虑）
+  | target (keys : Array DiscrTree.Key)    -- 按目标结论索引
+  | hyps (keys : Array DiscrTree.Key)      -- 按假设索引
+  | or (imodes : Array IndexingMode)       -- 多种模式的析取
+</pre><p>
+                  <code>target</code> 模式最常见——规则结论编码为 DiscrTree key 序列，只有当前目标结论的 head symbol 匹配时才考虑该规则。原理与 simp 的 DiscrTree 索引相同。</p>
+                <p>
+                  <strong>性能要点</strong>：<code>unindexed</code> 规则每次都会被考虑——O(n) 级别开销。应尽量避免。如果你的自定义规则始终被标记为 <code>unindexed</code>，检查其类型签名是否足够具体——aesop 需要看到结论的 head symbol 才能建立索引。</p>
+                </section>
+              <section>
+                <h3 id="ch11-attribute-parsing">
+                  12.7.4. <code>@[aesop]</code> 属性解析<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-attribute-parsing" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>@\[aesop]</code> 属性的语法支持丰富的组合。解析过程定义在 <code>Frontend/RuleExpr.lean</code>：</p>
+                <pre>-- [Aesop, Aesop/Frontend/RuleExpr.lean:33-36]
+-- 优先级语法
+syntax num "%" : Aesop.priority       -- 百分比（unsafe）
+syntax "-"? num : Aesop.priority      -- 整数（norm/safe）
+
+-- [Aesop, Aesop/Frontend/RuleExpr.lean:81-86]
+-- 阶段语法
+syntax "safe" : Aesop.phase
+syntax "norm" : Aesop.phase
+syntax "unsafe" : Aesop.phase
+
+-- [Aesop, Aesop/Frontend/RuleExpr.lean:100-109]
+-- 构建器语法
+syntax "apply" : Aesop.builder_name
+syntax "simp" : Aesop.builder_name
+syntax "unfold" : Aesop.builder_name
+syntax "tactic" : Aesop.builder_name
+syntax "forward" : Aesop.builder_name
+syntax "destruct" : Aesop.builder_name
+syntax "cases" : Aesop.builder_name
+syntax "default" : Aesop.builder_name
+</pre><p>
+                  <code>RuleConfig</code> 收集所有特征（phase、priority、builder、builder options、rule_sets）后调用对应的 <code>RuleBuilder</code> 生成规则：</p>
+                <pre>-- [Aesop, Aesop/Frontend/RuleExpr.lean:387-394]
+structure RuleConfig where
+  term? : Option Term
+  phase? : Option PhaseName
+  priority? : Option Priority
+  builder? : Option DBuilderName
+  builderOptions : RuleBuilderOptions
+  ruleSets : RuleSets
+</pre><p>
+                  <code>DBuilderName.toRuleBuilder</code> 将构建器名映射到实际的规则构建逻辑：</p>
+                <pre>-- [Aesop, Aesop/Frontend/RuleExpr.lean:144-154]
+def toRuleBuilder : DBuilderName → RuleBuilder
+  | .regular .apply =&gt; RuleBuilder.apply
+  | .regular .cases =&gt; RuleBuilder.cases
+  | .regular .constructors =&gt; RuleBuilder.constructors
+  | .regular .destruct =&gt; RuleBuilder.forward (isDestruct := true)
+  | .regular .forward =&gt; RuleBuilder.forward (isDestruct := false)
+  | .regular .simp =&gt; RuleBuilder.simp
+  | .regular .tactic =&gt; RuleBuilder.tactic
+  | .regular .unfold =&gt; RuleBuilder.unfold
+  | .default =&gt; RuleBuilder.default
+</pre></section>
+              <section>
+                <h3 id="ch11-builtin-rules">
+                  12.7.5. 内建规则<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-builtin-rules" title="Permalink">🔗</a></span></h3>
+                <p>
+                  aesop 注册了一批默认规则（<code>Aesop/BuiltinRules/</code>）：</p>
+                <p>
+                  | 规则 | 阶段 | 行为 |
+|------|------|------|
+| <code>assumption</code> | safe | 类似 <code>assumption</code> tactic |
+| <code>applyHyps</code> | unsafe | 尝试将所有假设 apply 到目标 |
+| <code>intros</code> | safe | 引入 ∀ binder |
+| <code>rfl</code> | safe | 关闭自反性目标 |
+| <code>split</code> | safe | 分解 <code>∧</code>、<code>↔</code> 目标 |
+| <code>subst</code> | norm | 用等式替换变量 |
+| <code>destructProducts</code> | norm | 分解 <code>∧</code>/<code>×</code> 假设 |
+| <code>ext</code> | safe | 函数外延性 |</p>
+                <p>
+                  内建规则的阶段选择蕴含设计智慧——<code>intros</code> 是 safe（引入变量永远不丢失信息）、<code>applyHyps</code> 是 unsafe（随意 apply 假设可能走错方向）、<code>subst</code> 是 norm（等式替换是纯化简）。</p>
+                </section>
+              <section>
+                <h3 id="ch11-norm-simp-unfold">
+                  12.7.6. Norm simp 规则与 Unfold 规则<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-norm-simp-unfold" title="Permalink">🔗</a></span></h3>
+                <p>
+                  Norm 阶段除了普通的 norm 规则外，还有两类特殊规则：</p>
+                <p>
+                  <strong>NormSimpRule</strong>：添加到 norm 阶段的 simp 引理集。通过 <code>@\[aesop norm simp]</code> 注册：</p>
+                <pre>-- [Aesop, Aesop/Rule.lean:156-169]
+structure NormSimpRule where
+  name : RuleName
+  entries : Array SimpEntry       -- SimpEntry 表示 simp 集的一个成员
+</pre><p>
+                  <strong>UnfoldRule</strong>：在 norm 阶段展开的定义。通过 <code>@\[aesop norm unfold]</code> 注册：</p>
+                <pre>-- [Aesop, Aesop/Rule.lean:194-210]
+structure UnfoldRule where
+  decl : Name
+  unfoldThm? : Option Name       -- 缓存的展开等式定理
+</pre></section>
+              </section>
+            <section>
+              <h2 id="ch11-script-generation">
+                12.8. 脚本生成<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-script-generation" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="ch11-proof-vs-script">
+                  12.8.1. Proof reconstruction vs 脚本生成<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-proof-vs-script" title="Permalink">🔗</a></span></h3>
+                <p>
+                  搜索成功后需要两个不同的"输出"：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <strong>Proof reconstruction</strong>（<code>extractProof</code>）——给<strong>内核</strong>检查的：遍历已证明的搜索路径，将各节点的 <code>Meta.SavedState</code> 串联，构建完整证明项并赋值给根 goal 的 metavariable</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>脚本生成</strong>（<code>extractScript</code> + <code>UScript.optimize</code>）——给<strong>人</strong>看的：将搜索轨迹翻译为 tactic 脚本，通过 <code>Try this:</code> 输出建议</p>
+                    </li>
+                  </ol>
+                <pre>-- [Aesop, Aesop/Search/Main.lean:117-127]
+def finalizeProof : SearchM Q Unit := do
+  (← getRootMVarId).withContext do
+    extractProof
+    let (some proof) ← getProof? | throwError
+      "aesop: internal error: root goal is proven but ..."
+    if (← instantiateMVars proof).hasExprMVar then
+      ...  -- 内部错误：证明中不应有未赋值的 mvar
+</pre></section>
+              <section>
+                <h3 id="ch11-script-optimize">
+                  12.8.2. UScript.optimize：结构化脚本<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-script-optimize" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>aesop?</code> 生成的脚本经过优化：搜索过程中每个操作产生 <code>Script.LazyStep</code>，记录在节点的 <code>scriptSteps?</code> 字段中。搜索成功后，<code>extractScript</code> 收集步骤，<code>UScript.optimize</code> 转换为结构化语法：</p>
+                <pre>-- [Aesop, Aesop/Script/Main.lean:22-57]
+def UScript.optimize (uscript : UScript) (proofHasMVar : Bool)
+    (preState : Meta.SavedState) (goal : MVarId) :
+    MetaM (Option (TSyntax ``tacticSeq × ScriptGenerated)) := do
+  let structureResult? ← do
+    let opts ← getOptions
+    if aesop.dev.dynamicStructuring.get opts &&
+       ! (aesop.dev.optimizedDynamicStructuring.get opts && ! proofHasMVar) then
+      structureDynamic
+    else
+      structureStatic
+  let some (sscript, gen) := structureResult?
+    | return none
+  let tacticSeq ← `(tacticSeq| $(← sscript.render):tactic*)
+  let tacticSeq ← optimizeSyntax tacticSeq
+  return some (tacticSeq, gen)
+</pre><p>
+                  两种结构化策略：</p>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>Static structuring</strong>：基于搜索树结构直接映射为 tactic 序列</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>Dynamic structuring</strong>：在 TacticState 上重放步骤，动态确定分支结构</p>
+                    </li>
+                  </ul>
+                <p>
+                  如果证明不含 metavar，优先使用 static structuring（更简单高效）。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch11-debugging">
+                12.9. 调试手册<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-debugging" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="ch11-trace-options">
+                  12.9.1. Trace 选项<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-trace-options" title="Permalink">🔗</a></span></h3>
+                <pre>set_option trace.aesop true in                  -- 所有 aesop trace
+set_option trace.aesop.steps true in            -- 搜索步骤（最常用）
+set_option trace.aesop.ruleSet true in          -- 规则集内容
+set_option trace.aesop.normalization true in    -- 规范化过程
+set_option trace.aesop.tree true in             -- 搜索树
+set_option trace.aesop.forward true in          -- 前向推理
+</pre><p>
+                  <code>trace.aesop.steps</code> 的输出使用 emoji 标记每步结果：✅ 规则应用成功且目标被证明；☑️ 规则应用成功，产生新子目标；❌ 规则应用失败；⏩ 规则被跳过。</p>
+                </section>
+              <section>
+                <h3 id="ch11-reading-errors">
+                  12.9.2. 阅读错误信息<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-reading-errors" title="Permalink">🔗</a></span></h3>
+                <pre>aesop: failed to prove the goal after exhaustive search.
+Initial goal:
+  ⊢ ...
+Remaining goals after safe rules:
+  ⊢ a ∈ t
+</pre><ul>
+                  <li>
+                    <p>
+                      <strong>exhaustive search</strong>：所有规则都失败，搜索树耗尽</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>max rule applications reached</strong>：总量限制截断——调大 <code>maxRuleApplications</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>max rule application depth reached</strong>：深度限制——调大 <code>maxRuleApplicationDepth</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>Remaining goals after safe rules</strong>："差了哪一步"的线索</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="ch11-symptom-diagnosis">
+                  12.9.3. 症状 → 诊断 → 修复<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-symptom-diagnosis" title="Permalink">🔗</a></span></h3>
+                <section>
+                  <h4 id="ch11-symptom-slow">
+                    12.9.3.1. 症状：aesop 超时 / 极慢<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-symptom-slow" title="Permalink">🔗</a></span></h4>
                   <p>
-                    <code>搜索架构</code>：norm → safe → unsafe 三阶段最佳优先搜索</p>
-                  </li>
-                <li>
+                    <strong>诊断</strong>：开 <code>trace.aesop.steps</code>，观察搜索是否在某个分支上反复深入。常见原因：</p>
+                  <ol start="1">
+                    <li>
+                      <p>
+                        <strong>unsafe 规则概率过高</strong>：某条不太有用的规则概率设为 90%，导致优先深探错误分支</p>
+                      </li>
+                    <li>
+                      <p>
+                        <strong>unindexed 规则过多</strong>：每个目标都要尝试所有 unindexed 规则</p>
+                      </li>
+                    <li>
+                      <p>
+                        <strong>规范化死循环</strong>：norm 规则互相触发</p>
+                      </li>
+                    </ol>
                   <p>
-                    <code>规则类型</code>：<code>norm</code>（规范化）、<code>safe</code>（确定性）、<code>unsafe</code>（分支）</p>
-                  </li>
-                <li>
+                    <strong>修复</strong>：降低可疑 unsafe 规则概率 / 检查 unindexed 规则 / 限制 <code>maxNormIterations</code></p>
+                  </section>
+                <section>
+                  <h4 id="ch11-symptom-not-found">
+                    12.9.3.2. 症状：aesop 找不到证明<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-symptom-not-found" title="Permalink">🔗</a></span></h4>
                   <p>
-                    <code>动作类型</code>：<code>apply</code>、<code>forward</code>、<code>destruct</code>、<code>cases</code>、<code>simp</code>、<code>tactic</code></p>
-                  </li>
-                <li>
+                    <strong>诊断</strong>：</p>
+                  <ol start="1">
+                    <li>
+                      <p>
+                        规则不在启用的规则集中——开 <code>trace.aesop.ruleSet</code> 确认</p>
+                      </li>
+                    <li>
+                      <p>
+                        规范化改变目标——开 <code>trace.aesop.normalization</code></p>
+                      </li>
+                    <li>
+                      <p>
+                        索引失配——norm simp 改变了 head symbol，DiscrTree 匹配失败</p>
+                      </li>
+                    <li>
+                      <p>
+                        深度不够——调大 <code>maxRuleApplicationDepth</code></p>
+                      </li>
+                    </ol>
                   <p>
-                    <code>规则集</code>：<code>declare_aesop_rule_sets</code> + <code>rule_sets</code></p>
-                  </li>
-                <li>
+                    <strong>修复</strong>：<code>aesop (rule_sets := [MyRules])</code> / <code>aesop (config := { maxRuleApplicationDepth := 50 })</code> / <code>aesop (add unsafe 50% apply myLemma)</code></p>
+                  </section>
+                <section>
+                  <h4 id="ch11-symptom-type-info">
+                    12.9.3.3. 症状：类型信息不足<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-symptom-type-info" title="Permalink">🔗</a></span></h4>
+                  <pre>-- ❌ a, s, t 类型未知
+-- example (a : _) (s t : _) (h : a ∈ s) : a ∈ s ∪ t := by aesop
+-- ✅ 显式标注
+example {α : Type} (a : α) (s t : Set α) (h : a ∈ s) : a ∈ s ∪ t := by aesop
+</pre><p>
+                    目标简单但失败 → 检查 metavariable（<code>?m</code>）或未解析 typeclass。</p>
+                  </section>
+                <section>
+                  <h4 id="ch11-symptom-safe-aggressive">
+                    12.9.3.4. 症状：safe 规则过度激进<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-symptom-safe-aggressive" title="Permalink">🔗</a></span></h4>
+                  <pre>-- ❌ destruct 消耗假设丢失信息
+-- @\[aesop safe destruct]
+-- theorem bad : P ∨ Q → True := fun _ =&gt; trivial
+-- ✅ 改为 forward 或降级 unsafe
+</pre><p>
+                    Safe 规则有 commit 语义——如果一条更早的 safe 规则先匹配并 commit，后续 safe 规则不会被尝试。调整 penalty 值或将干扰规则改为 unsafe。</p>
+                  </section>
+                <section>
+                  <h4 id="ch11-symptom-forward-cycle">
+                    12.9.3.5. 症状：forward 规则循环<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-symptom-forward-cycle" title="Permalink">🔗</a></span></h4>
+                  <pre>-- ❌ 互相触发产生无限新假设
+-- @\[aesop safe forward] theorem fwd  : R a b → R b a := ...
+-- @\[aesop safe forward] theorem back : R b a → R a b := ...
+-- ✅ 只保留一个方向，或改用 destruct
+</pre><p>
+                    超时或 <code>maxRuleApplications</code> 耗尽 → 检查 forward 规则是否形成环。</p>
+                  </section>
+                <section>
+                  <h4 id="ch11-symptom-rule-never-fires">
+                    12.9.3.6. 症状：规则已注册但从不触发<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-symptom-rule-never-fires" title="Permalink">🔗</a></span></h4>
                   <p>
-                    <code>调试</code>：<code>trace.aesop.*</code>、<code>aesop?</code>、Final goals</p>
-                  </li>
-                </ul>
+                    最常见的原因是 <strong>norm 阶段先改写了目标或假设</strong>，导致规范化后的目标形态与规则的 DiscrTree 索引不再匹配。例如：你注册了 <code>@\[aesop unsafe apply] theorem foo : A → B</code>，但 norm simp 将目标中的 <code>B</code> 化简为 <code>B'</code>，于是 <code>foo</code> 的索引 key（基于 <code>B</code> 的 head symbol）永远匹配不上。</p>
+                  <p>
+                    <strong>修复</strong>：(a) 将规则索引改为 <code>unindexed</code>（牺牲性能换正确性）；(b) 将规则注册为 norm 阶段；(c) 重新设计规则使其结论匹配规范化后的形态。</p>
+                  </section>
+                </section>
+              <section>
+                <h3 id="ch11-aesop-script-issues">
+                  12.9.4. aesop? 脚本不工作<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-aesop-script-issues" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>aesop?</code> 生成的脚本可能依赖特定的上下文条件：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      脚本中的 <code>simp</code> 调用可能依赖某些 <code>@\[simp]</code> 引理，在其他上下文中不存在</p>
+                    </li>
+                  <li>
+                    <p>
+                      定理名可能因 <code>open</code> 语句不同而无法解析</p>
+                    </li>
+                  </ol>
+                <p>
+                  <strong>修复</strong>：手动调整脚本中的 <code>simp</code> 调用，显式列出引理。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch11-extension-points">
+                12.10. 扩展点<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-extension-points" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="ch11-custom-rules">
+                  12.10.1. 自定义规则（最常见）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-custom-rules" title="Permalink">🔗</a></span></h3>
+                <pre>-- 安全规则：constructors 构建器自动注册所有构造子
+@\[aesop safe [constructors]]
+inductive MyInductive where | mk : Nat → MyInductive
+
+-- 不安全规则：50% 成功概率，apply 构建器
+@\[aesop unsafe 50% apply]
+theorem my_lemma : ∀ n, n + 0 = n := Nat.add_zero
+
+-- 规范化规则：添加到 norm simp 集
+@\[aesop norm simp]
+theorem my_simp_lemma : ∀ n, n + 0 = n := Nat.add_zero
+
+-- 规范化规则：unfold 定义
+@\[aesop norm unfold]
+def myDef₂ := 42
+</pre></section>
+              <section>
+                <h3 id="ch11-custom-rule-tac">
+                  12.10.2. 自定义 RuleTac<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-custom-rule-tac" title="Permalink">🔗</a></span></h3>
+                <p>
+                  如果内建构建器不够用，可以注册自定义的 <code>RuleTac</code>——实现 <code>RuleTacInput → BaseM RuleTacOutput</code> 签名：</p>
+                <pre>-- RuleTac 的类型签名
+def RuleTac := RuleTacInput → BaseM RuleTacOutput
+
+structure RuleTacInput where
+  goal : MVarId
+  mvars : UnorderedArraySet MVarId
+  indexMatchLocations : Array IndexMatchLocation
+  ...
+
+structure RuleApplication where
+  goals : Array Subgoal
+  postState : Meta.SavedState
+  successProbability? : Option Percent     -- 可选：动态覆盖概率
+</pre><p>
+                  在 <code>input.goal</code> 上执行自定义逻辑，返回 <code>RuleApplication</code> 数组。</p>
+                </section>
+              <section>
+                <h3 id="ch11-tacgen">
+                  12.10.3. TacGen：机器学习接口<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-tacgen" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>TacGen</code> 是 aesop 为 ML 模型预留的接口——接收当前目标，返回 <code>(tactic 字符串, 置信度)</code> 数组。aesop 将每条建议包装为 unsafe 规则应用，置信度转化为成功概率，使外部神经网络可以无缝接入搜索框架。</p>
+                </section>
+              <section>
+                <h3 id="ch11-custom-rule-sets">
+                  12.10.4. 自定义规则集<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-custom-rule-sets" title="Permalink">🔗</a></span></h3>
+                <pre>declare_aesop_rule_sets [MyDomainRules] (default := false)
+
+-- 往规则集中添加规则
+@\[aesop safe apply (rule_sets := [MyDomainRules])]
+theorem domain_lemma : ... := ...
+
+-- 使用时显式启用
+example : ... := by aesop (rule_sets := [MyDomainRules])
+</pre><p>
+                  aesop 的架构高度模块化——搜索策略、队列、规则构建器、规范化步骤都可以替换或扩展。如果你在构建领域特定的自动化 tactic，考虑复用 aesop 的搜索框架（通过 <code>Aesop.search</code> API）而不是从零编写。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch11-design-decisions">
+                12.11. 关键设计决策总结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-design-decisions" title="Permalink">🔗</a></span></h2>
+              <p>
+                回顾 aesop 的几个核心设计决策：</p>
+              <p>
+                <strong>AND-OR 树 + MVarCluster</strong>：引入 MVarCluster 处理 Lean 4 中 metavariable 共享——一个目标的赋值可能影响同簇的另一个目标。经典 AND-OR 树假设子目标独立，但 Lean 4 的 metavar 语义打破了这个假设。</p>
+              <p>
+                <strong>安全规则的 commit 语义</strong>：匹配成功即 commit，大幅剪枝搜索空间。推迟赋值 mvar 的安全规则兼顾效率与灵活性。这是 aesop 与简单 backtracking prover 的关键区别。</p>
+              <p>
+                <strong>规范化先于规则应用</strong>：先规范化确保 DiscrTree 索引准确匹配。但这也意味着 norm 阶段可能改变目标形态，导致某些规则的索引失配——这是调试中最常见的陷阱之一。</p>
+              <p>
+                <strong>概率引导搜索</strong>：成功概率沿路径累乘，偏好"每步高概率"的路径。<code>unificationGoalPenalty</code> 对含未赋值 metavar 的目标施加额外惩罚。为 unsafe 规则选择合理的成功概率至关重要——概率过高（如 90%）导致过早深入错误分支，过低（如 1%）则可能永远轮不到。实践中 50%–80% 是常见的合理区间。</p>
+              <p>
+                <strong>IO.Ref 可变搜索树</strong>：搜索树节点通过可变引用连接，状态更新原地修改。自底向上的状态传播配合 <code>IO.Ref</code>，比函数式更新整棵树效率高得多——但也意味着需要显式 <code>freeTree</code> 来避免内存泄漏。</p>
+              <p>
+                <strong>关键源码文件索引</strong>：</p>
+              <p>
+                | 文件 | 内容 |
+|------|------|
+| <code>Aesop/Main.lean</code> | tactic 入口 <code>evalAesop</code> |
+| <code>Aesop/Search/Main.lean</code> | <code>searchLoop</code>、<code>expandNextGoal</code>、<code>handleNonfatalError</code> |
+| <code>Aesop/Search/Expansion.lean</code> | <code>expandGoal</code>、<code>runSafeRule</code>、<code>runUnsafeRule</code> |
+| <code>Aesop/Search/Expansion/Norm.lean</code> | 规范化四步循环 |
+| <code>Aesop/Tree/Data.lean</code> | <code>GoalData</code>、<code>RappData</code>、<code>MVarClusterData</code>、<code>GoalState</code> |
+| <code>Aesop/Rule.lean</code> + <code>Aesop/Rule/Basic.lean</code> | 规则结构 |
+| <code>Aesop/RuleSet.lean</code> | 规则集层次 |
+| <code>Aesop/Frontend/RuleExpr.lean</code> | 属性语法解析 |
+| <code>Aesop/Options/Public.lean</code> | 配置选项 |
+| <code>Aesop/Script/Main.lean</code> | 脚本生成 |</p>
               </section>
             <section>
               <h2 id="ch11-exercises">
                 12.12. 练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-exercises" title="Permalink">🔗</a></span></h2>
               <section>
-                <h3 id="exercise-11-1">
-                  12.12.1. 练习 11.1（基础）：aesop 能力边界<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-11-1" title="Permalink">🔗</a></span></h3>
+                <h3 id="ch11-exercise-1">
+                  12.12.1. 练习 1（基础）：aesop 能力边界<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-exercise-1" title="Permalink">🔗</a></span></h3>
                 <p>
                   判断以下哪些 <code>aesop</code> 可以直接证明，不行的给出替代方案：</p>
                 <pre>-- (a) 集合成员
@@ -1354,29 +2334,51 @@ example (n : Nat) : n + 0 = n := by sorry
 example (P Q R : Prop) (h1 : P → Q) (h2 : Q → R) (hp : P) : R := by sorry
 -- (d) 列表长度
 example : (List.cons 1 [2, 3]).length = 3 := by sorry
-</pre><blockquote><p>
-                    <strong>提示</strong>：(a)(c) 是 aesop 主场；(b) 用 <code>omega</code>；(d) 看 norm 阶段是否化简。</p>
-                  </blockquote></section>
-              <section>
-                <h3 id="exercise-11-2">
-                  12.12.2. 练习 11.2（进阶）：自定义规则集<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-11-2" title="Permalink">🔗</a></span></h3>
-                <p>
-                  为图论领域定义 aesop 规则集。将 <code>symm</code> 注册为 safe forward，添加 transitivity 作为 unsafe 70%。
-思考：symm 作为 safe forward 会不会循环？（参考 11.8 失败 5）
-<strong>核心教训</strong>：规则工程（选什么规则、标什么优先级、用什么动作）往往比搜索参数调优更关键——一条错误的 safe forward 就能让整个搜索失控。</p>
+</pre><p>
+                  <strong>提示</strong>：(a)(c) 是 aesop 主场；(b) 用 <code>omega</code>；(d) 看 norm 阶段是否化简。</p>
                 </section>
               <section>
-                <h3 id="exercise-11-3">
-                  12.12.3. 练习 11.3（诊断）：修复失败<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-11-3" title="Permalink">🔗</a></span></h3>
+                <h3 id="ch11-exercise-2">
+                  12.12.2. 练习 2（进阶）：自定义规则集<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-exercise-2" title="Permalink">🔗</a></span></h3>
+                <p>
+                  为图论领域定义 aesop 规则集。将 <code>symm</code> 注册为 safe forward，添加 transitivity 作为 unsafe 70%。思考：symm 作为 safe forward 会不会循环？（参考调试手册中 forward 规则循环的讨论）</p>
+                <p>
+                  <strong>核心教训</strong>：规则工程（选什么规则、标什么优先级、用什么动作）往往比搜索参数调优更关键——一条错误的 safe forward 就能让整个搜索失控。</p>
+                </section>
+              <section>
+                <h3 id="ch11-exercise-3">
+                  12.12.3. 练习 3（诊断）：修复失败<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-exercise-3" title="Permalink">🔗</a></span></h3>
                 <pre>-- 为什么失败？用 trace.aesop 诊断，用 (add ...) 修复
 -- example {α : Type} (P Q : α → Prop) (a : α)
 --     (h1 : ∀ x, P x → Q x) (h2 : P a) : Q a := by aesop
-</pre></section>
+</pre><p>
+                  <strong>提示</strong>：<code>h1</code> 是全称量化的蕴含——默认 <code>applyHyps</code> 能否匹配？考虑 <code>add unsafe apply h1</code> 或者思考为什么 <code>aesop</code> 的内建规则覆盖不到这个模式。</p>
+                </section>
               <section>
-                <h3 id="exercise-11-4">
-                  12.12.4. 练习 11.4（实战）：aesop? 替换<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-11-4" title="Permalink">🔗</a></span></h3>
+                <h3 id="ch11-exercise-4">
+                  12.12.4. 练习 4（源码阅读）：搜索队列<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-exercise-4" title="Permalink">🔗</a></span></h3>
                 <p>
-                  在你的项目中用 <code>aesop?</code> 提取手写证明，比较编译速度，记录哪些值得保留、哪些应替换。</p>
+                  阅读 <code>Aesop/Search/Queue.lean</code>，回答：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <code>BestFirstQueue</code> 的底层数据结构是什么？</p>
+                    </li>
+                  <li>
+                    <p>
+                      排序的三级字典序是什么含义？</p>
+                    </li>
+                  <li>
+                    <p>
+                      为什么需要 <code>lastExpandedInIteration</code> 作为第二排序键？（提示：公平性）</p>
+                    </li>
+                  </ol>
+                </section>
+              <section>
+                <h3 id="ch11-exercise-5">
+                  12.12.5. 练习 5（实战）：aesop? 替换<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch11-exercise-5" title="Permalink">🔗</a></span></h3>
+                <p>
+                  在你的项目中用 <code>aesop?</code> 提取手写证明，比较编译速度，记录哪些值得保留、哪些应替换为 <code>aesop?</code> 输出的脚本。</p>
                 <p>
                   下一章：<code>grind</code>——E-matching 和 congruence closure。
 </p>

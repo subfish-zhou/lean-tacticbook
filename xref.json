@@ -1281,17 +1281,6 @@
         "number": "2"},
        {"title": "第二版：引理集扩展", "shortTitle": null, "number": "2"}]},
      "address": "/Ch23Methodology/"}],
-   "search-architecture":
-   [{"id": "search-architecture",
-     "data":
-     {"title": "11.2 搜索架构",
-      "shortTitle": null,
-      "sectionNum": "12.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.2 搜索架构", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch11Aesop/"}],
    "save-restore-state":
    [{"id": "save-restore-state",
      "data":
@@ -1327,40 +1316,6 @@
        {"title": "本书的代码约定", "shortTitle": null, "number": "5"},
        {"title": "可运行示例", "shortTitle": null, "number": "1"}]},
      "address": "/Ch00Setup/"}],
-   "rule-types":
-   [{"id": "rule-types",
-     "data":
-     {"title": "11.3 规则类型",
-      "shortTitle": null,
-      "sectionNum": "12.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.3 规则类型", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch11Aesop/"}],
-   "rule-sets":
-   [{"id": "rule-sets",
-     "data":
-     {"title": "规则集",
-      "shortTitle": null,
-      "sectionNum": "12.5.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.5 配置 aesop", "shortTitle": null, "number": "5"},
-       {"title": "规则集", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch11Aesop/"}],
-   "rule-actions":
-   [{"id": "rule-actions",
-     "data":
-     {"title": "11.4 规则动作",
-      "shortTitle": null,
-      "sectionNum": "12.4.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.4 规则动作", "shortTitle": null, "number": "4"}]},
-     "address": "/Ch11Aesop/"}],
    "rewrite-pre-post":
    [{"id": "rewrite-pre-post",
      "data":
@@ -1570,18 +1525,6 @@
         "number": "2"},
        {"title": "推理示例", "shortTitle": null, "number": "2"}]},
      "address": "/Ch12Grind/"}],
-   "reading-error-messages":
-   [{"id": "reading-error-messages",
-     "data":
-     {"title": "阅读错误信息",
-      "shortTitle": null,
-      "sectionNum": "12.7.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.7 调试 aesop", "shortTitle": null, "number": "7"},
-       {"title": "阅读错误信息", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch11Aesop/"}],
    "readability-decline":
    [{"id": "readability-decline",
      "data":
@@ -3358,17 +3301,6 @@
        {"title": "linarith：线性算术判定", "shortTitle": null, "number": "2"},
        {"title": "基本用法", "shortTitle": null, "number": "1"}]},
      "address": "/Ch09Linarith/"}],
-   "limitations-and-best-practices":
-   [{"id": "limitations-and-best-practices",
-     "data":
-     {"title": "11.9 局限与最佳实践",
-      "shortTitle": null,
-      "sectionNum": "12.9.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.9 局限与最佳实践", "shortTitle": null, "number": "9"}]},
-     "address": "/Ch11Aesop/"}],
    "let-expr":
    [{"id": "let-expr",
      "data":
@@ -3569,18 +3501,6 @@
        {"title": "环境与运行约定", "shortTitle": null, "number": "1"},
        {"title": "安装 Lean 4", "shortTitle": null, "number": "2"}]},
      "address": "/Ch00Setup/"}],
-   "inline-configuration":
-   [{"id": "inline-configuration",
-     "data":
-     {"title": "内联配置",
-      "shortTitle": null,
-      "sectionNum": "12.5.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.5 配置 aesop", "shortTitle": null, "number": "5"},
-       {"title": "内联配置", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch11Aesop/"}],
    "incremental-compilation":
    [{"id": "incremental-compilation",
      "data":
@@ -4209,19 +4129,6 @@
        {"title": "Lean 4 元编程模型", "shortTitle": null, "number": "2"},
        {"title": "第一个 tactic：从零开始", "shortTitle": null, "number": "5"}]},
      "address": "/Ch01MetaprogrammingModel/"}],
-   "finset-rule-set-example":
-   [{"id": "finset-rule-set-example",
-     "data":
-     {"title": "11.6 案例：Finset 的 aesop 规则集",
-      "shortTitle": null,
-      "sectionNum": "12.6.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.6 案例：Finset 的 aesop 规则集",
-        "shortTitle": null,
-        "number": "6"}]},
-     "address": "/Ch11Aesop/"}],
    "finite-sums":
    [{"id": "finite-sums",
      "data":
@@ -4774,18 +4681,6 @@
        {"title": "常见失败模式与 debug", "shortTitle": null, "number": "8"},
        {"title": "setGoals 遗漏目标", "shortTitle": null, "number": "3"}]},
      "address": "/Ch03FirstTactic/"}],
-   "failure-search-space-explosion":
-   [{"id": "failure-search-space-explosion",
-     "data":
-     {"title": "失败 3：搜索空间爆炸",
-      "shortTitle": null,
-      "sectionNum": "12.8.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.8 常见失败模式", "shortTitle": null, "number": "8"},
-       {"title": "失败 3：搜索空间爆炸", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch11Aesop/"}],
    "failure-savestate-restorestate":
    [{"id": "failure-savestate-restorestate",
      "data":
@@ -4800,18 +4695,6 @@
         "shortTitle": null,
         "number": "2"}]},
      "address": "/Ch04GoalManagement/"}],
-   "failure-safe-rules-too-aggressive":
-   [{"id": "failure-safe-rules-too-aggressive",
-     "data":
-     {"title": "失败 4：safe 规则过度激进",
-      "shortTitle": null,
-      "sectionNum": "12.8.4.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.8 常见失败模式", "shortTitle": null, "number": "8"},
-       {"title": "失败 4：safe 规则过度激进", "shortTitle": null, "number": "4"}]},
-     "address": "/Ch11Aesop/"}],
    "failure-reduce-vs-eval":
    [{"id": "failure-reduce-vs-eval",
      "data":
@@ -5036,18 +4919,6 @@
        {"title": "16.7 gcongr 的五种失败模式", "shortTitle": null, "number": "7"},
        {"title": "失败 2：缺少侧条件", "shortTitle": null, "number": "2"}]},
      "address": "/Ch16Gcongr/"}],
-   "failure-missing-rules":
-   [{"id": "failure-missing-rules",
-     "data":
-     {"title": "失败 2：缺少关键规则",
-      "shortTitle": null,
-      "sectionNum": "12.8.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.8 常见失败模式", "shortTitle": null, "number": "8"},
-       {"title": "失败 2：缺少关键规则", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch11Aesop/"}],
    "failure-missing-instance":
    [{"id": "failure-missing-instance",
      "data":
@@ -5142,18 +5013,6 @@
         "shortTitle": null,
         "number": "4"}]},
      "address": "/Ch01MetaprogrammingModel/"}],
-   "failure-insufficient-type-info":
-   [{"id": "failure-insufficient-type-info",
-     "data":
-     {"title": "失败 1：类型信息不足",
-      "shortTitle": null,
-      "sectionNum": "12.8.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.8 常见失败模式", "shortTitle": null, "number": "8"},
-       {"title": "失败 1：类型信息不足", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch11Aesop/"}],
    "failure-infeasible-computation":
    [{"id": "failure-infeasible-computation",
      "data":
@@ -5264,18 +5123,6 @@
        {"title": "13.3 decide 的五种失败模式", "shortTitle": null, "number": "3"},
        {"title": "失败 4：目标含自由变量", "shortTitle": null, "number": "4"}]},
      "address": "/Ch13Decide/"}],
-   "failure-forward-rule-cycles":
-   [{"id": "failure-forward-rule-cycles",
-     "data":
-     {"title": "失败 5：forward 规则循环",
-      "shortTitle": null,
-      "sectionNum": "12.8.5.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.8 常见失败模式", "shortTitle": null, "number": "8"},
-       {"title": "失败 5：forward 规则循环", "shortTitle": null, "number": "5"}]},
-     "address": "/Ch11Aesop/"}],
    "failure-forgetting-goals-update":
    [{"id": "failure-forgetting-goals-update",
      "data":
@@ -6400,54 +6247,6 @@
        {"title": "12.10 练习", "shortTitle": null, "number": "10"},
        {"title": "练习 1：基础等式链 ★", "shortTitle": null, "number": "1"}]},
      "address": "/Ch12Grind/"}],
-   "exercise-11-4":
-   [{"id": "exercise-11-4",
-     "data":
-     {"title": "练习 11.4（实战）：aesop? 替换",
-      "shortTitle": null,
-      "sectionNum": "12.12.4.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "练习", "shortTitle": null, "number": "12"},
-       {"title": "练习 11.4（实战）：aesop? 替换", "shortTitle": null, "number": "4"}]},
-     "address": "/Ch11Aesop/"}],
-   "exercise-11-3":
-   [{"id": "exercise-11-3",
-     "data":
-     {"title": "练习 11.3（诊断）：修复失败",
-      "shortTitle": null,
-      "sectionNum": "12.12.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "练习", "shortTitle": null, "number": "12"},
-       {"title": "练习 11.3（诊断）：修复失败", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch11Aesop/"}],
-   "exercise-11-2":
-   [{"id": "exercise-11-2",
-     "data":
-     {"title": "练习 11.2（进阶）：自定义规则集",
-      "shortTitle": null,
-      "sectionNum": "12.12.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "练习", "shortTitle": null, "number": "12"},
-       {"title": "练习 11.2（进阶）：自定义规则集", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch11Aesop/"}],
-   "exercise-11-1":
-   [{"id": "exercise-11-1",
-     "data":
-     {"title": "练习 11.1（基础）：aesop 能力边界",
-      "shortTitle": null,
-      "sectionNum": "12.12.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "练习", "shortTitle": null, "number": "12"},
-       {"title": "练习 11.1（基础）：aesop 能力边界", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch11Aesop/"}],
    "exercise-1-4":
    [{"id": "exercise-1-4",
      "data":
@@ -7294,17 +7093,6 @@
         "number": "13"},
        {"title": "12.8 调试 grind", "shortTitle": null, "number": "8"}]},
      "address": "/Ch12Grind/"}],
-   "debugging-aesop":
-   [{"id": "debugging-aesop",
-     "data":
-     {"title": "11.7 调试 aesop",
-      "shortTitle": null,
-      "sectionNum": "12.7.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.7 调试 aesop", "shortTitle": null, "number": "7"}]},
-     "address": "/Ch11Aesop/"}],
    "debug-instance-check-heartbeats":
    [{"id": "debug-instance-check-heartbeats",
      "data":
@@ -7601,17 +7389,6 @@
         "shortTitle": null,
         "number": "8"}]},
      "address": "/Ch06Simp/"}],
-   "configuring-aesop":
-   [{"id": "configuring-aesop",
-     "data":
-     {"title": "11.5 配置 aesop",
-      "shortTitle": null,
-      "sectionNum": "12.5.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.5 配置 aesop", "shortTitle": null, "number": "5"}]},
-     "address": "/Ch11Aesop/"}],
    "configuration-options":
    [{"id": "configuration-options",
      "data":
@@ -7762,18 +7539,6 @@
        {"title": "Type Class Synthesis", "shortTitle": null, "number": "6"},
        {"title": "5.7 常见失败模式", "shortTitle": null, "number": "8"}]},
      "address": "/Ch05TypeclassSynthesis/"}],
-   "common-config-options":
-   [{"id": "common-config-options",
-     "data":
-     {"title": "常用配置选项摘录",
-      "shortTitle": null,
-      "sectionNum": "12.5.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.5 配置 aesop", "shortTitle": null, "number": "5"},
-       {"title": "常用配置选项摘录", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch11Aesop/"}],
    "combo-positivity-ring":
    [{"id": "combo-positivity-ring",
      "data":
@@ -7816,17 +7581,6 @@
         "shortTitle": null,
         "number": "3"}]},
      "address": "/Ch24TowardsAnalysis/"}],
-   "combining-with-other-tactics":
-   [{"id": "combining-with-other-tactics",
-     "data":
-     {"title": "11.10 与其他 tactic 组合",
-      "shortTitle": null,
-      "sectionNum": "12.10.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.10 与其他 tactic 组合", "shortTitle": null, "number": "10"}]},
-     "address": "/Ch11Aesop/"}],
    "combining-tactics":
    [{"id": "combining-tactics",
      "data":
@@ -8358,28 +8112,581 @@
         "number": "6"},
        {"title": "组合使用", "shortTitle": null, "number": "1"}]},
      "address": "/Ch12Grind/"}],
+   "ch11-what-aesop-solves":
+   [{"id": "ch11-what-aesop-solves",
+     "data":
+     {"title": "aesop 解决什么问题",
+      "shortTitle": null,
+      "sectionNum": "12.1.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "aesop 解决什么问题", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-usage":
+   [{"id": "ch11-usage",
+     "data":
+     {"title": "用法详解",
+      "shortTitle": null,
+      "sectionNum": "12.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-unsafe-rules":
+   [{"id": "ch11-unsafe-rules",
+     "data":
+     {"title": "@[aesop unsafe N%]  — 不安全规则",
+      "shortTitle": null,
+      "sectionNum": "12.1.4.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "规则类型：norm / safe / unsafe",
+        "shortTitle": null,
+        "number": "4"},
+       {"title": "@[aesop unsafe N%]  — 不安全规则",
+        "shortTitle": null,
+        "number": "3"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-unsafe-inductive":
+   [{"id": "ch11-unsafe-inductive",
+     "data":
+     {"title": "unsafe inductive 实现",
+      "shortTitle": null,
+      "sectionNum": "12.3.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "搜索树：三层节点", "shortTitle": null, "number": "3"},
+       {"title": "unsafe inductive 实现", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-unsafe-execution":
+   [{"id": "ch11-unsafe-execution",
+     "data":
+     {"title": "不安全规则的选择与执行",
+      "shortTitle": null,
+      "sectionNum": "12.5.5.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "搜索主循环", "shortTitle": null, "number": "5"},
+       {"title": "不安全规则的选择与执行", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-tree-data":
+   [{"id": "ch11-tree-data",
+     "data":
+     {"title": "Goal / Rapp / MVarCluster 的真实定义",
+      "shortTitle": null,
+      "sectionNum": "12.3.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "搜索树：三层节点", "shortTitle": null, "number": "3"},
+       {"title": "Goal / Rapp / MVarCluster 的真实定义",
+        "shortTitle": null,
+        "number": "1"}]},
+     "address": "/Ch11Aesop/"}],
    "ch11-trace-options":
    [{"id": "ch11-trace-options",
      "data":
-     {"title": "trace 选项",
+     {"title": "Trace 选项",
+      "shortTitle": null,
+      "sectionNum": "12.9.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "调试手册", "shortTitle": null, "number": "9"},
+       {"title": "Trace 选项", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-tacgen":
+   [{"id": "ch11-tacgen",
+     "data":
+     {"title": "TacGen：机器学习接口",
+      "shortTitle": null,
+      "sectionNum": "12.10.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "扩展点", "shortTitle": null, "number": "10"},
+       {"title": "TacGen：机器学习接口", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-symptom-type-info":
+   [{"id": "ch11-symptom-type-info",
+     "data":
+     {"title": "症状：类型信息不足",
+      "shortTitle": null,
+      "sectionNum": "12.9.3.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "调试手册", "shortTitle": null, "number": "9"},
+       {"title": "症状 → 诊断 → 修复", "shortTitle": null, "number": "3"},
+       {"title": "症状：类型信息不足", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-symptom-slow":
+   [{"id": "ch11-symptom-slow",
+     "data":
+     {"title": "症状：aesop 超时 / 极慢",
+      "shortTitle": null,
+      "sectionNum": "12.9.3.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "调试手册", "shortTitle": null, "number": "9"},
+       {"title": "症状 → 诊断 → 修复", "shortTitle": null, "number": "3"},
+       {"title": "症状：aesop 超时 / 极慢", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-symptom-safe-aggressive":
+   [{"id": "ch11-symptom-safe-aggressive",
+     "data":
+     {"title": "症状：safe 规则过度激进",
+      "shortTitle": null,
+      "sectionNum": "12.9.3.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "调试手册", "shortTitle": null, "number": "9"},
+       {"title": "症状 → 诊断 → 修复", "shortTitle": null, "number": "3"},
+       {"title": "症状：safe 规则过度激进", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-symptom-rule-never-fires":
+   [{"id": "ch11-symptom-rule-never-fires",
+     "data":
+     {"title": "症状：规则已注册但从不触发",
+      "shortTitle": null,
+      "sectionNum": "12.9.3.6.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "调试手册", "shortTitle": null, "number": "9"},
+       {"title": "症状 → 诊断 → 修复", "shortTitle": null, "number": "3"},
+       {"title": "症状：规则已注册但从不触发", "shortTitle": null, "number": "6"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-symptom-not-found":
+   [{"id": "ch11-symptom-not-found",
+     "data":
+     {"title": "症状：aesop 找不到证明",
+      "shortTitle": null,
+      "sectionNum": "12.9.3.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "调试手册", "shortTitle": null, "number": "9"},
+       {"title": "症状 → 诊断 → 修复", "shortTitle": null, "number": "3"},
+       {"title": "症状：aesop 找不到证明", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-symptom-forward-cycle":
+   [{"id": "ch11-symptom-forward-cycle",
+     "data":
+     {"title": "症状：forward 规则循环",
+      "shortTitle": null,
+      "sectionNum": "12.9.3.5.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "调试手册", "shortTitle": null, "number": "9"},
+       {"title": "症状 → 诊断 → 修复", "shortTitle": null, "number": "3"},
+       {"title": "症状：forward 规则循环", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-symptom-diagnosis":
+   [{"id": "ch11-symptom-diagnosis",
+     "data":
+     {"title": "症状 → 诊断 → 修复",
+      "shortTitle": null,
+      "sectionNum": "12.9.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "调试手册", "shortTitle": null, "number": "9"},
+       {"title": "症状 → 诊断 → 修复", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-source-overview":
+   [{"id": "ch11-source-overview",
+     "data":
+     {"title": "源码全景",
+      "shortTitle": null,
+      "sectionNum": "12.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "源码全景", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-search-tree":
+   [{"id": "ch11-search-tree",
+     "data":
+     {"title": "搜索树：三层节点",
+      "shortTitle": null,
+      "sectionNum": "12.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "搜索树：三层节点", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-search-queue":
+   [{"id": "ch11-search-queue",
+     "data":
+     {"title": "搜索队列：优先级与策略",
+      "shortTitle": null,
+      "sectionNum": "12.4.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "搜索单子 SearchM", "shortTitle": null, "number": "4"},
+       {"title": "搜索队列：优先级与策略", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-search-monad":
+   [{"id": "ch11-search-monad",
+     "data":
+     {"title": "搜索单子 SearchM",
+      "shortTitle": null,
+      "sectionNum": "12.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "搜索单子 SearchM", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-search-loop-impl":
+   [{"id": "ch11-search-loop-impl",
+     "data":
+     {"title": "searchLoop：best-first search",
+      "shortTitle": null,
+      "sectionNum": "12.5.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "搜索主循环", "shortTitle": null, "number": "5"},
+       {"title": "searchLoop：best-first search",
+        "shortTitle": null,
+        "number": "1"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-search-loop":
+   [{"id": "ch11-search-loop",
+     "data":
+     {"title": "搜索主循环",
+      "shortTitle": null,
+      "sectionNum": "12.5.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "搜索主循环", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-script-optimize":
+   [{"id": "ch11-script-optimize",
+     "data":
+     {"title": "UScript.optimize：结构化脚本",
+      "shortTitle": null,
+      "sectionNum": "12.8.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "脚本生成", "shortTitle": null, "number": "8"},
+       {"title": "UScript.optimize：结构化脚本", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-script-generation":
+   [{"id": "ch11-script-generation",
+     "data":
+     {"title": "脚本生成",
+      "shortTitle": null,
+      "sectionNum": "12.8.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "脚本生成", "shortTitle": null, "number": "8"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-safe-rules":
+   [{"id": "ch11-safe-rules",
+     "data":
+     {"title": "@[aesop safe]  — 安全规则",
+      "shortTitle": null,
+      "sectionNum": "12.1.4.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "规则类型：norm / safe / unsafe",
+        "shortTitle": null,
+        "number": "4"},
+       {"title": "@[aesop safe]  — 安全规则", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-safe-prefix":
+   [{"id": "ch11-safe-prefix",
+     "data":
+     {"title": "安全前缀：优雅退化",
+      "shortTitle": null,
+      "sectionNum": "12.5.6.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "搜索主循环", "shortTitle": null, "number": "5"},
+       {"title": "安全前缀：优雅退化", "shortTitle": null, "number": "6"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-safe-commit":
+   [{"id": "ch11-safe-commit",
+     "data":
+     {"title": "安全规则的 commit 与推迟语义",
+      "shortTitle": null,
+      "sectionNum": "12.5.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "搜索主循环", "shortTitle": null, "number": "5"},
+       {"title": "安全规则的 commit 与推迟语义", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-rule-types":
+   [{"id": "ch11-rule-types",
+     "data":
+     {"title": "规则类型：norm / safe / unsafe",
+      "shortTitle": null,
+      "sectionNum": "12.1.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "规则类型：norm / safe / unsafe",
+        "shortTitle": null,
+        "number": "4"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-rule-system":
+   [{"id": "ch11-rule-system",
+     "data":
+     {"title": "规则系统",
+      "shortTitle": null,
+      "sectionNum": "12.7.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "规则系统", "shortTitle": null, "number": "7"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-rule-structure":
+   [{"id": "ch11-rule-structure",
+     "data":
+     {"title": "Rule 结构与 RuleName",
       "shortTitle": null,
       "sectionNum": "12.7.1.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.7 调试 aesop", "shortTitle": null, "number": "7"},
-       {"title": "trace 选项", "shortTitle": null, "number": "1"}]},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "规则系统", "shortTitle": null, "number": "7"},
+       {"title": "Rule 结构与 RuleName", "shortTitle": null, "number": "1"}]},
      "address": "/Ch11Aesop/"}],
-   "ch11-summary":
-   [{"id": "ch11-summary",
+   "ch11-rule-sets":
+   [{"id": "ch11-rule-sets",
      "data":
-     {"title": "11.11 小结",
+     {"title": "规则集",
       "shortTitle": null,
-      "sectionNum": "12.11.",
+      "sectionNum": "12.1.6.2.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.11 小结", "shortTitle": null, "number": "11"}]},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "配置 aesop", "shortTitle": null, "number": "6"},
+       {"title": "规则集", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-rule-set-hierarchy":
+   [{"id": "ch11-rule-set-hierarchy",
+     "data":
+     {"title": "BaseRuleSet / GlobalRuleSet / LocalRuleSet",
+      "shortTitle": null,
+      "sectionNum": "12.7.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "规则系统", "shortTitle": null, "number": "7"},
+       {"title": "BaseRuleSet / GlobalRuleSet / LocalRuleSet",
+        "shortTitle": null,
+        "number": "2"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-rule-builders":
+   [{"id": "ch11-rule-builders",
+     "data":
+     {"title": "规则动作（Builder）",
+      "shortTitle": null,
+      "sectionNum": "12.1.5.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "规则动作（Builder）", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-reading-errors":
+   [{"id": "ch11-reading-errors",
+     "data":
+     {"title": "阅读错误信息",
+      "shortTitle": null,
+      "sectionNum": "12.9.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "调试手册", "shortTitle": null, "number": "9"},
+       {"title": "阅读错误信息", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-proof-vs-script":
+   [{"id": "ch11-proof-vs-script",
+     "data":
+     {"title": "Proof reconstruction vs 脚本生成",
+      "shortTitle": null,
+      "sectionNum": "12.8.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "脚本生成", "shortTitle": null, "number": "8"},
+       {"title": "Proof reconstruction vs 脚本生成",
+        "shortTitle": null,
+        "number": "1"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-priority":
+   [{"id": "ch11-priority",
+     "data":
+     {"title": "优先级计算",
+      "shortTitle": null,
+      "sectionNum": "12.3.5.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "搜索树：三层节点", "shortTitle": null, "number": "3"},
+       {"title": "优先级计算", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-normalization-state":
+   [{"id": "ch11-normalization-state",
+     "data":
+     {"title": "NormalizationState 缓存",
+      "shortTitle": null,
+      "sectionNum": "12.6.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "规范化阶段", "shortTitle": null, "number": "6"},
+       {"title": "NormalizationState 缓存", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-normalization":
+   [{"id": "ch11-normalization",
+     "data":
+     {"title": "规范化阶段",
+      "shortTitle": null,
+      "sectionNum": "12.6.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "规范化阶段", "shortTitle": null, "number": "6"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-norm-simp-unfold":
+   [{"id": "ch11-norm-simp-unfold",
+     "data":
+     {"title": "Norm simp 规则与 Unfold 规则",
+      "shortTitle": null,
+      "sectionNum": "12.7.6.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "规则系统", "shortTitle": null, "number": "7"},
+       {"title": "Norm simp 规则与 Unfold 规则",
+        "shortTitle": null,
+        "number": "6"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-norm-rules":
+   [{"id": "ch11-norm-rules",
+     "data":
+     {"title": "@[aesop norm]  — 规范化规则",
+      "shortTitle": null,
+      "sectionNum": "12.1.4.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "规则类型：norm / safe / unsafe",
+        "shortTitle": null,
+        "number": "4"},
+       {"title": "@[aesop norm]  — 规范化规则", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-norm-four-steps":
+   [{"id": "ch11-norm-four-steps",
+     "data":
+     {"title": "四步不动点循环",
+      "shortTitle": null,
+      "sectionNum": "12.6.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "规范化阶段", "shortTitle": null, "number": "6"},
+       {"title": "四步不动点循环", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-node-state":
+   [{"id": "ch11-node-state",
+     "data":
+     {"title": "节点状态与传播",
+      "shortTitle": null,
+      "sectionNum": "12.3.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "搜索树：三层节点", "shortTitle": null, "number": "3"},
+       {"title": "节点状态与传播", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-inline-config":
+   [{"id": "ch11-inline-config",
+     "data":
+     {"title": "内联配置",
+      "shortTitle": null,
+      "sectionNum": "12.1.6.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "配置 aesop", "shortTitle": null, "number": "6"},
+       {"title": "内联配置", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-indexing":
+   [{"id": "ch11-indexing",
+     "data":
+     {"title": "IndexingMode 与 DiscrTree 索引",
+      "shortTitle": null,
+      "sectionNum": "12.7.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "规则系统", "shortTitle": null, "number": "7"},
+       {"title": "IndexingMode 与 DiscrTree 索引",
+        "shortTitle": null,
+        "number": "3"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-extension-points":
+   [{"id": "ch11-extension-points",
+     "data":
+     {"title": "扩展点",
+      "shortTitle": null,
+      "sectionNum": "12.10.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "扩展点", "shortTitle": null, "number": "10"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-expand-next-goal":
+   [{"id": "ch11-expand-next-goal",
+     "data":
+     {"title": "expandNextGoal：弹出并展开",
+      "shortTitle": null,
+      "sectionNum": "12.5.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "搜索主循环", "shortTitle": null, "number": "5"},
+       {"title": "expandNextGoal：弹出并展开", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-expand-goal":
+   [{"id": "ch11-expand-goal",
+     "data":
+     {"title": "expandGoal：三阶段展开",
+      "shortTitle": null,
+      "sectionNum": "12.5.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "搜索主循环", "shortTitle": null, "number": "5"},
+       {"title": "expandGoal：三阶段展开", "shortTitle": null, "number": "3"}]},
      "address": "/Ch11Aesop/"}],
    "ch11-exercises":
    [{"id": "ch11-exercises",
@@ -8389,29 +8696,285 @@
       "sectionNum": "12.12.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
        {"title": "练习", "shortTitle": null, "number": "12"}]},
      "address": "/Ch11Aesop/"}],
-   "ch11-common-failure-patterns":
-   [{"id": "ch11-common-failure-patterns",
+   "ch11-exercise-5":
+   [{"id": "ch11-exercise-5",
      "data":
-     {"title": "11.8 常见失败模式",
+     {"title": "练习 5（实战）：aesop? 替换",
       "shortTitle": null,
-      "sectionNum": "12.8.",
+      "sectionNum": "12.12.5.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.8 常见失败模式", "shortTitle": null, "number": "8"}]},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "练习", "shortTitle": null, "number": "12"},
+       {"title": "练习 5（实战）：aesop? 替换", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-exercise-4":
+   [{"id": "ch11-exercise-4",
+     "data":
+     {"title": "练习 4（源码阅读）：搜索队列",
+      "shortTitle": null,
+      "sectionNum": "12.12.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "练习", "shortTitle": null, "number": "12"},
+       {"title": "练习 4（源码阅读）：搜索队列", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-exercise-3":
+   [{"id": "ch11-exercise-3",
+     "data":
+     {"title": "练习 3（诊断）：修复失败",
+      "shortTitle": null,
+      "sectionNum": "12.12.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "练习", "shortTitle": null, "number": "12"},
+       {"title": "练习 3（诊断）：修复失败", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-exercise-2":
+   [{"id": "ch11-exercise-2",
+     "data":
+     {"title": "练习 2（进阶）：自定义规则集",
+      "shortTitle": null,
+      "sectionNum": "12.12.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "练习", "shortTitle": null, "number": "12"},
+       {"title": "练习 2（进阶）：自定义规则集", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-exercise-1":
+   [{"id": "ch11-exercise-1",
+     "data":
+     {"title": "练习 1（基础）：aesop 能力边界",
+      "shortTitle": null,
+      "sectionNum": "12.12.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "练习", "shortTitle": null, "number": "12"},
+       {"title": "练习 1（基础）：aesop 能力边界", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-eval-aesop":
+   [{"id": "ch11-eval-aesop",
+     "data":
+     {"title": "入口：evalAesop",
+      "shortTitle": null,
+      "sectionNum": "12.2.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "源码全景", "shortTitle": null, "number": "2"},
+       {"title": "入口：evalAesop", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-design-decisions":
+   [{"id": "ch11-design-decisions",
+     "data":
+     {"title": "关键设计决策总结",
+      "shortTitle": null,
+      "sectionNum": "12.11.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "关键设计决策总结", "shortTitle": null, "number": "11"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-debugging":
+   [{"id": "ch11-debugging",
+     "data":
+     {"title": "调试手册",
+      "shortTitle": null,
+      "sectionNum": "12.9.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "调试手册", "shortTitle": null, "number": "9"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-custom-rules":
+   [{"id": "ch11-custom-rules",
+     "data":
+     {"title": "自定义规则（最常见）",
+      "shortTitle": null,
+      "sectionNum": "12.10.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "扩展点", "shortTitle": null, "number": "10"},
+       {"title": "自定义规则（最常见）", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-custom-rule-tac":
+   [{"id": "ch11-custom-rule-tac",
+     "data":
+     {"title": "自定义 RuleTac",
+      "shortTitle": null,
+      "sectionNum": "12.10.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "扩展点", "shortTitle": null, "number": "10"},
+       {"title": "自定义 RuleTac", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-custom-rule-sets":
+   [{"id": "ch11-custom-rule-sets",
+     "data":
+     {"title": "自定义规则集",
+      "shortTitle": null,
+      "sectionNum": "12.10.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "扩展点", "shortTitle": null, "number": "10"},
+       {"title": "自定义规则集", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-config":
+   [{"id": "ch11-config",
+     "data":
+     {"title": "配置 aesop",
+      "shortTitle": null,
+      "sectionNum": "12.1.6.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "配置 aesop", "shortTitle": null, "number": "6"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-comparison":
+   [{"id": "ch11-comparison",
+     "data":
+     {"title": "与 simp / omega / auto 的区别",
+      "shortTitle": null,
+      "sectionNum": "12.1.7.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "与 simp / omega / auto 的区别",
+        "shortTitle": null,
+        "number": "7"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-common-options":
+   [{"id": "ch11-common-options",
+     "data":
+     {"title": "常用配置选项",
+      "shortTitle": null,
+      "sectionNum": "12.1.6.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "配置 aesop", "shortTitle": null, "number": "6"},
+       {"title": "常用配置选项", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-combos":
+   [{"id": "ch11-combos",
+     "data":
+     {"title": "与其他 tactic 组合",
+      "shortTitle": null,
+      "sectionNum": "12.1.8.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "与其他 tactic 组合", "shortTitle": null, "number": "8"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-builtin-rules":
+   [{"id": "ch11-builtin-rules",
+     "data":
+     {"title": "内建规则",
+      "shortTitle": null,
+      "sectionNum": "12.7.5.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "规则系统", "shortTitle": null, "number": "7"},
+       {"title": "内建规则", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-attribute-parsing":
+   [{"id": "ch11-attribute-parsing",
+     "data":
+     {"title": "@[aesop]  属性解析",
+      "shortTitle": null,
+      "sectionNum": "12.7.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "规则系统", "shortTitle": null, "number": "7"},
+       {"title": "@[aesop]  属性解析", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-architecture":
+   [{"id": "ch11-architecture",
+     "data":
+     {"title": "架构全景图",
+      "shortTitle": null,
+      "sectionNum": "12.2.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "源码全景", "shortTitle": null, "number": "2"},
+       {"title": "架构全景图", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-and-or-semantics":
+   [{"id": "ch11-and-or-semantics",
+     "data":
+     {"title": "AND-OR 语义",
+      "shortTitle": null,
+      "sectionNum": "12.3.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "搜索树：三层节点", "shortTitle": null, "number": "3"},
+       {"title": "AND-OR 语义", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-aesop-script-issues":
+   [{"id": "ch11-aesop-script-issues",
+     "data":
+     {"title": "aesop? 脚本不工作",
+      "shortTitle": null,
+      "sectionNum": "12.9.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "调试手册", "shortTitle": null, "number": "9"},
+       {"title": "aesop? 脚本不工作", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-aesop-limitations":
+   [{"id": "ch11-aesop-limitations",
+     "data":
+     {"title": "aesop 不能做什么",
+      "shortTitle": null,
+      "sectionNum": "12.1.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "aesop 不能做什么", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch11Aesop/"}],
+   "ch11-aesop-family":
+   [{"id": "ch11-aesop-family",
+     "data":
+     {"title": "aesop 家族：aesop / aesop? / aesop_nonterminal",
+      "shortTitle": null,
+      "sectionNum": "12.1.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "aesop 家族：aesop / aesop? / aesop_nonterminal",
+        "shortTitle": null,
+        "number": "3"}]},
      "address": "/Ch11Aesop/"}],
    "ch11-aesop":
    [{"id": "ch11-aesop",
      "data":
-     {"title": "aesop：可配置的搜索引擎",
+     {"title": "aesop：可配置的启发式搜索",
       "shortTitle": null,
       "sectionNum": "12.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"}]},
+       {"title": "aesop：可配置的启发式搜索", "shortTitle": null, "number": "12"}]},
      "address": "/Ch11Aesop/"}],
    "ch10-type-mismatch":
    [{"id": "ch10-type-mismatch",
@@ -10623,67 +11186,6 @@
        {"title": "迈向分析自动化", "shortTitle": null, "number": "25"},
        {"title": "24.1 分析自动化的现状", "shortTitle": null, "number": "1"}]},
      "address": "/Ch24TowardsAnalysis/"}],
-   "aesop-what-it-solves":
-   [{"id": "aesop-what-it-solves",
-     "data":
-     {"title": "11.1 aesop 解决什么问题",
-      "shortTitle": null,
-      "sectionNum": "12.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.1 aesop 解决什么问题", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch11Aesop/"}],
-   "aesop-unsafe-rules":
-   [{"id": "aesop-unsafe-rules",
-     "data":
-     {"title": "@[aesop unsafe N%]  — 不安全规则",
-      "shortTitle": null,
-      "sectionNum": "12.3.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.3 规则类型", "shortTitle": null, "number": "3"},
-       {"title": "@[aesop unsafe N%]  — 不安全规则",
-        "shortTitle": null,
-        "number": "3"}]},
-     "address": "/Ch11Aesop/"}],
-   "aesop-suggest":
-   [{"id": "aesop-suggest",
-     "data":
-     {"title": "aesop?  — 提取证明脚本",
-      "shortTitle": null,
-      "sectionNum": "12.7.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.7 调试 aesop", "shortTitle": null, "number": "7"},
-       {"title": "aesop?  — 提取证明脚本", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch11Aesop/"}],
-   "aesop-safe-rules":
-   [{"id": "aesop-safe-rules",
-     "data":
-     {"title": "@[aesop safe]  — 安全规则",
-      "shortTitle": null,
-      "sectionNum": "12.3.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.3 规则类型", "shortTitle": null, "number": "3"},
-       {"title": "@[aesop safe]  — 安全规则", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch11Aesop/"}],
-   "aesop-norm-rules":
-   [{"id": "aesop-norm-rules",
-     "data":
-     {"title": "@[aesop norm]  — 规范化规则",
-      "shortTitle": null,
-      "sectionNum": "12.3.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.3 规则类型", "shortTitle": null, "number": "3"},
-       {"title": "@[aesop norm]  — 规范化规则", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch11Aesop/"}],
    "advanced-techniques":
    [{"id": "advanced-techniques",
      "data":
