@@ -227,7 +227,7 @@ tag := "debugging-aesop"
 
 ## trace 选项
 %%%
-tag := "trace-options"
+tag := "ch11-trace-options"
 %%%
 
 ```
