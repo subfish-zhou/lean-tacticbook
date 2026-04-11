@@ -26,6 +26,7 @@ import LeanAutoBook.Ch21Performance
 import LeanAutoBook.Ch22ExternalTools
 import LeanAutoBook.Ch23Methodology
 import LeanAutoBook.Ch24TowardsAnalysis
+import LeanAutoBook.AppendixApiReference
 
 open Verso.Genre Manual
 open Verso Code External
@@ -93,3 +94,5 @@ _本书校验版本_：Lean 4 `v4.30.0-rc1`，Mathlib 同期主线（2026 年 4 
 {include 0 LeanAutoBook.Ch23Methodology}
 
 {include 0 LeanAutoBook.Ch24TowardsAnalysis}
+
+{include 0 LeanAutoBook.AppendixApiReference}
