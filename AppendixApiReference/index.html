@@ -1,0 +1,2783 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      (function(){
+  const {protocol:proto, host:hostName, pathname:path, search:srch, hash:hsh} = window.location;
+  if (!(path.endsWith("/") || path.endsWith(".html"))) {
+    window.location.replace(`${proto}//${hostName}${path}/${srch}${hsh}`);
+  }
+})()</script>
+    <base href="./../"><meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <title>附录 A：Metaprogramming API 速查表</title><link rel="stylesheet" href="book.css">
+    <link rel="stylesheet" href="verso-vars.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js" integrity="sha384-zbcZAIxlvJtNE3Dp5nxLXdXtXyxwOdnILY1TDPVmKFhl4r4nSUG1r8bcFXGVa4Te" crossorigin="anonymous"></script>
+    <script src="-verso-search/elasticlunr.min.js"></script>
+    <script src="-verso-search/fuzzysort.min.js"></script>
+    <script src="-verso-search/searchIndex.js"></script>
+    <script type="module" src="-verso-search/search-init.js"></script>
+    <link rel="stylesheet" href="-verso-search/search-box.css">
+    <link rel="stylesheet" href="-verso-search/search-highlight.css">
+    <link rel="stylesheet" href="-verso-search/domain-display.css">
+    <script src="-verso-data/katex/katex.js"></script>
+    <script src="-verso-data/katex/math.js"></script>
+    <script src="-verso-data/popper.min.js"></script>
+    <script src="-verso-data/tippy-bundle.umd.min.js"></script>
+    <link rel="stylesheet" href="-verso-data/tippy-border.css">
+    <link rel="stylesheet" href="-verso-data/katex/katex.css">
+    <style>
+
+.hl.lean {
+  white-space: pre;
+  font-weight: normal;
+  font-style: normal;
+  font-size: inherit;
+}
+
+.hl.lean .keyword {
+  color: var(--verso-code-keyword-color,);
+  font-weight: var(--verso-code-keyword-weight, bold);
+  font-style: var(--verso-code-keyword-style, normal);
+  font-family: var(--verso-code-keyword-font-family,);
+}
+
+.hl.lean .const {
+  color: var(--verso-code-const-color,);
+  font-weight: var(--verso-code-const-weight, normal);
+  font-style: var(--verso-code-const-style, normal);
+  font-family: var(--verso-code-const-font-family,);
+}
+
+.hl.lean .var {
+  color: var(--verso-code-var-color,);
+  font-weight: var(--verso-code-var-weight, normal);
+  font-style: var(--verso-code-var-style, italic);
+  font-family: var(--verso-code-var-font-family,);
+
+  position: relative;
+}
+
+.hl.lean .literal, .hl.lean .unknown {
+  color: var(--verso-code-color,);
+  font-weight: normal;
+  font-style: normal;
+  font-family: var(--verso-code-font-family,);
+}
+
+.hover-container {
+  width: 0;
+  height: 0;
+  position: relative;
+  display: inline;
+}
+
+.hl.lean a {
+  color: inherit;
+  text-decoration: currentcolor underline dotted;
+}
+
+.hl.lean a:hover {
+  text-decoration: currentcolor underline solid;
+}
+
+.hl.lean .hover-info {
+  white-space: normal;
+}
+
+.hl.lean .token .hover-info {
+  display: none;
+  position: absolute;
+  background-color: #e5e5e5;
+  border: 1px solid black;
+  padding: 0.5rem;
+  z-index: 300;
+}
+
+.hl.lean .hover-info.messages {
+  max-height: 10rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  padding: 0 0.5rem 0 0;
+  display: block;
+}
+
+.hl.lean .hover-info code {
+  white-space: pre-wrap;
+  background: none;
+  color: black;
+}
+
+.hl.lean .hover-info.messages > code {
+  padding: 0.5rem;
+  display: block;
+  width: fit-content;
+}
+
+.hl.lean .hover-info.messages > code:only-child {
+  margin: 0;
+}
+
+.hl.lean .hover-info.messages > code {
+  margin: 0.1rem;
+}
+
+.hl.lean .hover-info.messages > code:not(:first-child) {
+  margin-top: 0rem;
+}
+
+.hl.lean {
+}
+
+.hl.lean.block {
+  display: block;
+}
+
+.hl.lean.inline {
+  display: inline;
+  white-space: pre-wrap;
+}
+
+.hl.lean * {
+}
+
+.hl.lean .token {
+  transition: all 0.25s; /* Slight fade for highlights */
+}
+
+@media (hover: hover) {
+  .hl.lean .token.binding-hl, .hl.lean .literal.string:hover, .hl.lean .token.typed:hover {
+    background-color: #eee;
+    border-radius: 2px;
+    transition: none;
+  }
+}
+
+
+.hl.lean .has-info .token:not(.tactic-state):not(.tactic-state *), .hl.lean .has-info .inter-text:not(.tactic-state):not(.tactic-state *) {
+  text-decoration-style: wavy;
+  text-decoration-line: underline;
+  text-decoration-thickness: from-font;
+  text-decoration-skip-ink: none;
+}
+
+.hl.lean .has-info .hover-info {
+  display: none;
+  position: absolute;
+  transform: translate(0.25rem, 0.3rem);
+  border: 1px solid black;
+  padding: 0.5rem;
+  z-index: 400;
+  text-align: left;
+}
+
+.hl.lean .has-info.error :not(.tactic-state):not(.tactic-state *){
+  text-decoration-color: red;
+}
+
+@media (hover: hover) {
+  .hl.lean .has-info.error:hover {
+    background-color: #ffb3b3;
+  }
+}
+
+.hl.lean .hover-info.messages > code.error {
+  background-color: #e5e5e5;
+  border-left: 0.2rem solid #ffb3b3;
+}
+
+.tippy-box[data-theme~='error'] .hl.lean .hover-info.messages > code.error {
+  background: none;
+  border: none;
+}
+
+.error .verso-message, .error .verso-message .token, .error .verso-message label {
+  color: var(--verso-error-color);
+}
+
+.error .verso-message .case-label:has(input[type="checkbox"])::before {
+  background-color: var(--verso-error-color) !important;
+}
+
+.hl.lean .has-info.warning :not(.tactic-state):not(.tactic-state *) {
+  text-decoration-color: var(--verso-warning-indicator-color);
+}
+
+@media (hover: hover) {
+  .hl.lean .has-info.warning:hover {
+    background-color:var(--verso-warning-color);
+  }
+}
+
+.hl.lean .hover-info.messages > code.warning {
+  background-color: var(--verso-warning-color);
+}
+
+.lean-output {
+  border-left: 0.2em solid transparent;
+  padding: 0 0 0 0.5em;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.lean-output.error {
+  border-color: var(--verso-error-indicator-color);
+}
+
+.lean-output.information {
+  border-color: var(--verso-info-indicator-color);
+}
+
+.lean-output.warning {
+  border-color: var(--verso-warning-indicator-color);
+}
+
+.hl.lean .hover-info.messages > code.error {
+  background-color: #e5e5e5;
+  border-left: 0.2rem solid var(--verso-warning-color);
+}
+
+.tippy-box[data-theme~='warning'] .hl.lean .hover-info.messages > code.warning {
+  background: none;
+  border: none;
+}
+
+
+.hl.lean .has-info.information :not(.tactic-state):not(.tactic-state *) {
+  text-decoration-color: var(--verso-info-indicator-color, blue);
+}
+
+@media (hover: hover) {
+  .hl.lean .has-info.information:hover {
+    background-color: #4777ff;
+  }
+}
+
+
+.hl.lean .hover-info.messages > code.information {
+  background-color: #e5e5e5;
+  border-left: 0.2rem solid #4777ff;
+}
+
+.tippy-box[data-theme~='info'] .hl.lean .hover-info.messages > code.information {
+  background: none;
+  border: none;
+}
+
+.hl.lean div.docstring {
+  font-family: var(--verso-text-font-family, sans-serif);
+  white-space: normal;
+  max-width: calc(min(40rem, 90vw));
+  width: max-content;
+}
+
+.hl.lean div.docstring > :last-child {
+  margin-bottom: 0;
+}
+
+.hl.lean div.docstring > :first-child {
+  margin-top: 0;
+}
+
+.hl.lean .hover-info .sep {
+  display: block;
+  width: auto;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0;
+  height: 1px;
+  border-top: 1px solid #ccc;
+}
+
+.hl.lean code {
+  font-family: var(--verso-code-font-family);
+}
+
+.hl.lean .tactic-state {
+  display: none;
+  position: relative;
+  width: fit-content;
+  border: 1px solid #888888;
+  border-radius: 0.1rem;
+  padding: 0.5rem;
+  font-family: sans-serif;
+  background-color: #ffffff;
+}
+
+.hl.lean.popup .tactic-state {
+  position: static;
+  display: block;
+  width: auto;
+  border: none;
+  padding: 0.5rem;
+  font-family: sans-serif;
+  background-color: #ffffff;
+}
+
+
+.hl.lean .tactic {
+  position: relative;
+  display: inline;
+  vertical-align: top;
+  /* Without these, mobile Safari will start making font sizes inconsistent when its text size adjustment feature is triggered.*/
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.hl.lean .tactic:has(.tactic-toggle:checked) {
+  display: inline-grid;
+  grid-template-columns: 1fr;
+}
+
+.hl.lean .tactic-toggle:checked ~ .tactic-state {
+  display: inline-block;
+  vertical-align: top;
+  grid-row: 2;
+  justify-self: start;
+}
+
+.hl.lean .tactic > label {
+  position: relative;
+  grid-row: 1;
+  display: inline;
+}
+
+@media (hover: hover) {
+  .hl.lean .tactic:has(.tactic-toggle:not(:checked)) > label:hover {
+    background-color: #eeeeee;
+  }
+}
+
+.hl.lean .tactic-toggle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  height: 0;
+  width: 0;
+  z-index: -10;
+}
+
+.hl.lean .tactic > label::after {
+  content: "";
+  border: 1px solid #bbbbbb;
+  /* These need to be em, not rem, to scale with the font */
+  border-radius: 1em;
+  height: 0.25em;
+  vertical-align: middle;
+  width: 0.6em;
+  margin-left: 0.1em;
+  margin-right: 0.1em;
+  display: inline-block;
+  transition: all 0.5s;
+}
+
+/*
+@media (hover: hover) {
+  .hl.lean .tactic > label:hover::after {
+    border: 1px solid #aaaaaa;
+    background-color: #aaaaaa;
+    transition: all 0.5s;
+  }
+}
+*/
+
+.hl.lean .tactic > label:has(+ .tactic-toggle:checked)::after {
+  border: 1px solid #999999;
+  background-color: #999999;
+  transition: all 0.5s;
+}
+
+.hl.lean .tactic-state .goal + .goal {
+  margin-top: 1.5em;
+}
+
+/*
+Some CSS frameworks customize details/summary in ways not compatible with Verso's output.
+*/
+
+.hl.lean details {
+  display: block !important;
+  margin: 0;
+}
+
+.hl.lean details summary {
+  display: list-item !important;
+  margin: 0;
+}
+
+.hl.lean details summary:focus {
+  outline: none;
+  outline-offset: none;
+  color: inherit;
+}
+
+.hl.lean ul > li {
+  margin-bottom: 0;
+}
+
+.hl.lean details summary::marker {
+  display: inline !important;
+}
+
+.hl.lean details > summary:first-of-type {
+  list-style-type: disclosure-closed;
+  list-style-position: inside;
+}
+
+.hl.lean details[open] > summary:first-of-type {
+  list-style-type: disclosure-open;
+}
+
+.hl.lean details summary::before, .hl.lean details summary::after {
+  content: "" !important;
+  background: none;
+  display: none;
+}
+
+.hl.lean .tactic-state summary {
+  /* These need to be em, not rem, to scale with the font */
+  margin-left: -0.5em;
+}
+
+.hl.lean .tactic-state details {
+  /* These need to be em, not rem, to scale with the font */
+  padding-left: 0.5em;
+}
+
+.hl.lean .case-label {
+  display: block;
+  position: relative;
+}
+
+.hl.lean .case-label input[type="checkbox"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  height: 0;
+  width: 0;
+  z-index: -10;
+}
+
+.hl.lean .case-label:has(input[type="checkbox"])::before {
+  display: inline-block;
+  background-color: black;
+  content: ' ';
+  transition: ease 0.2s;
+  margin-right: 0.7em;
+  clip-path: polygon(100% 0, 0 0, 50% 100%);
+  width: 0.6em;
+  height: 0.6em;
+  vertical-align: middle;
+}
+
+.hl.lean .case-label:has(input[type="checkbox"]:not(:checked))::before {
+  transform: rotate(-90deg);
+}
+
+.hl.lean .case-label:has(input[type="checkbox"]) {
+
+}
+
+.hl.lean .case-label:has(input[type="checkbox"]:checked) {
+
+}
+
+
+.hl.lean .labeled-case > :not(:first-child) {
+  max-height: 0px;
+  display: block;
+  overflow: hidden;
+  transition: max-height 0.1s ease-in;
+  /* These need to be em, not rem, to scale with the font */
+  margin-left: 0.5em;
+  margin-top: 0.1em;
+}
+
+.hl.lean .labeled-case:has(.case-label input[type="checkbox"]:checked) > :not(:first-child) {
+  max-height: 100%;
+}
+
+
+.hl.lean .goal-name::before {
+  font-style: normal;
+  content: "case ";
+}
+
+.hl.lean .goal-name {
+  font-style: italic;
+  font-family: var(--verso-code-font-family);
+  color: inherit;
+}
+
+.hl.lean .hypotheses {
+  display: table;
+}
+
+.hl.lean .hypothesis {
+  display: table-row;
+}
+
+.hl.lean .hypothesis > * {
+  display: table-cell;
+}
+
+
+.hl.lean .hypotheses .colon {
+  text-align: center;
+  /* This needs to be em, not rem, to scale with the font */
+  min-width: 1em;
+}
+
+.hl.lean .hypotheses .name {
+  text-align: right;
+}
+
+.hl.lean .hypotheses .name,
+.hl.lean .hypotheses .type,
+.hl.lean .conclusion .type {
+  font-family: var(--verso-code-font-family);
+}
+
+.tippy-box {
+  /* Without these, mobile Safari will start making font sizes inconsistent when its text size adjustment feature is triggered.*/
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.tippy-box[data-theme~='lean'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 1px solid black;
+}
+.tippy-box[data-theme~='lean'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: #e5e5e5;
+}
+.tippy-box[data-theme~='lean'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-bottom-color: #e5e5e5;
+}
+.tippy-box[data-theme~='lean'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: #e5e5e5;
+}
+.tippy-box[data-theme~='lean'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: #e5e5e5;
+}
+
+.tippy-box[data-theme~='message'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: #e5e5e5;
+  border-width: 11px 11px 0;
+}
+.tippy-box[data-theme~='message'][data-placement^='top'] > .tippy-arrow::after {
+  bottom: -11px;
+  border-width: 11px 11px 0;
+}
+.tippy-box[data-theme~='message'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-width: 0 11px 11px;
+}
+.tippy-box[data-theme~='message'][data-placement^='bottom'] > .tippy-arrow::after {
+  top: -11px;
+  border-width: 0 11px 11px;
+}
+.tippy-box[data-theme~='message'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: #e5e5e5;
+  border-width: 11px 0 11px 11px;
+}
+.tippy-box[data-theme~='message'][data-placement^='left'] > .tippy-arrow::after {
+  right: -11px;
+  border-width: 11px 0 11px 11px;
+}
+
+.tippy-box[data-theme~='message'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: #e5e5e5;
+  border-width: 11px 11px 11px 0;
+}
+.tippy-box[data-theme~='message'][data-placement^='right'] > .tippy-arrow::after {
+  left: -11px;
+  border-width: 11px 11px 11px 0;
+}
+
+
+
+.tippy-box[data-theme~='warning'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 3px solid var(--verso-warning-color);
+}
+
+.tippy-box[data-theme~='error'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 3px solid #f7a7af;
+}
+
+.tippy-box[data-theme~='info'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 3px solid #99b3c2;
+}
+
+.tippy-box[data-theme~='tactic'] {
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: white;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-bottom-color: white;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: white;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: white;
+}
+
+.extra-doc-links {
+  list-style-type: none;
+  margin-left: 0;
+  padding: 0;
+}
+
+.extra-doc-links > li {
+  display: inline-block;
+}
+
+.extra-doc-links > li:not(:last-child)::after {
+  content: '|';
+  display: inline-block;
+  margin: 0 0.25em;
+}
+
+.verso-message .trace {
+  display: block;
+}
+
+.verso-message .trace > summary::marker {
+  color: var(--verso-text-color);
+}
+
+.verso-message .trace-children {
+  margin: 0;
+  padding: 0;
+}
+
+.verso-message .trace-children > li {
+  list-style-type: none;
+  margin-left: 1.5em;
+}
+
+.verso-message .trace-children > li:not(:has(.trace)) {
+  margin-left: 0;
+}
+
+.verso-message .trace-class {
+  color: color-mix(in srgb, currentColor 70%, transparent);
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+}
+
+.verso-message .text {
+  white-space: pre-wrap;
+}
+
+</style><script>
+      
+window.onload = () => {
+
+    // Don't show hovers inside of closed tactic states
+    function blockedByTactic(elem) {
+      let parent = elem.parentNode;
+      while (parent && "classList" in parent) {
+        if (parent.classList.contains("tactic")) {
+          const toggle = parent.querySelector("input.tactic-toggle");
+          if (toggle) {
+            return !toggle.checked;
+          }
+        }
+        parent = parent.parentNode;
+      }
+      return false;
+    }
+
+    // Track whether any tippy is visible (O(1) check instead of DOM scan)
+    let visibleTippyCount = 0;
+    function blockedByTippy(elem) {
+      return visibleTippyCount > 0;
+    }
+
+    // Binding highlights via event delegation with cached lookups
+    const bindingCache = new Map(); // context+binding -> [token elements]
+    let highlightedTokens = [];
+    function getBindingTokens(context, binding) {
+      const key = context + "\0" + binding;
+      let tokens = bindingCache.get(key);
+      if (!tokens) {
+        tokens = [];
+        for (const example of document.querySelectorAll(".hl.lean")) {
+          if (example.dataset.leanContext == context) {
+            for (const tok of example.querySelectorAll(".token[data-binding=\"" + CSS.escape(binding) + "\"]")) {
+              tokens.push(tok);
+            }
+          }
+        }
+        bindingCache.set(key, tokens);
+      }
+      return tokens;
+    }
+    for (const container of document.querySelectorAll(".hl.lean")) {
+      container.addEventListener("mouseover", (event) => {
+        const c = event.target.closest(".token");
+        if (!c || !c.dataset.binding || c.dataset.binding === "" || !container.contains(c)) return;
+        if (blockedByTactic(c)) return;
+        const tokens = getBindingTokens(container.dataset.leanContext, c.dataset.binding);
+        for (const tok of tokens) {
+          tok.classList.add("binding-hl");
+        }
+        highlightedTokens = tokens;
+      });
+      container.addEventListener("mouseout", (event) => {
+        const c = event.target.closest(".token");
+        if (!c || !container.contains(c)) return;
+        for (const tok of highlightedTokens) {
+          tok.classList.remove("binding-hl");
+        }
+        highlightedTokens = [];
+      });
+    }
+    /* Render docstrings */
+    if ('undefined' !== typeof marked) {
+        for (const d of document.querySelectorAll("code.docstring, pre.docstring")) {
+            const str = d.innerText;
+            const html = marked.parse(str);
+            const rendered = document.createElement("div");
+            rendered.classList.add("docstring");
+            rendered.innerHTML = html;
+            d.parentNode.replaceChild(rendered, d);
+        }
+    }
+    // Add hovers
+    let docsJson = "-verso-docs.json";
+    fetch(docsJson).then((resp) => resp.json()).then((versoDocData) => {
+
+      function hideParentTooltips(element) {
+        let parent = element.parentElement;
+        while (parent) {
+          const tippyInstance = parent._tippy;
+          if (tippyInstance) {
+            tippyInstance.hide();
+          }
+          parent = parent.parentElement;
+        }
+      }
+
+
+
+      const defaultTippyProps = {
+        /* DEBUG -- remove the space: * /
+        onHide(any) { return false; },
+        trigger: "click",
+        // */
+        /* theme: "lean", */
+        maxWidth: "none",
+        appendTo: () => document.body,
+        interactive: true,
+        delay: [100, null],
+        /* ignoreAttributes: true, */
+        followCursor: 'initial',
+        onShow(inst) {
+          if (inst.reference.className == 'tactic') {
+            const toggle = inst.reference.querySelector("input.tactic-toggle");
+            if (toggle && toggle.checked) {
+              return false;
+            }
+            hideParentTooltips(inst.reference);
+            if (blockedByTippy(inst.reference)) { return false; }
+
+          } else if (inst.reference.querySelector(".hover-info") || "versoHover" in inst.reference.dataset) {
+            if (blockedByTactic(inst.reference)) { return false };
+            if (blockedByTippy(inst.reference)) { return false; }
+          } else { // Nothing to show here!
+            return false;
+          }
+        },
+        onShown(inst) { visibleTippyCount++; },
+        onHidden(inst) { visibleTippyCount = Math.max(0, visibleTippyCount - 1); },
+        content (tgt) {
+          const content = document.createElement("span");
+          if (tgt.className == 'tactic') {
+            const state = tgt.querySelector(".tactic-state").cloneNode(true);
+            state.style.display = "block";
+            content.appendChild(state);
+            content.style.display = "block";
+            content.className = "hl lean popup";
+          } else {
+            content.className = "hl lean";
+            content.style.display = "block";
+            content.style.maxHeight = "300px";
+            content.style.overflowY = "auto";
+            content.style.overflowX = "hidden";
+            const hoverId = tgt.dataset.versoHover;
+            const hoverInfo = tgt.querySelector(".hover-info");
+            if (hoverId) { // Docstrings from the table
+              // TODO stop doing an implicit conversion from string to number here
+              let data = versoDocData[hoverId];
+              if (data) {
+                const info = document.createElement("span");
+                info.className = "hover-info";
+                info.style.display = "block";
+                info.innerHTML = data;
+                content.appendChild(info);
+                /* Render docstrings - TODO server-side */
+                if ('undefined' !== typeof marked) {
+                    for (const d of content.querySelectorAll("code.docstring, pre.docstring")) {
+                        const str = d.innerText;
+                        const html = marked.parse(str);
+                        const rendered = document.createElement("div");
+                        rendered.classList.add("docstring");
+                        rendered.innerHTML = html;
+                        d.parentNode.replaceChild(rendered, d);
+                    }
+                }
+              } else {
+                content.innerHTML = "Failed to load doc ID: " + hoverId;
+              }
+            } else if (hoverInfo) { // The inline info, still used for compiler messages
+              content.appendChild(hoverInfo.cloneNode(true));
+            }
+            const extraLinks = tgt.parentElement.dataset['versoLinks'];
+            if (extraLinks) {
+              try {
+                const extras = JSON.parse(extraLinks);
+                const links = document.createElement('ul');
+                links.className = 'extra-doc-links';
+                extras.forEach((l) => {
+                  const li = document.createElement('li');
+                  li.innerHTML = "<a href=\"" + l['href'] + "\" title=\"" + l.long + "\">" + l.short + "</a>";
+                  links.appendChild(li);
+                });
+                content.appendChild(links);
+              } catch (error) {
+                console.error(error);
+              }
+            }
+          }
+          return content;
+        }
+      };
+
+
+      document.querySelectorAll('.hl.lean .const.token, .hl.lean .keyword.token, .hl.lean .literal.token, .hl.lean .option.token, .hl.lean .var.token, .hl.lean .typed.token, .hl.lean .level-var, .hl.lean .level-const, .hl.lean .level-op, .hl.lean .sort').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'lean');
+      });
+      document.querySelectorAll('.hl.lean .has-info.warning').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'warning message');
+      });
+      document.querySelectorAll('.hl.lean .has-info.information').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'info message');
+      });
+      document.querySelectorAll('.hl.lean .has-info.error').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'error message');
+      });
+      document.querySelectorAll('.hl.lean .tactic').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'tactic');
+      });
+      // Skip tokens inside closed tactics — they interfere with tactic tippys
+      const closedTactics = new Set();
+      document.querySelectorAll('.hl.lean .tactic').forEach(tactic => {
+        const toggle = tactic.querySelector('input.tactic-toggle');
+        if (toggle && !toggle.checked) closedTactics.add(tactic);
+      });
+      function isInsideClosedTactic(el) {
+        const tactic = el.closest('.tactic');
+        return tactic && tactic !== el && closedTactics.has(tactic);
+      }
+
+      const tokenSelector = '.hl.lean .const.token, .hl.lean .keyword.token, .hl.lean .literal.token, .hl.lean .option.token, .hl.lean .var.token, .hl.lean .typed.token, .hl.lean .has-info, .hl.lean .tactic, .hl.lean .level-var, .hl.lean .level-const, .hl.lean .level-op, .hl.lean .sort';
+      tippy(Array.from(document.querySelectorAll(tokenSelector)).filter(el => !isInsideClosedTactic(el)), defaultTippyProps);
+
+      // Create/destroy token tippys when tactic checkbox toggles
+      const tacticTippySelector = '.const.token, .keyword.token, .literal.token, .option.token, .var.token, .typed.token, .has-info, .level-var, .level-const, .level-op, .sort';
+      document.querySelectorAll('.hl.lean .tactic').forEach(tactic => {
+        const toggle = tactic.querySelector('input.tactic-toggle');
+        if (toggle) toggle.addEventListener('change', () => {
+          if (toggle.checked) {
+            closedTactics.delete(tactic);
+            tactic.querySelectorAll('.token').forEach(tok => {
+              if (!tok._tippy && tok.matches(tacticTippySelector)) {
+                tippy(tok, defaultTippyProps);
+              }
+            });
+          } else {
+            closedTactics.add(tactic);
+            tactic.querySelectorAll('.token').forEach(tok => {
+              if (tok._tippy) tok._tippy.destroy();
+            });
+          }
+        });
+      });
+  });
+}
+</script>
+    <script src="-verso-search/search-highlight.js" defer="defer"></script>
+    <link rel="stylesheet" href="../static/theme.css"></head>
+  <body>
+    <header>
+      <div class="header-logo-wrapper"></div>
+      <div class="header-title-wrapper">
+        <a href="" class="header-title"><h1>
+            Lean 4 自动化内幕</h1>
+          </a></div>
+      </header>
+    <label for="toggle-toc" id="toggle-toc-click"><span class="line line1"></span><span class="line line2"></span><span class="line line3"></span></label><div class="with-toc">
+      <div class="toc-backdrop" onclick="document.getElementById('toggle-toc-click')?.click()"></div>
+      <nav id="toc">
+        <input type="checkbox" id="toggle-toc"><div class="first">
+          <a href="" class="toc-title"><h1>
+              Lean 4 自动化内幕</h1>
+            </a><div class="split-tocs">
+            <div class="split-toc book">
+              <div class="title">
+                <label for="--verso-manual-toc-----bookRoot" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-----bookRoot" checked="checked"></label><span class="">Table of Contents</span></div>
+              <table><tr class="numbered"><td class="num">1.</td><td><a href="Ch00Setup/#ch00-setup">环境与运行约定</a></td></tr><tr class="numbered"><td class="num">2.</td><td><a href="Ch01MetaprogrammingModel/#ch01-metaprogramming-model">Lean 4 元编程模型</a></td></tr><tr class="numbered"><td class="num">3.</td><td><a href="Ch02Expr/#ch02-expr">Expr：Lean 4 的内部表示</a></td></tr><tr class="numbered"><td class="num">4.</td><td><a href="Ch03FirstTactic/#ch03-first-tactic">编写你的第一个 Tactic</a></td></tr><tr class="numbered"><td class="num">5.</td><td><a href="Ch04GoalManagement/#ch04-goal-management">目标管理</a></td></tr><tr class="numbered"><td class="num">6.</td><td><a href="Ch05TypeclassSynthesis/#ch05-typeclass-synthesis">Type Class Synthesis</a></td></tr><tr class="numbered"><td class="num">7.</td><td><a href="Ch06Simp/#ch06-simp">simp——化简的瑞士军刀</a></td></tr><tr class="numbered"><td class="num">8.</td><td><a href="Ch07Ring/#ch07-ring">ring 和 <code>ring_nf</code>：代数范式化</a></td></tr><tr class="numbered"><td class="num">9.</td><td><a href="Ch08Omega/#ch08-omega">omega：Presburger 算术决策过程</a></td></tr><tr class="numbered"><td class="num">10.</td><td><a href="Ch09Linarith/#ch09-linarith">linarith、nlinarith 与 polyrith</a></td></tr><tr class="numbered"><td class="num">11.</td><td><a href="Ch10NormNum/#ch10-norm-num"><code>norm_num</code>：数值计算框架</a></td></tr><tr class="numbered"><td class="num">12.</td><td><a href="Ch11Aesop/#ch11-aesop">aesop：可配置的启发式搜索</a></td></tr><tr class="numbered"><td class="num">13.</td><td><a href="Ch12Grind/#ch12-grind">grind：E-matching 与 Congruence Closure</a></td></tr><tr class="numbered"><td class="num">14.</td><td><a href="Ch13Decide/#ch13-decide">decide 与 <code>native_decide</code>：有限计算判定</a></td></tr><tr class="numbered"><td class="num">15.</td><td><a href="Ch14Positivity/#ch14-positivity">positivity：符号非负性推理</a></td></tr><tr class="numbered"><td class="num">16.</td><td><a href="Ch15FunProp/#ch15-fun-prop"><code>fun_prop</code>：函数性质的自动证明</a></td></tr><tr class="numbered"><td class="num">17.</td><td><a href="Ch16Gcongr/#ch16-gcongr">gcongr：广义合同性</a></td></tr><tr class="numbered"><td class="num">18.</td><td><a href="Ch17FieldSimp/#ch17-field-simp"><code>field_simp</code>：分式化简</a></td></tr><tr class="numbered"><td class="num">19.</td><td><a href="Ch18LogicTransforms/#ch18-logic-transforms">push<em>neg、contrapose、by</em>contra</a></td></tr><tr class="numbered"><td class="num">20.</td><td><a href="Ch19DesignYourOwn/#ch19-design-your-own">设计你自己的领域自动化</a></td></tr><tr class="numbered"><td class="num">21.</td><td><a href="Ch20Reflection/#ch20-reflection">反射证明模式</a></td></tr><tr class="numbered"><td class="num">22.</td><td><a href="Ch21Performance/#ch21-performance">性能工程</a></td></tr><tr class="numbered"><td class="num">23.</td><td><a href="Ch22ExternalTools/#ch22-external-tools">对接外部工具</a></td></tr><tr class="numbered"><td class="num">24.</td><td><a href="Ch23Methodology/#ch23-methodology">从证明模式到自动化：方法论</a></td></tr><tr class="numbered"><td class="num">25.</td><td><a href="Ch24TowardsAnalysis/#ch24-towards-analysis">迈向分析自动化</a></td></tr><tr class="current numbered"><td class="num">26.</td><td><a href="AppendixApiReference/#appendix-api-reference">附录 A：Metaprogramming API 速查表</a></td></tr></table></div>
+            <div class="split-toc">
+              <div class="title">
+                <label for="--verso-manual-toc-appendix-api-reference" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-appendix-api-reference" checked="checked"></label><span class="number">26.</span> <span class="current"><a href="AppendixApiReference/#appendix-api-reference">附录 A：Metaprogramming API 速查表</a></span></div>
+              <table><tr class="numbered"><td class="num">26.1.</td><td><a href="AppendixApiReference/#appendix-api-minimal-template">最小 tactic 工作流模板</a></td></tr><tr class="numbered"><td class="num">26.2.</td><td><a href="AppendixApiReference/#appendix-api-corem">A.1 CoreM 层</a></td></tr><tr class="numbered"><td class="num">26.3.</td><td><a href="AppendixApiReference/#appendix-api-metam">A.2 MetaM 层</a></td></tr><tr class="numbered"><td class="num">26.4.</td><td><a href="AppendixApiReference/#appendix-api-termelabm">A.3 TermElabM 层</a></td></tr><tr class="numbered"><td class="num">26.5.</td><td><a href="AppendixApiReference/#appendix-api-tacticm">A.4 TacticM 层</a></td></tr><tr class="numbered"><td class="num">26.6.</td><td><a href="AppendixApiReference/#appendix-api-error-logging">A.5 错误处理与日志</a></td></tr><tr class="numbered"><td class="num">26.7.</td><td><a href="AppendixApiReference/#appendix-api-expr-constructors">A.6 Expr 构造函数</a></td></tr><tr class="numbered"><td class="num">26.8.</td><td><a href="AppendixApiReference/#appendix-api-expr-matching">A.7 Expr 匹配与分析</a></td></tr><tr class="numbered"><td class="num">26.9.</td><td><a href="AppendixApiReference/#appendix-api-name-level-syntax">A.8 Name / Level / Syntax 操作</a></td></tr><tr class="numbered"><td class="num">26.10.</td><td><a href="AppendixApiReference/#appendix-api-tactic-decl">A.9 Tactic 声明方式</a></td></tr><tr class="numbered"><td class="num">26.11.</td><td><a href="AppendixApiReference/#appendix-api-attributes">A.10 常用属性（Attribute）</a></td></tr><tr class="numbered"><td class="num">26.12.</td><td><a href="AppendixApiReference/#appendix-api-monad-lifting">A.11 Monad 层级提升</a></td></tr><tr class="numbered"><td class="num">26.13.</td><td><a href="AppendixApiReference/#appendix-api-expr-overview">A.12 Expr 构造子速览</a></td></tr><tr class="numbered"><td class="num">26.14.</td><td><a href="AppendixApiReference/#appendix-api-task-lookup">A.13 速查：按任务查 API</a></td></tr><tr class="numbered"><td class="num">26.15.</td><td><a href="AppendixApiReference/#appendix-api-chapter-index">A.14 章节-API 交叉索引</a></td></tr><tr class="numbered"><td class="num">26.16.</td><td><a href="AppendixApiReference/#appendix-api-advanced">A.15 进阶 API 🔧</a></td></tr></table></div>
+            </div>
+          </div>
+        <div class="last"></div>
+        </nav>
+      <main><div class="content-wrapper">
+          <nav class="prev-next-buttons">
+            <a class="local-button active" href="Ch24TowardsAnalysis/#ch24-towards-analysis" rel="prev" title="25. 迈向分析自动化"><span class="arrow">←</span><span class="where">25. 迈向分析自动化</span></a><div></div>
+            </nav>
+          <section>
+            <h1>
+              26. 附录 A：Metaprogramming API 速查表<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-reference" title="Permalink">🔗</a></span></h1>
+            <p>
+              本附录按 monad 层分类，列出本书各章提到的所有常用元编程 API。每个条目给出签名、所在层、用途、简短示例和注意事项。API 按使用频率排序（常用在前）。</p>
+            <p>
+              <strong>图标说明</strong>：条目标题后的图标表示使用层级——</p>
+            <ul>
+              <li>
+                <p>
+                  没有图标 = 核心常用 API，日常 tactic 开发的基本工具</p>
+                </li>
+              <li>
+                <p>
+                  🔧 = 高级或版本敏感 API，仅在特殊场景下需要</p>
+                </li>
+              </ul>
+            <section>
+              <h2 id="appendix-api-minimal-template">
+                26.1. 最小 tactic 工作流模板<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-minimal-template" title="Permalink">🔗</a></span></h2>
+              <p>
+                第一次写自定义 tactic？从这个 10 行模板开始：</p>
+              <pre>import Lean
+open Lean Elab Tactic Meta
+
+elab "my_first_tactic" : tactic =&gt; do
+  let goal ← getMainGoal        -- 拿到当前目标（MVarId）
+  let target ← goal.getType     -- 目标类型（Expr，即"要证什么"）
+  let target ← whnf target      -- 规约到弱头范式，露出顶层结构
+  logInfo m!"goal type: {target}" -- 在 InfoView 里显示
+  -- 在这里添加你的证明逻辑
+</pre><p>
+                <strong>建议阅读顺序</strong>：先通读 Ch01，掌握 <code>getMainGoal</code> / <code>goal.getType</code> / <code>whnf</code> / <code>goal.assign</code> 四件套，再按需查阅本附录。</p>
+              </section>
+            <section>
+              <h2 id="appendix-api-corem">
+                26.2. A.1 CoreM 层<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-corem" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code>CoreM</code> 是整个元编程栈的基础层（最底层的 monad，所有上层 monad 都继承它的能力），提供环境访问、名字生成和选项读取。</p>
+              <section>
+                <h3 id="appendix-api-getenv">
+                  26.2.1. <code>getEnv</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-getenv" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>CoreM Environment</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 获取当前环境（environment，即所有已声明的定义、定理、公理的集合）的只读快照</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>示例</strong>: <code>let env ← getEnv; if env.contains Nat.add then ...</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: 返回的是快照，后续修改环境不会反映到已获取的值</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch01 后</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-getoptions">
+                  26.2.2. <code>getOptions</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-getoptions" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>CoreM Options</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 读取当前用户选项（<code>set_option</code> 设置的值）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch05 后</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-mkfreshid">
+                  26.2.3. <code>mkFreshId</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-mkfreshid" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>CoreM Name</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 生成一个全局唯一的名字</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch03 后</p>
+                    </li>
+                  </ul>
+                </section>
+              </section>
+            <section>
+              <h2 id="appendix-api-metam">
+                26.3. A.2 MetaM 层<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-metam" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code>MetaM</code> 是元编程的核心层（在 <code>CoreM</code> 之上，增加了元变量管理和统一化），提供类型检查、元变量（metavariable，即待填充的"洞"）管理、表达式规约（reduction，把表达式化简到更基本的形式）和 unification（统一化，判断两个表达式是否"本质相同"并尝试让它们匹配）。</p>
+              <section>
+                <h3 id="appendix-api-infertype">
+                  26.3.1. <code>inferType</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-infertype" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Expr → MetaM Expr</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 推断表达式的类型</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>示例</strong>: <code>let ty ← inferType (mkConst Nat.zero)  -- 得到 Nat</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: 对含自由变量（free variable，局部上下文中的变量）的表达式，需在正确的 <code>LocalContext</code> 中调用</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch01 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch01, Ch02, Ch05</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-isdefeq">
+                  26.3.2. <code>isDefEq</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-isdefeq" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Expr → Expr → MetaM Bool</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>所在层</strong>: MetaM</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 判断两个表达式是否定义等价（definitional equality，经过规约后完全一致）；会触发 unification 副作用</p>
+                    </li>
+                  </ul>
+                <p>
+                  <strong>示例</strong>：</p>
+                <pre>if ← isDefEq declType target then
+  goal.assign decl.toExpr
+</pre><ul>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: <strong>有副作用</strong>——可能会赋值元变量。如果只想检查而不想影响状态，用 <code>withoutModifyingState</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch01 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch01, Ch03, Ch06, Ch19</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-whnf">
+                  26.3.3. <code>whnf</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-whnf" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Expr → MetaM Expr</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 将表达式规约到弱头范式（Weak Head Normal Form，只展开最外层，露出顶层构造子）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>示例</strong>: <code>let e ← whnf target</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: 只规约"头部"，不深入子项；需要完全规约用 <code>reduce</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch01 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch02</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-reduce">
+                  26.3.4. <code>reduce</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-reduce" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Expr → MetaM Expr</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 尽可能完全规约表达式（比 <code>whnf</code> 更彻底但更慢）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch02 后</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-mkfreshexprmvar">
+                  26.3.5. <code>mkFreshExprMVar</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-mkfreshexprmvar" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Option Expr → MetaM Expr</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 创建一个新的元变量（hole，即待填充的占位符）；参数是可选的期望类型</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>示例</strong>: <code>let mvar ← mkFreshExprMVar (some targetType)</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: 新元变量未赋值——它会成为需要后续处理的子目标</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch01 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch01, Ch03</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-instantiatemvars">
+                  26.3.6. <code>instantiateMVars</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-instantiatemvars" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Expr → MetaM Expr</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 将表达式中已赋值的元变量替换为其赋值</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: 在检查证明项完整性前应当调用</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch19 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch19</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-foralltelescope">
+                  26.3.7. <code>forallTelescope</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-foralltelescope" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Expr → (Array Expr → Expr → MetaM α) → MetaM α</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 展开 <code>∀</code> 类型，将绑定变量（bound variable）转为 fvar（free variable），进入 body</p>
+                    </li>
+                  </ul>
+                <p>
+                  <strong>示例</strong>：</p>
+                <pre>forallTelescope goalType fun fvars body =&gt; do
+  -- fvars: 量化变量（fvar）; body: bvar 已替换为 fvar
+</pre><ul>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: fvar 只在回调内有效，<strong>不要泄漏到回调外部</strong></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>配对记忆</strong>: <code>forallE ↔ forallTelescope</code>（构造子 vs 展开器），逆操作是 <code>mkForallFVars</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch01 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch01, Ch02</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-lambdatelescope">
+                  26.3.8. <code>lambdaTelescope</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-lambdatelescope" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Expr → (Array Expr → Expr → MetaM α) → MetaM α</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 展开 <code>λ</code> 表达式，将绑定变量转为 fvar，进入 body</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: 与 <code>forallTelescope</code> 对称；同样不要泄漏 fvar</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>配对记忆</strong>: <code>lam ↔ lambdaTelescope</code>，逆操作是 <code>mkLambdaFVars</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch02 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch02</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-withlocaldecl">
+                  26.3.9. <code>withLocalDecl</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-withlocaldecl" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Name → BinderInfo → Expr → (Expr → MetaM α) → MetaM α</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 临时向局部上下文添加一个变量，回调结束后自动移除</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch02 后</p>
+                    </li>
+                  </ul>
+                <p>
+                  <strong>示例</strong>：</p>
+                <pre>withLocalDecl `x .default (mkConst ``Nat) fun x =&gt; do ...
+</pre></section>
+              <section>
+                <h3 id="appendix-api-mkforallfvars">
+                  26.3.10. <code>mkForallFVars</code> / <code>mkLambdaFVars</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-mkforallfvars" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Array Expr → Expr → MetaM Expr</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 将 body 中的 fvar 抽象为 <code>∀</code>/<code>λ</code> 绑定（与 telescope 系列互逆）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>示例</strong>: <code>let ty ← mkForallFVars fvars body</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>配对记忆</strong>: <code>forallTelescope</code> 展开 → <code>mkForallFVars</code> 重建；<code>lambdaTelescope</code> 展开 → <code>mkLambdaFVars</code> 重建</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch01 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch01</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-kabstract">
+                  26.3.11. <code>kabstract</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-kabstract" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Expr → Expr → MetaM Expr</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 将表达式中匹配指定子项的部分抽象为 <code>bvar</code>（bound variable，de Bruijn 索引表示的绑定变量）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: 支持 <code>occurrences</code> 参数控制替换哪些出现</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch02 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch02</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-isproof-isprop">
+                  26.3.12. <code>isProof</code> / <code>isProp</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-isproof-isprop" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Expr → MetaM Bool</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: <code>isProof</code> 判断表达式是否为证明项（proof term）；<code>isProp</code> 判断其类型是否为 <code>Prop</code>（命题宇宙）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch02 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch02</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-synthinstance">
+                  26.3.13. <code>synthInstance?</code> / <code>synthInstance</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-synthinstance" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Expr → MetaM (Option Expr)</code> / <code>Expr → MetaM Expr</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 搜索 type class（类型类，Lean 的自动实例推断机制）实例；<code>synthInstance?</code> 失败时返回 <code>none</code>，<code>synthInstance</code> 失败时直接报错</p>
+                    </li>
+                  </ul>
+                <p>
+                  <strong>示例</strong>：</p>
+                <pre>-- 推荐：先用 synthInstance?，可以优雅地处理搜索失败
+match ← synthInstance? (← mkAppM ``Inhabited #[α]) with
+| some inst =&gt; logInfo m!"found: {inst}"
+| none      =&gt; throwError "no Inhabited instance for {α}"
+
+-- 也可以查找 OfNat 实例
+let inst ← synthInstance (← mkAppM ``OfNat #[mkConst ``Nat, mkNatLit 0])
+</pre><ul>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: 推荐优先使用 <code>synthInstance?</code>，它让你能在搜索失败时给出更好的错误信息，而不是直接抛出内部错误</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch05 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch05</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-isinstance">
+                  26.3.14. <code>isInstance</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-isinstance" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Name → MetaM Bool</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 检查某个声明是否被标记为 type class instance</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch05 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch05</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-mkappm">
+                  26.3.15. <code>mkAppM</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-mkappm" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Name → Array Expr → MetaM Expr</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 创建函数应用并自动填充隐式参数（implicit argument，由编译器推断的参数）和 universe level</p>
+                    </li>
+                  </ul>
+                <p>
+                  <strong>示例</strong>：</p>
+                <pre>-- mkAppM 自动推断隐式参数和 universe level
+let eqRefl ← mkAppM ``Eq.refl #[a]
+
+-- 对比：手动用 mkConst + mkAppN 需要自己提供所有参数
+let eqRefl := mkApp2 (mkConst ``Eq.refl [levelOne]) ty a
+-- 注意手动版本需要知道 Eq.refl 的 universe level 和类型参数
+</pre><ul>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: 比手动 <code>mkApp</code> + <code>mkConst</code> 方便得多，自动处理 universe polymorphism。如果 <code>mkAppM</code> 报错"failed to synthesize"或"type mismatch"，通常意味着提供的显式参数不足以推断出所有隐式参数——此时可以用 <code>mkAppOptM</code> 手动指定部分隐式参数，或检查参数类型是否正确</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch05 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch05, Ch14, Ch19</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-mkconstwithfreshmvarlevels">
+                  26.3.16. <code>mkConstWithFreshMVarLevels</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-mkconstwithfreshmvarlevels" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Name → MetaM Expr</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 创建常量引用并为 universe 参数生成新的元 level</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch05 后</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-mkeqrefl">
+                  26.3.17. <code>mkEqRefl</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-mkeqrefl" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Expr → MetaM Expr</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 构造 <code>@Eq.refl α a</code> 证明项</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch01 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch01</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-withoutmodifyingstate">
+                  26.3.18. <code>withoutModifyingState</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-withoutmodifyingstate" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>MetaM α → MetaM α</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 执行操作但不保留对状态的修改（用于探测性检查）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>示例</strong>: <code>let canUnify ← withoutModifyingState (isDefEq a b)</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: 常用于"试探" <code>isDefEq</code> 而不想留下副作用</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch01 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch01, Ch03</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-withoptions">
+                  26.3.19. <code>withOptions</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-withoptions" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>(Options → Options) → MetaM α → MetaM α</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 临时修改选项后执行操作</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch05 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch05</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-withnewlocalinstance">
+                  26.3.20. <code>withNewLocalInstance</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-withnewlocalinstance" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Name → Expr → MetaM α → MetaM α</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 临时向 type class 搜索添加一个局部实例</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch05 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch05</p>
+                    </li>
+                  </ul>
+                </section>
+              </section>
+            <section>
+              <h2 id="appendix-api-termelabm">
+                26.4. A.3 TermElabM 层<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-termelabm" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code>TermElabM</code> 处理从语法（<code>Syntax</code>，Lean 的抽象语法树表示）到表达式（<code>Expr</code>，Lean 的内核项表示）的精化（elaboration，把用户写的语法转换为类型正确的内核表达式）过程。</p>
+              <section>
+                <h3 id="appendix-api-elabterm">
+                  26.4.1. <code>elabTerm</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-elabterm" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Syntax → Option Expr → TermElabM Expr</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 将语法精化为表达式；第二个参数是可选的期望类型</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>示例</strong>: <code>let e ← elabTerm (← `(Nat.add 2 3)) none</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: 有 elaboration 开销；性能敏感时优先用 <code>mkApp</code> 系列手动构造</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch02 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch02, Ch05</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-elabtype">
+                  26.4.2. <code>elabType</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-elabtype" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Syntax → TermElabM Expr</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 将语法精化为类型（期望结果是 <code>Sort _</code>）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch02 后</p>
+                    </li>
+                  </ul>
+                </section>
+              </section>
+            <section>
+              <h2 id="appendix-api-tacticm">
+                26.5. A.4 TacticM 层<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-tacticm" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code>TacticM</code> 是 tactic 的直接运行环境（最上层 monad），管理目标列表（goal list，每个目标对应一个待证明的元变量）。</p>
+              <section>
+                <h3 id="appendix-api-getmaingoal">
+                  26.5.1. <code>getMainGoal</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-getmaingoal" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>TacticM MVarId</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 获取当前目标列表的第一个目标（主目标）；列表为空时抛出 "no goals"</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch01 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch01, Ch03, Ch04, Ch05, Ch07, Ch14, Ch19</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-getmaintarget">
+                  26.5.2. <code>getMainTarget</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-getmaintarget" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>TacticM Expr</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 获取主目标的类型（即需要证明的命题）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch01 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch01, Ch04, Ch05</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-getgoals-setgoals">
+                  26.5.3. <code>getGoals</code> / <code>setGoals</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-getgoals-setgoals" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>TacticM (List MVarId)</code> / <code>List MVarId → TacticM Unit</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 直接读写目标列表（不做过滤）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: <code>setGoals</code> 不过滤已解决目标——可能需要配合 <code>getUnsolvedGoals</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch03 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch03, Ch04, Ch19</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-getunsolvedgoals">
+                  26.5.4. <code>getUnsolvedGoals</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-getunsolvedgoals" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>TacticM (List MVarId)</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 获取目标列表并过滤掉已赋值的元变量</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch04 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch04</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-replacemaingoal">
+                  26.5.5. <code>replaceMainGoal</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-replacemaingoal" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>List MVarId → TacticM Unit</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 用新的子目标列表替换主目标（新目标在前，旧的其余目标在后）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch04 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch04</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-closemaingoal">
+                  26.5.6. <code>closeMainGoal</code> 🔧<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-closemaingoal" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Expr → TacticM Unit</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 用给定证明项关闭主目标（assign + 移除）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: 此 API 名称在不同 Lean 4 版本间可能有变化，建议以当前 toolchain 的 API 文档为准。等价的手动写法：<code>goal.assign proof; replaceMainGoal \[\]</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch19 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch19</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-mvarid-assign">
+                  26.5.7. <code>MVarId.assign</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-mvarid-assign" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>MVarId → Expr → MetaM Unit</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 将证明项赋值给元变量，关闭对应目标</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>示例</strong>: <code>goal.assign proofExpr</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: 赋值后 <code>MVarId</code> 标记为已解决，但仍可能留在目标列表中</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch01 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch01, Ch03, Ch04</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-mvarid-gettype">
+                  26.5.8. <code>MVarId.getType</code> / <code>MVarId.isAssigned</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-mvarid-gettype" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>MVarId → MetaM Expr</code> / <code>MVarId → MetaM Bool</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 获取目标类型 / 检查是否已赋值</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch03 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch03, Ch04</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-mvarid-intro">
+                  26.5.9. <code>MVarId.intro</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-mvarid-intro" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>MVarId → Name → MetaM (FVarId × MVarId)</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 对目标执行 <code>intro</code>，返回引入的变量和新目标</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>示例</strong>: <code>let (fvar, newGoal) ← goal.intro `h</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch03 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch03, Ch04</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-mvarid-withcontext">
+                  26.5.10. <code>MVarId.withContext</code> / <code>withMainContext</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-mvarid-withcontext" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>MVarId → MetaM α → MetaM α</code> / <code>TacticM α → TacticM α</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 在目标的局部上下文中执行操作</p>
+                    </li>
+                  </ul>
+                <p>
+                  <strong>示例</strong>：</p>
+                <pre>withMainContext do
+  let lctx ← getLCtx
+  for decl in lctx do ...
+</pre><ul>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: 访问目标的局部假设前<strong>必须</strong>先进入其上下文</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch03 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch03, Ch04, Ch05, Ch07, Ch19</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-getlctx">
+                  26.5.11. <code>getLCtx</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-getlctx" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>MetaM LocalContext</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 获取当前局部上下文（所有局部变量和假设）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: <code>LocalDecl</code> 有 <code>.userName</code>、<code>.type</code>、<code>.toExpr</code> 等字段；用 <code>.isImplementationDetail</code> 过滤内部变量</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch03 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch03, Ch04, Ch05</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-focus">
+                  26.5.12. <code>focus</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-focus" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>TacticM α → TacticM α</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 隔离主目标——回调中只能看到主目标，结束后子目标自动合并回</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch04 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch04</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-savestate">
+                  26.5.13. <code>saveState</code> / <code>restoreState</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-savestate" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>TacticM SavedState</code> / <code>SavedState → TacticM Unit</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 保存/恢复 tactic 状态，用于回溯（backtracking，尝试一种策略失败后恢复到之前的状态）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>示例</strong>: <code>let saved ← saveState; try ... catch _ =&gt; restoreState saved; ...</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch04 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch04</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-trytactic">
+                  26.5.14. <code>tryTactic?</code> 🔧<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-trytactic" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>TacticM Unit → TacticM (Option Unit)</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>所在层</strong>: TacticM</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 尝试执行 tactic，失败时返回 <code>none</code> 并回滚状态</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: 此 API 名称在不同 Lean 4 版本间可能有变化。如果编译报错，可用 <code>saveState</code>/<code>restoreState</code> 手动实现等价逻辑</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch04 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch04</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-evaltactic">
+                  26.5.15. <code>evalTactic</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-evaltactic" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Syntax → TacticM Unit</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>所在层</strong>: TacticM</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 执行由 <code>Syntax</code> 表示的 tactic（在元编程中调用其他 tactic）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>示例</strong>: <code>evalTactic (← `(tactic| simp [Nat.add_comm]))</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: 常与 syntax quotation 配合使用；是 tactic 组合的主要手段</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch03 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch03, Ch04, Ch06, Ch07, Ch08</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-liftmetatactic">
+                  26.5.16. <code>liftMetaTactic</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-liftmetatactic" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>(MVarId → MetaM (List MVarId)) → TacticM Unit</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 将 <code>MetaM</code> 层的目标操作提升到 <code>TacticM</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch04 后</p>
+                    </li>
+                  </ul>
+                </section>
+              </section>
+            <section>
+              <h2 id="appendix-api-error-logging">
+                26.6. A.5 错误处理与日志<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-error-logging" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="appendix-api-throwerror">
+                  26.6.1. <code>throwError</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-throwerror" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>MessageData → MetaM α</code>（各层均可用）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 抛出带格式化消息的错误</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>示例</strong>: <code>throwError "expected equality, got {← ppExpr target}"</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch01 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch02, Ch03, Ch04, Ch05, Ch19</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-throwtacticex">
+                  26.6.2. <code>throwTacticEx</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-throwtacticex" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Name → MVarId → MessageData → TacticM α</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 抛出 tactic 错误，自动包含目标上下文信息</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch01 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch01, Ch03</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-loginfo">
+                  26.6.3. <code>logInfo</code> / <code>logWarning</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-loginfo" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>MessageData → CoreM Unit</code>（各层均可用）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 输出信息/警告消息（在 InfoView 中显示）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>示例</strong>: <code>logInfo m!"Found {matches.size} matching lemmas"</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch01 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch03, Ch04, Ch07</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-ppexpr">
+                  26.6.4. <code>ppExpr</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-ppexpr" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Expr → MetaM Format</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 将 <code>Expr</code> 转为人类可读格式</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: 在 <code>m!"..."</code> 插值中 <code>Expr</code> 会自动调用 <code>ppExpr</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch01 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch01</p>
+                    </li>
+                  </ul>
+                </section>
+              </section>
+            <section>
+              <h2 id="appendix-api-expr-constructors">
+                26.7. A.6 Expr 构造函数<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-expr-constructors" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="appendix-api-mkconst">
+                  26.7.1. <code>mkConst</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-mkconst" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Name → List Level → Expr</code>（纯函数）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 创建对已声明常量的引用</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>示例</strong>: <code>let natAdd := mkConst Nat.add</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: universe level 默认 <code>[]</code>；多态定义需提供正确 level</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>配对记忆</strong>: 构造用 <code>mkConst</code>，匹配/提取用 <code>Expr.constName?</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch01 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch01, Ch02, Ch03, Ch05</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-mkapp">
+                  26.7.2. <code>mkApp</code> / <code>mkApp2</code> / <code>mkApp3</code> / <code>mkApp4</code> / <code>mkAppN</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-mkapp" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Expr → Expr → Expr</code>（mkApp）/ <code>Expr → Array Expr → Expr</code>（mkAppN）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 构造函数应用（单参数/多参数/数组参数）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>示例</strong>: <code>let eq := mkApp3 (mkConst Eq) (mkConst Nat) a b</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>配对记忆</strong>: 构造用 <code>mkApp</code>，分析用 <code>Expr.getAppFn</code> + <code>Expr.getAppArgs</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch02 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch02, Ch03</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-mklambda-mkforall">
+                  26.7.3. <code>mkLambda</code> / <code>mkForall</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-mklambda-mkforall" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Name → BinderInfo → Expr → Expr → Expr</code>（纯函数）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 构造 <code>λ</code> / <code>∀</code>/<code>→</code> 表达式（使用 de Bruijn 索引，一种用数字代替变量名的表示方式）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>示例</strong>: <code>mkLambda `n .default (mkConst Nat) (.bvar 0)</code>  -- <code>fun n : Nat =&gt; n</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>配对记忆</strong>: <code>mkLambda ↔ lambdaTelescope</code>，<code>mkForall ↔ forallTelescope</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch02 后</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-mknatlit">
+                  26.7.4. <code>mkNatLit</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-mknatlit" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Nat → Expr</code>（纯函数）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 创建自然数字面量</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch01 后</p>
+                    </li>
+                  </ul>
+                </section>
+              </section>
+            <section>
+              <h2 id="appendix-api-expr-matching">
+                26.8. A.7 Expr 匹配与分析<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-expr-matching" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="appendix-api-match-expr">
+                  26.8.1. <code>match\_expr</code> / <code>let\_expr</code> 语法<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-match-expr" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 按 head constant 匹配表达式，自动解开嵌套的 <code>app</code>。示例：<code>match_expr target with | Eq α lhs rhs =&gt; ... | And p q =&gt; ...</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: 只按 head constant 匹配；对 <code>forallE</code> 等 binder 构造子无效，需用普通 <code>match</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch02 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch02, Ch03, Ch19</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-expr-getappfn">
+                  26.8.2. <code>Expr.getAppFn</code> / <code>Expr.getAppArgs</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-expr-getappfn" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Expr → Expr</code> / <code>Expr → Array Expr</code>（纯函数）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 获取应用头函数 / 所有参数</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>示例</strong>: <code>target.getAppFn</code> 对 <code>f a b c</code> 返回 <code>f</code>；<code>target.getAppArgs</code> 返回 <code>#\[a, b, c\]</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>配对记忆</strong>: 与 <code>mkApp</code> / <code>mkAppN</code> 互逆——<code>mkApp</code> 组装，<code>getAppFn</code>/<code>getAppArgs</code> 拆解</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch02 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch02</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-expr-isapp">
+                  26.8.3. <code>Expr.isApp</code> / <code>Expr.isConst</code> / <code>Expr.isForall</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-expr-isapp" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Expr → Bool</code>（纯函数）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 判断表达式是否为特定构造子</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch02 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch02</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-expr-constname">
+                  26.8.4. Expr constName / constName?<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-expr-constname" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Expr → Name</code> / <code>Expr → Option Name</code>（纯函数）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 提取 <code>const</code> 构造子中的名字</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: <code>constName</code> 在非 const 时会 panic；安全版用 <code>constName?</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch02 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch02</p>
+                    </li>
+                  </ul>
+                </section>
+              </section>
+            <section>
+              <h2 id="appendix-api-name-level-syntax">
+                26.9. A.8 Name / Level / Syntax 操作<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-name-level-syntax" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="appendix-api-name">
+                  26.9.1. Name<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-name" title="Permalink">🔗</a></span></h3>
+                <pre>-- 构造（推荐：反引号语法）
+`Nat.add                          -- 单反引号：当前命名空间解析
+``Nat.add                         -- 双反引号：完全限定名（推荐日常使用）
+
+-- 编程方式构造（仅在需要动态拼接名字时使用）
+Name.mkStr2 "Lean" "Meta"        -- 等价于 `Lean.Meta，但用于运行时构造
+Name.anonymous                    -- 空名字
+
+-- 操作
+Name.append : Name → Name → Name  -- 连接两个名字
+Name.str : Name → String → Name   -- 追加字符串组件
+Name.num : Name → Nat → Name      -- 追加数字组件（如 `_uniq.123`）
+Name.isPrefixOf : Name → Name → Bool  -- 前缀检查
+</pre><p>
+                  <strong>注意</strong>: 在元程序中引用已有声明<strong>首选双反引号</strong>（如 <code>Nat.add</code>），它在编译时检查名字是否存在。<code>Name.mkStr2</code> 等编程构造方式只在需要运行时动态拼接名字时使用（如根据用户输入生成名字）。</p>
+                </section>
+              <section>
+                <h3 id="appendix-api-level">
+                  26.9.2. Level<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-level" title="Permalink">🔗</a></span></h3>
+                <pre>-- 构造
+Level.zero                        -- universe 0
+Level.succ : Level → Level        -- u + 1
+Level.max : Level → Level → Level -- max u v
+Level.param : Name → Level        -- 参数 level（如 `u`）
+
+-- 常用
+levelOne := Level.succ Level.zero  -- universe 1
+</pre></section>
+              <section>
+                <h3 id="appendix-api-syntax">
+                  26.9.3. Syntax 与引号<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-syntax" title="Permalink">🔗</a></span></h3>
+                <pre>-- Tactic 语法引号
+`(tactic| simp [h1, h2])          -- 构造 tactic 语法
+`(tactic| ring)                    -- 简单 tactic
+
+-- Term 语法引号
+`(Nat.add 2 3)                    -- 构造 term 语法
+`($e + $f)                        -- 带反引号插值
+
+-- 标识符
+mkIdent : Name → Syntax           -- 从 Name 创建标识符语法
+</pre></section>
+              </section>
+            <section>
+              <h2 id="appendix-api-tactic-decl">
+                26.10. A.9 Tactic 声明方式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-tactic-decl" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="appendix-api-elab">
+                  26.10.1. <code>elab</code> / <code>elab\_rules</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-elab" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 声明带完整语义实现的 tactic</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>示例</strong>: <code>elab "my_tactic" : tactic =&gt; do let goal ← getMainGoal; ...</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch01 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch01, Ch03, Ch04, Ch05, Ch07, Ch08, Ch14, Ch19</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-macro">
+                  26.10.2. <code>macro</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-macro" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 声明纯语法展开的 tactic（不进入 <code>TacticM</code>）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>示例</strong>: <code>macro "my_rfl" : tactic =&gt; `(tactic| rfl)</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: 适合简单 tactic 组合；复杂逻辑需用 <code>elab</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch01 后</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch01, Ch08</p>
+                    </li>
+                  </ul>
+                </section>
+              </section>
+            <section>
+              <h2 id="appendix-api-attributes">
+                26.11. A.10 常用属性（Attribute）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-attributes" title="Permalink">🔗</a></span></h2>
+              <p>
+                属性（attribute）用于将声明注册到特定 tactic 的规则库中。</p>
+              <p>
+                <strong>注意</strong>：虽然下面的属性写法看起来相似（都是 <code>@[xxx]</code>），但它们背后的注册机制并不相同。例如 <code>@[simp]</code> 将引理加入 <code>simp</code> 的 discrimination tree 索引，<code>@[aesop]</code> 将规则加入 <code>aesop</code> 的搜索树，而 <code>@[instance]</code> 是将声明注册到 type class 系统。它们只是共享了 <code>@[...]</code> 这一语法外壳，底层的存储和查询方式各不相同。</p>
+              <p>
+                | 属性 | 用途 | 出现章节 |
+|------|------|----------|
+| <code>@[simp]</code> | 注册为 <code>simp</code> 化简规则 | Ch06 |
+| <code>@[aesop]</code> | 注册为 <code>aesop</code> 搜索规则（支持 <code>safe</code>/<code>unsafe</code>/<code>norm</code>） | Ch11, Ch19 |
+| <code>@[norm_num]</code> | 注册为 <code>norm_num</code> 计算插件 | Ch10 |
+| <code>@[positivity]</code> | 注册为 <code>positivity</code> 传播规则 | Ch14, Ch19 |
+| <code>@[grind]</code> | 注册为 <code>grind</code> E-matching 触发规则 | Ch12 |
+| <code>@[field_simp]</code> | 注册为 <code>field_simp</code> 分母消除规则 | Ch17 |
+| <code>@[gcongr]</code> | 注册为 <code>gcongr</code> 不等式 congruence 规则 | Ch16 |
+| <code>@[fun_prop]</code> | 注册为 <code>fun_prop</code> 函数性质传播规则 | Ch15 |
+| <code>@[ext]</code> | 注册为扩展性引理 | — |
+| <code>@[instance]</code> | 注册为 type class 实例 | Ch05 |</p>
+              </section>
+            <section>
+              <h2 id="appendix-api-monad-lifting">
+                26.12. A.11 Monad 层级提升<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-monad-lifting" title="Permalink">🔗</a></span></h2>
+              <pre>CoreM ← MetaM ← TermElabM ← TacticM
+</pre><p>
+                每一层自动 lift（提升，即自动继承下层能力）下层 API。例如在 <code>TacticM</code> 中可直接调用 <code>inferType</code>（MetaM 层）。需要将 <code>MVarId → MetaM (List MVarId)</code> 提升到 <code>TacticM</code> 时用 <code>liftMetaTactic</code>。</p>
+              </section>
+            <section>
+              <h2 id="appendix-api-expr-overview">
+                26.13. A.12 Expr 构造子速览<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-expr-overview" title="Permalink">🔗</a></span></h2>
+              <p>
+                | 构造子 | 含义 | 日常使用频率 | 配对 API |
+|--------|------|------------|----------|
+| <code>Expr.app fn arg</code> | 函数应用（多参数 = 嵌套 app） | ★★★★★ | 构造: <code>mkApp</code>; 分析: <code>getAppFn</code>/<code>getAppArgs</code> |
+| <code>Expr.const name levels</code> | 常量引用（定义/定理） | ★★★★★ | 构造: <code>mkConst</code>; 提取: <code>constName?</code> |
+| <code>Expr.fvar fvarId</code> | 自由变量（局部上下文中的变量） | ★★★★★ | 通过 <code>getLCtx</code> 查询 |
+| <code>Expr.mvar mvarId</code> | 元变量（未解决的目标/hole） | ★★★★☆ | 构造: <code>mkFreshExprMVar</code>; 赋值: <code>MVarId.assign</code> |
+| <code>Expr.lam name type body bi</code> | λ 表达式 | ★★★★☆ | 构造: <code>mkLambda</code>; 展开: <code>lambdaTelescope</code> |
+| <code>Expr.forallE name type body bi</code> | ∀/→ 类型 | ★★★★☆ | 构造: <code>mkForall</code>; 展开: <code>forallTelescope</code> |
+| <code>Expr.letE name type value body nonDep</code> | let 绑定 | ★★★☆☆ | — |
+| <code>Expr.lit literal</code> | 字面量（自然数/字符串） | ★★★☆☆ | 构造: <code>mkNatLit</code> |
+| <code>Expr.sort level</code> | Sort（Type u / Prop） | ★★☆☆☆ | — |
+| <code>Expr.bvar index</code> | 绑定变量（de Bruijn 索引） | ★★☆☆☆ | 通过 telescope 系列避免直接操作 |
+| <code>Expr.mdata data expr</code> | 元数据注解 | ★☆☆☆☆ | — |
+| <code>Expr.proj typeName idx struct</code> | 结构体投影 | ★☆☆☆☆ | — |</p>
+              <p>
+                <strong>关键类型</strong>：</p>
+              <ul>
+                <li>
+                  <p>
+                    <code>MVarId</code>：元变量标识（每个未解决目标对应一个）</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>FVarId</code>：自由变量标识（局部上下文中的变量）</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>LocalContext</code>：局部声明集合（通过 <code>getLCtx</code> 获取）</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>LocalDecl</code>：单个局部声明（<code>.userName</code>、<code>.type</code>、<code>.toExpr</code> 字段）</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>Environment</code>：全局环境（所有定义/定理/公理）</p>
+                  </li>
+                </ul>
+              </section>
+            <section>
+              <h2 id="appendix-api-task-lookup">
+                26.14. A.13 速查：按任务查 API<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-task-lookup" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="appendix-api-task-inspect-goal">
+                  26.14.1. "我想检查目标的结构"<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-task-inspect-goal" title="Permalink">🔗</a></span></h3>
+                <pre>let goal ← getMainGoal
+let target ← goal.getType       -- 或 getMainTarget
+let target ← whnf target        -- 规约定义包裹
+match_expr target with
+| Eq α lhs rhs =&gt; ...           -- 等式
+| And p q      =&gt; ...           -- 合取
+| _            =&gt; throwError "unsupported shape"
+</pre></section>
+              <section>
+                <h3 id="appendix-api-task-search-hyps">
+                  26.14.2. "我想在假设中搜索"<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-task-search-hyps" title="Permalink">🔗</a></span></h3>
+                <pre>withMainContext do
+  let target ← getMainTarget
+  let lctx ← getLCtx
+  for decl in lctx do
+    if decl.isImplementationDetail then continue
+    if ← isDefEq decl.type target then
+      (← getMainGoal).assign decl.toExpr
+      return
+  throwError "no matching hypothesis"
+</pre></section>
+              <section>
+                <h3 id="appendix-api-task-split-goal">
+                  26.14.3. "我想拆分目标为子目标"<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-task-split-goal" title="Permalink">🔗</a></span></h3>
+                <pre>let goal ← getMainGoal
+let sub1 ← mkFreshExprMVar (some typeA)
+let sub2 ← mkFreshExprMVar (some typeB)
+let proof := mkApp2 (mkConst ``And.intro) sub1 sub2
+goal.assign proof
+replaceMainGoal [sub1.mvarId!, sub2.mvarId!]
+</pre></section>
+              <section>
+                <h3 id="appendix-api-task-call-tactic">
+                  26.14.4. "我想调用别的 tactic"<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-task-call-tactic" title="Permalink">🔗</a></span></h3>
+                <pre>evalTactic (← `(tactic| simp [Nat.add_comm]))
+-- 或组合多个 tactic
+evalTactic (← `(tactic| constructor &lt;;&gt; assumption))
+</pre></section>
+              <section>
+                <h3 id="appendix-api-task-build-proof">
+                  26.14.5. "我想构造证明项"<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-task-build-proof" title="Permalink">🔗</a></span></h3>
+                <pre>-- 方式 1：mkAppM（自动处理隐式参数和 universe，推荐首选）
+let proof ← mkAppM ``Eq.refl #[a]
+
+-- 方式 2：手动 mkApp（更底层，需自己处理隐式参数）
+let proof := mkApp2 (mkConst ``Eq.refl [levelOne]) ty a
+-- ↑ 注意：需要手动提供 universe level 和类型参数
+
+-- 方式 3：从语法精化（最方便但有 elaboration 开销）
+let proof ← elabTerm (← `(Eq.refl $stx)) (some expectedType)
+</pre></section>
+              <section>
+                <h3 id="appendix-api-task-binders">
+                  26.14.6. "我想处理绑定结构（∀ / λ）"<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-task-binders" title="Permalink">🔗</a></span></h3>
+                <pre>-- 展开 ∀，操作 body，再重建
+forallTelescope goalType fun fvars body =&gt; do
+  -- fvars: 量化变量（fvar），body: bvar 已替换
+  let newBody := ...
+  mkForallFVars fvars newBody     -- 重建 ∀
+
+-- 展开 λ，类似
+lambdaTelescope expr fun fvars body =&gt; do
+  let result := ...
+  mkLambdaFVars fvars result      -- 重建 λ
+</pre></section>
+              <section>
+                <h3 id="appendix-api-task-typeclass">
+                  26.14.7. "我想查找 type class 实例"<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-task-typeclass" title="Permalink">🔗</a></span></h3>
+                <pre>-- 推荐：先用 synthInstance?，优雅处理搜索失败
+match ← synthInstance? (← mkAppM ``Inhabited #[α]) with
+| some inst =&gt; ...
+| none      =&gt; throwError "no Inhabited instance"
+
+-- 确信存在时
+let inst ← synthInstance instType
+</pre></section>
+              <section>
+                <h3 id="appendix-api-task-probe">
+                  26.14.8. "我想探测而不留副作用"<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-task-probe" title="Permalink">🔗</a></span></h3>
+                <pre>-- isDefEq 有副作用（赋值元变量），用 withoutModifyingState 隔离
+let matches ← withoutModifyingState do
+  isDefEq a b
+</pre></section>
+              <section>
+                <h3 id="appendix-api-task-backtrack">
+                  26.14.9. "我想用回溯尝试多种策略"<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-task-backtrack" title="Permalink">🔗</a></span></h3>
+                <pre>let saved ← saveState
+try
+  firstStrategy
+catch _ =&gt;
+  restoreState saved
+  secondStrategy
+</pre></section>
+              </section>
+            <section>
+              <h2 id="appendix-api-chapter-index">
+                26.15. A.14 章节-API 交叉索引<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-chapter-index" title="Permalink">🔗</a></span></h2>
+              <p>
+                | 章节 | 核心 API |
+|------|----------|
+| Ch01 | <code>CoreM</code>, <code>MetaM</code>, <code>TacticM</code>, <code>elab</code>, <code>inferType</code>, <code>isDefEq</code>, <code>getMainGoal</code>, <code>mkFreshExprMVar</code>, <code>forallTelescope</code>, <code>mkEqRefl</code> |
+| Ch02 | <code>Expr</code> 构造子, <code>match_expr</code>, <code>let_expr</code>, <code>whnf</code>, <code>isProof</code>, <code>isProp</code>, <code>getAppFn</code>, <code>getAppArgs</code>, <code>kabstract</code>, <code>mkApp*</code> |
+| Ch03 | <code>getMainGoal</code>, <code>goal.assign</code>, <code>goal.getType</code>, <code>getLCtx</code>, <code>isDefEq</code>, <code>evalTactic</code>, <code>throwTacticEx</code>, <code>withContext</code> |
+| Ch04 | <code>getGoals</code>, <code>setGoals</code>, <code>replaceMainGoal</code>, <code>focus</code>, <code>saveState</code>, <code>restoreState</code>, <code>getUnsolvedGoals</code>, <code>logInfo</code> |
+| Ch05 | <code>mkAppM</code>, <code>synthInstance</code>, <code>synthInstance?</code>, <code>isInstance</code>, <code>withOptions</code>, <code>withNewLocalInstance</code> |
+| Ch06 | <code>simp</code>, <code>isDefEq</code>, <code>DiscrTree.getMatch</code> |
+| Ch07 | <code>ring</code>, <code>evalTactic</code>, <code>logInfo</code>, <code>mkConst</code> |
+| Ch08 | <code>omega</code>, <code>evalTactic</code>, <code>macro</code>, <code>decide</code> |
+| Ch09 | <code>linarith</code>, <code>nlinarith</code>, <code>polyrith</code> |
+| Ch10 | <code>norm_num</code>, <code>decide</code>, <code>native_decide</code> |
+| Ch11 | <code>aesop</code>, <code>@[aesop]</code> |
+| Ch12 | <code>grind</code>, <code>@[grind]</code> |
+| Ch13 | <code>decide</code>, <code>native_decide</code>, <code>Decidable</code> |
+| Ch14 | <code>positivity</code>, <code>mkAppM</code>, <code>@[positivity]</code> |
+| Ch15 | <code>fun_prop</code>, <code>@[fun_prop]</code> |
+| Ch16 | <code>gcongr</code>, <code>@[gcongr]</code> |
+| Ch17 | <code>field_simp</code>, <code>ring</code> |
+| Ch18 | <code>intro</code>, <code>cases</code>, <code>constructor</code> |
+| Ch19 | <code>MetaM</code>, <code>TacticM</code>, <code>closeMainGoal</code>, <code>instantiateMVars</code>, <code>isDefEq</code>, <code>mkAppM</code>, <code>DiscrTree</code>, <code>match_expr</code> |</p>
+              </section>
+            <section>
+              <h2 id="appendix-api-advanced">
+                26.16. A.15 进阶 API 🔧<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-advanced" title="Permalink">🔗</a></span></h2>
+              <blockquote><p>
+                  <strong>提示</strong>：以下 API 面向需要直接操作 Lean 内核环境或 discrimination tree 的高级场景。普通 tactic 开发通常不需要这些 API，建议在掌握 A.1–A.9 后再按需学习。</p>
+                </blockquote><section>
+                <h3 id="appendix-api-setenv">
+                  26.16.1. <code>setEnv</code> 🔧<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-setenv" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Environment → CoreM Unit</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 直接替换当前全局环境</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: ⚠️ <strong>普通 tactic 开发不需要此 API</strong>。直接操作环境可能破坏一致性（如引入循环依赖或类型不正确的声明）。绝大多数场景应通过 <code>addAndCompile</code> 或 <code>addDecl</code> 等高层接口操作环境</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: 仅在开发 Lean 编译器插件或环境操作工具时</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-addandcompile">
+                  26.16.2. <code>addAndCompile</code> 🔧<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-addandcompile" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>Declaration → CoreM Unit</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 向环境添加声明并编译（生成字节码）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: ⚠️ <strong>普通 tactic 开发不需要此 API</strong>。添加前要确保名字未被占用，且声明通过类型检查。仅在需要在运行时动态创建新定义时使用（如代码生成工具）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: 仅在开发 Lean 编译器插件或 metaprogram 生成工具时</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="appendix-api-discrtree-getmatch">
+                  26.16.3. <code>DiscrTree.getMatch</code> 🔧<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=appendix-api-discrtree-getmatch" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>签名</strong>: <code>DiscrTree α → Expr → MetaM (Array α)</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>: 用 discrimination tree（判别树，一种按表达式结构快速索引和查找的数据结构）快速按表达式结构查找匹配规则</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>注意</strong>: 这是 <code>simp</code>、<code>aesop</code> 等 tactic 的内部索引机制。理解它有助于理解这些 tactic 的工作原理，但直接使用它需要对索引结构有深入了解。入门阶段建议通过 <code>@[simp]</code>、<code>@[aesop]</code> 等属性间接使用 discrimination tree，而不是直接操作</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推荐掌握时机</strong>: Ch19 后，仅在需要开发自定义规则索引时</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>出现章节</strong>: Ch05, Ch06, Ch19
+</p>
+                    </li>
+                  </ul>
+                </section>
+              </section>
+            </section>
+          <nav class="prev-next-buttons">
+            <a class="local-button active" href="Ch24TowardsAnalysis/#ch24-towards-analysis" rel="prev" title="25. 迈向分析自动化"><span class="arrow">←</span><span class="where">25. 迈向分析自动化</span></a><div></div>
+            </nav>
+          </div>
+        </main></div>
+    </body>
+  </html>
+

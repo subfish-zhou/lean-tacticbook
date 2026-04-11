@@ -1,0 +1,1 @@
+window.docContents[142].resolve({"/AppendixApiReference/#appendix-api-error-logging":{"contents":"\n\n\n\n\n\n\n\n","context":"Lean 4 自动化内幕\u0009附录 A：Metaprogramming API 速查表","header":"26.6. A.5 错误处理与日志","id":"/AppendixApiReference/#appendix-api-error-logging"}});

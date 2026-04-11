@@ -1,0 +1,1 @@
+window.docContents[116].resolve({"/AppendixApiReference/#appendix-api-replacemaingoal":{"contents":"* 签名: List MVarId → TacticM Unit* 用途: 用新的子目标列表替换主目标（新目标在前，旧的其余目标在后）* 推荐掌握时机: Ch04 后* 出现章节: Ch04\n\n","context":"Lean 4 自动化内幕\u0009附录 A：Metaprogramming API 速查表\u0009A.4 TacticM 层","header":"26.5.5. replaceMainGoal","id":"/AppendixApiReference/#appendix-api-replacemaingoal"}});
