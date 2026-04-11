@@ -7,7 +7,7 @@ open Verso Code External
 set_option verso.exampleProject "../examples"
 set_option verso.exampleModule "Examples.Ch17FieldSimp"
 
-#doc (Manual) "第十七章 `field_simp`：分式化简" =>
+#doc (Manual) "`field_simp`：分式化简" =>
 %%%
 file := "Ch17FieldSimp"
 tag := "ch17-field-simp"

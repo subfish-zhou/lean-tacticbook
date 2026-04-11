@@ -7,7 +7,7 @@ open Verso Code External
 set_option verso.exampleProject "../examples"
 set_option verso.exampleModule "Examples.Ch12Grind"
 
-#doc (Manual) "第十二章 grind：E-matching 与 Congruence Closure" =>
+#doc (Manual) "grind：E-matching 与 Congruence Closure" =>
 %%%
 file := "Ch12Grind"
 tag := "ch12-grind"

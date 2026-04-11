@@ -7,7 +7,7 @@ open Verso Code External
 set_option verso.exampleProject "../examples"
 set_option verso.exampleModule "Examples.Ch11Aesop"
 
-#doc (Manual) "第十一章 aesop：可配置的搜索引擎" =>
+#doc (Manual) "aesop：可配置的搜索引擎" =>
 %%%
 file := "Ch11Aesop"
 tag := "ch11-aesop"

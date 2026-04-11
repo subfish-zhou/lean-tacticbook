@@ -7,7 +7,7 @@ open Verso Code External
 set_option verso.exampleProject "../examples"
 set_option verso.exampleModule "Examples.Ch05TypeclassSynthesis"
 
-#doc (Manual) "第五章 Type Class Synthesis" =>
+#doc (Manual) "Type Class Synthesis" =>
 %%%
 file := "Ch05TypeclassSynthesis"
 tag := "ch05-typeclass-synthesis"

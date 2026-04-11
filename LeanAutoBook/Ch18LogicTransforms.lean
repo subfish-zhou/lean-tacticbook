@@ -7,7 +7,7 @@ open Verso Code External
 set_option verso.exampleProject "../examples"
 set_option verso.exampleModule "Examples.Ch18LogicTransforms"
 
-#doc (Manual) "第十八章 push_neg、contrapose、by_contra" =>
+#doc (Manual) "push_neg、contrapose、by_contra" =>
 %%%
 file := "Ch18LogicTransforms"
 tag := "ch18-logic-transforms"

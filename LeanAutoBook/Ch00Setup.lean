@@ -7,7 +7,7 @@ open Verso Code External
 set_option verso.exampleProject "../examples"
 set_option verso.exampleModule "Examples.Ch00Setup"
 
-#doc (Manual) "第零章 环境与运行约定" =>
+#doc (Manual) "环境与运行约定" =>
 %%%
 file := "Ch00Setup"
 tag := "ch00-setup"

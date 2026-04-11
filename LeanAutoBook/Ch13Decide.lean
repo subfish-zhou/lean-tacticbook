@@ -7,7 +7,7 @@ open Verso Code External
 set_option verso.exampleProject "../examples"
 set_option verso.exampleModule "Examples.Ch13Decide"
 
-#doc (Manual) "第十三章 decide 与 `native_decide`：有限计算判定" =>
+#doc (Manual) "decide 与 `native_decide`：有限计算判定" =>
 %%%
 file := "Ch13Decide"
 tag := "ch13-decide"

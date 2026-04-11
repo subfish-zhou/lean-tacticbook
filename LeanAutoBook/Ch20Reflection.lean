@@ -7,7 +7,7 @@ open Verso Code External
 set_option verso.exampleProject "../examples"
 set_option verso.exampleModule "Examples.Ch20Reflection"
 
-#doc (Manual) "第二十章 反射证明模式" =>
+#doc (Manual) "反射证明模式" =>
 %%%
 file := "Ch20Reflection"
 tag := "ch20-reflection"

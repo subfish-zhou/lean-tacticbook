@@ -7,7 +7,7 @@ open Verso Code External
 set_option verso.exampleProject "../examples"
 set_option verso.exampleModule "Examples.Ch14Positivity"
 
-#doc (Manual) "第十四章 positivity：符号非负性推理" =>
+#doc (Manual) "positivity：符号非负性推理" =>
 %%%
 file := "Ch14Positivity"
 tag := "ch14-positivity"

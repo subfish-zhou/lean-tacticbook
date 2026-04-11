@@ -7,7 +7,7 @@ open Verso Code External
 set_option verso.exampleProject "../examples"
 set_option verso.exampleModule "Examples.Ch06Simp"
 
-#doc (Manual) "第六章 simp：重写引擎" =>
+#doc (Manual) "simp：重写引擎" =>
 %%%
 file := "Ch06Simp"
 tag := "ch06-simp"

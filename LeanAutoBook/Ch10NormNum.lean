@@ -7,7 +7,7 @@ open Verso Code External
 set_option verso.exampleProject "../examples"
 set_option verso.exampleModule "Examples.Ch10NormNum"
 
-#doc (Manual) "第十章 `norm_num`：数值计算框架" =>
+#doc (Manual) "`norm_num`：数值计算框架" =>
 %%%
 file := "Ch10NormNum"
 tag := "ch10-norm-num"

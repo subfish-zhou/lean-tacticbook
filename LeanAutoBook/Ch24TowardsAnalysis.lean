@@ -7,7 +7,7 @@ open Verso Code External
 set_option verso.exampleProject "../examples"
 set_option verso.exampleModule "Examples.Ch24TowardsAnalysis"
 
-#doc (Manual) "第二十四章 迈向分析自动化" =>
+#doc (Manual) "迈向分析自动化" =>
 %%%
 file := "Ch24TowardsAnalysis"
 tag := "ch24-towards-analysis"

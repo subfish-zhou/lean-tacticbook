@@ -7,7 +7,7 @@ open Verso Code External
 set_option verso.exampleProject "../examples"
 set_option verso.exampleModule "Examples.Ch21Performance"
 
-#doc (Manual) "第二十一章 性能工程" =>
+#doc (Manual) "性能工程" =>
 %%%
 file := "Ch21Performance"
 tag := "ch21-performance"

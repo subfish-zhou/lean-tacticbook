@@ -7,7 +7,7 @@ open Verso Code External
 set_option verso.exampleProject "../examples"
 set_option verso.exampleModule "Examples.Ch16Gcongr"
 
-#doc (Manual) "第十六章 gcongr：广义合同性" =>
+#doc (Manual) "gcongr：广义合同性" =>
 %%%
 file := "Ch16Gcongr"
 tag := "ch16-gcongr"

@@ -7,7 +7,7 @@ open Verso Code External
 set_option verso.exampleProject "../examples"
 set_option verso.exampleModule "Examples.Ch15FunProp"
 
-#doc (Manual) "第十五章 `fun_prop`：函数性质的自动证明" =>
+#doc (Manual) "`fun_prop`：函数性质的自动证明" =>
 %%%
 file := "Ch15FunProp"
 tag := "ch15-fun-prop"

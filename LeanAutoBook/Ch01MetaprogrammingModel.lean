@@ -7,7 +7,7 @@ open Verso Code External
 set_option verso.exampleProject "../examples"
 set_option verso.exampleModule "Examples.Ch01MetaprogrammingModel"
 
-#doc (Manual) "第一章 Lean 4 元编程模型" =>
+#doc (Manual) "Lean 4 元编程模型" =>
 %%%
 file := "Ch01MetaprogrammingModel"
 tag := "ch01-metaprogramming-model"

@@ -7,7 +7,7 @@ open Verso Code External
 set_option verso.exampleProject "../examples"
 set_option verso.exampleModule "Examples.Ch03FirstTactic"
 
-#doc (Manual) "第三章 编写你的第一个 Tactic" =>
+#doc (Manual) "编写你的第一个 Tactic" =>
 %%%
 file := "Ch03FirstTactic"
 tag := "ch03-first-tactic"

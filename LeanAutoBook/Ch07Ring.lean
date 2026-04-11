@@ -7,7 +7,7 @@ open Verso Code External
 set_option verso.exampleProject "../examples"
 set_option verso.exampleModule "Examples.Ch07Ring"
 
-#doc (Manual) "第七章 ring 和 `ring_nf`：代数范式化" =>
+#doc (Manual) "ring 和 `ring_nf`：代数范式化" =>
 %%%
 file := "Ch07Ring"
 tag := "ch07-ring"

@@ -7,7 +7,7 @@ open Verso Code External
 set_option verso.exampleProject "../examples"
 set_option verso.exampleModule "Examples.Ch22ExternalTools"
 
-#doc (Manual) "第二十二章 对接外部工具" =>
+#doc (Manual) "对接外部工具" =>
 %%%
 file := "Ch22ExternalTools"
 tag := "ch22-external-tools"

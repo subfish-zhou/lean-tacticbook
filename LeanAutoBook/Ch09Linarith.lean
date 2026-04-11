@@ -7,7 +7,7 @@ open Verso Code External
 set_option verso.exampleProject "../examples"
 set_option verso.exampleModule "Examples.Ch09Linarith"
 
-#doc (Manual) "第九章 linarith、nlinarith 与 polyrith" =>
+#doc (Manual) "linarith、nlinarith 与 polyrith" =>
 %%%
 file := "Ch09Linarith"
 tag := "ch09-linarith"

@@ -7,7 +7,7 @@ open Verso Code External
 set_option verso.exampleProject "../examples"
 set_option verso.exampleModule "Examples.Ch04GoalManagement"
 
-#doc (Manual) "第四章 目标管理" =>
+#doc (Manual) "目标管理" =>
 %%%
 file := "Ch04GoalManagement"
 tag := "ch04-goal-management"

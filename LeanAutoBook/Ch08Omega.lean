@@ -7,7 +7,7 @@ open Verso Code External
 set_option verso.exampleProject "../examples"
 set_option verso.exampleModule "Examples.Ch08Omega"
 
-#doc (Manual) "第八章 omega：Presburger 算术决策过程" =>
+#doc (Manual) "omega：Presburger 算术决策过程" =>
 %%%
 file := "Ch08Omega"
 tag := "ch08-omega"

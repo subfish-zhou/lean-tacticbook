@@ -7,7 +7,7 @@ open Verso Code External
 set_option verso.exampleProject "../examples"
 set_option verso.exampleModule "Examples.Ch19DesignYourOwn"
 
-#doc (Manual) "第十九章 设计你自己的领域自动化" =>
+#doc (Manual) "设计你自己的领域自动化" =>
 %%%
 file := "Ch19DesignYourOwn"
 tag := "ch19-design-your-own"

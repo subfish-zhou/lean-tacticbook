@@ -7,7 +7,7 @@ open Verso Code External
 set_option verso.exampleProject "../examples"
 set_option verso.exampleModule "Examples.Ch02Expr"
 
-#doc (Manual) "第二章 Expr：Lean 4 的内部表示" =>
+#doc (Manual) "Expr：Lean 4 的内部表示" =>
 %%%
 file := "Ch02Expr"
 tag := "ch02-expr"
