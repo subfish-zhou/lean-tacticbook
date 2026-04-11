@@ -87,6 +87,18 @@
        {"title": "对接外部工具", "shortTitle": null, "number": "23"},
        {"title": "22.1 为什么对接外部工具", "shortTitle": null, "number": "1"}]},
      "address": "/Ch22ExternalTools/"}],
+   "why-congr":
+   [{"id": "why-congr",
+     "data":
+     {"title": "为什么需要 congruence lemma",
+      "shortTitle": null,
+      "sectionNum": "7.7.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "Congruence Lemma", "shortTitle": null, "number": "7"},
+       {"title": "为什么需要 congruence lemma", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch06Simp/"}],
    "when-to-stop":
    [{"id": "when-to-stop",
      "data":
@@ -98,6 +110,42 @@
        {"title": "从证明模式到自动化：方法论", "shortTitle": null, "number": "24"},
        {"title": "23.6 何时停止", "shortTitle": null, "number": "6"}]},
      "address": "/Ch23Methodology/"}],
+   "when-simp-only":
+   [{"id": "when-simp-only",
+     "data":
+     {"title": "何时该用  simp only",
+      "shortTitle": null,
+      "sectionNum": "7.1.5.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "何时该用  simp only", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch06Simp/"}],
+   "when-not-to-simp":
+   [{"id": "when-not-to-simp",
+     "data":
+     {"title": "什么时候不要第一反应用 simp",
+      "shortTitle": null,
+      "sectionNum": "7.1.6.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "什么时候不要第一反应用 simp", "shortTitle": null, "number": "6"}]},
+     "address": "/Ch06Simp/"}],
+   "when-dsimp":
+   [{"id": "when-dsimp",
+     "data":
+     {"title": "何时用 dsimp",
+      "shortTitle": null,
+      "sectionNum": "7.10.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "dsimp 的实现", "shortTitle": null, "number": "10"},
+       {"title": "何时用 dsimp", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch06Simp/"}],
    "when-domain-automation":
    [{"id": "when-domain-automation",
      "data":
@@ -302,6 +350,20 @@
        {"title": "14.4 内置规则覆盖范围", "shortTitle": null, "number": "4"},
        {"title": "类型转换与除法", "shortTitle": null, "number": "3"}]},
      "address": "/Ch14Positivity/"}],
+   "try-theorem":
+   [{"id": "try-theorem",
+     "data":
+     {"title": "tryTheorem?：匹配 → 实例化 → discharge → 构造 proof",
+      "shortTitle": null,
+      "sectionNum": "7.6.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "单步重写：Rewrite.lean", "shortTitle": null, "number": "6"},
+       {"title": "tryTheorem?：匹配 → 实例化 → discharge → 构造 proof",
+        "shortTitle": null,
+        "number": "1"}]},
+     "address": "/Ch06Simp/"}],
    "try-tactic-wrapper":
    [{"id": "try-tactic-wrapper",
      "data":
@@ -314,29 +376,43 @@
        {"title": "4.4 保存与恢复状态", "shortTitle": null, "number": "5"},
        {"title": "更高层的封装： tryTactic?", "shortTitle": null, "number": "3"}]},
      "address": "/Ch04GoalManagement/"}],
-   "traversal-strategy":
-   [{"id": "traversal-strategy",
+   "try-congr-theorem":
+   [{"id": "try-congr-theorem",
      "data":
-     {"title": "6.5 遍历策略",
+     {"title": "trySimpCongrTheorem?：应用 congruence lemma",
       "shortTitle": null,
-      "sectionNum": "7.5.",
+      "sectionNum": "7.7.4.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.5 遍历策略", "shortTitle": null, "number": "5"}]},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "Congruence Lemma", "shortTitle": null, "number": "7"},
+       {"title": "trySimpCongrTheorem?：应用 congruence lemma",
+        "shortTitle": null,
+        "number": "4"}]},
      "address": "/Ch06Simp/"}],
-   "trace-options":
-   [{"id": "trace-options",
+   "trace-patterns":
+   [{"id": "trace-patterns",
      "data":
-     {"title": "trace 选项",
+     {"title": "常见 trace 模式与诊断",
       "shortTitle": null,
-      "sectionNum": "12.7.1.",
+      "sectionNum": "7.11.2.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
-       {"title": "11.7 调试 aesop", "shortTitle": null, "number": "7"},
-       {"title": "trace 选项", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch11Aesop/"}],
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "调试：trace 输出详解", "shortTitle": null, "number": "11"},
+       {"title": "常见 trace 模式与诊断", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch06Simp/"}],
+   "trace-debugging":
+   [{"id": "trace-debugging",
+     "data":
+     {"title": "调试：trace 输出详解",
+      "shortTitle": null,
+      "sectionNum": "7.11.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "调试：trace 输出详解", "shortTitle": null, "number": "11"}]},
+     "address": "/Ch06Simp/"}],
    "trace":
    [{"id": "trace",
      "data":
@@ -662,6 +738,20 @@
        {"title": "tactic 是怎么注册和调用的", "shortTitle": null, "number": "4"},
        {"title": "调用流程", "shortTitle": null, "number": "2"}]},
      "address": "/Ch01MetaprogrammingModel/"}],
+   "synthesize-args":
+   [{"id": "synthesize-args",
+     "data":
+     {"title": "synthesizeArgs：合成参数与 discharge 前提",
+      "shortTitle": null,
+      "sectionNum": "7.6.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "单步重写：Rewrite.lean", "shortTitle": null, "number": "6"},
+       {"title": "synthesizeArgs：合成参数与 discharge 前提",
+        "shortTitle": null,
+        "number": "2"}]},
+     "address": "/Ch06Simp/"}],
    "synthesis-vs-other-lookup":
    [{"id": "synthesis-vs-other-lookup",
      "data":
@@ -856,6 +946,40 @@
        {"title": "编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
        {"title": "split_and ：拆分合取目标", "shortTitle": null, "number": "4"}]},
      "address": "/Ch03FirstTactic/"}],
+   "source-reading-guide":
+   [{"id": "source-reading-guide",
+     "data":
+     {"title": "源码阅读路线图",
+      "shortTitle": null,
+      "sectionNum": "7.14.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "源码阅读路线图", "shortTitle": null, "number": "14"}]},
+     "address": "/Ch06Simp/"}],
+   "source-overview":
+   [{"id": "source-overview",
+     "data":
+     {"title": "源码全景：文件结构与调用链",
+      "shortTitle": null,
+      "sectionNum": "7.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "源码全景：文件结构与调用链", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch06Simp/"}],
+   "source-files":
+   [{"id": "source-files",
+     "data":
+     {"title": "源码文件一览",
+      "shortTitle": null,
+      "sectionNum": "7.2.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "源码全景：文件结构与调用链", "shortTitle": null, "number": "2"},
+       {"title": "源码文件一览", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch06Simp/"}],
    "slow-version":
    [{"id": "slow-version",
      "data":
@@ -868,6 +992,41 @@
        {"title": "21.9 实战：优化一个慢证明", "shortTitle": null, "number": "12"},
        {"title": "原始版本（慢）", "shortTitle": null, "number": "1"}]},
      "address": "/Ch21Performance/"}],
+   "single-step-rewrite":
+   [{"id": "single-step-rewrite",
+     "data":
+     {"title": "单步重写：Rewrite.lean",
+      "shortTitle": null,
+      "sectionNum": "7.6.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "单步重写：Rewrite.lean", "shortTitle": null, "number": "6"}]},
+     "address": "/Ch06Simp/"}],
+   "simproc-mechanism":
+   [{"id": "simproc-mechanism",
+     "data":
+     {"title": "Simproc 机制",
+      "shortTitle": null,
+      "sectionNum": "7.12.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "扩展点与自定义", "shortTitle": null, "number": "12"},
+       {"title": "Simproc 机制", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch06Simp/"}],
+   "simproc-composition":
+   [{"id": "simproc-composition",
+     "data":
+     {"title": "Simproc 的组合",
+      "shortTitle": null,
+      "sectionNum": "7.12.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "扩展点与自定义", "shortTitle": null, "number": "12"},
+       {"title": "Simproc 的组合", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch06Simp/"}],
    "simp-vs-simp-only":
    [{"id": "simp-vs-simp-only",
      "data":
@@ -880,16 +1039,76 @@
        {"title": "21.4 优化 simp", "shortTitle": null, "number": "5"},
        {"title": "全局 simp vs simp only", "shortTitle": null, "number": "1"}]},
      "address": "/Ch21Performance/"}],
-   "simp-variants":
-   [{"id": "simp-variants",
+   "simp-usage":
+   [{"id": "simp-usage",
      "data":
-     {"title": "6.6 simp 的变体",
+     {"title": "用法详解",
       "shortTitle": null,
-      "sectionNum": "7.6.",
+      "sectionNum": "7.1.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.6 simp 的变体", "shortTitle": null, "number": "6"}]},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch06Simp/"}],
+   "simp-theorem":
+   [{"id": "simp-theorem",
+     "data":
+     {"title": "SimpTheorem：单条引理",
+      "shortTitle": null,
+      "sectionNum": "7.3.7.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "核心类型拆解", "shortTitle": null, "number": "3"},
+       {"title": "SimpTheorem：单条引理", "shortTitle": null, "number": "7"}]},
+     "address": "/Ch06Simp/"}],
+   "simp-step-dispatch":
+   [{"id": "simp-step-dispatch",
+     "data":
+     {"title": "simpStep：按表达式结构分发",
+      "shortTitle": null,
+      "sectionNum": "7.5.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "重写循环：Main.lean 逐函数拆解", "shortTitle": null, "number": "5"},
+       {"title": "simpStep：按表达式结构分发", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch06Simp/"}],
+   "simp-step":
+   [{"id": "simp-step",
+     "data":
+     {"title": "Simp.Step",
+      "shortTitle": null,
+      "sectionNum": "7.3.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "核心类型拆解", "shortTitle": null, "number": "3"},
+       {"title": "Simp.Step", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch06Simp/"}],
+   "simp-state":
+   [{"id": "simp-state",
+     "data":
+     {"title": "Simp.State",
+      "shortTitle": null,
+      "sectionNum": "7.3.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "核心类型拆解", "shortTitle": null, "number": "3"},
+       {"title": "Simp.State", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch06Simp/"}],
+   "simp-result":
+   [{"id": "simp-result",
+     "data":
+     {"title": "Simp.Result",
+      "shortTitle": null,
+      "sectionNum": "7.3.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "核心类型拆解", "shortTitle": null, "number": "3"},
+       {"title": "Simp.Result", "shortTitle": null, "number": "1"}]},
      "address": "/Ch06Simp/"}],
    "simp-question-workflow":
    [{"id": "simp-question-workflow",
@@ -903,18 +1122,6 @@
        {"title": "21.4 优化 simp", "shortTitle": null, "number": "5"},
        {"title": "simp? 工作流", "shortTitle": null, "number": "2"}]},
      "address": "/Ch21Performance/"}],
-   "simp-query":
-   [{"id": "simp-query",
-     "data":
-     {"title": "simp?",
-      "shortTitle": null,
-      "sectionNum": "7.9.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.9 调试 simp", "shortTitle": null, "number": "9"},
-       {"title": "simp?", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch06Simp/"}],
    "simp-other-tuning":
    [{"id": "simp-other-tuning",
      "data":
@@ -927,97 +1134,210 @@
        {"title": "21.4 优化 simp", "shortTitle": null, "number": "5"},
        {"title": "其他 simp 调优", "shortTitle": null, "number": "3"}]},
      "address": "/Ch21Performance/"}],
-   "simp-only":
-   [{"id": "simp-only",
+   "simp-origin":
+   [{"id": "simp-origin",
      "data":
-     {"title": "simp only",
+     {"title": "Origin：引理来源",
       "shortTitle": null,
-      "sectionNum": "7.6.1.",
+      "sectionNum": "7.3.8.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.6 simp 的变体", "shortTitle": null, "number": "6"},
-       {"title": "simp only", "shortTitle": null, "number": "1"}]},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "核心类型拆解", "shortTitle": null, "number": "3"},
+       {"title": "Origin：引理来源", "shortTitle": null, "number": "8"}]},
+     "address": "/Ch06Simp/"}],
+   "simp-methods":
+   [{"id": "simp-methods",
+     "data":
+     {"title": "Methods：可插拔的钩子",
+      "shortTitle": null,
+      "sectionNum": "7.3.6.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "核心类型拆解", "shortTitle": null, "number": "3"},
+       {"title": "Methods：可插拔的钩子", "shortTitle": null, "number": "6"}]},
+     "address": "/Ch06Simp/"}],
+   "simp-match":
+   [{"id": "simp-match",
+     "data":
+     {"title": "simpMatch：match 表达式的化简",
+      "shortTitle": null,
+      "sectionNum": "7.2.5.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "源码全景：文件结构与调用链", "shortTitle": null, "number": "2"},
+       {"title": "simpMatch：match 表达式的化简", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch06Simp/"}],
+   "simp-m":
+   [{"id": "simp-m",
+     "data":
+     {"title": "SimpM monad",
+      "shortTitle": null,
+      "sectionNum": "7.3.5.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "核心类型拆解", "shortTitle": null, "number": "3"},
+       {"title": "SimpM monad", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch06Simp/"}],
+   "simp-loop":
+   [{"id": "simp-loop",
+     "data":
+     {"title": "simpLoop：主循环",
+      "shortTitle": null,
+      "sectionNum": "7.5.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "重写循环：Main.lean 逐函数拆解", "shortTitle": null, "number": "5"},
+       {"title": "simpLoop：主循环", "shortTitle": null, "number": "2"}]},
      "address": "/Ch06Simp/"}],
    "simp-lemmas":
    [{"id": "simp-lemmas",
      "data":
-     {"title": "6.2 重写规则集：simp lemmas",
+     {"title": "重写规则集：simp lemmas",
       "shortTitle": null,
-      "sectionNum": "7.2.",
+      "sectionNum": "7.1.2.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.2 重写规则集：simp lemmas", "shortTitle": null, "number": "2"}]},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "重写规则集：simp lemmas", "shortTitle": null, "number": "2"}]},
      "address": "/Ch06Simp/"}],
-   "simp-in-metaprograms":
-   [{"id": "simp-in-metaprograms",
+   "simp-impl":
+   [{"id": "simp-impl",
      "data":
-     {"title": "6.11 在元程序中调用 simp",
+     {"title": "simpImpl：顶层入口",
       "shortTitle": null,
-      "sectionNum": "7.11.",
+      "sectionNum": "7.5.1.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.11 在元程序中调用 simp", "shortTitle": null, "number": "11"}]},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "重写循环：Main.lean 逐函数拆解", "shortTitle": null, "number": "5"},
+       {"title": "simpImpl：顶层入口", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch06Simp/"}],
+   "simp-forall":
+   [{"id": "simp-forall",
+     "data":
+     {"title": "simpForall 与 contextual simp",
+      "shortTitle": null,
+      "sectionNum": "7.5.6.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "重写循环：Main.lean 逐函数拆解", "shortTitle": null, "number": "5"},
+       {"title": "simpForall 与 contextual simp",
+        "shortTitle": null,
+        "number": "6"}]},
+     "address": "/Ch06Simp/"}],
+   "simp-family":
+   [{"id": "simp-family",
+     "data":
+     {"title": "simp 家族一览",
+      "shortTitle": null,
+      "sectionNum": "7.1.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "simp 家族一览", "shortTitle": null, "number": "4"}]},
      "address": "/Ch06Simp/"}],
    "simp-core-idea":
    [{"id": "simp-core-idea",
      "data":
-     {"title": "6.1 simp 的核心思想",
+     {"title": "核心思想",
       "shortTitle": null,
-      "sectionNum": "7.1.",
+      "sectionNum": "7.1.1.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.1 simp 的核心思想", "shortTitle": null, "number": "1"}]},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "核心思想", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch06Simp/"}],
+   "simp-context":
+   [{"id": "simp-context",
+     "data":
+     {"title": "Simp.Context",
+      "shortTitle": null,
+      "sectionNum": "7.3.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "核心类型拆解", "shortTitle": null, "number": "3"},
+       {"title": "Simp.Context", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch06Simp/"}],
+   "simp-congr-theorem":
+   [{"id": "simp-congr-theorem",
+     "data":
+     {"title": "SimpCongrTheorem 的定义",
+      "shortTitle": null,
+      "sectionNum": "7.7.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "Congruence Lemma", "shortTitle": null, "number": "7"},
+       {"title": "SimpCongrTheorem 的定义", "shortTitle": null, "number": "2"}]},
      "address": "/Ch06Simp/"}],
    "simp-config":
    [{"id": "simp-config",
      "data":
-     {"title": "6.8 simp 的配置",
+     {"title": "配置",
       "shortTitle": null,
-      "sectionNum": "7.8.",
+      "sectionNum": "7.1.7.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.8 simp 的配置", "shortTitle": null, "number": "8"}]},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "配置", "shortTitle": null, "number": "7"}]},
      "address": "/Ch06Simp/"}],
-   "simp-collaboration-with-tactics":
-   [{"id": "simp-collaboration-with-tactics",
+   "simp-app":
+   [{"id": "simp-app",
      "data":
-     {"title": "6.13 simp 与其他 tactic 的协作",
+     {"title": "simpApp：函数应用的处理",
       "shortTitle": null,
-      "sectionNum": "7.13.",
+      "sectionNum": "7.5.4.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.13 simp 与其他 tactic 的协作",
-        "shortTitle": null,
-        "number": "13"}]},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "重写循环：Main.lean 逐函数拆解", "shortTitle": null, "number": "5"},
+       {"title": "simpApp：函数应用的处理", "shortTitle": null, "number": "4"}]},
      "address": "/Ch06Simp/"}],
-   "simp-annotation-best-practices":
-   [{"id": "simp-annotation-best-practices",
+   "simp-all-vs-star":
+   [{"id": "simp-all-vs-star",
      "data":
-     {"title": "6.12 @[simp] 标注的最佳实践",
+     {"title": "simp_all vs simp at *",
       "shortTitle": null,
-      "sectionNum": "7.12.",
+      "sectionNum": "7.9.2.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.12 @[simp] 标注的最佳实践", "shortTitle": null, "number": "12"}]},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "simp_all 的特殊逻辑", "shortTitle": null, "number": "9"},
+       {"title": "simp_all vs simp at *", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch06Simp/"}],
+   "simp-all-entry":
+   [{"id": "simp-all-entry",
+     "data":
+     {"title": "入口",
+      "shortTitle": null,
+      "sectionNum": "7.9.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "simp_all 的特殊逻辑", "shortTitle": null, "number": "9"},
+       {"title": "入口", "shortTitle": null, "number": "1"}]},
      "address": "/Ch06Simp/"}],
    "simp-all":
    [{"id": "simp-all",
      "data":
-     {"title": "simp_all",
+     {"title": "simp_all 的特殊逻辑",
       "shortTitle": null,
-      "sectionNum": "7.6.2.",
+      "sectionNum": "7.9.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.6 simp 的变体", "shortTitle": null, "number": "6"},
-       {"title": "simp_all", "shortTitle": null, "number": "2"}]},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "simp_all 的特殊逻辑", "shortTitle": null, "number": "9"}]},
      "address": "/Ch06Simp/"}],
    "setup-exercises":
    [{"id": "setup-exercises",
@@ -1194,6 +1514,31 @@
        {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
        {"title": "ring_nf ：只做范式化", "shortTitle": null, "number": "3"}]},
      "address": "/Ch07Ring/"}],
+   "rewrite-pre-post":
+   [{"id": "rewrite-pre-post",
+     "data":
+     {"title": "rewritePre 与 rewritePost",
+      "shortTitle": null,
+      "sectionNum": "7.4.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "DiscrTree：引理索引", "shortTitle": null, "number": "4"},
+       {"title": "rewritePre 与 rewritePost",
+        "shortTitle": null,
+        "number": "2"}]},
+     "address": "/Ch06Simp/"}],
+   "rewrite-loop":
+   [{"id": "rewrite-loop",
+     "data":
+     {"title": "重写循环：Main.lean 逐函数拆解",
+      "shortTitle": null,
+      "sectionNum": "7.5.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "重写循环：Main.lean 逐函数拆解", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch06Simp/"}],
    "result-type":
    [{"id": "result-type",
      "data":
@@ -1317,6 +1662,18 @@
        {"title": "反射证明模式", "shortTitle": null, "number": "21"},
        {"title": "20.1 反射的核心思想", "shortTitle": null, "number": "1"}]},
      "address": "/Ch20Reflection/"}],
+   "reduce-step":
+   [{"id": "reduce-step",
+     "data":
+     {"title": "reduceStep：基础规约",
+      "shortTitle": null,
+      "sectionNum": "7.5.5.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "重写循环：Main.lean 逐函数拆解", "shortTitle": null, "number": "5"},
+       {"title": "reduceStep：基础规约", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch06Simp/"}],
    "recursive-decomposition-process":
    [{"id": "recursive-decomposition-process",
      "data":
@@ -1538,6 +1895,20 @@
        {"title": "norm_num ：数值计算框架", "shortTitle": null, "number": "11"},
        {"title": "证明构造策略", "shortTitle": null, "number": "3"}]},
      "address": "/Ch10NormNum/"}],
+   "proof-composition":
+   [{"id": "proof-composition",
+     "data":
+     {"title": "Proof 组合：为什么 simp 不是纯 AST 变换",
+      "shortTitle": null,
+      "sectionNum": "7.5.7.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "重写循环：Main.lean 逐函数拆解", "shortTitle": null, "number": "5"},
+       {"title": "Proof 组合：为什么 simp 不是纯 AST 变换",
+        "shortTitle": null,
+        "number": "7"}]},
+     "address": "/Ch06Simp/"}],
    "project-troubleshooting":
    [{"id": "project-troubleshooting",
      "data":
@@ -2732,6 +3103,30 @@
        {"title": "目标管理", "shortTitle": null, "number": "5"},
        {"title": "4.1 多目标的心智模型", "shortTitle": null, "number": "2"}]},
      "address": "/Ch04GoalManagement/"}],
+   "more-debug-scenarios":
+   [{"id": "more-debug-scenarios",
+     "data":
+     {"title": "更多 debug 场景",
+      "shortTitle": null,
+      "sectionNum": "7.1.10.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "更多 debug 场景", "shortTitle": null, "number": "10"}]},
+     "address": "/Ch06Simp/"}],
+   "more-alternatives":
+   [{"id": "more-alternatives",
+     "data":
+     {"title": "更多替代 tactic",
+      "shortTitle": null,
+      "sectionNum": "7.1.11.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "更多替代 tactic", "shortTitle": null, "number": "11"}]},
+     "address": "/Ch06Simp/"}],
    "monotone-implementation-choice":
    [{"id": "monotone-implementation-choice",
      "data":
@@ -2858,6 +3253,20 @@
        {"title": "Lean 4 元编程模型", "shortTitle": null, "number": "2"},
        {"title": "层次之间的穿越", "shortTitle": null, "number": "6"}]},
      "address": "/Ch01MetaprogrammingModel/"}],
+   "mk-default-methods":
+   [{"id": "mk-default-methods",
+     "data":
+     {"title": "mkDefaultMethods：默认方法的组装",
+      "shortTitle": null,
+      "sectionNum": "7.12.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "扩展点与自定义", "shortTitle": null, "number": "12"},
+       {"title": "mkDefaultMethods：默认方法的组装",
+        "shortTitle": null,
+        "number": "3"}]},
+     "address": "/Ch06Simp/"}],
    "missing-plugin":
    [{"id": "missing-plugin",
      "data":
@@ -3508,17 +3917,6 @@
         "shortTitle": null,
         "number": "2"}]},
      "address": "/Ch22ExternalTools/"}],
-   "internal-index-discrtree":
-   [{"id": "internal-index-discrtree",
-     "data":
-     {"title": "6.4 内部索引：DiscrTree",
-      "shortTitle": null,
-      "sectionNum": "7.4.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.4 内部索引：DiscrTree", "shortTitle": null, "number": "4"}]},
-     "address": "/Ch06Simp/"}],
    "integer-expr-equivalence":
    [{"id": "integer-expr-equivalence",
      "data":
@@ -4251,18 +4649,6 @@
        {"title": "20.1 反射的核心思想", "shortTitle": null, "number": "1"},
        {"title": "四步模式", "shortTitle": null, "number": "1"}]},
      "address": "/Ch20Reflection/"}],
-   "four-lemma-forms":
-   [{"id": "four-lemma-forms",
-     "data":
-     {"title": "四种引理形式",
-      "shortTitle": null,
-      "sectionNum": "7.2.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.2 重写规则集：simp lemmas", "shortTitle": null, "number": "2"},
-       {"title": "四种引理形式", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch06Simp/"}],
    "four-design-patterns":
    [{"id": "four-design-patterns",
      "data":
@@ -4827,18 +5213,6 @@
        {"title": "14.6 positivity 的六种失败模式", "shortTitle": null, "number": "6"},
        {"title": "失败 5：不认识的函数", "shortTitle": null, "number": "4"}]},
      "address": "/Ch14Positivity/"}],
-   "failure-unexpected-unfolding":
-   [{"id": "failure-unexpected-unfolding",
-     "data":
-     {"title": "失败模式 3：意外展开",
-      "shortTitle": null,
-      "sectionNum": "7.10.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.10 常见失败模式", "shortTitle": null, "number": "10"},
-       {"title": "失败模式 3：意外展开", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch06Simp/"}],
    "failure-trace-ide-hang":
    [{"id": "failure-trace-ide-hang",
      "data":
@@ -4899,42 +5273,6 @@
        {"title": "16.7 gcongr 的五种失败模式", "shortTitle": null, "number": "7"},
        {"title": "失败 1：两侧结构不匹配", "shortTitle": null, "number": "1"}]},
      "address": "/Ch16Gcongr/"}],
-   "failure-simp-too-slow":
-   [{"id": "failure-simp-too-slow",
-     "data":
-     {"title": "失败模式 4：simp 太慢",
-      "shortTitle": null,
-      "sectionNum": "7.10.4.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.10 常见失败模式", "shortTitle": null, "number": "10"},
-       {"title": "失败模式 4：simp 太慢", "shortTitle": null, "number": "4"}]},
-     "address": "/Ch06Simp/"}],
-   "failure-simp-no-progress":
-   [{"id": "failure-simp-no-progress",
-     "data":
-     {"title": "失败模式 2：simp 改变不了目标",
-      "shortTitle": null,
-      "sectionNum": "7.10.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.10 常见失败模式", "shortTitle": null, "number": "10"},
-       {"title": "失败模式 2：simp 改变不了目标", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch06Simp/"}],
-   "failure-simp-loop":
-   [{"id": "failure-simp-loop",
-     "data":
-     {"title": "失败模式 1：simp 循环",
-      "shortTitle": null,
-      "sectionNum": "7.10.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.10 常见失败模式", "shortTitle": null, "number": "10"},
-       {"title": "失败模式 1：simp 循环", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch06Simp/"}],
    "failure-side-goal-unsolved":
    [{"id": "failure-side-goal-unsolved",
      "data":
@@ -5733,6 +6071,17 @@
        {"title": "对接外部工具", "shortTitle": null, "number": "23"},
        {"title": "22.10 设计检查清单", "shortTitle": null, "number": "10"}]},
      "address": "/Ch22ExternalTools/"}],
+   "extension-points":
+   [{"id": "extension-points",
+     "data":
+     {"title": "扩展点与自定义",
+      "shortTitle": null,
+      "sectionNum": "7.12.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "扩展点与自定义", "shortTitle": null, "number": "12"}]},
+     "address": "/Ch06Simp/"}],
    "extensibility-performance":
    [{"id": "extensibility-performance",
      "data":
@@ -6144,17 +6493,29 @@
        {"title": "练习", "shortTitle": null, "number": "9"},
        {"title": "练习 7.1：基础展开（⭐）", "shortTitle": null, "number": "1"}]},
      "address": "/Ch07Ring/"}],
+   "exercise-6-5":
+   [{"id": "exercise-6-5",
+     "data":
+     {"title": "练习 5（源码阅读）",
+      "shortTitle": null,
+      "sectionNum": "7.15.5.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "练习", "shortTitle": null, "number": "15"},
+       {"title": "练习 5（源码阅读）", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch06Simp/"}],
    "exercise-6-4":
    [{"id": "exercise-6-4",
      "data":
-     {"title": "练习 4（综合）：组合化简",
+     {"title": "练习 4（综合）",
       "shortTitle": null,
       "sectionNum": "7.15.4.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.15 练习", "shortTitle": null, "number": "15"},
-       {"title": "练习 4（综合）：组合化简", "shortTitle": null, "number": "4"}]},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "练习", "shortTitle": null, "number": "15"},
+       {"title": "练习 4（综合）", "shortTitle": null, "number": "4"}]},
      "address": "/Ch06Simp/"}],
    "exercise-6-3":
    [{"id": "exercise-6-3",
@@ -6164,8 +6525,8 @@
       "sectionNum": "7.15.3.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.15 练习", "shortTitle": null, "number": "15"},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "练习", "shortTitle": null, "number": "15"},
        {"title": "练习 3（debug）：为什么 simp 失败了？",
         "shortTitle": null,
         "number": "3"}]},
@@ -6173,14 +6534,14 @@
    "exercise-6-2":
    [{"id": "exercise-6-2",
      "data":
-     {"title": "练习 2（热身）：simp only",
+     {"title": "练习 2（simp only）",
       "shortTitle": null,
       "sectionNum": "7.15.2.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.15 练习", "shortTitle": null, "number": "15"},
-       {"title": "练习 2（热身）：simp only", "shortTitle": null, "number": "2"}]},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "练习", "shortTitle": null, "number": "15"},
+       {"title": "练习 2（simp only）", "shortTitle": null, "number": "2"}]},
      "address": "/Ch06Simp/"}],
    "exercise-6-1":
    [{"id": "exercise-6-1",
@@ -6190,8 +6551,8 @@
       "sectionNum": "7.15.1.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.15 练习", "shortTitle": null, "number": "15"},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "练习", "shortTitle": null, "number": "15"},
        {"title": "练习 1（热身）：基本 simp", "shortTitle": null, "number": "1"}]},
      "address": "/Ch06Simp/"}],
    "exercise-5-4":
@@ -6924,6 +7285,18 @@
         "shortTitle": null,
         "number": "1"}]},
      "address": "/Ch04GoalManagement/"}],
+   "eval-simp":
+   [{"id": "eval-simp",
+     "data":
+     {"title": "tactic 入口：evalSimp",
+      "shortTitle": null,
+      "sectionNum": "7.2.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "源码全景：文件结构与调用链", "shortTitle": null, "number": "2"},
+       {"title": "tactic 入口：evalSimp", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch06Simp/"}],
    "estimation-problem-modeling":
    [{"id": "estimation-problem-modeling",
      "data":
@@ -7017,6 +7390,18 @@
        {"title": "对接外部工具", "shortTitle": null, "number": "23"},
        {"title": "22.5 编码与解码", "shortTitle": null, "number": "5"}]},
      "address": "/Ch22ExternalTools/"}],
+   "elab-simp-args":
+   [{"id": "elab-simp-args",
+     "data":
+     {"title": "参数解析：elabSimpArgs 内部",
+      "shortTitle": null,
+      "sectionNum": "7.2.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "源码全景：文件结构与调用链", "shortTitle": null, "number": "2"},
+       {"title": "参数解析：elabSimpArgs 内部", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch06Simp/"}],
    "elab-and-macro":
    [{"id": "elab-and-macro",
      "data":
@@ -7060,17 +7445,52 @@
         "number": "2"},
        {"title": "E-graph 数据结构", "shortTitle": null, "number": "1"}]},
      "address": "/Ch12Grind/"}],
-   "dsimp":
-   [{"id": "dsimp",
+   "dsimp-vs-simp":
+   [{"id": "dsimp-vs-simp",
      "data":
-     {"title": "dsimp",
+     {"title": "dsimp 与 simp 的核心区别",
       "shortTitle": null,
-      "sectionNum": "7.6.3.",
+      "sectionNum": "7.10.2.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.6 simp 的变体", "shortTitle": null, "number": "6"},
-       {"title": "dsimp", "shortTitle": null, "number": "3"}]},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "dsimp 的实现", "shortTitle": null, "number": "10"},
+       {"title": "dsimp 与 simp 的核心区别", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch06Simp/"}],
+   "dsimp-simproc":
+   [{"id": "dsimp-simproc",
+     "data":
+     {"title": "dsimp 的 DSimproc",
+      "shortTitle": null,
+      "sectionNum": "7.10.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "dsimp 的实现", "shortTitle": null, "number": "10"},
+       {"title": "dsimp 的 DSimproc", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch06Simp/"}],
+   "dsimp-impl-detail":
+   [{"id": "dsimp-impl-detail",
+     "data":
+     {"title": "dsimpImpl",
+      "shortTitle": null,
+      "sectionNum": "7.10.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "dsimp 的实现", "shortTitle": null, "number": "10"},
+       {"title": "dsimpImpl", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch06Simp/"}],
+   "dsimp-impl":
+   [{"id": "dsimp-impl",
+     "data":
+     {"title": "dsimp 的实现",
+      "shortTitle": null,
+      "sectionNum": "7.10.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "dsimp 的实现", "shortTitle": null, "number": "10"}]},
      "address": "/Ch06Simp/"}],
    "discr-tree-indexing":
    [{"id": "discr-tree-indexing",
@@ -7084,6 +7504,17 @@
        {"title": "19.7 可扩展性与性能", "shortTitle": null, "number": "7"},
        {"title": "索引而不是线性搜索", "shortTitle": null, "number": "2"}]},
      "address": "/Ch19DesignYourOwn/"}],
+   "discr-tree":
+   [{"id": "discr-tree",
+     "data":
+     {"title": "DiscrTree：引理索引",
+      "shortTitle": null,
+      "sectionNum": "7.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "DiscrTree：引理索引", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch06Simp/"}],
    "discovery-process":
    [{"id": "discovery-process",
      "data":
@@ -7095,29 +7526,40 @@
        {"title": "从证明模式到自动化：方法论", "shortTitle": null, "number": "24"},
        {"title": "23.1 自动化的发现流程", "shortTitle": null, "number": "1"}]},
      "address": "/Ch23Methodology/"}],
-   "discharger-conditional-lemmas":
-   [{"id": "discharger-conditional-lemmas",
+   "discharger":
+   [{"id": "discharger",
      "data":
-     {"title": "6.7 Discharger：条件引理的证明器",
+     {"title": "Discharger",
       "shortTitle": null,
-      "sectionNum": "7.7.",
+      "sectionNum": "7.8.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.7 Discharger：条件引理的证明器",
-        "shortTitle": null,
-        "number": "7"}]},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "Discharger", "shortTitle": null, "number": "8"}]},
+     "address": "/Ch06Simp/"}],
+   "discharge-impl":
+   [{"id": "discharge-impl",
+     "data":
+     {"title": "discharge?' 的真实实现",
+      "shortTitle": null,
+      "sectionNum": "7.8.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "Discharger", "shortTitle": null, "number": "8"},
+       {"title": "discharge?' 的真实实现", "shortTitle": null, "number": "1"}]},
      "address": "/Ch06Simp/"}],
    "directionality-lhs-to-rhs":
    [{"id": "directionality-lhs-to-rhs",
      "data":
-     {"title": "6.3 方向性：只从左到右",
+     {"title": "方向性：只从左到右",
       "shortTitle": null,
-      "sectionNum": "7.3.",
+      "sectionNum": "7.1.3.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.3 方向性：只从左到右", "shortTitle": null, "number": "3"}]},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "方向性：只从左到右", "shortTitle": null, "number": "3"}]},
      "address": "/Ch06Simp/"}],
    "direct-impl-call":
    [{"id": "direct-impl-call",
@@ -7376,6 +7818,30 @@
        {"title": "设计你自己的领域自动化", "shortTitle": null, "number": "20"},
        {"title": "19.9 设计清单", "shortTitle": null, "number": "9"}]},
      "address": "/Ch19DesignYourOwn/"}],
+   "default-pre-post":
+   [{"id": "default-pre-post",
+     "data":
+     {"title": "默认 pre/post 钩子",
+      "shortTitle": null,
+      "sectionNum": "7.6.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "单步重写：Rewrite.lean", "shortTitle": null, "number": "6"},
+       {"title": "默认 pre/post 钩子", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch06Simp/"}],
+   "default-discharger":
+   [{"id": "default-discharger",
+     "data":
+     {"title": "默认 discharger",
+      "shortTitle": null,
+      "sectionNum": "7.8.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "Discharger", "shortTitle": null, "number": "8"},
+       {"title": "默认 discharger", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch06Simp/"}],
    "decision-tree":
    [{"id": "decision-tree",
      "data":
@@ -7501,13 +7967,14 @@
    "debugging-simp":
    [{"id": "debugging-simp",
      "data":
-     {"title": "6.9 调试 simp",
+     {"title": "调试",
       "shortTitle": null,
-      "sectionNum": "7.9.",
+      "sectionNum": "7.1.8.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.9 调试 simp", "shortTitle": null, "number": "9"}]},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "调试", "shortTitle": null, "number": "8"}]},
      "address": "/Ch06Simp/"}],
    "debugging-linarith":
    [{"id": "debugging-linarith",
@@ -7598,6 +8065,32 @@
        {"title": "Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
        {"title": "de Bruijn 索引 vs 自由变量", "shortTitle": null, "number": "6"}]},
      "address": "/Ch02Expr/"}],
+   "custom-simp-checklist":
+   [{"id": "custom-simp-checklist",
+     "data":
+     {"title": "编写自定义 simp-like tactic 的最小检查清单",
+      "shortTitle": null,
+      "sectionNum": "7.12.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "扩展点与自定义", "shortTitle": null, "number": "12"},
+       {"title": "编写自定义 simp-like tactic 的最小检查清单",
+        "shortTitle": null,
+        "number": "4"}]},
+     "address": "/Ch06Simp/"}],
+   "custom-discharger":
+   [{"id": "custom-discharger",
+     "data":
+     {"title": "自定义 discharger 的实现",
+      "shortTitle": null,
+      "sectionNum": "7.8.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "Discharger", "shortTitle": null, "number": "8"},
+       {"title": "自定义 discharger 的实现", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch06Simp/"}],
    "create-with-lake":
    [{"id": "create-with-lake",
      "data":
@@ -7647,6 +8140,17 @@
        {"title": "Monad 栈：从底层到顶层", "shortTitle": null, "number": "2"},
        {"title": "CoreM：基础层", "shortTitle": null, "number": "1"}]},
      "address": "/Ch01MetaprogrammingModel/"}],
+   "core-types":
+   [{"id": "core-types",
+     "data":
+     {"title": "核心类型拆解",
+      "shortTitle": null,
+      "sectionNum": "7.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "核心类型拆解", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch06Simp/"}],
    "core-architecture-plugin-registry":
    [{"id": "core-architecture-plugin-registry",
      "data":
@@ -7754,6 +8258,17 @@
        {"title": "Expr：Lean 4 的内部表示", "shortTitle": null, "number": "3"},
        {"title": "构造 Expr", "shortTitle": null, "number": "5"}]},
      "address": "/Ch02Expr/"}],
+   "congruence-lemma":
+   [{"id": "congruence-lemma",
+     "data":
+     {"title": "Congruence Lemma",
+      "shortTitle": null,
+      "sectionNum": "7.7.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "Congruence Lemma", "shortTitle": null, "number": "7"}]},
+     "address": "/Ch06Simp/"}],
    "congruence-closure-algorithm":
    [{"id": "congruence-closure-algorithm",
      "data":
@@ -7769,6 +8284,32 @@
         "shortTitle": null,
         "number": "2"}]},
      "address": "/Ch12Grind/"}],
+   "congr-registration":
+   [{"id": "congr-registration",
+     "data":
+     {"title": "@[congr] 注册",
+      "shortTitle": null,
+      "sectionNum": "7.7.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "Congruence Lemma", "shortTitle": null, "number": "7"},
+       {"title": "@[congr] 注册", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch06Simp/"}],
+   "congr-args":
+   [{"id": "congr-args",
+     "data":
+     {"title": "congrArgs：逐参数化简的 proof 构造",
+      "shortTitle": null,
+      "sectionNum": "7.5.8.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "重写循环：Main.lean 逐函数拆解", "shortTitle": null, "number": "5"},
+       {"title": "congrArgs：逐参数化简的 proof 构造",
+        "shortTitle": null,
+        "number": "8"}]},
+     "address": "/Ch06Simp/"}],
    "configuring-aesop":
    [{"id": "configuring-aesop",
      "data":
@@ -7794,6 +8335,18 @@
        {"title": "12.4 使用 grind", "shortTitle": null, "number": "4"},
        {"title": "配置参数", "shortTitle": null, "number": "3"}]},
      "address": "/Ch12Grind/"}],
+   "config-index":
+   [{"id": "config-index",
+     "data":
+     {"title": "config.index 与退化模式",
+      "shortTitle": null,
+      "sectionNum": "7.4.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "DiscrTree：引理索引", "shortTitle": null, "number": "4"},
+       {"title": "config.index 与退化模式", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch06Simp/"}],
    "comprehensive-exercises":
    [{"id": "comprehensive-exercises",
      "data":
@@ -8027,6 +8580,18 @@
        {"title": "设计你自己的领域自动化", "shortTitle": null, "number": "20"},
        {"title": "19.6 组合多种模式", "shortTitle": null, "number": "6"}]},
      "address": "/Ch19DesignYourOwn/"}],
+   "combined-debug-strategy":
+   [{"id": "combined-debug-strategy",
+     "data":
+     {"title": "组合调试策略",
+      "shortTitle": null,
+      "sectionNum": "7.11.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "调试：trace 输出详解", "shortTitle": null, "number": "11"},
+       {"title": "组合调试策略", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch06Simp/"}],
    "combination-rules":
    [{"id": "combination-rules",
      "data":
@@ -8538,6 +9103,18 @@
         "number": "6"},
        {"title": "组合使用", "shortTitle": null, "number": "1"}]},
      "address": "/Ch12Grind/"}],
+   "ch11-trace-options":
+   [{"id": "ch11-trace-options",
+     "data":
+     {"title": "trace 选项",
+      "shortTitle": null,
+      "sectionNum": "12.7.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
+       {"title": "11.7 调试 aesop", "shortTitle": null, "number": "7"},
+       {"title": "trace 选项", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch11Aesop/"}],
    "ch11-summary":
    [{"id": "ch11-summary",
      "data":
@@ -8743,59 +9320,61 @@
        {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
        {"title": "练习", "shortTitle": null, "number": "9"}]},
      "address": "/Ch07Ring/"}],
-   "ch06-summary":
-   [{"id": "ch06-summary",
+   "ch06-trace-options":
+   [{"id": "ch06-trace-options",
      "data":
-     {"title": "6.14 小结",
+     {"title": "trace 开关一览",
       "shortTitle": null,
-      "sectionNum": "7.14.",
+      "sectionNum": "7.11.1.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.14 小结", "shortTitle": null, "number": "14"}]},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "调试：trace 输出详解", "shortTitle": null, "number": "11"},
+       {"title": "trace 开关一览", "shortTitle": null, "number": "1"}]},
      "address": "/Ch06Simp/"}],
    "ch06-simp":
    [{"id": "ch06-simp",
      "data":
-     {"title": "simp：重写引擎",
+     {"title": "simp——化简的瑞士军刀",
       "shortTitle": null,
       "sectionNum": "7.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"}]},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"}]},
      "address": "/Ch06Simp/"}],
    "ch06-next-chapter":
    [{"id": "ch06-next-chapter",
      "data":
-     {"title": "6.16 下一章预告",
+     {"title": "下一章预告",
       "shortTitle": null,
       "sectionNum": "7.16.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.16 下一章预告", "shortTitle": null, "number": "16"}]},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "下一章预告", "shortTitle": null, "number": "16"}]},
      "address": "/Ch06Simp/"}],
    "ch06-exercises":
    [{"id": "ch06-exercises",
      "data":
-     {"title": "6.15 练习",
+     {"title": "练习",
       "shortTitle": null,
       "sectionNum": "7.15.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.15 练习", "shortTitle": null, "number": "15"}]},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "练习", "shortTitle": null, "number": "15"}]},
      "address": "/Ch06Simp/"}],
    "ch06-common-failure-patterns":
    [{"id": "ch06-common-failure-patterns",
      "data":
-     {"title": "6.10 常见失败模式",
+     {"title": "常见失败模式",
       "shortTitle": null,
-      "sectionNum": "7.10.",
+      "sectionNum": "7.1.9.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.10 常见失败模式", "shortTitle": null, "number": "10"}]},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "常见失败模式", "shortTitle": null, "number": "9"}]},
      "address": "/Ch06Simp/"}],
    "ch05-typeclass-synthesis":
    [{"id": "ch05-typeclass-synthesis",
@@ -9048,18 +9627,6 @@
        {"title": "22.2 证书（Certificate）模式", "shortTitle": null, "number": "2"},
        {"title": "案例： polyrith", "shortTitle": null, "number": "2"}]},
      "address": "/Ch22ExternalTools/"}],
-   "candidate-selection":
-   [{"id": "candidate-selection",
-     "data":
-     {"title": "候选选择",
-      "shortTitle": null,
-      "sectionNum": "7.2.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "simp：重写引擎", "shortTitle": null, "number": "7"},
-       {"title": "6.2 重写规则集：simp lemmas", "shortTitle": null, "number": "2"},
-       {"title": "候选选择", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch06Simp/"}],
    "calling-other-tactics":
    [{"id": "calling-other-tactics",
      "data":
@@ -9071,6 +9638,18 @@
        {"title": "目标管理", "shortTitle": null, "number": "5"},
        {"title": "4.5 调用其他 tactic", "shortTitle": null, "number": "6"}]},
      "address": "/Ch04GoalManagement/"}],
+   "call-chain":
+   [{"id": "call-chain",
+     "data":
+     {"title": "完整调用链",
+      "shortTitle": null,
+      "sectionNum": "7.2.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "源码全景：文件结构与调用链", "shortTitle": null, "number": "2"},
+       {"title": "完整调用链", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch06Simp/"}],
    "caching-avoid-duplication":
    [{"id": "caching-avoid-duplication",
      "data":
@@ -9297,6 +9876,18 @@
        {"title": "从证明模式到自动化：方法论", "shortTitle": null, "number": "24"},
        {"title": "23.4 自动化层级选择", "shortTitle": null, "number": "4"}]},
      "address": "/Ch23Methodology/"}],
+   "auto-vs-hand-congr":
+   [{"id": "auto-vs-hand-congr",
+     "data":
+     {"title": "自动生成 vs @[congr] 手写",
+      "shortTitle": null,
+      "sectionNum": "7.7.5.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "Congruence Lemma", "shortTitle": null, "number": "7"},
+       {"title": "自动生成 vs @[congr] 手写", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch06Simp/"}],
    "assumption-search":
    [{"id": "assumption-search",
      "data":
@@ -9320,6 +9911,17 @@
        {"title": "norm_num  与  simp  的配合", "shortTitle": null, "number": "5"},
        {"title": "作为 simp 的 discharger", "shortTitle": null, "number": "1"}]},
      "address": "/Ch10NormNum/"}],
+   "architecture-overview":
+   [{"id": "architecture-overview",
+     "data":
+     {"title": "架构全景图",
+      "shortTitle": null,
+      "sectionNum": "7.13.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "simp——化简的瑞士军刀", "shortTitle": null, "number": "7"},
+       {"title": "架构全景图", "shortTitle": null, "number": "13"}]},
+     "address": "/Ch06Simp/"}],
    "applicability-quick-reference":
    [{"id": "applicability-quick-reference",
      "data":
@@ -9506,22 +10108,6 @@
        "context":
        ["Lean 4 自动化内幕", "Type Class Synthesis", "5.2 Synthesis 的搜索过程", "优先级"]}},
      "address": "/Ch05TypeclassSynthesis/"}],
-   "double":
-   [{"id": "double",
-     "data":
-     {"/Ch06Simp/#double":
-      {"display": "double",
-       "context":
-       ["Lean 4 自动化内幕", "simp：重写引擎", "6.15 练习", "练习 3（debug）：为什么 simp 失败了？"]}},
-     "address": "/Ch06Simp/"}],
-   "SimpLemmaDemo.add_zero":
-   [{"id": "SimpLemmaDemo___add_zero",
-     "data":
-     {"/Ch06Simp/#SimpLemmaDemo___add_zero":
-      {"display": "add_zero",
-       "context":
-       ["Lean 4 自动化内幕", "simp：重写引擎", "6.2 重写规则集：simp lemmas", "四种引理形式"]}},
-     "address": "/Ch06Simp/"}],
    "Point.y":
    [{"id": "Point___y",
      "data":
@@ -9604,20 +10190,6 @@
         "13.5 编写 Decidable 实例",
         "方式 3：归约到已有可判定命题"]}},
      "address": "/Ch13Decide/"}],
-   "GoodSimpLemmaDemo.length_nil":
-   [{"id": "GoodSimpLemmaDemo___length_nil",
-     "data":
-     {"/Ch06Simp/#GoodSimpLemmaDemo___length_nil":
-      {"display": "length_nil",
-       "context": ["Lean 4 自动化内幕", "simp：重写引擎", "6.12 @[simp] 标注的最佳实践"]}},
-     "address": "/Ch06Simp/"}],
-   "GoodSimpLemmaDemo.length_cons":
-   [{"id": "GoodSimpLemmaDemo___length_cons",
-     "data":
-     {"/Ch06Simp/#GoodSimpLemmaDemo___length_cons":
-      {"display": "length_cons",
-       "context": ["Lean 4 自动化内幕", "simp：重写引擎", "6.12 @[simp] 标注的最佳实践"]}},
-     "address": "/Ch06Simp/"}],
    "Color.red":
    [{"id": "Color___red",
      "data":
