@@ -169,18 +169,6 @@
        {"title": "4.4 保存与恢复状态", "shortTitle": null, "number": "5"},
        {"title": "saveState  保存了什么？", "shortTitle": null, "number": "2"}]},
      "address": "/Ch04GoalManagement/"}],
-   "what-is-horner-nf":
-   [{"id": "what-is-horner-nf",
-     "data":
-     {"title": "什么是 Horner 范式",
-      "shortTitle": null,
-      "sectionNum": "8.2.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "内部原理：Horner 范式", "shortTitle": null, "number": "2"},
-       {"title": "什么是 Horner 范式", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch07Ring/"}],
    "what-is-expr":
    [{"id": "what-is-expr",
      "data":
@@ -204,18 +192,6 @@
        {"title": "4.8 练习", "shortTitle": null, "number": "9"},
        {"title": "热身练习", "shortTitle": null, "number": "1"}]},
      "address": "/Ch04GoalManagement/"}],
-   "via-eval-tactic":
-   [{"id": "via-eval-tactic",
-     "data":
-     {"title": "通过 evalTactic",
-      "shortTitle": null,
-      "sectionNum": "8.7.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "在元编程中调用 ring", "shortTitle": null, "number": "7"},
-       {"title": "通过 evalTactic", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch07Ring/"}],
    "variable-elimination":
    [{"id": "variable-elimination",
      "data":
@@ -265,18 +241,6 @@
        {"title": "19.7 可扩展性与性能", "shortTitle": null, "number": "7"},
        {"title": "让用户添加规则", "shortTitle": null, "number": "1"}]},
      "address": "/Ch19DesignYourOwn/"}],
-   "unsupported-structures":
-   [{"id": "unsupported-structures",
-     "data":
-     {"title": "不支持的结构",
-      "shortTitle": null,
-      "sectionNum": "8.4.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "支持的代数结构", "shortTitle": null, "number": "4"},
-       {"title": "不支持的结构", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch07Ring/"}],
    "unclear-error-messages":
    [{"id": "unclear-error-messages",
      "data":
@@ -326,18 +290,6 @@
        {"title": "实用工具函数", "shortTitle": null, "number": "7"},
        {"title": "类型相关", "shortTitle": null, "number": "1"}]},
      "address": "/Ch02Expr/"}],
-   "type-mismatch":
-   [{"id": "type-mismatch",
-     "data":
-     {"title": "类型不匹配",
-      "shortTitle": null,
-      "sectionNum": "8.5.4.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "常见失败模式与诊断", "shortTitle": null, "number": "5"},
-       {"title": "类型不匹配", "shortTitle": null, "number": "4"}]},
-     "address": "/Ch07Ring/"}],
    "type-cast-and-division":
    [{"id": "type-cast-and-division",
      "data":
@@ -817,17 +769,6 @@
         "shortTitle": null,
         "number": "2"}]},
      "address": "/Ch05TypeclassSynthesis/"}],
-   "supported-algebraic-structures":
-   [{"id": "supported-algebraic-structures",
-     "data":
-     {"title": "支持的代数结构",
-      "shortTitle": null,
-      "sectionNum": "8.4.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "支持的代数结构", "shortTitle": null, "number": "4"}]},
-     "address": "/Ch07Ring/"}],
    "summary":
    [{"id": "summary",
      "data":
@@ -851,18 +792,6 @@
        {"title": "实用工具函数", "shortTitle": null, "number": "7"},
        {"title": "替换与遍历", "shortTitle": null, "number": "3"}]},
      "address": "/Ch02Expr/"}],
-   "structure-overview":
-   [{"id": "structure-overview",
-     "data":
-     {"title": "结构总览",
-      "shortTitle": null,
-      "sectionNum": "8.4.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "支持的代数结构", "shortTitle": null, "number": "4"},
-       {"title": "结构总览", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch07Ring/"}],
    "structural-analysis-utils":
    [{"id": "structural-analysis-utils",
      "data":
@@ -1444,76 +1373,6 @@
        {"title": "aesop：可配置的搜索引擎", "shortTitle": null, "number": "12"},
        {"title": "11.4 规则动作", "shortTitle": null, "number": "4"}]},
      "address": "/Ch11Aesop/"}],
-   "ring-what-it-solves":
-   [{"id": "ring-what-it-solves",
-     "data":
-     {"title": "ring 解决什么问题",
-      "shortTitle": null,
-      "sectionNum": "8.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "ring 解决什么问题", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch07Ring/"}],
-   "ring-proof-strategy":
-   [{"id": "ring-proof-strategy",
-     "data":
-     {"title": "ring 的证明策略",
-      "shortTitle": null,
-      "sectionNum": "8.2.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "内部原理：Horner 范式", "shortTitle": null, "number": "2"},
-       {"title": "ring 的证明策略", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch07Ring/"}],
-   "ring-nf-vs-ring":
-   [{"id": "ring-nf-vs-ring",
-     "data":
-     {"title": "ring_nf  与 ring 的选择",
-      "shortTitle": null,
-      "sectionNum": "8.3.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "ring_nf ：只做范式化", "shortTitle": null, "number": "3"},
-       {"title": "ring_nf  与 ring 的选择", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch07Ring/"}],
-   "ring-nf-simplify-hypothesis":
-   [{"id": "ring-nf-simplify-hypothesis",
-     "data":
-     {"title": "化简假设",
-      "shortTitle": null,
-      "sectionNum": "8.3.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "ring_nf ：只做范式化", "shortTitle": null, "number": "3"},
-       {"title": "化简假设", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch07Ring/"}],
-   "ring-nf-simplify-goal":
-   [{"id": "ring-nf-simplify-goal",
-     "data":
-     {"title": "化简目标",
-      "shortTitle": null,
-      "sectionNum": "8.3.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "ring_nf ：只做范式化", "shortTitle": null, "number": "3"},
-       {"title": "化简目标", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch07Ring/"}],
-   "ring-nf-normalization-only":
-   [{"id": "ring-nf-normalization-only",
-     "data":
-     {"title": "ring_nf ：只做范式化",
-      "shortTitle": null,
-      "sectionNum": "8.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "ring_nf ：只做范式化", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch07Ring/"}],
    "rewrite-pre-post":
    [{"id": "rewrite-pre-post",
      "data":
@@ -1563,17 +1422,6 @@
        {"title": "22.8 实践考量", "shortTitle": null, "number": "8"},
        {"title": "可复现性", "shortTitle": null, "number": "2"}]},
      "address": "/Ch22ExternalTools/"}],
-   "related-tactics":
-   [{"id": "related-tactics",
-     "data":
-     {"title": "与 ring 相关的 tactic",
-      "shortTitle": null,
-      "sectionNum": "8.6.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "与 ring 相关的 tactic", "shortTitle": null, "number": "6"}]},
-     "address": "/Ch07Ring/"}],
    "reflection-vs-stepwise":
    [{"id": "reflection-vs-stepwise",
      "data":
@@ -1811,18 +1659,6 @@
         "number": "19"},
        {"title": "18.2  push_neg ：否定下推", "shortTitle": null, "number": "2"}]},
      "address": "/Ch18LogicTransforms/"}],
-   "push-cast-plus-ring":
-   [{"id": "push-cast-plus-ring",
-     "data":
-     {"title": "push_cast  + ring",
-      "shortTitle": null,
-      "sectionNum": "8.6.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "与 ring 相关的 tactic", "shortTitle": null, "number": "6"},
-       {"title": "push_cast  + ring", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch07Ring/"}],
    "pure-reflection":
    [{"id": "pure-reflection",
      "data":
@@ -2335,17 +2171,6 @@
        {"title": "性能工程", "shortTitle": null, "number": "22"},
        {"title": "21.11 练习", "shortTitle": null, "number": "14"}]},
      "address": "/Ch21Performance/"}],
-   "performance-considerations":
-   [{"id": "performance-considerations",
-     "data":
-     {"title": "性能考量",
-      "shortTitle": null,
-      "sectionNum": "8.8.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "性能考量", "shortTitle": null, "number": "8"}]},
-     "address": "/Ch07Ring/"}],
    "pattern-to-implementation":
    [{"id": "pattern-to-implementation",
      "data":
@@ -2715,18 +2540,6 @@
        {"title": "迈向分析自动化", "shortTitle": null, "number": "25"},
        {"title": "24.9 开放问题", "shortTitle": null, "number": "9"}]},
      "address": "/Ch24TowardsAnalysis/"}],
-   "opaque-functions":
-   [{"id": "opaque-functions",
-     "data":
-     {"title": "含有不透明函数",
-      "shortTitle": null,
-      "sectionNum": "8.5.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "常见失败模式与诊断", "shortTitle": null, "number": "5"},
-       {"title": "含有不透明函数", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch07Ring/"}],
    "omega-what-it-solves":
    [{"id": "omega-what-it-solves",
      "data":
@@ -3021,18 +2834,6 @@
         "shortTitle": null,
         "number": "4"}]},
      "address": "/Ch13Decide/"}],
-   "nat-subtraction-trap":
-   [{"id": "nat-subtraction-trap",
-     "data":
-     {"title": "ℕ 上的减法陷阱",
-      "shortTitle": null,
-      "sectionNum": "8.4.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "支持的代数结构", "shortTitle": null, "number": "4"},
-       {"title": "ℕ 上的减法陷阱", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch07Ring/"}],
    "nat-sub-handling":
    [{"id": "nat-sub-handling",
      "data":
@@ -3080,18 +2881,6 @@
        {"title": "关键类型速览", "shortTitle": null, "number": "3"},
        {"title": "Name", "shortTitle": null, "number": "1"}]},
      "address": "/Ch01MetaprogrammingModel/"}],
-   "multivariate-case":
-   [{"id": "multivariate-case",
-     "data":
-     {"title": "多变量情形",
-      "shortTitle": null,
-      "sectionNum": "8.2.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "内部原理：Horner 范式", "shortTitle": null, "number": "2"},
-       {"title": "多变量情形", "shortTitle": null, "number": "3"}]},
-     "address": "/Ch07Ring/"}],
    "multi-goal-mental-model":
    [{"id": "multi-goal-mental-model",
      "data":
@@ -3304,17 +3093,6 @@
        {"title": "进阶技巧", "shortTitle": null, "number": "6"},
        {"title": "在 meta 编程中调用", "shortTitle": null, "number": "3"}]},
      "address": "/Ch09Linarith/"}],
-   "metaprogramming-ring":
-   [{"id": "metaprogramming-ring",
-     "data":
-     {"title": "在元编程中调用 ring",
-      "shortTitle": null,
-      "sectionNum": "8.7.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "在元编程中调用 ring", "shortTitle": null, "number": "7"}]},
-     "address": "/Ch07Ring/"}],
    "metam-typechecking":
    [{"id": "metam-typechecking",
      "data":
@@ -3365,18 +3143,6 @@
        {"title": "23.6 何时停止", "shortTitle": null, "number": "6"},
        {"title": "信号 2：维护成本超过收益", "shortTitle": null, "number": "2"}]},
      "address": "/Ch23Methodology/"}],
-   "low-level-api":
-   [{"id": "low-level-api",
-     "data":
-     {"title": "底层 API",
-      "shortTitle": null,
-      "sectionNum": "8.7.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "在元编程中调用 ring", "shortTitle": null, "number": "7"},
-       {"title": "底层 API", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch07Ring/"}],
    "logic-transforms-when-to-use":
    [{"id": "logic-transforms-when-to-use",
      "data":
@@ -3715,18 +3481,6 @@
        {"title": "22.6 案例：LLM 辅助证明搜索", "shortTitle": null, "number": "6"},
        {"title": "架构", "shortTitle": null, "number": "1"}]},
      "address": "/Ch22ExternalTools/"}],
-   "linear-combination":
-   [{"id": "linear-combination",
-     "data":
-     {"title": "linear_combination",
-      "shortTitle": null,
-      "sectionNum": "8.6.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "与 ring 相关的 tactic", "shortTitle": null, "number": "6"},
-       {"title": "linear_combination", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch07Ring/"}],
    "linarith-with-hints":
    [{"id": "linarith-with-hints",
      "data":
@@ -4138,17 +3892,6 @@
        {"title": "20.6 反射 vs 逐步构造", "shortTitle": null, "number": "6"},
        {"title": "混合方案（实际选择）", "shortTitle": null, "number": "3"}]},
      "address": "/Ch20Reflection/"}],
-   "horner-normal-form":
-   [{"id": "horner-normal-form",
-     "data":
-     {"title": "内部原理：Horner 范式",
-      "shortTitle": null,
-      "sectionNum": "8.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "内部原理：Horner 范式", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch07Ring/"}],
    "higher-order-unification":
    [{"id": "higher-order-unification",
      "data":
@@ -4231,18 +3974,6 @@
         "number": "13"},
        {"title": "12.5 grind 的内部结构概览", "shortTitle": null, "number": "5"}]},
      "address": "/Ch12Grind/"}],
-   "goal-not-equality":
-   [{"id": "goal-not-equality",
-     "data":
-     {"title": "目标不是等式",
-      "shortTitle": null,
-      "sectionNum": "8.5.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "常见失败模式与诊断", "shortTitle": null, "number": "5"},
-       {"title": "目标不是等式", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch07Ring/"}],
    "goal-list-operations":
    [{"id": "goal-list-operations",
      "data":
@@ -4809,18 +4540,6 @@
         "shortTitle": null,
         "number": "3"}]},
      "address": "/Ch17FieldSimp/"}],
-   "field-simp-plus-ring":
-   [{"id": "field-simp-plus-ring",
-     "data":
-     {"title": "field_simp  + ring",
-      "shortTitle": null,
-      "sectionNum": "8.6.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "与 ring 相关的 tactic", "shortTitle": null, "number": "6"},
-       {"title": "field_simp  + ring", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch07Ring/"}],
    "field-simp-nonzero-sources":
    [{"id": "field-simp-nonzero-sources",
      "data":
@@ -6417,82 +6136,6 @@
        {"title": "8.8 练习", "shortTitle": null, "number": "8"},
        {"title": "练习 1：基础线性推理", "shortTitle": null, "number": "1"}]},
      "address": "/Ch08Omega/"}],
-   "exercise-7-6":
-   [{"id": "exercise-7-6",
-     "data":
-     {"title": "练习 7.6：组合 tactic（⭐⭐⭐）",
-      "shortTitle": null,
-      "sectionNum": "8.9.6.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "练习", "shortTitle": null, "number": "9"},
-       {"title": "练习 7.6：组合 tactic（⭐⭐⭐）", "shortTitle": null, "number": "6"}]},
-     "address": "/Ch07Ring/"}],
-   "exercise-7-5":
-   [{"id": "exercise-7-5",
-     "data":
-     {"title": "练习 7.5：诊断失败（⭐⭐）",
-      "shortTitle": null,
-      "sectionNum": "8.9.5.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "练习", "shortTitle": null, "number": "9"},
-       {"title": "练习 7.5：诊断失败（⭐⭐）", "shortTitle": null, "number": "5"}]},
-     "address": "/Ch07Ring/"}],
-   "exercise-7-4":
-   [{"id": "exercise-7-4",
-     "data":
-     {"title": "练习 7.4： field_simp  + ring（⭐⭐）",
-      "shortTitle": null,
-      "sectionNum": "8.9.4.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "练习", "shortTitle": null, "number": "9"},
-       {"title": "练习 7.4： field_simp  + ring（⭐⭐）",
-        "shortTitle": null,
-        "number": "4"}]},
-     "address": "/Ch07Ring/"}],
-   "exercise-7-3":
-   [{"id": "exercise-7-3",
-     "data":
-     {"title": "练习 7.3： linear_combination （⭐⭐）",
-      "shortTitle": null,
-      "sectionNum": "8.9.3.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "练习", "shortTitle": null, "number": "9"},
-       {"title": "练习 7.3： linear_combination （⭐⭐）",
-        "shortTitle": null,
-        "number": "3"}]},
-     "address": "/Ch07Ring/"}],
-   "exercise-7-2":
-   [{"id": "exercise-7-2",
-     "data":
-     {"title": "练习 7.2： ring_nf  化简（⭐）",
-      "shortTitle": null,
-      "sectionNum": "8.9.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "练习", "shortTitle": null, "number": "9"},
-       {"title": "练习 7.2： ring_nf  化简（⭐）", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch07Ring/"}],
-   "exercise-7-1":
-   [{"id": "exercise-7-1",
-     "data":
-     {"title": "练习 7.1：基础展开（⭐）",
-      "shortTitle": null,
-      "sectionNum": "8.9.1.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "练习", "shortTitle": null, "number": "9"},
-       {"title": "练习 7.1：基础展开（⭐）", "shortTitle": null, "number": "1"}]},
-     "address": "/Ch07Ring/"}],
    "exercise-6-5":
    [{"id": "exercise-6-5",
      "data":
@@ -7343,18 +6986,6 @@
        {"title": "编写你的第一个 Tactic", "shortTitle": null, "number": "4"},
        {"title": "错误处理与 diagnostics", "shortTitle": null, "number": "7"}]},
      "address": "/Ch03FirstTactic/"}],
-   "equality-depends-on-hypothesis":
-   [{"id": "equality-depends-on-hypothesis",
-     "data":
-     {"title": "等式依赖假设",
-      "shortTitle": null,
-      "sectionNum": "8.5.2.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "常见失败模式与诊断", "shortTitle": null, "number": "5"},
-       {"title": "等式依赖假设", "shortTitle": null, "number": "2"}]},
-     "address": "/Ch07Ring/"}],
    "epsilon-patterns":
    [{"id": "epsilon-patterns",
      "data":
@@ -7608,18 +7239,6 @@
        {"title": "性能工程", "shortTitle": null, "number": "22"},
        {"title": "21.3 诊断工具箱", "shortTitle": null, "number": "4"}]},
      "address": "/Ch21Performance/"}],
-   "diagnostic-flowchart":
-   [{"id": "diagnostic-flowchart",
-     "data":
-     {"title": "诊断流程图",
-      "shortTitle": null,
-      "sectionNum": "8.5.5.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "常见失败模式与诊断", "shortTitle": null, "number": "5"},
-       {"title": "诊断流程图", "shortTitle": null, "number": "5"}]},
-     "address": "/Ch07Ring/"}],
    "diagnosis-process":
    [{"id": "diagnosis-process",
      "data":
@@ -8460,17 +8079,6 @@
        {"title": "目标管理", "shortTitle": null, "number": "5"},
        {"title": "4.7 常见失败模式与调试", "shortTitle": null, "number": "8"}]},
      "address": "/Ch04GoalManagement/"}],
-   "common-failures-and-diagnostics":
-   [{"id": "common-failures-and-diagnostics",
-     "data":
-     {"title": "常见失败模式与诊断",
-      "shortTitle": null,
-      "sectionNum": "8.5.",
-      "context":
-      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
-       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "常见失败模式与诊断", "shortTitle": null, "number": "5"}]},
-     "address": "/Ch07Ring/"}],
    "common-failure-patterns":
    [{"id": "common-failure-patterns",
      "data":
@@ -9288,16 +8896,222 @@
        {"title": "omega：Presburger 算术决策过程", "shortTitle": null, "number": "9"},
        {"title": "8.8 练习", "shortTitle": null, "number": "8"}]},
      "address": "/Ch08Omega/"}],
-   "ch07-summary":
-   [{"id": "ch07-summary",
+   "ch07-what-ring-solves":
+   [{"id": "ch07-what-ring-solves",
      "data":
-     {"title": "小结",
+     {"title": "ring 解决什么问题",
       "shortTitle": null,
-      "sectionNum": "8.10.",
+      "sectionNum": "8.1.1.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
        {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "小结", "shortTitle": null, "number": "10"}]},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "ring 解决什么问题", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-usage":
+   [{"id": "ch07-usage",
+     "data":
+     {"title": "用法详解",
+      "shortTitle": null,
+      "sectionNum": "8.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-three-type-families":
+   [{"id": "ch07-three-type-families",
+     "data":
+     {"title": "三个类型族",
+      "shortTitle": null,
+      "sectionNum": "8.3.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "核心数据结构：ExBase / ExProd / ExSum",
+        "shortTitle": null,
+        "number": "3"},
+       {"title": "三个类型族", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-supported-structures":
+   [{"id": "ch07-supported-structures",
+     "data":
+     {"title": "支持的代数结构",
+      "shortTitle": null,
+      "sectionNum": "8.1.5.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "支持的代数结构", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-structural-equality":
+   [{"id": "ch07-structural-equality",
+     "data":
+     {"title": "结构等式比较",
+      "shortTitle": null,
+      "sectionNum": "8.4.8.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "规范化算法：eval / evalAdd / evalMul / evalPow",
+        "shortTitle": null,
+        "number": "4"},
+       {"title": "结构等式比较", "shortTitle": null, "number": "8"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-source-overview":
+   [{"id": "ch07-source-overview",
+     "data":
+     {"title": "源码全景：文件结构与调用链",
+      "shortTitle": null,
+      "sectionNum": "8.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "源码全景：文件结构与调用链", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-ring1-registration":
+   [{"id": "ch07-ring1-registration",
+     "data":
+     {"title": "ring1  tactic 注册",
+      "shortTitle": null,
+      "sectionNum": "8.2.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "源码全景：文件结构与调用链", "shortTitle": null, "number": "2"},
+       {"title": "ring1  tactic 注册", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-ring1":
+   [{"id": "ch07-ring1",
+     "data":
+     {"title": "ring1：底层等式证明器",
+      "shortTitle": null,
+      "sectionNum": "8.1.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "ring1：底层等式证明器", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-ring-nf-registration":
+   [{"id": "ch07-ring-nf-registration",
+     "data":
+     {"title": "ring_nf  tactic 注册",
+      "shortTitle": null,
+      "sectionNum": "8.9.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "ring_nf 实现", "shortTitle": null, "number": "9"},
+       {"title": "ring_nf  tactic 注册", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-ring-nf-impl":
+   [{"id": "ch07-ring-nf-impl",
+     "data":
+     {"title": "ring_nf 实现",
+      "shortTitle": null,
+      "sectionNum": "8.9.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "ring_nf 实现", "shortTitle": null, "number": "9"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-ring-nf":
+   [{"id": "ch07-ring-nf",
+     "data":
+     {"title": "ring_nf：只做范式化",
+      "shortTitle": null,
+      "sectionNum": "8.1.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "ring_nf：只做范式化", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-ring-mode":
+   [{"id": "ch07-ring-mode",
+     "data":
+     {"title": "RingMode  配置",
+      "shortTitle": null,
+      "sectionNum": "8.12.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "扩展点与配置", "shortTitle": null, "number": "12"},
+       {"title": "RingMode  配置", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-ring-macro":
+   [{"id": "ch07-ring-macro",
+     "data":
+     {"title": "ring  宏",
+      "shortTitle": null,
+      "sectionNum": "8.2.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "源码全景：文件结构与调用链", "shortTitle": null, "number": "2"},
+       {"title": "ring  宏", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-ring-family":
+   [{"id": "ch07-ring-family",
+     "data":
+     {"title": "ring 家族一览",
+      "shortTitle": null,
+      "sectionNum": "8.1.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "ring 家族一览", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-ring-core":
+   [{"id": "ch07-ring-core",
+     "data":
+     {"title": "ringCore ：核心证明生成",
+      "shortTitle": null,
+      "sectionNum": "8.2.6.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "源码全景：文件结构与调用链", "shortTitle": null, "number": "2"},
+       {"title": "ringCore ：核心证明生成", "shortTitle": null, "number": "6"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-ring-compute-parametric":
+   [{"id": "ch07-ring-compute-parametric",
+     "data":
+     {"title": "RingCompute  参数化",
+      "shortTitle": null,
+      "sectionNum": "8.12.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "扩展点与配置", "shortTitle": null, "number": "12"},
+       {"title": "RingCompute  参数化", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-ring-compute-impl":
+   [{"id": "ch07-ring-compute-impl",
+     "data":
+     {"title": "具体的  ringCompute  实现",
+      "shortTitle": null,
+      "sectionNum": "8.5.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "系数计算：norm_num 作为后端", "shortTitle": null, "number": "5"},
+       {"title": "具体的  ringCompute  实现", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-ring-compute":
+   [{"id": "ch07-ring-compute",
+     "data":
+     {"title": "RingCompute  接口",
+      "shortTitle": null,
+      "sectionNum": "8.5.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "系数计算：norm_num 作为后端", "shortTitle": null, "number": "5"},
+       {"title": "RingCompute  接口", "shortTitle": null, "number": "1"}]},
      "address": "/Ch07Ring/"}],
    "ch07-ring":
    [{"id": "ch07-ring",
@@ -9309,16 +9123,636 @@
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
        {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"}]},
      "address": "/Ch07Ring/"}],
+   "ch07-result-type":
+   [{"id": "ch07-result-type",
+     "data":
+     {"title": "Result  类型",
+      "shortTitle": null,
+      "sectionNum": "8.3.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "核心数据结构：ExBase / ExProd / ExSum",
+        "shortTitle": null,
+        "number": "3"},
+       {"title": "Result  类型", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-rat-coeff":
+   [{"id": "ch07-rat-coeff",
+     "data":
+     {"title": "RatCoeff ：有理系数",
+      "shortTitle": null,
+      "sectionNum": "8.5.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "系数计算：norm_num 作为后端", "shortTitle": null, "number": "5"},
+       {"title": "RatCoeff ：有理系数", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-qq-role":
+   [{"id": "ch07-qq-role",
+     "data":
+     {"title": "Qq  的角色",
+      "shortTitle": null,
+      "sectionNum": "8.10.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "证明引理系统", "shortTitle": null, "number": "10"},
+       {"title": "Qq  的角色", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-prove-eq":
+   [{"id": "ch07-prove-eq",
+     "data":
+     {"title": "proveEq ：Meta 层入口",
+      "shortTitle": null,
+      "sectionNum": "8.2.5.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "源码全景：文件结构与调用链", "shortTitle": null, "number": "2"},
+       {"title": "proveEq ：Meta 层入口", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-proof-strategy-detail":
+   [{"id": "ch07-proof-strategy-detail",
+     "data":
+     {"title": "证明策略",
+      "shortTitle": null,
+      "sectionNum": "8.10.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "证明引理系统", "shortTitle": null, "number": "10"},
+       {"title": "证明策略", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-proof-lemmas":
+   [{"id": "ch07-proof-lemmas",
+     "data":
+     {"title": "证明引理系统",
+      "shortTitle": null,
+      "sectionNum": "8.10.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "证明引理系统", "shortTitle": null, "number": "10"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-pnat-instance":
+   [{"id": "ch07-pnat-instance",
+     "data":
+     {"title": "PNat 实例",
+      "shortTitle": null,
+      "sectionNum": "8.6.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "类型提升：CSLift", "shortTitle": null, "number": "6"},
+       {"title": "PNat 实例", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-performance":
+   [{"id": "ch07-performance",
+     "data":
+     {"title": "性能考量",
+      "shortTitle": null,
+      "sectionNum": "8.8.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "性能考量", "shortTitle": null, "number": "8"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-not-purely-data":
+   [{"id": "ch07-not-purely-data",
+     "data":
+     {"title": "为什么 ring 不是纯数据算法",
+      "shortTitle": null,
+      "sectionNum": "8.10.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "证明引理系统", "shortTitle": null, "number": "10"},
+       {"title": "为什么 ring 不是纯数据算法", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-normalization-algorithms":
+   [{"id": "ch07-normalization-algorithms",
+     "data":
+     {"title": "规范化算法：eval / evalAdd / evalMul / evalPow",
+      "shortTitle": null,
+      "sectionNum": "8.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "规范化算法：eval / evalAdd / evalMul / evalPow",
+        "shortTitle": null,
+        "number": "4"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-normal-form-intuition":
+   [{"id": "ch07-normal-form-intuition",
+     "data":
+     {"title": "范式的直觉理解",
+      "shortTitle": null,
+      "sectionNum": "8.3.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "核心数据结构：ExBase / ExProd / ExSum",
+        "shortTitle": null,
+        "number": "3"},
+       {"title": "范式的直觉理解", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-next-chapter":
+   [{"id": "ch07-next-chapter",
+     "data":
+     {"title": "下一章预告",
+      "shortTitle": null,
+      "sectionNum": "8.16.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "下一章预告", "shortTitle": null, "number": "16"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-neg-sub":
+   [{"id": "ch07-neg-sub",
+     "data":
+     {"title": "取负和减法",
+      "shortTitle": null,
+      "sectionNum": "8.4.6.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "规范化算法：eval / evalAdd / evalMul / evalPow",
+        "shortTitle": null,
+        "number": "4"},
+       {"title": "取负和减法", "shortTitle": null, "number": "6"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-metaprogramming":
+   [{"id": "ch07-metaprogramming",
+     "data":
+     {"title": "在元编程中调用 ring",
+      "shortTitle": null,
+      "sectionNum": "8.12.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "扩展点与配置", "shortTitle": null, "number": "12"},
+       {"title": "在元编程中调用 ring", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-key-lemma-families":
+   [{"id": "ch07-key-lemma-families",
+     "data":
+     {"title": "关键引理族",
+      "shortTitle": null,
+      "sectionNum": "8.10.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "证明引理系统", "shortTitle": null, "number": "10"},
+       {"title": "关键引理族", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-horner-relation":
+   [{"id": "ch07-horner-relation",
+     "data":
+     {"title": "与 Horner 形式的关系",
+      "shortTitle": null,
+      "sectionNum": "8.7.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "与 Horner 形式的关系", "shortTitle": null, "number": "7"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-file-structure":
+   [{"id": "ch07-file-structure",
+     "data":
+     {"title": "文件结构",
+      "shortTitle": null,
+      "sectionNum": "8.2.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "源码全景：文件结构与调用链", "shortTitle": null, "number": "2"},
+       {"title": "文件结构", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-failure-diagnosis":
+   [{"id": "ch07-failure-diagnosis",
+     "data":
+     {"title": "常见失败模式与诊断",
+      "shortTitle": null,
+      "sectionNum": "8.1.7.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "常见失败模式与诊断", "shortTitle": null, "number": "7"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-extension-points":
+   [{"id": "ch07-extension-points",
+     "data":
+     {"title": "扩展点与配置",
+      "shortTitle": null,
+      "sectionNum": "8.12.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "扩展点与配置", "shortTitle": null, "number": "12"}]},
+     "address": "/Ch07Ring/"}],
    "ch07-exercises":
    [{"id": "ch07-exercises",
      "data":
      {"title": "练习",
       "shortTitle": null,
-      "sectionNum": "8.9.",
+      "sectionNum": "8.15.",
       "context":
       [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
        {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
-       {"title": "练习", "shortTitle": null, "number": "9"}]},
+       {"title": "练习", "shortTitle": null, "number": "15"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-exercise-6":
+   [{"id": "ch07-exercise-6",
+     "data":
+     {"title": "练习 6（源码阅读）",
+      "shortTitle": null,
+      "sectionNum": "8.15.6.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "练习", "shortTitle": null, "number": "15"},
+       {"title": "练习 6（源码阅读）", "shortTitle": null, "number": "6"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-exercise-5":
+   [{"id": "ch07-exercise-5",
+     "data":
+     {"title": "练习 5：诊断失败",
+      "shortTitle": null,
+      "sectionNum": "8.15.5.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "练习", "shortTitle": null, "number": "15"},
+       {"title": "练习 5：诊断失败", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-exercise-4":
+   [{"id": "ch07-exercise-4",
+     "data":
+     {"title": "练习 4： field_simp  + ring",
+      "shortTitle": null,
+      "sectionNum": "8.15.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "练习", "shortTitle": null, "number": "15"},
+       {"title": "练习 4： field_simp  + ring",
+        "shortTitle": null,
+        "number": "4"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-exercise-3":
+   [{"id": "ch07-exercise-3",
+     "data":
+     {"title": "练习 3： linear_combination",
+      "shortTitle": null,
+      "sectionNum": "8.15.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "练习", "shortTitle": null, "number": "15"},
+       {"title": "练习 3： linear_combination",
+        "shortTitle": null,
+        "number": "3"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-exercise-2":
+   [{"id": "ch07-exercise-2",
+     "data":
+     {"title": "练习 2： ring_nf  化简",
+      "shortTitle": null,
+      "sectionNum": "8.15.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "练习", "shortTitle": null, "number": "15"},
+       {"title": "练习 2： ring_nf  化简", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-exercise-1":
+   [{"id": "ch07-exercise-1",
+     "data":
+     {"title": "练习 1：基础展开",
+      "shortTitle": null,
+      "sectionNum": "8.15.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "练习", "shortTitle": null, "number": "15"},
+       {"title": "练习 1：基础展开", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-eval-pow":
+   [{"id": "ch07-eval-pow",
+     "data":
+     {"title": "幂规范化： evalPow",
+      "shortTitle": null,
+      "sectionNum": "8.4.5.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "规范化算法：eval / evalAdd / evalMul / evalPow",
+        "shortTitle": null,
+        "number": "4"},
+       {"title": "幂规范化： evalPow", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-eval-mul":
+   [{"id": "ch07-eval-mul",
+     "data":
+     {"title": "乘法规范化： evalMul",
+      "shortTitle": null,
+      "sectionNum": "8.4.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "规范化算法：eval / evalAdd / evalMul / evalPow",
+        "shortTitle": null,
+        "number": "4"},
+       {"title": "乘法规范化： evalMul", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-eval-function":
+   [{"id": "ch07-eval-function",
+     "data":
+     {"title": "eval ：核心递归引擎",
+      "shortTitle": null,
+      "sectionNum": "8.4.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "规范化算法：eval / evalAdd / evalMul / evalPow",
+        "shortTitle": null,
+        "number": "4"},
+       {"title": "eval ：核心递归引擎", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-eval-expr":
+   [{"id": "ch07-eval-expr",
+     "data":
+     {"title": "核心函数： evalExpr",
+      "shortTitle": null,
+      "sectionNum": "8.9.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "ring_nf 实现", "shortTitle": null, "number": "9"},
+       {"title": "核心函数： evalExpr", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-eval-add":
+   [{"id": "ch07-eval-add",
+     "data":
+     {"title": "加法规范化： evalAdd",
+      "shortTitle": null,
+      "sectionNum": "8.4.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "规范化算法：eval / evalAdd / evalMul / evalPow",
+        "shortTitle": null,
+        "number": "4"},
+       {"title": "加法规范化： evalAdd", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-div-inv":
+   [{"id": "ch07-div-inv",
+     "data":
+     {"title": "除法和求逆",
+      "shortTitle": null,
+      "sectionNum": "8.4.7.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "规范化算法：eval / evalAdd / evalMul / evalPow",
+        "shortTitle": null,
+        "number": "4"},
+       {"title": "除法和求逆", "shortTitle": null, "number": "7"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-debug-transparency":
+   [{"id": "ch07-debug-transparency",
+     "data":
+     {"title": "模式 4： ring  失败但  ring!  成功",
+      "shortTitle": null,
+      "sectionNum": "8.13.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "调试手册", "shortTitle": null, "number": "13"},
+       {"title": "模式 4： ring  失败但  ring!  成功",
+        "shortTitle": null,
+        "number": "4"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-debug-tools":
+   [{"id": "ch07-debug-tools",
+     "data":
+     {"title": "辅助诊断工具",
+      "shortTitle": null,
+      "sectionNum": "8.13.5.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "调试手册", "shortTitle": null, "number": "13"},
+       {"title": "辅助诊断工具", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-debug-nat-sub":
+   [{"id": "ch07-debug-nat-sub",
+     "data":
+     {"title": "模式 3：ℕ 减法",
+      "shortTitle": null,
+      "sectionNum": "8.13.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "调试手册", "shortTitle": null, "number": "13"},
+       {"title": "模式 3：ℕ 减法", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-debug-manual":
+   [{"id": "ch07-debug-manual",
+     "data":
+     {"title": "调试手册",
+      "shortTitle": null,
+      "sectionNum": "8.13.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "调试手册", "shortTitle": null, "number": "13"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-debug-division":
+   [{"id": "ch07-debug-division",
+     "data":
+     {"title": "模式 2：残余含  a / a  或  a * a⁻¹",
+      "shortTitle": null,
+      "sectionNum": "8.13.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "调试手册", "shortTitle": null, "number": "13"},
+       {"title": "模式 2：残余含  a / a  或  a * a⁻¹",
+        "shortTitle": null,
+        "number": "2"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-debug-constant-neq":
+   [{"id": "ch07-debug-constant-neq",
+     "data":
+     {"title": "模式 1：常数不等式",
+      "shortTitle": null,
+      "sectionNum": "8.13.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "调试手册", "shortTitle": null, "number": "13"},
+       {"title": "模式 1：常数不等式", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-data-structures":
+   [{"id": "ch07-data-structures",
+     "data":
+     {"title": "核心数据结构：ExBase / ExProd / ExSum",
+      "shortTitle": null,
+      "sectionNum": "8.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "核心数据结构：ExBase / ExProd / ExSum",
+        "shortTitle": null,
+        "number": "3"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-cslift-mechanism":
+   [{"id": "ch07-cslift-mechanism",
+     "data":
+     {"title": "问题与机制",
+      "shortTitle": null,
+      "sectionNum": "8.6.1.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "类型提升：CSLift", "shortTitle": null, "number": "6"},
+       {"title": "问题与机制", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-cslift":
+   [{"id": "ch07-cslift",
+     "data":
+     {"title": "类型提升：CSLift",
+      "shortTitle": null,
+      "sectionNum": "8.6.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "类型提升：CSLift", "shortTitle": null, "number": "6"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-compare":
+   [{"id": "ch07-compare",
+     "data":
+     {"title": "不等式自动化：Compare.lean",
+      "shortTitle": null,
+      "sectionNum": "8.11.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "不等式自动化：Compare.lean", "shortTitle": null, "number": "11"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-companion-tactics":
+   [{"id": "ch07-companion-tactics",
+     "data":
+     {"title": "常见搭档 tactic",
+      "shortTitle": null,
+      "sectionNum": "8.1.6.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "用法详解", "shortTitle": null, "number": "1"},
+       {"title": "常见搭档 tactic", "shortTitle": null, "number": "6"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-coefficient-computation":
+   [{"id": "ch07-coefficient-computation",
+     "data":
+     {"title": "系数计算：norm_num 作为后端",
+      "shortTitle": null,
+      "sectionNum": "8.5.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "系数计算：norm_num 作为后端", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-cleanup-ref":
+   [{"id": "ch07-cleanup-ref",
+     "data":
+     {"title": "ringCleanupRef ：清理钩子",
+      "shortTitle": null,
+      "sectionNum": "8.12.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "扩展点与配置", "shortTitle": null, "number": "12"},
+       {"title": "ringCleanupRef ：清理钩子", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-cleanup":
+   [{"id": "ch07-cleanup",
+     "data":
+     {"title": "清理例程： cleanup",
+      "shortTitle": null,
+      "sectionNum": "8.9.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "ring_nf 实现", "shortTitle": null, "number": "9"},
+       {"title": "清理例程： cleanup", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-canonicity-invariants":
+   [{"id": "ch07-canonicity-invariants",
+     "data":
+     {"title": "范式的规范性保证",
+      "shortTitle": null,
+      "sectionNum": "8.3.3.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "核心数据结构：ExBase / ExProd / ExSum",
+        "shortTitle": null,
+        "number": "3"},
+       {"title": "范式的规范性保证", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-call-chain":
+   [{"id": "ch07-call-chain",
+     "data":
+     {"title": "入口调用链：从  ring  到范式比较",
+      "shortTitle": null,
+      "sectionNum": "8.2.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "源码全景：文件结构与调用链", "shortTitle": null, "number": "2"},
+       {"title": "入口调用链：从  ring  到范式比较", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-cache":
+   [{"id": "ch07-cache",
+     "data":
+     {"title": "Cache ：实例缓存",
+      "shortTitle": null,
+      "sectionNum": "8.9.4.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "ring_nf 实现", "shortTitle": null, "number": "9"},
+       {"title": "Cache ：实例缓存", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-atom-management":
+   [{"id": "ch07-atom-management",
+     "data":
+     {"title": "原子管理： AtomM  monad",
+      "shortTitle": null,
+      "sectionNum": "8.4.2.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "规范化算法：eval / evalAdd / evalMul / evalPow",
+        "shortTitle": null,
+        "number": "4"},
+       {"title": "原子管理： AtomM  monad", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch07Ring/"}],
+   "ch07-architecture":
+   [{"id": "ch07-architecture",
+     "data":
+     {"title": "架构全景图",
+      "shortTitle": null,
+      "sectionNum": "8.14.",
+      "context":
+      [{"title": "Lean 4 自动化内幕", "shortTitle": null, "number": null},
+       {"title": "ring 和  ring_nf ：代数范式化", "shortTitle": null, "number": "8"},
+       {"title": "架构全景图", "shortTitle": null, "number": "14"}]},
      "address": "/Ch07Ring/"}],
    "ch06-trace-options":
    [{"id": "ch06-trace-options",

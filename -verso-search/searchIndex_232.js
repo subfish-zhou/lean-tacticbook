@@ -1,0 +1,1 @@
+window.docContents[232].resolve({"/Ch07Ring/#ch07-proof-strategy-detail":{"contents":"ring 不在最后一步生成一个大证明，而是在规范化的每一步都附带证明。每个 eval* 函数返回的 Result 中包含一个 proof : Q($e = $expr) 项。proof 沿着分配律、结合律、cast、系数计算一路累积——每步操作的输出不是一个值，而是一个 Result 三元组。\n\n","context":"Lean 4 自动化内幕\u0009ring 和  ring_nf ：代数范式化\u0009证明引理系统","header":"8.10.1. 证明策略","id":"/Ch07Ring/#ch07-proof-strategy-detail"}});

@@ -949,7 +949,7 @@ window.onload = () => {
             <div class="split-toc">
               <div class="title">
                 <label for="--verso-manual-toc-ch07-ring" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch07-ring" checked="checked"></label><span class="number">8.</span> <span class="current"><a href="Ch07Ring/#ch07-ring">ring 和 <code>ring_nf</code>：代数范式化</a></span></div>
-              <table><tr class="numbered"><td class="num">8.1.</td><td><a href="Ch07Ring/#ring-what-it-solves">ring 解决什么问题</a></td></tr><tr class="numbered"><td class="num">8.2.</td><td><a href="Ch07Ring/#horner-normal-form">内部原理：Horner 范式</a></td></tr><tr class="numbered"><td class="num">8.3.</td><td><a href="Ch07Ring/#ring-nf-normalization-only"><code>ring_nf</code>：只做范式化</a></td></tr><tr class="numbered"><td class="num">8.4.</td><td><a href="Ch07Ring/#supported-algebraic-structures">支持的代数结构</a></td></tr><tr class="numbered"><td class="num">8.5.</td><td><a href="Ch07Ring/#common-failures-and-diagnostics">常见失败模式与诊断</a></td></tr><tr class="numbered"><td class="num">8.6.</td><td><a href="Ch07Ring/#related-tactics">与 ring 相关的 tactic</a></td></tr><tr class="numbered"><td class="num">8.7.</td><td><a href="Ch07Ring/#metaprogramming-ring">在元编程中调用 ring</a></td></tr><tr class="numbered"><td class="num">8.8.</td><td><a href="Ch07Ring/#performance-considerations">性能考量</a></td></tr><tr class="numbered"><td class="num">8.9.</td><td><a href="Ch07Ring/#ch07-exercises">练习</a></td></tr><tr class="numbered"><td class="num">8.10.</td><td><a href="Ch07Ring/#ch07-summary">小结</a></td></tr></table></div>
+              <table><tr class="numbered"><td class="num">8.1.</td><td><a href="Ch07Ring/#ch07-usage">用法详解</a></td></tr><tr class="numbered"><td class="num">8.2.</td><td><a href="Ch07Ring/#ch07-source-overview">源码全景：文件结构与调用链</a></td></tr><tr class="numbered"><td class="num">8.3.</td><td><a href="Ch07Ring/#ch07-data-structures">核心数据结构：ExBase / ExProd / ExSum</a></td></tr><tr class="numbered"><td class="num">8.4.</td><td><a href="Ch07Ring/#ch07-normalization-algorithms">规范化算法：eval / evalAdd / evalMul / evalPow</a></td></tr><tr class="numbered"><td class="num">8.5.</td><td><a href="Ch07Ring/#ch07-coefficient-computation">系数计算：norm_num 作为后端</a></td></tr><tr class="numbered"><td class="num">8.6.</td><td><a href="Ch07Ring/#ch07-cslift">类型提升：CSLift</a></td></tr><tr class="numbered"><td class="num">8.7.</td><td><a href="Ch07Ring/#ch07-horner-relation">与 Horner 形式的关系</a></td></tr><tr class="numbered"><td class="num">8.8.</td><td><a href="Ch07Ring/#ch07-performance">性能考量</a></td></tr><tr class="numbered"><td class="num">8.9.</td><td><a href="Ch07Ring/#ch07-ring-nf-impl">ring_nf 实现</a></td></tr><tr class="numbered"><td class="num">8.10.</td><td><a href="Ch07Ring/#ch07-proof-lemmas">证明引理系统</a></td></tr><tr class="numbered"><td class="num">8.11.</td><td><a href="Ch07Ring/#ch07-compare">不等式自动化：Compare.lean</a></td></tr><tr class="numbered"><td class="num">8.12.</td><td><a href="Ch07Ring/#ch07-extension-points">扩展点与配置</a></td></tr><tr class="numbered"><td class="num">8.13.</td><td><a href="Ch07Ring/#ch07-debug-manual">调试手册</a></td></tr><tr class="numbered"><td class="num">8.14.</td><td><a href="Ch07Ring/#ch07-architecture">架构全景图</a></td></tr><tr class="numbered"><td class="num">8.15.</td><td><a href="Ch07Ring/#ch07-exercises">练习</a></td></tr><tr class="numbered"><td class="num">8.16.</td><td><a href="Ch07Ring/#ch07-next-chapter">下一章预告</a></td></tr></table></div>
             </div>
           </div>
         <div class="last"></div>
@@ -961,14 +961,16 @@ window.onload = () => {
             <h1>
               8. ring 和 <code>ring_nf</code>：代数范式化<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-ring" title="Permalink">🔗</a></span></h1>
             <p>
-              <strong>本章目标</strong>：理解 <code>ring</code> 的决策过程，掌握 <code>ring_nf</code> 的化简用法，学会诊断常见失败模式。</p>
+              <strong>本章目标</strong>：前半章掌握 <code>ring</code> 家族（<code>ring</code> / <code>ring_nf</code> / <code>ring1</code>）的用法、配置与调试；后半章从 Mathlib 真实源码层面拆解 ring 的完整实现——入口调用链、多项式范式数据结构、规范化算法、系数计算、类型提升——面向想深入理解内部机制的读者。</p>
             <section>
-              <h2 id="ring-what-it-solves">
-                8.1. ring 解决什么问题<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ring-what-it-solves" title="Permalink">🔗</a></span></h2>
-              <p>
-                <code>ring</code> 证明<strong>交换（半）环</strong>上的多项式恒等式。它是一个<strong>完备决策过程</strong>：
-对于交换环公理可推出的任何多项式等式，<code>ring</code> 一定能判定。</p>
-              <pre>-- 基础展开
+              <h2 id="ch07-usage">
+                8.1. 用法详解<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-usage" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="ch07-what-ring-solves">
+                  8.1.1. ring 解决什么问题<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-what-ring-solves" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>ring</code> 证明<strong>交换（半）环</strong>上的多项式恒等式。它是一个<strong>完备决策过程</strong>：对于交换环公理可推出的任何多项式等式，<code>ring</code> 一定能判定。</p>
+                <pre>-- 基础展开
 example (x y : ℤ) : (x + y) ^ 2 = x ^ 2 + 2 * x * y + y ^ 2 := by
   ring
   -- ✅ ring 把两边规范化为同一个 Horner 范式，得到 rfl
@@ -986,253 +988,144 @@ example (a b c : ℚ) :
       6 * a * b * c := by
   ring
   -- ✅ 变量数和次数不影响正确性，只影响性能
+
+-- 变量指数
+example (n : ℕ) (m : ℤ) : 2^(n+1) * m = 2 * 2^n * m := by ring
 </pre><p>
-                <code>ring</code> 的三条核心边界：</p>
-              <ol start="1">
-                <li>
-                  <p>
-                    <strong>不处理序</strong>——<code>ring</code> 不能证明 <code>x + 1 &gt; x</code>，那是 <code>linarith</code> / <code>positivity</code> 的领域</p>
-                  </li>
-                <li>
-                  <p>
-                    <strong>不展开函数</strong>——<code>ring</code> 把 <code>sin x</code>、<code>f n</code> 等当作不透明原子</p>
-                  </li>
-                <li>
-                  <p>
-                    <strong>不处理除法</strong>——<code>x / y * y = x</code> 需要 <code>y ≠ 0</code>，超出环公理</p>
-                  </li>
-                </ol>
-              </section>
-            <section>
-              <h2 id="horner-normal-form">
-                8.2. 内部原理：Horner 范式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=horner-normal-form" title="Permalink">🔗</a></span></h2>
+                  <code>ring</code> 的三条核心边界：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <strong>不处理序</strong>——<code>ring</code> 不能证明 <code>x + 1 &gt; x</code>，那是 <code>linarith</code> / <code>positivity</code> 的领域</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>不展开函数</strong>——<code>ring</code> 把 <code>sin x</code>、<code>f n</code> 等当作不透明原子</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>不处理除法约分</strong>——<code>x / y * y = x</code> 需要 <code>y ≠ 0</code>，超出环公理</p>
+                    </li>
+                  </ol>
+                </section>
               <section>
-                <h3 id="what-is-horner-nf">
-                  8.2.1. 什么是 Horner 范式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=what-is-horner-nf" title="Permalink">🔗</a></span></h3>
-                <p>
-                  多项式 <code class="math inline">a_0 + a_1 x + a_2 x^2 + \cdots + a_n x^n</code> 的 Horner 形式是：</p>
-                <p>
-                  <code class="math inline">a_0 + x \cdot (a_1 + x \cdot (a_2 + \cdots + x \cdot a_n))</code></p>
-                <p>
-                  这种嵌套表示有两个优势：</p>
+                <h3 id="ch07-ring-family">
+                  8.1.2. ring 家族一览<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-ring-family" title="Permalink">🔗</a></span></h3>
                 <ul>
                   <li>
                     <p>
-                      <strong>唯一性</strong>——同一个多项式只有一种 Horner 范式（在固定变量序下）</p>
+                      <code>ring</code>：尝试 <code>ring1</code> 关闭目标；若失败回退到 <code>ring_nf</code> 并提示用户</p>
                     </li>
                   <li>
                     <p>
-                      <strong>高效求值</strong>——只需 <code class="math inline">n</code> 次乘法 + <code class="math inline">n</code> 次加法，不需要幂运算</p>
+                      <code>ring1</code>：直接证明等式目标（不做 fallback）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>ring_nf</code>：只做范式化，不要求等式两边相等；可作用于假设</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>ring!</code> / <code>ring1!</code> / <code>ring_nf!</code>：使用更激进的可约性设置（<code>.default</code> 代替 <code>.reducible</code>）</p>
                     </li>
                   </ul>
+                <p>
+                  <code>ring</code> 和 <code>ring_nf</code> 都同时支持 tactic 模式和 conv 模式。</p>
                 </section>
               <section>
-                <h3 id="ring-proof-strategy">
-                  8.2.2. ring 的证明策略<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ring-proof-strategy" title="Permalink">🔗</a></span></h3>
+                <h3 id="ch07-ring-nf">
+                  8.1.3. ring_nf：只做范式化<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-ring-nf" title="Permalink">🔗</a></span></h3>
                 <p>
-                  <code>ring</code> 的工作分为三步：</p>
-                <pre>            规范化                    比较                    规范化
-LHS ────────────→ nf_lhs ═══════════════════ nf_rhs ←──────────── RHS
-    proof₁: LHS = nf_lhs    nf_lhs ≡ nf_rhs    proof₂: RHS = nf_rhs
-                              (结构相等)
-</pre><ol start="1">
-                  <li>
-                    <p>
-                      对 LHS 递归应用环公理（结合律、交换律、分配律），产生 <code>proof₁ : LHS = nf_lhs</code></p>
-                    </li>
-                  <li>
-                    <p>
-                      对 RHS 做同样处理，产生 <code>proof₂ : RHS = nf_rhs</code></p>
-                    </li>
-                  <li>
-                    <p>
-                      检查 <code>nf_lhs</code> 与 <code>nf_rhs</code> 是否结构相同（<code>rfl</code>）</p>
-                    </li>
-                  <li>
-                    <p>
-                      若相同，组合得到 <code>LHS = RHS</code>；若不同，报错</p>
-                    </li>
-                  </ol>
-                <p>
-                  关键点：第 3 步是<strong>纯粹的语法比较</strong>——不需要搜索或回溯。
-与搜索型 tactic 不同，<code>ring</code> 没有回溯搜索空间，因此不会因搜索爆炸而超时。
-但规范化本身产生的项数可能随变量数和次数急剧增长（见 7.8），所以高次多变量场景下 <code>ring</code> 依然可能很慢。</p>
-                </section>
-              <section>
-                <h3 id="multivariate-case">
-                  8.2.3. 多变量情形<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=multivariate-case" title="Permalink">🔗</a></span></h3>
-                <p>
-                  对于多变量多项式，<code>ring</code> 选定一个变量序（通常按出现顺序），
-然后递归地把系数本身视为"内层"多项式。例如 <code class="math inline">2xy + 3x + y</code> 以 <code class="math inline">x</code> 为主变量时：</p>
-                <p>
-                  <code class="math inline">x \cdot (2y + 3) + y</code></p>
-                <p>
-                  内层系数 <code class="math inline">2y + 3</code> 和 <code class="math inline">y</code> 再以 <code class="math inline">y</code> 为主变量做 Horner 规范化。</p>
-                </section>
-              </section>
-            <section>
-              <h2 id="ring-nf-normalization-only">
-                8.3. <code>ring_nf</code>：只做范式化<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ring-nf-normalization-only" title="Permalink">🔗</a></span></h2>
-              <p>
-                <code>ring_nf</code> 执行与 <code>ring</code> 相同的规范化过程，但<strong>不要求两边相等</strong>。
-它把目标（或假设）中的代数子表达式化简为 Horner 范式。</p>
-              <section>
-                <h3 id="ring-nf-simplify-goal">
-                  8.3.1. 化简目标<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ring-nf-simplify-goal" title="Permalink">🔗</a></span></h3>
-                <pre>example (x : ℤ) : (x + 1) ^ 2 - 1 = x ^ 2 + 2 * x := by
+                  <code>ring_nf</code> 执行与 <code>ring</code> 相同的规范化过程，但<strong>不要求两边相等</strong>。它把目标（或假设）中的代数子表达式化简为范式形式。</p>
+                <pre>-- 化简目标
+example (x : ℤ) : (x + 1) ^ 2 - 1 = x ^ 2 + 2 * x := by
   ring_nf
   -- ring_nf 把两边分别化简为范式
   -- 如果化简后两边相同，目标自动关闭
-  -- 如果不同，留下化简后的目标供后续 tactic 处理
-</pre></section>
-              <section>
-                <h3 id="ring-nf-simplify-hypothesis">
-                  8.3.2. 化简假设<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ring-nf-simplify-hypothesis" title="Permalink">🔗</a></span></h3>
-                <pre>example (x : ℤ) (h : (x + 1) ^ 2 = 9) : x ^ 2 + 2 * x = 8 := by
+
+-- 化简假设
+example (x : ℤ) (h : (x + 1) ^ 2 = 9) : x ^ 2 + 2 * x = 8 := by
   ring_nf at h
   -- h 从 (x + 1) ^ 2 = 9 变为 x ^ 2 + 2 * x + 1 = 9
   linarith
-  -- ⊢ x ^ 2 + 2 * x = 8，由 h 和 linarith 解决
-</pre></section>
-              <section>
-                <h3 id="ring-nf-vs-ring">
-                  8.3.3. <code>ring_nf</code> 与 ring 的选择<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ring-nf-vs-ring" title="Permalink">🔗</a></span></h3>
+</pre><p>
+                  <strong>何时用 <strong><code>ring_nf</code> 而非 <code>ring</code></strong></strong>：</p>
                 <ul>
                   <li>
                     <p>
-                      <code>证明 </code>LHS = RHS<code>，两边都是多项式</code>：<code>ring</code></p>
+                      目标不是等式但含有环表达式——用 <code>ring_nf</code> 化简后交给其他 tactic</p>
                     </li>
                   <li>
                     <p>
-                      <code>化简后交给其他 tactic</code>：<code>ring_nf</code> 然后接后续 tactic</p>
+                      需要化简假设中的代数表达式——<code>ring_nf at h</code></p>
                     </li>
                   <li>
                     <p>
-                      <code>化简假设中的代数表达式</code>：<code>ring_nf at h</code></p>
-                    </li>
-                  <li>
-                    <p>
-                      <code>只想看化简结果（探索性）</code>：<code>ring_nf</code></p>
+                      探索性使用：只想看化简结果</p>
                     </li>
                   </ul>
                 <p>
-                  经验法则：如果你认为等式纯粹是代数恒等式，先用 <code>ring</code>。
-如果 <code>ring</code> 失败，再考虑 <code>ring_nf</code> + 其他 tactic 的组合。</p>
+                  经验法则：如果等式纯粹是代数恒等式，先用 <code>ring</code>。失败后再考虑 <code>ring_nf</code> + 其他 tactic 的组合。</p>
                 </section>
-              </section>
-            <section>
-              <h2 id="supported-algebraic-structures">
-                8.4. 支持的代数结构<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=supported-algebraic-structures" title="Permalink">🔗</a></span></h2>
               <section>
-                <h3 id="structure-overview">
-                  8.4.1. 结构总览<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=structure-overview" title="Permalink">🔗</a></span></h3>
+                <h3 id="ch07-ring1">
+                  8.1.4. ring1：底层等式证明器<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-ring1" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>ring1</code> 是 <code>ring</code> 的核心——只接受等式目标，不做 fallback。<code>ring</code> 宏在内部先调用 <code>ring1</code>，失败后才回退到 <code>ring_nf</code>。直接使用 <code>ring1</code> 的场景较少，主要用于元编程或需要精确控制行为时。</p>
+                </section>
+              <section>
+                <h3 id="ch07-supported-structures">
+                  8.1.5. 支持的代数结构<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-supported-structures" title="Permalink">🔗</a></span></h3>
                 <ul>
                   <li>
                     <p>
-                      结构：交换环 <code>CommRing</code> —— 典型类型：<code>ℤ</code>, <code>ℚ</code>, <code>ℝ</code>, <code>ℂ</code>, <code>ZMod n</code> —— 注意事项：完整支持</p>
+                      <strong>交换环 <strong><code>CommRing</code></strong></strong>（<code>ℤ</code>, <code>ℚ</code>, <code>ℝ</code>, <code>ℂ</code>, <code>ZMod n</code>）：完整支持</p>
                     </li>
                   <li>
                     <p>
-                      结构：交换半环 <code>CommSemiring</code> —— 典型类型：<code>ℕ</code> —— 注意事项：减法受限（见 7.5）</p>
+                      <strong>交换半环 <strong><code>CommSemiring</code></strong></strong>（<code>ℕ</code>）：加法和乘法正常工作；减法受限（截断减法不满足环公理）</p>
                     </li>
                   <li>
                     <p>
-                      结构：交换代数 —— 典型类型：<code>R[X]</code>（多项式环） —— 注意事项：系数环需是 <code>CommRing</code></p>
+                      <strong>域 <strong><code>Field</code></strong></strong>（<code>ℚ</code>, <code>ℝ</code>, <code>ℂ</code>）：不处理 <code>a/a = 1</code> 约分（用 <code>field_simp</code> + <code>ring</code>）</p>
                     </li>
                   <li>
                     <p>
-                      结构：域 <code>Field</code> —— 典型类型：<code>ℚ</code>, <code>ℝ</code>, <code>ℂ</code> —— 注意事项：不处理除法（用 <code>field_simp</code> + <code>ring</code>）</p>
+                      <strong><strong><code>ℕ+</code> 等非半环类型</strong></strong>：通过 <code>CSLift</code> 类型提升机制支持（见源码拆解部分）</p>
                     </li>
                   </ul>
-                </section>
-              <section>
-                <h3 id="nat-subtraction-trap">
-                  8.4.2. ℕ 上的减法陷阱<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=nat-subtraction-trap" title="Permalink">🔗</a></span></h3>
                 <p>
-                  自然数上的减法是截断减法（<code>a - b = 0</code> 当 <code>a ≤ b</code>），不满足环公理。
-<code>ring</code> 可以处理 <code>ℕ</code> 上的加法和乘法，但涉及减法时经常失败：</p>
+                  <strong>ℕ 上的减法陷阱</strong>：</p>
                 <pre>-- ✅ 没有减法，ring 正常工作
 example (n : ℕ) : (n + 1) ^ 2 = n ^ 2 + 2 * n + 1 := by ring
 
--- ❌ 有减法，ring 可能失败
+-- ❌ 有减法，ring 失败
 -- example (n : ℕ) : (n + 1) - 1 = n := by ring  -- fails
 -- 正确做法：用 omega
 example (n : ℕ) : (n + 1) - 1 = n := by omega
 </pre><p>
-                  <strong>实践规则</strong>：在 <code>ℕ</code> 上，只要目标含有减法，就不要首先想到 <code>ring</code>——优先考虑 <code>omega</code> 或先转换到 <code>ℤ</code>。</p>
+                  <strong>实践规则</strong>：在 <code>ℕ</code> 上，只要目标含有减法，不要首选 <code>ring</code>——优先考虑 <code>omega</code> 或先转换到 <code>ℤ</code>。</p>
                 </section>
               <section>
-                <h3 id="unsupported-structures">
-                  8.4.3. 不支持的结构<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=unsupported-structures" title="Permalink">🔗</a></span></h3>
-                <ul>
-                  <li>
-                    <p>
-                      <strong>非交换环</strong>（如矩阵环）——用 <code>noncomm_ring</code></p>
-                    </li>
-                  <li>
-                    <p>
-                      <strong>除法环上的除法</strong>——用 <code>field_simp</code> 先消除分母，再用 <code>ring</code></p>
-                    </li>
-                  </ul>
-                <pre>-- field_simp + ring 的经典组合
-example (x : ℝ) (hx : x ≠ 0) : (x ^ 2 - 1) / x = x - 1 / x := by
-  field_simp
-  -- ⊢ x ^ 2 - 1 = x * x - 1（消除分母后）
-  ring
-</pre></section>
-              </section>
-            <section>
-              <h2 id="common-failures-and-diagnostics">
-                8.5. 常见失败模式与诊断<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=common-failures-and-diagnostics" title="Permalink">🔗</a></span></h2>
-              <section>
-                <h3 id="goal-not-equality">
-                  8.5.1. 目标不是等式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=goal-not-equality" title="Permalink">🔗</a></span></h3>
-                <pre>-- ❌ ring 只能证明等式，不能证明不等式
--- example (x : ℤ) : x ^ 2 ≥ 0 := by ring
--- 错误信息：ring failed, ring expressions not equal
--- 修复：用 nlinarith 或 positivity
-example (x : ℤ) : x ^ 2 ≥ 0 := by positivity
+                <h3 id="ch07-companion-tactics">
+                  8.1.6. 常见搭档 tactic<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-companion-tactics" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong><strong><code>linear_combination</code></strong></strong>——<code>ring</code> 最重要的搭档。给定等式假设，找到系数使目标成为这些假设的线性组合 + <code>ring</code> 恒等式：</p>
+                <pre>example (a b : ℤ) (h1 : a + b = 5) (h2 : a - b = 1) : a = 3 := by
+  linear_combination (h1 + h2) / 2
 </pre><p>
-                  <code>ring</code> 的错误信息 <code>ring expressions not equal</code> 可能误导：
-它并不意味着等式不成立，只是说 <code>ring</code> 的规范化后两边不同。
-对于不等式，<code>ring</code> 的规范化根本不适用。</p>
-                </section>
-              <section>
-                <h3 id="equality-depends-on-hypothesis">
-                  8.5.2. 等式依赖假设<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=equality-depends-on-hypothesis" title="Permalink">🔗</a></span></h3>
-                <pre>-- ❌ ring 不使用任何假设
--- example (x y : ℤ) (h : x = y) : x ^ 2 = y ^ 2 := by ring
--- ring 看不到 h，只看到 x ^ 2 和 y ^ 2 是不同的范式
--- 修复方案 1：先 subst
-example (x y : ℤ) (h : x = y) : x ^ 2 = y ^ 2 := by subst h; ring
--- 修复方案 2：用 linear_combination
-example (x y : ℤ) (h : x = y) : x ^ 2 = y ^ 2 := by
-  linear_combination (x + y) * h
-  -- 思路：用假设 h 乘以 (x + y)，生成一个可供 ring 验证的新恒等式
-  -- linear_combination 把目标变成 x^2 - y^2 - (x+y)*(x-y) = 0
-  -- 然后用 ring 验证
+                  <strong><strong><code>field_simp</code> + <code>ring</code></strong></strong>——处理含分式的等式：</p>
+                <pre>example (a b : ℝ) (ha : a ≠ 0) (hb : b ≠ 0) :
+    1 / a + 1 / b = (a + b) / (a * b) := by
+  field_simp; ring
+</pre><p>
+                  <strong><strong><code>push_cast</code> + <code>ring</code></strong></strong>——类型转换会阻碍 <code>ring</code>，<code>push_cast</code> 把 cast 推到最内层：</p>
+                <pre>example (m n : ℕ) : ((m + n : ℕ) : ℤ) = (m : ℤ) + (n : ℤ) := by
+  push_cast; ring
 </pre></section>
               <section>
-                <h3 id="opaque-functions">
-                  8.5.3. 含有不透明函数<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=opaque-functions" title="Permalink">🔗</a></span></h3>
-                <pre>-- ❌ ring 不展开 abs
--- example (x : ℤ) : |x| ^ 2 = x ^ 2 := by ring
--- ring 把 |x| 当作原子 a，看到 a^2 ≠ x^2
--- 修复：需要分情况讨论或用专门引理
-example (x : ℤ) : |x| ^ 2 = x ^ 2 := sq_abs x
-</pre></section>
-              <section>
-                <h3 id="type-mismatch">
-                  8.5.4. 类型不匹配<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=type-mismatch" title="Permalink">🔗</a></span></h3>
-                <pre>-- ❌ 混合 ℕ 和 ℤ
--- example (n : ℕ) : (n : ℤ) + 1 = ↑n + 1 := by ring
--- 有时 coercion 会导致 ring 看到不同的表达式
--- 修复：用 push_cast 统一类型后再 ring
-example (n : ℕ) : (↑(n + 1) : ℤ) = ↑n + 1 := by push_cast; ring
-</pre></section>
-              <section>
-                <h3 id="diagnostic-flowchart">
-                  8.5.5. 诊断流程图<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=diagnostic-flowchart" title="Permalink">🔗</a></span></h3>
+                <h3 id="ch07-failure-diagnosis">
+                  8.1.7. 常见失败模式与诊断<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-failure-diagnosis" title="Permalink">🔗</a></span></h3>
                 <p>
                   当 <code>ring</code> 失败时，按以下顺序检查：</p>
                 <pre>ring 失败
@@ -1247,66 +1140,1204 @@ example (n : ℕ) : (↑(n + 1) : ℤ) = ↑n + 1 := by push_cast; ring
   │
   ├─ 含有除法？     ──→ 用 field_simp 先消分母
   │
-  └─ 类型 coercion？ ──→ 用 push_cast / pull_cast 统一类型
-</pre></section>
+  ├─ 类型 coercion？ ──→ 用 push_cast / pull_cast 统一类型
+  │
+  └─ ring 失败但 ring! 成功？ ──→ 透明度问题，见下文
+</pre><p>
+                  <strong>透明度问题</strong>：<code>ring</code> 使用 <code>.reducible</code> 透明度，只展开 <code>@[reducible]</code> 定义；<code>ring!</code> 使用 <code>.default</code> 透明度，展开更多定义。如果等式涉及非 <code>@[reducible]</code> 的定义（如 <code>def myTwo : ℤ := 2</code>），<code>ring</code> 无法"看穿"它，但 <code>ring!</code> 可以。</p>
+                <pre>def myTwo : ℤ := 2
+example (x : ℤ) : myTwo * x = x + x := by ring!  -- ring 失败，ring! 成功
+</pre><p>
+                  <strong>缺实例报错</strong>：错误信息包含 <code>failed to synthesize CommSemiring</code> 时，确认类型确实有对应的代数结构实例。如果类型可以嵌入到有实例的类型中，考虑提供 <code>CSLift</code> 实例。</p>
+                </section>
               </section>
             <section>
-              <h2 id="related-tactics">
-                8.6. 与 ring 相关的 tactic<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=related-tactics" title="Permalink">🔗</a></span></h2>
-              <section>
-                <h3 id="linear-combination">
-                  8.6.1. <code>linear_combination</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=linear-combination" title="Permalink">🔗</a></span></h3>
+              <h2 id="ch07-source-overview">
+                8.2. 源码全景：文件结构与调用链<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-source-overview" title="Permalink">🔗</a></span></h2>
+              <blockquote><p>
+                  <strong>源码版本说明</strong>：以下引用基于 Mathlib 的 <code>Mathlib/Tactic/Ring/</code> 目录。<code>ring</code> 完全在 Mathlib 中实现，不依赖 Lean 核心的 tactic 框架（不同于 <code>simp</code>）。</p>
+                </blockquote><section>
+                <h3 id="ch07-file-structure">
+                  8.2.1. 文件结构<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-file-structure" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <code>Ring/Common.lean</code>（~1340 行）：核心算法——数据结构、规范化函数（<code>eval</code>/<code>evalAdd</code>/<code>evalMul</code>/<code>evalPow</code>）、<code>RingCompute</code> 接口、<code>Cache</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>Ring/Basic.lean</code>（~605 行）：<code>RatCoeff</code> 有理系数处理、<code>proveEq</code>/<code>ringCore</code> 入口、<code>ring1</code> 注册、<code>CSLift</code> 类型提升</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>Ring/RingNF.lean</code>（~236 行）：<code>ring</code> 宏定义、<code>ring_nf</code> tactic、<code>cleanup</code> 清理例程</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>Ring/Compare.lean</code>（~259 行）：不等式自动化（<code>proveLE</code>/<code>proveLT</code>），用于 <code>linear_combination</code> 的 discharger</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>Ring/PNat.lean</code>（~52 行）：<code>CSLift ℕ+ ℕ</code> 实例</p>
+                    </li>
+                  </ul>
                 <p>
-                  <code>linear_combination</code> 是 <code>ring</code> 最重要的搭档。
-给定等式假设 <code class="math inline">h_1, \ldots, h_k</code>，找到系数使目标成为这些假设的线性组合 + <code>ring</code> 恒等式：</p>
-                <pre>example (a b : ℤ) (h1 : a + b = 5) (h2 : a - b = 1) : a = 3 := by
-  linear_combination (h1 + h2) / 2
-  -- 内部步骤：把目标改写为 LHS - RHS - (展开) = 0，用 ring 验证
+                  与 <code>simp</code> 的关键区别：<code>simp</code> 是<strong>通用重写引擎</strong>（在 Lean 核心实现），而 <code>ring</code> 是<strong>特化的判定过程</strong>（在 Mathlib 实现）。<code>ring</code> 不做重写搜索，而是把等式两边<strong>规范化</strong>为同一个范式，然后比较。</p>
+                </section>
+              <section>
+                <h3 id="ch07-call-chain">
+                  8.2.2. 入口调用链：从 <code>ring</code> 到范式比较<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-call-chain" title="Permalink">🔗</a></span></h3>
+                <p>
+                  当你在 tactic 模式中写下 <code>ring</code>，经过以下调用链：</p>
+                <pre>用户写 `ring`
+  → ring 宏展开为 `first | ring1 | try_this ring_nf ...`
+    → ring1 tactic (Tactic 层, TacticM)
+      → proveEq (Meta 层入口)
+        → ringCore (构建 Cache + 调用 eval)
+          → Common.eval e₁ 和 Common.eval e₂ (核心规范化)
+            → 比较两个范式是否相等 (ExSum.eq)
+              → 返回证明 proof : e₁ = e₂
 </pre></section>
               <section>
-                <h3 id="field-simp-plus-ring">
-                  8.6.2. <code>field_simp</code> + ring<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=field-simp-plus-ring" title="Permalink">🔗</a></span></h3>
+                <h3 id="ch07-ring-macro">
+                  8.2.3. <code>ring</code> 宏<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-ring-macro" title="Permalink">🔗</a></span></h3>
                 <p>
-                  处理含分式的等式：先用 <code>field_simp</code> 消分母，再用 <code>ring</code>：</p>
-                <pre>example (a b : ℝ) (ha : a ≠ 0) (hb : b ≠ 0) :
-    1 / a + 1 / b = (a + b) / (a * b) := by
-  field_simp; ring
-</pre></section>
+                  <code>ring</code> 本身是一个<strong>宏</strong>（不是 elaborator），展开为先尝试 <code>ring1</code> 关闭目标，失败后回退到 <code>ring_nf</code> 并用 <code>try_this</code> 提示用户：</p>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/RingNF.lean:196-207]
+macro (name := ring) "ring" : tactic =&gt;
+  `(tactic| first | ring1 | try_this ring_nf
+  "\n\nThe `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+  \nNote that `ring` works primarily in *commutative* rings. \
+  If you have a noncommutative ring, abelian group or module, consider using \
+  `noncomm_ring`, `abel` or `module` instead.")
+@[tactic_alt ring] macro "ring!" : tactic =&gt;
+  `(tactic| first | ring1! | try_this ring_nf!
+  "\n\nThe `ring!` tactic failed to close the goal. Use `ring_nf!` to obtain a normal form.
+  \nNote that `ring!` works primarily in *commutative* rings. \
+  If you have a noncommutative ring, abelian group or module, consider using \
+  `noncomm_ring`, `abel` or `module` instead.")
+</pre><p>
+                  这里体现了 <code>ring</code> 与 <code>ring_nf</code> 的精准分工：<strong><strong><code>ring</code> = 规范化 + 关闭目标</strong></strong>，<strong><strong><code>ring_nf</code> = 规范化 + 回写表达式</strong></strong>。</p>
+                </section>
               <section>
-                <h3 id="push-cast-plus-ring">
-                  8.6.3. <code>push_cast</code> + ring<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=push-cast-plus-ring" title="Permalink">🔗</a></span></h3>
+                <h3 id="ch07-ring1-registration">
+                  8.2.4. <code>ring1</code> tactic 注册<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-ring1-registration" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Basic.lean:599-602]
+elab (name := ring1) "ring1" tk:"!"? : tactic =&gt; liftMetaMAtMain fun g ↦ do
+  AtomM.run (if tk.isSome then .default else .reducible) (proveEq g)
+
+@[tactic_alt ring1] macro "ring1!" : tactic =&gt; `(tactic| ring1 !)
+</pre><p>
+                  关键细节：</p>
+                <ul>
+                  <li>
+                    <p>
+                      <strong><strong><code>liftMetaMAtMain</code></strong></strong>：从 <code>TacticM</code> 提升到 <code>MetaM</code>，拿到当前主目标 <code>g : MVarId</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong><strong><code>AtomM.run</code></strong></strong>：进入 <code>AtomM</code> monad——这是 <code>ring</code> 的专用工作 monad，管理<strong>原子</strong>（不可分解的子表达式）的编号和状态</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong><strong><code>tk:"!"?</code></strong></strong>：<code>ring1!</code> 时使用 <code>.default</code> 可约性（更激进）；普通 <code>ring1</code> 使用 <code>.reducible</code>（更保守）</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="ch07-prove-eq">
+                  8.2.5. <code>proveEq</code>：Meta 层入口<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-prove-eq" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Basic.lean:551-575]
+def proveEq (g : MVarId) : AtomM Unit := do
+  let some (α, e₁, e₂) := (← whnfR &lt;|← instantiateMVars &lt;|← g.getType).eq?
+    | throwError "ring failed: not an equality"
+  let .sort u ← whnf (← inferType α) | unreachable!
+  let v ← try u.dec catch _ =&gt; throwError "not a type{indentExpr α}"
+  have α : Q(Type v) := α
+  let sα ←
+    try Except.ok &lt;$&gt; synthInstanceQ q(CommSemiring $α)
+    catch e =&gt; pure (.error e)
+  have e₁ : Q($α) := e₁; have e₂ : Q($α) := e₂
+  let eq ← match sα with
+  | .ok sα =&gt; ringCore sα e₁ e₂
+  | .error e =&gt;
+    let β ← mkFreshExprMVarQ q(Type v)
+    let e₁' ← mkFreshExprMVarQ q($β)
+    let e₂' ← mkFreshExprMVarQ q($β)
+    let (sβ, (pf : Q($e₁' = $e₂' → $e₁ = $e₂))) ← try
+      let _l ← synthInstanceQ q(CSLift $α $β)
+      let sβ ← synthInstanceQ q(CommSemiring $β)
+      let _ ← synthInstanceQ q(CSLiftVal $e₁ $e₁')
+      let _ ← synthInstanceQ q(CSLiftVal $e₂ $e₂')
+      pure (sβ, q(of_lift (a := $e₁) (b := $e₂)))
+    catch _ =&gt; throw e
+    pure q($pf $(← ringCore sβ e₁' e₂'))
+  g.assign eq
+</pre><p>
+                  步骤解读：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <strong>提取等式</strong>：用 <code>Expr.eq?</code> 从目标类型中提取 <code>α</code>、<code>e₁</code>、<code>e₂</code>。如果目标不是等式，直接报错。</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>推断 universe</strong>：需要知道 <code>α : Type v</code> 的 universe level <code>v</code>。</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>合成实例</strong>：尝试为 <code>α</code> 合成 <code>CommSemiring</code> 实例——这是 <code>ring</code> 工作的最低要求。</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>分支</strong>：如果合成成功，走路径 A（<code>ringCore</code> 直接规范化）；否则尝试路径 B（通过 <code>CSLift</code> 提升到交换半环类型，见"类型提升"一节）。</p>
+                    </li>
+                  </ol>
+                </section>
+              <section>
+                <h3 id="ch07-ring-core">
+                  8.2.6. <code>ringCore</code>：核心证明生成<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-ring-core" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Basic.lean:577-589]
+where
+  ringCore {v : Level} {α : Q(Type v)} (sα : Q(CommSemiring $α))
+      (e₁ e₂ : Q($α)) : AtomM Q($e₁ = $e₂) := do
+    let c ← Common.mkCache sα
+    profileitM Exception "ring" (← getOptions) do
+      let ⟨a, va, pa⟩ ← Common.eval rcℕ (ringCompute c) c e₁
+      let ⟨b, vb, pb⟩ ← Common.eval rcℕ (ringCompute c) c e₂
+      unless va.eq rcℕ (ringCompute c) vb do
+        let g ← mkFreshExprMVar (← (← ringCleanupRef.get) q($a = $b))
+        throwError "ring failed, ring expressions not equal\n{g.mvarId!}"
+      have : $a =Q $b := ⟨⟩
+      return q(of_eq $pa $pb)
+</pre><p>
+                  这是 <code>ring</code> 的核心循环，四步：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <strong>构建 Cache</strong>：缓存 <code>CommRing</code>、<code>Semifield</code>、<code>CharZero</code> 等可选实例，避免重复合成</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>规范化</strong>：对 <code>e₁</code> 和 <code>e₂</code> 分别调用 <code>Common.eval</code>，得到范式表达式 <code>a</code>/<code>b</code>、范式数据 <code>va</code>/<code>vb</code>、等式证明 <code>pa : e₁ = a</code>/<code>pb : e₂ = b</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>比较</strong>：用 <code>va.eq vb</code> 判断两个范式是否结构相等。如果不等，报错并显示规范化后的残余目标 <code>a = b</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>构造证明</strong>：范式相等意味着 <code>a</code> 和 <code>b</code> 是同一个 <code>Qq</code> 表达式（definitionally equal），用 <code>of_eq pa pb</code> 拼出 <code>e₁ = e₂</code> 的证明</p>
+                    </li>
+                  </ol>
                 <p>
-                  类型转换（<code>ℕ → ℤ</code> 等）会阻碍 <code>ring</code>。<code>push_cast</code> 把 cast 推到最内层：</p>
-                <pre>example (m n : ℕ) : ((m + n : ℕ) : ℤ) = (m : ℤ) + (n : ℤ) := by
-  push_cast; ring
-</pre></section>
+                  <code>of_eq</code> 的签名是 <code>e₁ = c → e₂ = c → e₁ = e₂</code>。当 <code>a =Q b</code>（即 <code>a</code> 和 <code>b</code> 在 type checker 中 definitionally equal），<code>pa</code> 和 <code>pb</code> 可以直接拼成 <code>e₁ = e₂</code>，无需额外的等式证明。</p>
+                </section>
               </section>
             <section>
-              <h2 id="metaprogramming-ring">
-                8.7. 在元编程中调用 ring<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=metaprogramming-ring" title="Permalink">🔗</a></span></h2>
+              <h2 id="ch07-data-structures">
+                8.3. 核心数据结构：ExBase / ExProd / ExSum<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-data-structures" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code>ring</code> 的核心思想是把任意环表达式规范化为<strong>有序多项式范式</strong>。这一范式由三个互相递归的归纳类型定义。</p>
               <section>
-                <h3 id="via-eval-tactic">
-                  8.7.1. 通过 evalTactic<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=via-eval-tactic" title="Permalink">🔗</a></span></h3>
+                <h3 id="ch07-three-type-families">
+                  8.3.1. 三个类型族<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-three-type-families" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Common.lean:208-256]
+mutual
+
+-- 基：原子或嵌套的和
+meta inductive ExBase {u : Lean.Level} {α : Q(Type u)} (BaseType : Q($α) → Type)
+    (sα : Q(CommSemiring $α)) : (e : Q($α)) → Type
+  | atom {e} (id : ℕ) : ExBase BaseType sα e
+  | sum {e} (_ : ExSum BaseType sα e) : ExBase BaseType sα e
+
+-- 积（单项式）：系数 × 幂的乘积链
+meta inductive ExProd {u : Lean.Level} {α : Q(Type u)} (BaseType : Q($α) → Type)
+    (sα : Q(CommSemiring $α)) : (e : Q($α)) → Type
+  | const {e : Q($α)} (value : BaseType e) : ExProd BaseType sα e
+  | mul {x : Q($α)} {e : Q(ℕ)} {b : Q($α)} :
+    ExBase BaseType sα x → ExProdNat e → ExProd BaseType sα b →
+      ExProd BaseType sα q($x ^ $e * $b)
+
+-- 和（多项式）：单项式的有序链表
+meta inductive ExSum {u : Lean.Level} {α : Q(Type u)} (BaseType : Q($α) → Type)
+    (sα : Q(CommSemiring $α)) : (e : Q($α)) → Type
+  | zero : ExSum BaseType sα q(0 : $α)
+  | add {a b : Q($α)} :
+    ExProd BaseType sα a → ExSum BaseType sα b → ExSum BaseType sα q($a + $b)
+
+end
+</pre><p>
+                  类似地，自然数版本 <code>ExBaseNat</code> / <code>ExProdNat</code> / <code>ExSumNat</code> 专门用于表示<strong>指数</strong>（指数总是自然数）。它们与主版本结构相同但独立定义，因为 <code>BaseType</code> 是参数而非索引——如果放在索引位置，<code>ExProd</code> 的 universe 会从 <code>Type</code> 升到 <code>Type 1</code>，而 Lean 的核心 monad 类型不支持 <code>Type 1</code> 中的计算。</p>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Common.lean:145-200]
+mutual
+
+meta inductive ExBaseNat : (e : Q(ℕ)) → Type
+  | atom {e} (id : ℕ) : ExBaseNat e
+  | sum {e} (_ : ExSumNat e) : ExBaseNat e
+
+meta inductive ExProdNat : (e : Q(ℕ)) → Type
+  | const {e : Q(ℕ)} (value : btℕ e) : ExProdNat e
+  | mul {x : Q(ℕ)} {e : Q(ℕ)} {b : Q(ℕ)} :
+    ExBaseNat x → ExProdNat e → ExProdNat b → ExProdNat q($x ^ $e * $b)
+
+meta inductive ExSumNat : (e : Q(ℕ)) → Type
+  | zero : ExSumNat q(0)
+  | add {a b : Q(ℕ)} : ExProdNat a → ExSumNat b → ExSumNat q($a + $b)
+
+end
+</pre></section>
+              <section>
+                <h3 id="ch07-normal-form-intuition">
+                  8.3.2. 范式的直觉理解<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-normal-form-intuition" title="Permalink">🔗</a></span></h3>
+                <p>
+                  以 <code>(x + y)² + 3xy</code> 为例，展开为 <code>x² + 2xy + y² + 3xy = x² + 5xy + y²</code>：</p>
+                <pre>ExSum                                    -- 多项式 = 单项式链表
+  .add                                   -- 第一项: x² · 1
+    (ExProd.mul                          --   单项式 = base^exp * tail
+      (ExBase.atom 0)                    --   base = x (原子 #0)
+      (ExProdNat: 2)                     --   exp = 2
+      (ExProd.const 1))                  --   tail = 系数 1
+    .add                                 -- 第二项: x¹ · y¹ · 5
+      (ExProd.mul
+        (ExBase.atom 0)                  --   base = x
+        (ExProdNat: 1)                   --   exp = 1
+        (ExProd.mul
+          (ExBase.atom 1)                --   base = y (原子 #1)
+          (ExProdNat: 1)                 --   exp = 1
+          (ExProd.const 5)))             --   系数 5
+      .add                               -- 第三项: y² · 1
+        (ExProd.mul
+          (ExBase.atom 1)                --   base = y
+          (ExProdNat: 2)                 --   exp = 2
+          (ExProd.const 1))
+        .zero                            -- 结束
+</pre></section>
+              <section>
+                <h3 id="ch07-canonicity-invariants">
+                  8.3.3. 范式的规范性保证<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-canonicity-invariants" title="Permalink">🔗</a></span></h3>
+                <p>
+                  范式之所以"规范"，靠的是以下不变量：</p>
+                <p>
+                  <strong>单项式排序</strong>：<code>ExSum</code> 中的单项式按<strong>全序</strong>排列。排序规则由 <code>ExProd.cmp</code> 定义：</p>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Common.lean:462-467]
+partial def ExProd.cmp {u : Lean.Level} {α : Q(Type u)} {bt} {sα : Q(CommSemiring $α)}
+    (rc : RingCompare bt) {a b : Q($α)} :
+    ExProd bt sα a → ExProd bt sα b → Ordering
+  | .const i, .const j =&gt; rc.compare i j
+  | .mul a₁ a₂ a₃, .mul b₁ b₂ b₃ =&gt;
+    (a₁.cmp rc b₁).then (a₂.toExProd.2.cmp rcℕ b₂.toExProd.2) |&gt;.then (a₃.cmp rc b₃)
+  | .const _, .mul .. =&gt; .lt
+  | .mul .., .const _ =&gt; .gt
+</pre><p>
+                  <strong>基排序</strong>：<code>ExBase.cmp</code> 对原子按编号排序，原子 &lt; 嵌套和：</p>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Common.lean:453-459]
+partial def ExBase.cmp {u : Lean.Level} {α : Q(Type u)} {bt} {sα : Q(CommSemiring $α)}
+    (rc : RingCompare bt) {a b : Q($α)} :
+    ExBase bt sα a → ExBase bt sα b → Ordering
+  | .atom i, .atom j =&gt; compare i j
+  | .sum a, .sum b =&gt; a.cmp rc b
+  | .atom .., .sum .. =&gt; .lt
+  | .sum .., .atom .. =&gt; .gt
+</pre><p>
+                  <strong>不变量清单</strong>：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <code>ExSum</code> 中的单项式按 <code>ExProd.cmp</code> 全序排列</p>
+                    </li>
+                  <li>
+                    <p>
+                      同类项（相同基和指数模式）的系数已合并</p>
+                    </li>
+                  <li>
+                    <p>
+                      零系数项已删除</p>
+                    </li>
+                  <li>
+                    <p>
+                      每个单项式内部，<code>ExProd.mul</code> 链按基递增有序</p>
+                    </li>
+                  <li>
+                    <p>
+                      指数本身已规范化为 <code>ExSumNat</code>/<code>ExProdNat</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      每步操作附带等式证明（<code>Result</code> 类型）</p>
+                    </li>
+                  </ol>
+                <p>
+                  这些不变量保证了<strong>同一个环表达式有且仅有一种范式表示</strong>——这是 <code>ring</code> 正确性的基础。</p>
+                </section>
+              <section>
+                <h3 id="ch07-result-type">
+                  8.3.4. <code>Result</code> 类型<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-result-type" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Common.lean:265-271]
+structure Result {α : Q(Type u)} (E : Q($α) → Type*) (e : Q($α)) where
+  expr : Q($α)         -- 规范化后的表达式
+  val : E expr          -- 范式数据结构
+  proof : Q($e = $expr) -- 等式证明：原始 = 规范化
+</pre><p>
+                  每一步规范化都产生一个 <code>Result</code>，<strong>同时携带数据和证明</strong>。这是"verified by construction"的设计——规范化的每一步都有证明，不存在"先计算后验证"的信任缺口。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch07-normalization-algorithms">
+                8.4. 规范化算法：eval / evalAdd / evalMul / evalPow<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-normalization-algorithms" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="ch07-eval-function">
+                  8.4.1. <code>eval</code>：核心递归引擎<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-eval-function" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>eval</code> 是规范化的核心——给定一个 Lean 表达式，返回其范式表示。它对表达式做 WHNF 展开，根据 head function 分发到对应的处理分支：</p>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Common.lean:1271-1338]
+partial def eval  {u : Lean.Level}
+    {α : Q(Type u)} {bt : Q($α) → Type} {sα : Q(CommSemiring $α)} (rc : RingCompute bt sα)
+    (c : Cache sα) (e : Q($α)) : AtomM (Result (ExSum bt sα) e) := Lean.withIncRecDepth do
+  let els := do
+    try rc.derive e
+    catch _ =&gt; evalAtom rc rcℕ e
+  let .const n _ := (← withReducible &lt;| whnf e).getAppFn | els
+  match n, c.rα, c.dsα with
+  | ``HAdd.hAdd, _, _ | ``Add.add, _, _ =&gt; match e with
+    | ~q($a + $b) =&gt;
+      let ⟨_, va, pa⟩ ← eval rc c a
+      let ⟨_, vb, pb⟩ ← eval rc c b
+      let ⟨c, vc, p⟩ ← evalAdd rc rcℕ va vb
+      pure ⟨c, vc, q(add_congr $pa $pb $p)⟩
+    | _ =&gt; els
+  | ``HMul.hMul, _, _ | ``Mul.mul, _, _ =&gt; match e with
+    | ~q($a * $b) =&gt;
+      let ⟨_, va, pa⟩ ← eval rc c a
+      let ⟨_, vb, pb⟩ ← eval rc c b
+      let ⟨c, vc, p⟩ ← evalMul rc rcℕ va vb
+      pure ⟨c, vc, q(mul_congr $pa $pb $p)⟩
+    | _ =&gt; els
+  | ``HPow.hPow, _, _ | ``Pow.pow, _, _ =&gt; match e with
+    | ~q($a ^ $b) =&gt;
+      let ⟨_, va, pa⟩ ← eval rc c a
+      let ⟨b, vb, pb⟩ ← eval rcℕ .nat b
+      let ⟨b', vb'⟩ := vb.toExSumNat
+      have : $b =Q $b' := ⟨⟩
+      let ⟨c, vc, p⟩ ← evalPow rc rcℕ va vb'
+      pure ⟨c, vc, q(pow_congr $pa $pb $p)⟩
+    | _ =&gt; els
+  | ``Neg.neg, some rα, _ =&gt; match e with
+    | ~q(-$a) =&gt;
+      let ⟨_, va, pa⟩ ← eval rc c a
+      let ⟨b, vb, p⟩ ← evalNeg rc rα va
+      pure ⟨b, vb, q(neg_congr $pa $p)⟩
+    | _ =&gt; els
+  | ``HSub.hSub, some rα, _ | ``Sub.sub, some rα, _ =&gt; match e with
+    | ~q($a - $b) =&gt; do
+      let ⟨_, va, pa⟩ ← eval rc c a
+      let ⟨_, vb, pb⟩ ← eval rc c b
+      let ⟨c, vc, p⟩ ← evalSub rc rcℕ rα va vb
+      pure ⟨c, vc, q(sub_congr $pa $pb $p)⟩
+    | _ =&gt; els
+  | ``Inv.inv, _, some dsα =&gt; match e with
+    | ~q($a⁻¹) =&gt;
+      let ⟨_, va, pa⟩ ← eval rc c a
+      let ⟨b, vb, p⟩ ← va.evalInv rc rcℕ dsα c.czα
+      pure ⟨b, vb, q(inv_congr $pa $p)⟩
+    | _ =&gt; els
+  | ``HDiv.hDiv, _, some dsα | ``Div.div, _, some dsα =&gt; match e with
+    | ~q($a / $b) =&gt; do
+      let ⟨_, va, pa⟩ ← eval rc c a
+      let ⟨_, vb, pb⟩ ← eval rc c b
+      let ⟨c, vc, p⟩ ← evalDiv rc rcℕ dsα c.czα va vb
+      pure ⟨c, vc, q(div_congr $pa $pb $p)⟩
+    | _ =&gt; els
+  | _, _, _ =&gt; els
+</pre><p>
+                  算法逻辑：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <strong>WHNF 展开</strong>：对表达式做 weak-head normal form 展开，拿到 head function</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>模式匹配</strong>：根据 head function 分发到对应的处理分支</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>递归规范化</strong>：每个分支先递归规范化子表达式，再用对应的范式操作合并结果</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>回退</strong>：如果 head function 不是已知运算符，尝试用 <code>norm_num</code>（<code>rc.derive</code>）识别常量，或当作不可分解的<strong>原子</strong>（<code>evalAtom</code>）</p>
+                    </li>
+                  </ol>
+                <p>
+                  注意 <code>Neg.neg</code> 和 <code>Sub.sub</code> 分支需要 <code>c.rα = some _</code>（即 <code>CommRing</code> 实例），<code>Inv.inv</code> 和 <code>Div.div</code> 分支需要 <code>c.dsα = some _</code>（即 <code>Semifield</code> 实例）。如果类型只是 <code>CommSemiring</code>，这些分支不会被匹配，对应的操作会回退到 <code>evalAtom</code>。</p>
+                </section>
+              <section>
+                <h3 id="ch07-atom-management">
+                  8.4.2. 原子管理：<code>AtomM</code> monad<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-atom-management" title="Permalink">🔗</a></span></h3>
+                <p>
+                  当 <code>eval</code> 遇到无法分解的表达式（如自由变量 <code>x</code>、未知函数 <code>f a</code>）时，调用 <code>evalAtom</code>，它通过 <code>AtomM</code> monad 管理原子编号：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      检查这个表达式是否已经见过（用 <code>isDefEq</code> 判断）</p>
+                    </li>
+                  <li>
+                    <p>
+                      如果见过，返回之前分配的编号</p>
+                    </li>
+                  <li>
+                    <p>
+                      如果没见过，分配新编号并记录</p>
+                    </li>
+                  </ol>
+                <p>
+                  原子编号是<strong>范式定义的组成部分</strong>。变量编号的顺序直接决定了范式中单项式的排列顺序——<code>ExBase.cmp</code> 对原子按编号比较。这意味着编号小的变量在所有单项式中排在前面，保证了 <code>x*y</code> 和 <code>y*x</code> 规范化后得到完全相同的范式结构。</p>
+                </section>
+              <section>
+                <h3 id="ch07-eval-add">
+                  8.4.3. 加法规范化：<code>evalAdd</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-eval-add" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Common.lean:573-594]
+partial def evalAdd {a b : Q($α)} (va : ExSum bt sα a) (vb : ExSum bt sα b) :
+    MetaM &lt;| Result (ExSum bt sα) q($a + $b) := do
+  Lean.Core.checkSystem decl_name%.toString
+  match va, vb with
+  | .zero, vb =&gt; return ⟨b, vb, q(add_pf_zero_add $b)⟩
+  | va, .zero =&gt; return ⟨a, va, q(add_pf_add_zero $a)⟩
+  | .add (a := a₁) (b := _a₂) va₁ va₂, .add (a := b₁) (b := _b₂) vb₁ vb₂ =&gt;
+    have va := .add va₁ va₂; have vb := .add vb₁ vb₂
+    match ← (evalAddOverlap rc rcℕ va₁ vb₁).run with
+    | some (.nonzero ⟨_, vc₁, pc₁⟩) =&gt;
+      let ⟨_, vc₂, pc₂⟩ ← evalAdd va₂ vb₂
+      return ⟨_, .add vc₁ vc₂, q(add_pf_add_overlap $pc₁ $pc₂)⟩
+    | some (.zero pc₁) =&gt;
+      let ⟨c₂, vc₂, pc₂⟩ ← evalAdd va₂ vb₂
+      return ⟨c₂, vc₂, q(add_pf_add_overlap_zero $pc₁ $pc₂)⟩
+    | none =&gt;
+      if let .lt := va₁.cmp rcℕ rc vb₁ then
+        let ⟨_c, vc, pc⟩ ← evalAdd va₂ vb
+        return ⟨_, .add va₁ vc, q(add_pf_add_lt $a₁ $pc)⟩
+      else
+        let ⟨_c, vc, pc⟩ ← evalAdd va vb₂
+        return ⟨_, .add vb₁ vc, q(add_pf_add_gt $b₁ $pc)⟩
+</pre><p>
+                  这是一个<strong>有序链表归并</strong>（类似归并排序的 merge 步骤）：</p>
+                <ul>
+                  <li>
+                    <p>
+                      两个多项式都按单项式排序</p>
+                    </li>
+                  <li>
+                    <p>
+                      同类项（相同基和指数模式）的系数相加（<code>evalAddOverlap</code>）</p>
+                    </li>
+                  <li>
+                    <p>
+                      如果系数和为零，删除该项（<code>.zero</code> 分支）</p>
+                    </li>
+                  <li>
+                    <p>
+                      非同类项按序保留</p>
+                    </li>
+                  </ul>
+                <p>
+                  <code>evalAddOverlap</code> 负责检测和合并同类项：</p>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Common.lean:528-546]
+def evalAddOverlap {a b : Q($α)} (va : ExProd bt sα a) (vb : ExProd bt sα b) :
+    OptionT MetaM (Overlap bt sα q($a + $b)) := do
+  Lean.Core.checkSystem decl_name%.toString
+  match va, vb with
+  | .const za, .const zb =&gt; do
+    let ⟨⟨_, zc, pf⟩, isZero⟩ ← rc.add za zb
+    match isZero with
+    | .some pf =&gt; pure &lt;| .zero q($pf)
+    | .none =&gt;
+      assumeInstancesCommute
+      pure &lt;| .nonzero ⟨_, .const zc, q($pf)⟩
+  | .mul (x := a₁) (e := a₂) va₁ va₂ va₃, .mul (x := b₁) (e := b₂) vb₁ vb₂ vb₃ =&gt; do
+    guard (va₁.eq rcℕ rc vb₁ && va₂.toExProd.2.eq rcℕ rcℕ vb₂.toExProd.2)
+    have : $a₁ =Q $b₁ := ⟨⟩; have : $a₂ =Q $b₂ := ⟨⟩
+    match ← evalAddOverlap va₃ vb₃ with
+    | .zero p =&gt; pure &lt;| .zero q(add_overlap_pf_zero $a₁ $a₂ $p)
+    | .nonzero ⟨_, vc, p⟩ =&gt;
+      pure &lt;| .nonzero ⟨_, .mul va₁ va₂ vc, q(add_overlap_pf $a₁ $a₂ $p)⟩
+  | _, _ =&gt; OptionT.fail
+</pre></section>
+              <section>
+                <h3 id="ch07-eval-mul">
+                  8.4.4. 乘法规范化：<code>evalMul</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-eval-mul" title="Permalink">🔗</a></span></h3>
+                <p>
+                  乘法使用<strong>分配律</strong>：<code>(a₁ + a₂) * b = a₁ * b + a₂ * b</code>，递归地把多项式乘法拆解为单项式乘法，然后用 <code>evalAdd</code> 合并：</p>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Common.lean:689-697]
+def evalMul {a b : Q($α)} (va : ExSum bt sα a) (vb : ExSum bt sα b) :
+    MetaM &lt;| Result (ExSum bt sα) q($a * $b) := do
+  match va with
+  | .zero =&gt; return ⟨_, .zero, q(zero_mul $b)⟩
+  | .add va₁ va₂ =&gt;
+    let ⟨_, vc₁, pc₁⟩ ← evalMul₁ rc rcℕ va₁ vb
+    let ⟨_, vc₂, pc₂⟩ ← evalMul va₂ vb
+    let ⟨_, vd, pd⟩ ← evalAdd rc rcℕ vc₁ vc₂
+    return ⟨_, vd, q(add_mul $pc₁ $pc₂ $pd)⟩
+</pre><p>
+                  单项式乘法 <code>evalMulProd</code> 处理幂的合并——当两个单项式的<strong>基相同</strong>时合并指数（<code>x^e * x^f = x^(e+f)</code>），当基不同时按排序插入：</p>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Common.lean:624-656]
+partial def evalMulProd {a b : Q($α)} (va : ExProd bt sα a) (vb : ExProd bt sα b) :
+    MetaM &lt;| Result (ExProd bt sα) q($a * $b) := do
+  Lean.Core.checkSystem decl_name%.toString
+  match va, vb with
+  | .const za, .const zb =&gt;
+    let ⟨_, zc, pf⟩ ← rc.mul za zb
+    assumeInstancesCommute
+    return ⟨_, .const zc, q($pf)⟩
+  | .mul (x := a₁) (e := a₂) va₁ va₂ va₃, vb@(.const _) =&gt;
+    let ⟨_, vc, pc⟩ ← evalMulProd va₃ vb
+    return ⟨_, .mul va₁ va₂ vc, q(mul_pf_left $a₁ $a₂ $pc)⟩
+  | va@(.const _), .mul (x := b₁) (e := b₂) vb₁ vb₂ vb₃ =&gt;
+    let ⟨_, vc, pc⟩ ← evalMulProd va vb₃
+    return ⟨_, .mul vb₁ vb₂ vc, q(mul_pf_right $b₁ $b₂ $pc)⟩
+  | .mul (x := xa) (e := ea) vxa vea va₂, .mul (x := xb) (e := eb) vxb veb vb₂ =&gt;
+    have va := .mul vxa vea va₂; have vb := .mul vxb veb vb₂
+    let ⟨ea', vea'⟩ := vea.toExProd
+    let ⟨eb', veb'⟩ := veb.toExProd
+    if vxa.eq rcℕ rc vxb then
+      have : $xa =Q $xb := ⟨⟩
+      if let some (.nonzero ⟨ec', vec', pec'⟩) ← (evalAddOverlap rcℕ rcℕ vea' veb').run then
+        let ⟨_, vc, pc⟩ ← evalMulProd va₂ vb₂
+        let ⟨ec, vec⟩ := vec'.toExProdNat
+        have : $ea =Q $ea' := ⟨⟩; have : $eb =Q $eb' := ⟨⟩; have : $ec =Q $ec' := ⟨⟩
+        return ⟨_, .mul vxa vec vc, q(mul_pp_pf_overlap $xa $pec' $pc)⟩
+    if let .lt := (vxa.cmp rcℕ rc vxb).then (vea'.cmp rcℕ rcℕ veb') then
+      let ⟨_, vc, pc⟩ ← evalMulProd va₂ vb
+      return ⟨_, .mul vxa vea vc, q(mul_pf_left $xa $ea $pc)⟩
+    else
+      let ⟨_, vc, pc⟩ ← evalMulProd va vb₂
+      return ⟨_, .mul vxb veb vc, q(mul_pf_right $xb $eb $pc)⟩
+</pre></section>
+              <section>
+                <h3 id="ch07-eval-pow">
+                  8.4.5. 幂规范化：<code>evalPow</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-eval-pow" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Common.lean:1047-1058]
+def evalPow {a : Q($α)} {b : Q(ℕ)} (va : ExSum bt sα a) (vb : ExSumNat b) :
+    MetaM &lt;| Result (ExSum bt sα) q($a ^ $b) := do
+  match vb with
+  | .zero =&gt;
+    let ⟨_, one, pf⟩ := rc.one
+    assumeInstancesCommute
+    return ⟨_, (ExProd.const (one)).toSum, q(pow_zero $a $pf)⟩
+  | .add vb₁ vb₂ =&gt;
+    let ⟨_, vc₁, pc₁⟩ ← evalPow₁ rc rcℕ va vb₁
+    let ⟨_, vc₂, pc₂⟩ ← evalPow va vb₂
+    let ⟨_, vd, pd⟩ ← evalMul rc rcℕ vc₁ vc₂
+    return ⟨_, vd, q(pow_add $pc₁ $pc₂ $pd)⟩
+</pre><p>
+                  幂运算利用 <code>a^(b₁+b₂) = a^b₁ * a^b₂</code> 拆分指数，最终归约到基本情况。对于<strong>具体自然数指数</strong>（如 <code>x^3</code>），通过 <code>evalPowNat</code> 用二进制快速幂展开：</p>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Common.lean:870-889]
+partial def evalPowNat {a : Q($α)} (va : ExSum bt sα a) (n : Q(ℕ)) :
+    MetaM &lt;| Result (ExSum bt sα) q($a ^ $n) := do
+  let nn := n.natLit!
+  if nn = 1 then
+    have : $n =Q 1 := ⟨⟩
+    return ⟨_, va, q(pow_one $a)⟩
+  else
+    let nm := nn &gt;&gt;&gt; 1
+    have m : Q(ℕ) := mkRawNatLit nm
+    if nn &&& 1 = 0 then
+      have : $n =Q 2 * $m := ⟨⟩
+      let ⟨_, vb, pb⟩ ← evalPowNat va m
+      let ⟨_, vc, pc⟩ ← evalMul rc rcℕ vb vb
+      return ⟨_, vc, q(pow_bit0 $pb $pc)⟩
+    else
+      have : $n =Q 2 * $m + 1 := ⟨⟩
+      let ⟨_, vb, pb⟩ ← evalPowNat va m
+      let ⟨_, vc, pc⟩ ← evalMul rc rcℕ vb vb
+      let ⟨_, vd, pd⟩ ← evalMul rc rcℕ vc va
+      return ⟨_, vd, q(pow_bit1 $pb $pc $pd)⟩
+</pre><p>
+                  对于<strong>变量指数</strong>（如 <code>x^n</code>），保留为 <code>ExProd.mul (atom x) (atom n) (const 1)</code> 的形式。</p>
+                </section>
+              <section>
+                <h3 id="ch07-neg-sub">
+                  8.4.6. 取负和减法<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-neg-sub" title="Permalink">🔗</a></span></h3>
+                <p>
+                  取负需要 <code>CommRing</code>（不仅仅是 <code>CommSemiring</code>），对每个单项式的系数取负：</p>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Common.lean:712-723]
+def evalNegProd {a : Q($α)} (rα : Q(CommRing $α)) (va : ExProd bt sα a) :
+    MetaM &lt;| Result (ExProd bt sα) q(-$a) := do
+  Lean.Core.checkSystem decl_name%.toString
+  match va with
+  | .const za =&gt;
+    let ⟨b, zb, pb⟩ ← rc.neg q($rα) za
+    return ⟨b, .const zb,  q($pb)⟩
+  | .mul (x := a₁) (e := a₂) va₁ va₂ va₃ =&gt;
+    let ⟨_, vb, pb⟩ ← evalNegProd rα va₃
+    assumeInstancesCommute
+    return ⟨_, .mul va₁ va₂ vb, q(neg_mul $a₁ $a₂ $pb)⟩
+</pre><p>
+                  减法被展开为加法加取负 <code>a - b = a + (-b)</code>：</p>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Common.lean:754-760]
+def evalSub {a b : Q($α)}
+    (rα : Q(CommRing $α)) (va : ExSum bt sα a) (vb : ExSum bt sα b) :
+    MetaM &lt;| Result (ExSum bt sα) q($a - $b) := do
+  let ⟨_c, vc, pc⟩ ← evalNeg rc rα vb
+  let ⟨d, vd, pd⟩ ← evalAdd rc rcℕ va vc
+  assumeInstancesCommute
+  return ⟨d, vd, q(sub_pf $pc $pd)⟩
+</pre></section>
+              <section>
+                <h3 id="ch07-div-inv">
+                  8.4.7. 除法和求逆<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-div-inv" title="Permalink">🔗</a></span></h3>
+                <p>
+                  除法需要 <code>Semifield</code>，被转化为 <code>a * b⁻¹</code>：</p>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Common.lean:1184-1189]
+def evalDiv {a b : Q($α)} (rα : Q(Semifield $α)) (czα : Option Q(CharZero $α))
+    (va : ExSum bt sα a) (vb : ExSum bt sα b) : AtomM (Result (ExSum bt sα) q($a / $b)) := do
+  let ⟨_c, vc, pc⟩ ← vb.evalInv rc rcℕ rα czα
+  let ⟨d, vd, pd⟩ ← evalMul rc rcℕ va vc
+  assumeInstancesCommute
+  pure ⟨d, vd, q(div_pf $pc $pd)⟩
+</pre><p>
+                  注意 <code>ring</code> <strong>不会</strong>做 <code>a/a = 1</code> 约分——它只会把 <code>b⁻¹</code> 当作一个新原子（如果 <code>b</code> 是非常数多项式）或用 <code>norm_num</code> 计算具体数值的逆（如果 <code>b</code> 是常数）。</p>
+                </section>
+              <section>
+                <h3 id="ch07-structural-equality">
+                  8.4.8. 结构等式比较<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-structural-equality" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Common.lean:436-443]
+partial def ExSum.eq
+    {u : Lean.Level} {α : Q(Type u)} {bt} {sα : Q(CommSemiring $α)} (rc : RingCompare bt)
+    {a b : Q($α)} :
+    ExSum bt sα a → ExSum bt sα b → Bool
+  | .zero, .zero =&gt; true
+  | .add a₁ a₂, .add b₁ b₂ =&gt; a₁.eq rc b₁ && a₂.eq rc b₂
+  | _, _ =&gt; false
+</pre><p>
+                  逐项递归比较。由于范式保证了唯一性，结构相等等价于语义相等。<code>ring</code> <strong>不</strong>用 Lean 的 <code>isDefEq</code> 来比较规范化后的表达式——<code>ExSum.eq</code> 在纯数据结构上操作，近乎免费。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch07-coefficient-computation">
+                8.5. 系数计算：norm_num 作为后端<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-coefficient-computation" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="ch07-ring-compute">
+                  8.5.1. <code>RingCompute</code> 接口<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-ring-compute" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>ring</code> 的规范化算法通过 <code>RingCompute</code> 结构体与系数类型解耦：</p>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Common.lean:290-321]
+structure RingCompute {u : Lean.Level} {α : Q(Type u)} (BaseType : Q($α) → Type)
+  (sα : Q(CommSemiring $α)) extends RingCompare BaseType where
+  add {x y : Q($α)} : BaseType x → BaseType y →
+    MetaM ((Result BaseType q($x + $y)) × (Option Q(IsNat ($x + $y) 0)))
+  mul {x y : Q($α)} : BaseType x → BaseType y → MetaM (Result BaseType q($x * $y))
+  cast (v : Lean.Level) (β : Q(Type v)) (_ : Q(CommSemiring $β))
+      (_ : Q(SMul $β $α)) (x : Q($β)) :
+    AtomM (Σ y : Q($α), ExSum BaseType sα q($y) × Q(∀ a : $α, $x • a = $y * a))
+  neg {x : Q($α)} (rα : Q(CommRing $α)) : BaseType x → MetaM (Result BaseType q(-$x))
+  pow {x : Q($α)} {b : Q(ℕ)} : BaseType x → (vb : ExProdNat q($b)) →
+    OptionT MetaM (Result BaseType q($x ^ $b))
+  inv {x : Q($α)} (czα : Option Q(CharZero $α)) (fα : Q(Semifield $α)) : BaseType x →
+    AtomM (Option &lt;| Result BaseType q($x⁻¹))
+  derive (x : Q($α)) : MetaM (Result (ExSum BaseType sα) q($x))
+  isOne {x : Q($α)} : BaseType x → Option Q(NormNum.IsNat $x 1)
+  one : Result BaseType q((nat_lit 1).rawCast)
+</pre><p>
+                  每个方法对应一种系数运算，且<strong>必须同时返回计算结果和证明</strong>。</p>
+                </section>
+              <section>
+                <h3 id="ch07-rat-coeff">
+                  8.5.2. <code>RatCoeff</code>：有理系数<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-rat-coeff" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Common.lean:108-113]
+structure _root_.Mathlib.Tactic.Ring.RatCoeff {u : Lean.Level} {α : Q(Type u)} (e : Q($α)) where
+  value : ℚ
+  hyp : Option Expr
+deriving Inhabited
+</pre><p>
+                  <code>ring</code> 在 <code>ℚ</code> 系数上工作——即使用户的类型是 <code>ℤ</code>，<code>ring</code> 也能处理有理系数（当然在 <code>ℤ</code> 上不会出现非整数系数）。<code>value</code> 是有理数值，<code>hyp</code> 在系数不是整数时存储分母非零的证明。</p>
+                </section>
+              <section>
+                <h3 id="ch07-ring-compute-impl">
+                  8.5.3. 具体的 <code>ringCompute</code> 实现<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-ring-compute-impl" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Basic.lean:493-506]
+partial def _root_.Mathlib.Tactic.Ring.ringCompute
+    {u : Lean.Level} {α : Q(Type u)} {sα : Q(CommSemiring $α)} (cα : Common.Cache sα) :
+    Common.RingCompute RatCoeff sα where
+  add := add sα
+  mul := mul sα
+  cast := cast sα cα
+  neg := neg
+  pow := pow sα
+  inv := inv sα
+  derive := derive sα
+  isOne := isOne sα
+  one := ⟨q((nat_lit 1).rawCast), ⟨1, none⟩, q(rfl)⟩
+  toRingCompare := ringCompare
+</pre><p>
+                  关键洞察：<strong><strong><code>ring</code> 的系数计算委托给 <code>norm_num</code></strong></strong>。<code>ring</code> 自己不做数值计算——它只负责多项式结构的规范化，数值计算交给 <code>norm_num</code> 这个更专业的工具。例如 <code>add</code> 方法内部调用 <code>NormNum.Result.add</code>，<code>mul</code> 调用 <code>NormNum.Result.mul</code>。</p>
+                <p>
+                  系数比较直接在 <code>ℚ</code> 值上进行：</p>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Basic.lean:487-491]
+partial def _root_.Mathlib.Tactic.Ring.ringCompare {u : Lean.Level} {α : Q(Type u)} :
+    Common.RingCompare (α := α) RatCoeff where
+  eq zx zy := zx.value == zy.value
+  compare zx zy := compare zx.value zy.value
+</pre><p>
+                  这是 <code>ring</code> 效率的一个来源——不需要在 Lean 表达式层面做 <code>isDefEq</code> 判断。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch07-cslift">
+                8.6. 类型提升：CSLift<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-cslift" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="ch07-cslift-mechanism">
+                  8.6.1. 问题与机制<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-cslift-mechanism" title="Permalink">🔗</a></span></h3>
+                <p>
+                  有些类型（如 <code>ℕ+</code>）不是 <code>CommSemiring</code>，但可以嵌入到一个更大的 <code>CommSemiring</code> 中。<code>ring</code> 通过 <code>CSLift</code> 机制处理这种情况：</p>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Basic.lean:519-531]
+class CSLift (α : Type u) (β : outParam (Type u)) where
+  lift : α → β
+  inj : Function.Injective lift
+
+class CSLiftVal {α} {β : outParam (Type u)} [CSLift α β] (a : α) (b : outParam β) : Prop where
+  eq : b = CSLift.lift a
+</pre><p>
+                  使用流程：当 <code>CommSemiring α</code> 合成失败时，<code>proveEq</code> 尝试：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      合成 <code>CSLift α β</code> 找到目标类型 <code>β</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      确认 <code>β</code> 是 <code>CommSemiring</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      把 <code>e₁</code>、<code>e₂</code> 通过 <code>CSLiftVal</code> 提升到 <code>β</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      在 <code>β</code> 上运行 <code>ringCore</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      用 <code>CSLift.inj</code> 的单射性把证明拉回到 <code>α</code></p>
+                    </li>
+                  </ol>
+                <p>
+                  最后一步使用 <code>of_lift</code> 引理：</p>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Basic.lean:535-537]
+theorem of_lift {α β} [inst : CSLift α β] {a b : α} {a' b' : β}
+    [h1 : CSLiftVal a a'] [h2 : CSLiftVal b b'] (h : a' = b') : a = b :=
+  inst.2 &lt;| by rwa [← h1.1, ← h2.1]
+</pre></section>
+              <section>
+                <h3 id="ch07-pnat-instance">
+                  8.6.2. PNat 实例<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-pnat-instance" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/PNat.lean:24-25]
+instance : CSLift ℕ+ Nat where
+  lift := PNat.val
+  inj := PNat.coe_injective
+</pre><p>
+                  这让 <code>ring</code> 可以在 <code>ℕ+</code> 上工作，尽管 <code>ℕ+</code> 本身没有 <code>CommSemiring</code> 实例（它没有零元素）。相应的 <code>CSLiftVal</code> 实例把 <code>ℕ+</code> 上的运算（加法、乘法、幂）分配到提升后的 <code>ℕ</code> 上：</p>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/PNat.lean:41-48]
+instance {n n' k k'} [h1 : CSLiftVal (n : ℕ+) n'] [h2 : CSLiftVal (k : ℕ+) k'] :
+    CSLiftVal (n + k) (n' + k') := ⟨by simp [h1.1, h2.1, CSLift.lift]⟩
+
+instance {n n' k k'} [h1 : CSLiftVal (n : ℕ+) n'] [h2 : CSLiftVal (k : ℕ+) k'] :
+    CSLiftVal (n * k) (n' * k') := ⟨by simp [h1.1, h2.1, CSLift.lift]⟩
+
+instance {n n' k} [h1 : CSLiftVal (n : ℕ+) n'] :
+    CSLiftVal (n ^ k) (n' ^ k) := ⟨by simp [h1.1, CSLift.lift]⟩
+</pre><p>
+                  用户可以为自定义类型提供 <code>CSLift</code> 实例来扩展 <code>ring</code> 的适用范围——只需一个到 <code>CommSemiring</code> 类型的单射嵌入，核心规范化逻辑完全不变。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch07-horner-relation">
+                8.7. 与 Horner 形式的关系<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-horner-relation" title="Permalink">🔗</a></span></h2>
+              <p>
+                传统的多项式 Horner 形式是 <code>(...((aₙx + aₙ₋₁)x + aₙ₋₂)x + ... + a₁)x + a₀</code>。<code>ring</code> 的范式更通用：</p>
+              <ul>
+                <li>
+                  <p>
+                    <strong>多变量</strong>：Horner 形式本质上是单变量的，而 <code>ExBase</code>/<code>ExProd</code>/<code>ExSum</code> 的互相递归天然支持多变量</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>嵌套</strong>：<code>ExBase.sum</code> 允许在基中嵌套完整的多项式，处理 <code>(a + b)^n</code> 这类表达式</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>有理系数</strong>：通过 <code>BaseType</code> 参数化系数类型，<code>ring</code> 在 <code>ℚ</code> 系数上工作（不仅仅是 <code>ℤ</code> 或 <code>ℕ</code>）</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong>变量指数</strong>：<code>ExProdNat</code> 中的指数也是多项式，允许 <code>2^n</code> 等变量指数出现</p>
+                  </li>
+                </ul>
+              <p>
+                这种 Horner-like form 并不是唯一自然的选择——例如也可以用稀疏展开、DAG 表示或递归 Horner scheme。<code>ring</code> 选择当前范式是因为它<strong>足够好</strong>（多变量天然有序）、<strong>足够可比较</strong>（结构相等即语义相等）、<strong>足够利于递归构造 proof</strong>（每步操作对应一条等式引理）。</p>
+              </section>
+            <section>
+              <h2 id="ch07-performance">
+                8.8. 性能考量<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-performance" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code>ring</code> 的复杂度与表达式大小多项式相关，但高次幂会导致项数爆炸：</p>
+              <pre>-- ✅ 快速：变量少、次数低
+example (x : ℤ) : (x + 1) ^ 4 = x ^ 4 + 4 * x ^ 3 + 6 * x ^ 2 + 4 * x + 1 := by
+  ring
+
+-- ⚠️ 较慢：(a + b + c + d + e) ^ 10 展开后有大量项
+</pre><p>
+                性能提示：</p>
+              <ul>
+                <li>
+                  <p>
+                    太慢时先手动化简子表达式，或拆分证明步骤</p>
+                  </li>
+                <li>
+                  <p>
+                    <code>ring</code> 使用二进制快速幂（<code>evalPowNat</code>），但展开后的乘法合并仍然是瓶颈</p>
+                  </li>
+                <li>
+                  <p>
+                    变量指数（如 <code>x^n</code>）不做展开，因此 <code>2^(n+1) * m = 2 * 2^n * m</code> 是快速的</p>
+                  </li>
+                <li>
+                  <p>
+                    系数运算委托给 <code>norm_num</code>，大数系数不是性能问题</p>
+                  </li>
+                </ul>
+              </section>
+            <section>
+              <h2 id="ch07-ring-nf-impl">
+                8.9. ring_nf 实现<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-ring-nf-impl" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="ch07-eval-expr">
+                  8.9.1. 核心函数：<code>evalExpr</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-eval-expr" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/RingNF.lean:61-73]
+def evalExpr (e : Expr) : AtomM Simp.Result := do
+  let e ← withReducible &lt;| whnf e
+  guard e.isApp
+  let ⟨u, α, e⟩ ← inferTypeQ' e
+  let sα ← synthInstanceQ q(CommSemiring $α)
+  let c ← Common.mkCache sα
+  let ⟨a, _, pa⟩ ← match
+    (← Common.isAtomOrDerivable (ringCompute c) c q($e)) with
+  | none =&gt; Common.eval rcℕ (ringCompute c) c e
+  | some none =&gt; failure
+  | some (some r) =&gt; pure r
+  pure { expr := a, proof? := pa }
+</pre><p>
+                  关键的预检查 <code>isAtomOrDerivable</code>：</p>
+                <ul>
+                  <li>
+                    <p>
+                      <strong><strong><code>none</code></strong></strong>：表达式有代数运算（加/乘/幂等），值得完整规范化</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong><strong><code>some none</code></strong></strong>：纯原子，<code>ring_nf</code> 不做任何事</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong><strong><code>some (some r)</code></strong></strong>：虽然没有代数结构，但 <code>norm_num</code> 能化简（如 <code>2 + 3</code> → <code>5</code>）</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="ch07-cleanup">
+                  8.9.2. 清理例程：<code>cleanup</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-cleanup" title="Permalink">🔗</a></span></h3>
+                <p>
+                  规范化后的表达式可能包含冗余的 <code>+ 0</code>、<code>* 1</code>、<code>^ 1</code> 等。<code>cleanup</code> 用一组 simp 引理清理：</p>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/RingNF.lean:91-105]
+def cleanup (cfg : RingNF.Config) (r : Simp.Result) : MetaM Simp.Result := do
+  match cfg.mode with
+  | .raw =&gt; pure r
+  | .SOP =&gt; do
+    let thms : SimpTheorems := {}
+    let thms ← [``add_zero, ``_root_.mul_one, ``_root_.pow_one, ``mul_neg, ``add_neg
+      ].foldlM (·.addConst ·) thms
+    let thms ← [``nat_rawCast_0, ``nat_rawCast_1, ``nat_rawCast_2, ``int_rawCast_neg,
+      ``nnrat_rawCast, ``rat_rawCast_neg, ``add_assoc_rev, ``mul_assoc_rev
+      ].foldlM (·.addConst · (post := false)) thms
+    let ctx ← Simp.mkContext { zetaDelta := cfg.zetaDelta }
+      (simpTheorems := #[thms])
+      (congrTheorems := ← getSimpCongrTheorems)
+    pure &lt;| ←
+      r.mkEqTrans (← Simp.main r.expr ctx (methods := Lean.Meta.Simp.mkDefaultMethodsCore {})).1
+</pre><p>
+                  两种模式：<strong>SOP</strong>（默认）用 simp 清除冗余项并重排结合律为左结合；<strong>raw</strong> 不做任何清理，直接返回内部原始表示。<code>ring_nf (config := { mode := .raw })</code> 可以输出 <code>ring</code> 的内部原始范式，用于调试。</p>
+                </section>
+              <section>
+                <h3 id="ch07-ring-nf-registration">
+                  8.9.3. <code>ring_nf</code> tactic 注册<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-ring-nf-registration" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/RingNF.lean:135-141]
+elab (name := ringNF) "ring_nf" tk:"!"? cfg:optConfig loc:(location)? : tactic =&gt; do
+  let mut cfg ← elabConfig cfg
+  if tk.isSome then cfg := { cfg with red := .default, zetaDelta := true }
+  let loc := (loc.map expandLocation).getD (.targets #[] true)
+  let s ← IO.mkRef {}
+  let m := AtomM.recurse s cfg.toConfig (wellBehavedDischarge := true) evalExpr (cleanup cfg)
+  transformAtLocation (m ·) "`ring_nf`" loc cfg.failIfUnchanged false
+</pre><p>
+                  <code>ring_nf</code> 被集成到 <code>simp</code> 框架中——通过 <code>AtomM.recurse</code> 和 <code>transformAtLocation</code> 递归地对目标中的每个子表达式尝试规范化。这也是 <code>ring_nf</code> 能处理 <code>sin (x + y) + sin (y + x) = 2 * sin (x + y)</code> 这种嵌套场景的原因——它会在 <code>sin</code> 的<strong>参数</strong>中做环规范化。</p>
+                </section>
+              <section>
+                <h3 id="ch07-cache">
+                  8.9.4. <code>Cache</code>：实例缓存<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-cache" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Common.lean:1061-1074]
+structure Cache {α : Q(Type u)} (sα : Q(CommSemiring $α)) where
+  rα : Option Q(CommRing $α)
+  dsα : Option Q(Semifield $α)
+  czα : Option Q(CharZero $α)
+
+def mkCache {α : Q(Type u)} (sα : Q(CommSemiring $α)) : MetaM (Cache sα) :=
+  return {
+    rα := (← trySynthInstanceQ q(CommRing $α)).toOption
+    dsα := (← trySynthInstanceQ q(Semifield $α)).toOption
+    czα := (← trySynthInstanceQ q(CharZero $α)).toOption }
+</pre><p>
+                  <code>Cache</code> 在 <code>proveEq</code> 开始时构建一次，之后在整个规范化过程中反复使用。它决定了 <code>eval</code> 的哪些分支可用：</p>
+                <ul>
+                  <li>
+                    <p>
+                      <code>rα = some _</code>：允许 <code>Neg.neg</code>、<code>HSub.hSub</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>dsα = some _</code>：允许 <code>HDiv.hDiv</code>、<code>Inv.inv</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>czα = some _</code>：求逆时使用，保证除以非零</p>
+                    </li>
+                  </ul>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch07-proof-lemmas">
+                8.10. 证明引理系统<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-proof-lemmas" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="ch07-proof-strategy-detail">
+                  8.10.1. 证明策略<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-proof-strategy-detail" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>ring</code> 不在最后一步生成一个大证明，而是<strong>在规范化的每一步都附带证明</strong>。每个 <code>eval*</code> 函数返回的 <code>Result</code> 中包含一个 <code>proof : Q($e = $expr)</code> 项。proof 沿着分配律、结合律、cast、系数计算一路累积——每步操作的输出不是一个值，而是一个 <code>Result</code> 三元组。</p>
+                </section>
+              <section>
+                <h3 id="ch07-key-lemma-families">
+                  8.10.2. 关键引理族<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-key-lemma-families" title="Permalink">🔗</a></span></h3>
+                <p>
+                  规范化的每一步都引用预定义的等式引理：</p>
+                <p>
+                  <strong>加法归并引理</strong>：</p>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Common.lean:548-563]
+theorem add_pf_zero_add (b : R) : 0 + b = b := by simp
+theorem add_pf_add_zero (a : R) : a + 0 = a := by simp
+
+theorem add_pf_add_overlap
+    (_ : a₁ + b₁ = c₁) (_ : a₂ + b₂ = c₂) : (a₁ + a₂ : R) + (b₁ + b₂) = c₁ + c₂ := by
+  subst_vars; simp [add_assoc, add_left_comm]
+
+theorem add_pf_add_overlap_zero
+    (h : IsNat (a₁ + b₁) (nat_lit 0)) (h₄ : a₂ + b₂ = c) : (a₁ + a₂ : R) + (b₁ + b₂) = c := by
+  subst_vars; rw [add_add_add_comm, h.1, Nat.cast_zero, add_pf_zero_add]
+
+theorem add_pf_add_lt (a₁ : R) (_ : a₂ + b = c) : (a₁ + a₂) + b = a₁ + c := by simp [*, add_assoc]
+
+theorem add_pf_add_gt (b₁ : R) (_ : a + b₂ = c) : a + (b₁ + b₂) = b₁ + c := by
+  subst_vars; simp [add_left_comm]
+</pre><p>
+                  <strong>乘法引理</strong>：</p>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Common.lean:598-612]
+theorem one_mul (a : R) : (nat_lit 1).rawCast * a = a := by simp [Nat.rawCast]
+theorem mul_one (a : R) : a * (nat_lit 1).rawCast = a := by simp [Nat.rawCast]
+
+theorem mul_pf_left (a₁ : R) (a₂) (_ : a₃ * b = c) :
+    (a₁ ^ a₂ * a₃ : R) * b = a₁ ^ a₂ * c := by
+  subst_vars; rw [mul_assoc]
+
+theorem mul_pf_right (b₁ : R) (b₂) (_ : a * b₃ = c) :
+    a * (b₁ ^ b₂ * b₃) = b₁ ^ b₂ * c := by
+  subst_vars; rw [mul_left_comm]
+
+theorem mul_pp_pf_overlap {ea eb e : ℕ} (x : R) (_ : ea + eb = e) (_ : a₂ * b₂ = c) :
+    (x ^ ea * a₂ : R) * (x ^ eb * b₂) = x ^ e * c := by
+  subst_vars; simp [pow_add, mul_mul_mul_comm]
+</pre><p>
+                  <strong>幂运算引理</strong>：</p>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Common.lean:851-859]
+theorem pow_one (a : R) : a ^ nat_lit 1 = a := by simp
+
+theorem pow_bit0 {k : ℕ} (_ : (a : R) ^ k = b) (_ : b * b = c) :
+    a ^ (Nat.mul (nat_lit 2) k) = c := by
+  subst_vars; simp [Nat.succ_mul, pow_add]
+
+theorem pow_bit1 {k : ℕ} {d : R} (_ : (a : R) ^ k = b) (_ : b * b = c) (_ : c * a = d) :
+    a ^ (Nat.add (Nat.mul (nat_lit 2) k) (nat_lit 1)) = d := by
+  subst_vars; simp [Nat.succ_mul, pow_add]
+</pre><p>
+                  <strong>congr 引理</strong>（连接递归步骤与子表达式证明）：</p>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Common.lean:1191-1227]
+theorem add_congr (_ : a = a') (_ : b = b') (_ : a' + b' = c) : (a + b : R) = c := by
+  subst_vars; rfl
+theorem mul_congr (_ : a = a') (_ : b = b') (_ : a' * b' = c) : (a * b : R) = c := by
+  subst_vars; rfl
+theorem pow_congr {b b' : ℕ} (_ : a = a') (_ : b = b')
+    (_ : a' ^ b' = c) : (a ^ b : R) = c := by subst_vars; rfl
+theorem neg_congr {R} [CommRing R] {a a' b : R} (_ : a = a')
+    (_ : -a' = b) : (-a : R) = b := by subst_vars; rfl
+theorem sub_congr {R} [CommRing R] {a a' b b' c : R} (_ : a = a') (_ : b = b')
+    (_ : a' - b' = c) : (a - b : R) = c := by subst_vars; rfl
+</pre><p>
+                  <strong>顶层拼接</strong>：</p>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Basic.lean:541]
+theorem of_eq {α} {a b c : α} (_ : (a : α) = c) (_ : b = c) : a = b := by subst_vars; rfl
+</pre></section>
+              <section>
+                <h3 id="ch07-qq-role">
+                  8.10.3. <code>Qq</code> 的角色<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-qq-role" title="Permalink">🔗</a></span></h3>
+                <p>
+                  所有证明项都通过 Lean 的 <code>Qq</code> 库构造。<code>Qq</code> 在<strong>编译时</strong>检查引用表达式的类型正确性——如果 <code>ring</code> 的证明构造有误，Mathlib 本身就无法编译。这是"verified by construction"设计的第二层保障。</p>
+                <p>
+                  例如在 <code>evalAdd</code> 中的 <code>q(add_pf_add_overlap $pc₁ $pc₂)</code>，<code>Qq</code> 会在编译时检查 <code>pc₁</code> 和 <code>pc₂</code> 的类型是否匹配 <code>add_pf_add_overlap</code> 的参数签名。</p>
+                </section>
+              <section>
+                <h3 id="ch07-not-purely-data">
+                  8.10.4. 为什么 ring 不是纯数据算法<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-not-purely-data" title="Permalink">🔗</a></span></h3>
+                <p>
+                  从前面的代码看，<code>ring</code> 的核心操作——加法归并、乘法分配、幂拆分——似乎只是在操作数据结构。但实际工程中远不止此。</p>
+                <p>
+                  <strong>不变量维护是全局约束</strong>。范式唯一性依赖一组严格不变量始终成立：<code>ExSum</code> 按全序排序、同类项已合并、零系数已删除、<code>ExProd</code> 幂链按基有序、指数本身已规范化。每一个 <code>evalAdd</code>/<code>evalMul</code>/<code>evalPow</code> 操作都必须<strong>同时</strong>维护所有这些不变量——不是"先算出结果再清理"，而是在构造过程中就保证输出满足全部约束。</p>
+                <p>
+                  <strong>proof-producing normalization 才是真正的复杂性来源</strong>。<code>evalAdd</code>/<code>evalMul</code>/<code>evalPow</code> 不只是在算新的数据结构——它们还得在每一步<strong>同步拼出正确的等式证明</strong>。加法归并的每次比较和合并都对应一条等式引理；乘法的分配律展开需要 <code>add_mul</code> 引理串联；幂的拆分需要 <code>pow_add</code> 引理组合。</p>
+                <p>
+                  <strong>规范化过程中持续维护的不变量清单</strong>：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <strong>ExSum 项按全序排序</strong>：<code>evalAdd</code> 通过归并维护此序</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>同类项已合并</strong>：<code>evalAddOverlap</code> 在归并时检测并合并同类项</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>零系数已删除</strong>：合并时的 <code>.zero</code> 分支消去零项</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>ExProd 幂链按基有序</strong>：<code>evalMulProd</code> 通过归并维护此序</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>指数本身已规范化</strong>：自然数版本的 <code>ExSumNat</code>/<code>ExProdNat</code> 保证</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>每步操作附带等式证明</strong>：所有 <code>eval*</code> 函数返回 <code>Result</code></p>
+                    </li>
+                  </ol>
+                <p>
+                  结论：<code>ring</code> 的整个实现都在维护唯一范式所需的不变量。表面上是多项式数据结构操作，实际上每一步都必须同时满足排序、合并、消零、proof 拼接四重约束。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch07-compare">
+                8.11. 不等式自动化：Compare.lean<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-compare" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code>Ring/Compare.lean</code> 提供了 <code>proveLE</code> 和 <code>proveLT</code> 函数，可以在有序交换半环中自动证明某些不等式——具体来说是 ring-normal 形式只差一个<strong>常数</strong>的情况（如 <code>x + 3 + y &lt; y + x + 4</code>）。</p>
+              <p>
+                核心逻辑：先对两边分别做 ring 规范化，然后比较规范化后的结构。如果两个 <code>ExSum</code> 只在首项系数上不同，就用 <code>norm_num</code> 比较系数大小：</p>
+              <pre>-- [Mathlib, Mathlib/Tactic/Ring/Compare.lean:123-156]
+def evalLE {v : Level} {α : Q(Type v)}
+    (ics : Q(CommSemiring $α)) (_ : Q(PartialOrder $α)) (_ : Q(IsOrderedRing $α))
+    {a b : Q($α)} (va : Ring.ExSum q($ics) a) (vb : Ring.ExSum q($ics) b) :
+    MetaM (Except ExceptType Q($a ≤ $b)) := do
+  let lα : Q(LE $α) := q(le_of_po $α)
+  assumeInstancesCommute
+  let ⟨_, pz⟩ ← NormNum.mkOfNat α q(amwo_of_cs $α) q(nat_lit 0)
+  let rz : NormNum.Result q((0:$α)) :=
+    NormNum.Result.isNat q(amwo_of_cs $α) q(nat_lit 0) (q(NormNum.isNat_ofNat $α $pz):)
+  match va, vb with
+  | .zero, .zero =&gt; pure &lt;| .ok (q(le_refl (0:$α)):)
+  | .add (b := a') (.const (e := xa) ⟨ca, hypa⟩) va', .add (.const (e := xb) ⟨cb, hypb⟩) vb' =&gt; do
+    unless va'.eq rcℕ ringCompare vb' do return .error notComparable
+    let rxa := NormNum.Result.ofRawRat ca xa hypa
+    let rxb := NormNum.Result.ofRawRat cb xb hypb
+    let NormNum.Result.isTrue pf ← NormNum.evalLE.core lα rxa rxb | return .error tooSmall
+    pure &lt;| .ok (q(add_le_add_left (a := $a') $pf):)
+  -- ... 更多分支处理 ca ≤ 0 和 0 ≤ cb 的情况
+  | _, _ =&gt;
+    unless va.eq rcℕ ringCompare vb do return .error notComparable
+    pure &lt;| .ok (q(le_refl $a):)
+</pre><p>
+                <code>proveLE</code> 和 <code>proveLT</code> 的用户入口：</p>
+              <pre>-- [Mathlib, Mathlib/Tactic/Ring/Compare.lean:206-229]
+def proveLE (g : MVarId) : MetaM Unit := do
+  let some (α, e₁, e₂) := (← whnfR &lt;|← instantiateMVars &lt;|← g.getType).le?
+    | throwError "ring failed: not of the form `A ≤ B`"
+  -- ... 合成 CommSemiring, PartialOrder, IsOrderedRing 实例
+  -- 对两边做 ring 规范化
+  -- 调用 evalLE 比较
+  match ← evalLE ics ipo sα va vb with
+  | .ok p =&gt; g.assign q(le_congr $pa $p $pb)
+  | .error e =&gt; -- 报错：ring expressions not comparable 或 LHS is larger
+</pre><p>
+                这个自动化本身不直接面向用户，但作为 <code>linear_combination</code> 在不等式目标上的 discharger 间接可用——用户调用 <code>linear_combination</code> 时如果目标是不等式，会自动使用这里的逻辑。</p>
+              </section>
+            <section>
+              <h2 id="ch07-extension-points">
+                8.12. 扩展点与配置<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-extension-points" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="ch07-ring-compute-parametric">
+                  8.12.1. <code>RingCompute</code> 参数化<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-ring-compute-parametric" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>ring</code> 的规范化算法通过 <code>RingCompute</code> 接口与系数运算解耦。当前 <code>ring</code> 只有 <code>RatCoeff</code> 一种系数实现，但这个设计为未来扩展保留了空间——例如未来的 <code>algebra</code> tactic 可以用 <code>ring</code> 表达式作为系数类型。</p>
+                </section>
+              <section>
+                <h3 id="ch07-cleanup-ref">
+                  8.12.2. <code>ringCleanupRef</code>：清理钩子<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-cleanup-ref" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/Basic.lean:548]
+initialize ringCleanupRef : IO.Ref (Expr → MetaM Expr) ← IO.mkRef pure
+</pre><p>
+                  <code>Ring/RingNF.lean</code> 在初始化时设置这个引用：</p>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/RingNF.lean:108-109]
+initialize ringCleanupRef.set fun e =&gt; do
+  return (← cleanup {} { expr := e }).expr
+</pre><p>
+                  <code>ringCleanupRef</code> 在 <code>ringCore</code> 失败时用于<strong>清理残余目标的显示</strong>。当 <code>ring</code> 失败，它会用这个函数美化残余目标（如 <code>a + 0 = b * 1</code> 会被清理为 <code>a = b</code>），让用户更容易理解差距在哪里。这个可变引用让 <code>Basic.lean</code> 不依赖 <code>RingNF.lean</code>，同时允许 <code>RingNF.lean</code> 注入更好的显示逻辑。</p>
+                </section>
+              <section>
+                <h3 id="ch07-ring-mode">
+                  8.12.3. <code>RingMode</code> 配置<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-ring-mode" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Mathlib, Mathlib/Tactic/Ring/RingNF.lean:32-37]
+inductive RingMode where
+  | SOP    -- Sum of Products：标准多项式形式
+  | raw    -- 原始内部表示
+  deriving Inhabited, BEq, Repr
+</pre><p>
+                  <code>ring_nf (config := { mode := .raw })</code> 输出 <code>ring</code> 的内部原始表示（带 <code>+ 0</code>、<code>* 1</code>、<code>^ 1</code> 等冗余项），用于调试。默认的 <code>.SOP</code> 模式会通过 <code>cleanup</code> 清理这些冗余。</p>
+                </section>
+              <section>
+                <h3 id="ch07-metaprogramming">
+                  8.12.4. 在元编程中调用 ring<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-metaprogramming" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong>通过 <strong><code>evalTactic</code></strong></strong>——最简单的方式：</p>
                 <pre>import Mathlib.Tactic.Ring
 
 elab "try_ring" : tactic =&gt; do
   try
     Lean.Elab.Tactic.evalTactic (← `(tactic| ring))
-    --                           ^^^^^^^^^^^^^^^^
-    --  syntax quotation：构造 `ring` 的 Syntax 对象
   catch _ =&gt;
     Lean.logInfo "ring failed, skipping"
-</pre></section>
-              <section>
-                <h3 id="low-level-api">
-                  8.7.2. 底层 API<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=low-level-api" title="Permalink">🔗</a></span></h3>
+</pre><p>
+                  <strong>底层 API</strong>——直接调用 <code>proveEq</code>：</p>
                 <pre>open Lean Elab Tactic in
 elab "ring_diagnose" : tactic =&gt; withMainContext do
   let goal ← getMainGoal
   let target ← goal.getType
   let some (_, _, lhs, rhs) := target.eq?
-    --  eq? 返回 (level, type, lhs, rhs)；非等式返回 none
-- throwError "ring_diagnose: goal is not an equality"
+    | throwError "ring_diagnose: goal is not an equality"
   logInfo m!"LHS: {lhs}"
   logInfo m!"RHS: {rhs}"
   try
@@ -1317,24 +2348,136 @@ elab "ring_diagnose" : tactic =&gt; withMainContext do
 </pre></section>
               </section>
             <section>
-              <h2 id="performance-considerations">
-                8.8. 性能考量<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=performance-considerations" title="Permalink">🔗</a></span></h2>
+              <h2 id="ch07-debug-manual">
+                8.13. 调试手册<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-debug-manual" title="Permalink">🔗</a></span></h2>
               <p>
-                <code>ring</code> 的复杂度与表达式大小多项式相关，但高次幂会导致项数爆炸：</p>
-              <pre>-- ✅ 快速：变量少、次数低
-example (x : ℤ) : (x + 1) ^ 4 = x ^ 4 + 4 * x ^ 3 + 6 * x ^ 2 + 4 * x + 1 := by
-  ring
-
--- ⚠️ 较慢：(a + b + c + d + e) ^ 10 可能需要数秒
-</pre><p>
-                性能提示：太慢时先手动化简子表达式，或拆分证明步骤。</p>
+                当 <code>ring</code> 失败时，它会显示规范化后的残余目标。下面列出最典型的失败模式。</p>
+              <section>
+                <h3 id="ch07-debug-constant-neq">
+                  8.13.1. 模式 1：常数不等式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-debug-constant-neq" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong>症状</strong>：<code>ring_nf</code> 把目标化简为 <code>0 = 1</code> 或类似的常数不等式。</p>
+                <p>
+                  <strong>诊断</strong>：原始等式在数学上就不成立。<code>ring</code> 的规范化是完备的——如果两边化简到不同的常数，说明等式确实为假。</p>
+                <p>
+                  <strong>修复</strong>：检查原始命题的数学正确性。</p>
+                </section>
+              <section>
+                <h3 id="ch07-debug-division">
+                  8.13.2. 模式 2：残余含 <code>a / a</code> 或 <code>a * a⁻¹</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-debug-division" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong>症状</strong>：残余目标包含未被约分的分式。</p>
+                <p>
+                  <strong>诊断</strong>：<code>ring</code> 不做 <code>a/a = 1</code> 约分。这超出了 <code>ring</code> 的处理模型——<code>a/a = 1</code> 需要 <code>a ≠ 0</code> 的前提，不属于无条件等式。</p>
+                <p>
+                  <strong>修复</strong>：用 <code>field_simp</code> 先消除分式，再用 <code>ring</code> 处理。</p>
+                </section>
+              <section>
+                <h3 id="ch07-debug-nat-sub">
+                  8.13.3. 模式 3：ℕ 减法<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-debug-nat-sub" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong>症状</strong>：<code>ring</code> 在 <code>ℕ</code> 上的等式失败。</p>
+                <p>
+                  <strong>诊断</strong>：<code>ℕ</code> 只是 <code>CommSemiring</code>，没有 <code>CommRing</code> 实例。<code>ring</code> 会把 <code>-</code> 当作无法分解的原子处理。</p>
+                <p>
+                  <strong>修复</strong>：改用 <code>ℤ</code>（有完整环结构），或使用 <code>omega</code>。</p>
+                </section>
+              <section>
+                <h3 id="ch07-debug-transparency">
+                  8.13.4. 模式 4：<code>ring</code> 失败但 <code>ring!</code> 成功<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-debug-transparency" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong>症状</strong>：<code>ring</code> 报错，但 <code>ring!</code> 成功。</p>
+                <p>
+                  <strong>诊断</strong>：透明度问题。<code>ring</code> 使用 <code>.reducible</code> 透明度；<code>ring!</code> 使用 <code>.default</code> 透明度，展开更多定义。</p>
+                <p>
+                  <strong>修复</strong>：使用 <code>ring!</code>；或先 <code>unfold</code> 手动展开再用 <code>ring</code>；或把定义标记为 <code>@[reducible]</code>。</p>
+                </section>
+              <section>
+                <h3 id="ch07-debug-tools">
+                  8.13.5. 辅助诊断工具<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-debug-tools" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong><strong><code>ring_nf</code></strong></strong>：不关闭目标，只做规范化——看看规范化后的残余形式</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong><strong><code>ring_nf (config := { mode := .raw })</code></strong></strong>：输出 <code>ring</code> 内部的原始范式表示，用于深度调试</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong><strong><code>set_option trace.Meta.Tactic.norm_num true</code></strong></strong>：跟踪 <code>norm_num</code>（<code>ring</code> 依赖的系数计算引擎）的执行</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong><strong><code>set_option trace.Meta.synthInstance true</code></strong></strong>：排查类型类合成失败</p>
+                    </li>
+                  </ul>
+                </section>
               </section>
             <section>
+              <h2 id="ch07-architecture">
+                8.14. 架构全景图<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-architecture" title="Permalink">🔗</a></span></h2>
+              <pre>用户层
+┌─────────────────────────────────────────────────────┐
+│  ring / ring!                                       │
+│  ring_nf / ring_nf!                                 │
+│  ring1 / ring1!                                     │
+└───────────┬─────────────────────────────────────────┘
+            │
+宏展开层
+┌───────────┴─────────────────────────────────────────┐
+│  ring → first | ring1 | try_this ring_nf ...        │
+│  ring_nf → transformAtLocation evalExpr cleanup     │
+└───────────┬─────────────────────────────────────────┘
+            │
+Tactic 层 (TacticM)
+┌───────────┴─────────────────────────────────────────┐
+│  ring1 elab                                         │
+│  · AtomM.run (管理原子编号)                          │
+│  · proveEq (提取等式、合成实例)                      │
+│  · ringCore (核心证明生成)                           │
+└───────────┬─────────────────────────────────────────┘
+            │
+规范化层 (AtomM / MetaM)
+┌───────────┴─────────────────────────────────────────┐
+│  Common.eval ←── 核心递归                           │
+│  ├── 模式匹配 head function                         │
+│  │   ├── +  → eval 两侧 → evalAdd (归并)           │
+│  │   ├── *  → eval 两侧 → evalMul (分配)           │
+│  │   ├── ^  → eval 底、指数 → evalPow              │
+│  │   ├── -  → eval → evalNeg (系数取负)             │
+│  │   ├── /  → eval → evalInv + evalMul              │
+│  │   └── 其他 → derive (norm_num) 或 evalAtom       │
+│  ├── 范式比较: ExSum.eq                              │
+│  └── 证明拼接: of_eq pa pb                          │
+└─────────────────────────────────────────────────────┘
+
+数据层
+┌─────────────────────────────────────────────────────┐
+│  ExSum (多项式 = 单项式有序链表)                     │
+│  ├── ExProd (单项式 = base^exp 乘积链)              │
+│  │   └── ExBase (基 = 原子 | 嵌套和)                │
+│  └── ExSumNat / ExProdNat / ExBaseNat (自然数指数)   │
+│                                                     │
+│  RingCompute (系数运算接口)                          │
+│  ├── RatCoeff (有理系数)                             │
+│  └── 委托 norm_num 做数值计算                        │
+│                                                     │
+│  Cache (类型类实例缓存)                              │
+│  ├── CommRing? (允许取负/减法)                       │
+│  ├── Semifield? (允许除法/求逆)                      │
+│  └── CharZero? (保证非零除数)                        │
+│                                                     │
+│  Result (规范化表达式 + 范式数据 + 等式证明)          │
+└─────────────────────────────────────────────────────┘
+</pre></section>
+            <section>
               <h2 id="ch07-exercises">
-                8.9. 练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-exercises" title="Permalink">🔗</a></span></h2>
+                8.15. 练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-exercises" title="Permalink">🔗</a></span></h2>
               <section>
-                <h3 id="exercise-7-1">
-                  8.9.1. 练习 7.1：基础展开（⭐）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-7-1" title="Permalink">🔗</a></span></h3>
+                <h3 id="ch07-exercise-1">
+                  8.15.1. 练习 1：基础展开<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-exercise-1" title="Permalink">🔗</a></span></h3>
                 <p>
                   证明以下等式：</p>
                 <pre>-- (a) 立方和公式
@@ -1348,8 +2491,8 @@ example (x y : ℤ) :
   sorry
 </pre></section>
               <section>
-                <h3 id="exercise-7-2">
-                  8.9.2. 练习 7.2：<code>ring_nf</code> 化简（⭐）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-7-2" title="Permalink">🔗</a></span></h3>
+                <h3 id="ch07-exercise-2">
+                  8.15.2. 练习 2：<code>ring_nf</code> 化简<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-exercise-2" title="Permalink">🔗</a></span></h3>
                 <p>
                   使用 <code>ring_nf</code> 化简假设后完成证明：</p>
                 <pre>-- 提示：ring_nf at h 化简假设，然后用 linarith
@@ -1357,8 +2500,8 @@ example (x : ℤ) (h : (x + 2) ^ 2 = (x + 1) ^ 2 + 5) : x = 1 := by
   sorry
 </pre></section>
               <section>
-                <h3 id="exercise-7-3">
-                  8.9.3. 练习 7.3：<code>linear_combination</code>（⭐⭐）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-7-3" title="Permalink">🔗</a></span></h3>
+                <h3 id="ch07-exercise-3">
+                  8.15.3. 练习 3：<code>linear_combination</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-exercise-3" title="Permalink">🔗</a></span></h3>
                 <p>
                   使用 <code>linear_combination</code> 完成以下证明。关键是找到正确的系数：</p>
                 <pre>-- (a)
@@ -1373,8 +2516,8 @@ example (x y : ℤ) (h1 : x + y = 5) (h2 : x * y = 6) :
   -- 提示：x^2 + y^2 = (x+y)^2 - 2*x*y
 </pre></section>
               <section>
-                <h3 id="exercise-7-4">
-                  8.9.4. 练习 7.4：<code>field_simp</code> + ring（⭐⭐）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-7-4" title="Permalink">🔗</a></span></h3>
+                <h3 id="ch07-exercise-4">
+                  8.15.4. 练习 4：<code>field_simp</code> + ring<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-exercise-4" title="Permalink">🔗</a></span></h3>
                 <p>
                   消分母后用 <code>ring</code> 完成：</p>
                 <pre>example (x : ℝ) (hx : x ≠ 0) :
@@ -1383,8 +2526,8 @@ example (x y : ℤ) (h1 : x + y = 5) (h2 : x * y = 6) :
   -- 提示：field_simp 然后 ring
 </pre></section>
               <section>
-                <h3 id="exercise-7-5">
-                  8.9.5. 练习 7.5：诊断失败（⭐⭐）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-7-5" title="Permalink">🔗</a></span></h3>
+                <h3 id="ch07-exercise-5">
+                  8.15.5. 练习 5：诊断失败<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-exercise-5" title="Permalink">🔗</a></span></h3>
                 <p>
                   以下 <code>ring</code> 调用都会失败。为每个找出失败原因并给出正确证明：</p>
                 <pre>-- (a) 为什么失败？用什么替代？
@@ -1397,51 +2540,31 @@ example (x y : ℤ) (h1 : x + y = 5) (h2 : x * y = 6) :
 -- example (x y : ℤ) (h : x = y + 1) : x ^ 2 = y ^ 2 + 2 * y + 1 := by ring
 </pre></section>
               <section>
-                <h3 id="exercise-7-6">
-                  8.9.6. 练习 7.6：组合 tactic（⭐⭐⭐）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-7-6" title="Permalink">🔗</a></span></h3>
+                <h3 id="ch07-exercise-6">
+                  8.15.6. 练习 6（源码阅读）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-exercise-6" title="Permalink">🔗</a></span></h3>
                 <p>
-                  综合运用本章所学完成证明：</p>
-                <pre>-- 提示：可能需要 push_cast, ring_nf, linarith 等多个 tactic 的组合
-example (n : ℕ) : (2 * n + 1) ^ 2 - 1 = 4 * n * (n + 1) := by
-  sorry
-  -- 注意：这里是 ℕ 上的减法！
-</pre></section>
+                  阅读 <code>evalAdd</code> 的源码（Common.lean:573-594），回答以下问题：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <code>evalAddOverlap</code> 返回 <code>.zero</code> 时意味着什么？对应的数学操作是什么？</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>va₁.cmp rcℕ rc vb₁</code> 返回 <code>.lt</code> 时，为什么选择 <code>va₁</code> 留在前面？</p>
+                    </li>
+                  <li>
+                    <p>
+                      如果两个多项式都只有一个单项式且不同类，<code>evalAdd</code> 需要几步递归？</p>
+                    </li>
+                  </ol>
+                </section>
               </section>
             <section>
-              <h2 id="ch07-summary">
-                8.10. 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-summary" title="Permalink">🔗</a></span></h2>
-              <ul>
-                <li>
-                  <p>
-                    <code>ring</code> 原理：规范化为 Horner 范式，做纯语法比较</p>
-                  </li>
-                <li>
-                  <p>
-                    <code>适用范围</code>：交换（半）环上的多项式恒等式</p>
-                  </li>
-                <li>
-                  <p>
-                    <code>ring_nf</code>：只做范式化，不要求相等；可作用于假设</p>
-                  </li>
-                <li>
-                  <p>
-                    <code>linear_combination</code>：利用等式假设 + <code>ring</code> 证明依赖假设的等式</p>
-                  </li>
-                <li>
-                  <p>
-                    <code>field_simp</code> + <code>ring</code>：先消分母再证多项式等式</p>
-                  </li>
-                <li>
-                  <p>
-                    <code>push_cast</code> + <code>ring</code>：先统一类型转换再证等式</p>
-                  </li>
-                <li>
-                  <p>
-                    <code>常见失败</code>：不等式、假设依赖、函数不透明、ℕ 减法、除法、类型转换</p>
-                  </li>
-                </ul>
+              <h2 id="ch07-next-chapter">
+                8.16. 下一章预告<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch07-next-chapter" title="Permalink">🔗</a></span></h2>
               <p>
-                下一章：<code>omega</code>——线性整数/自然数算术的完备决策过程。
+                <code>ring</code> 解决的是可交换环上的<strong>等式</strong>问题。下一章进入 <code>omega</code>——线性整数/自然数算术的完备决策过程，它能处理 <code>ring</code> 无法触及的<strong>不等式</strong>和<strong>自然数减法</strong>。
 </p>
               </section>
             </section>
