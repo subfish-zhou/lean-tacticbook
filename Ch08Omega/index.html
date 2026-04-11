@@ -949,7 +949,7 @@ window.onload = () => {
             <div class="split-toc">
               <div class="title">
                 <label for="--verso-manual-toc-ch08-omega" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch08-omega" checked="checked"></label><span class="number">9.</span> <span class="current"><a href="Ch08Omega/#ch08-omega">omega：Presburger 算术决策过程</a></span></div>
-              <table><tr class="numbered"><td class="num">9.1.</td><td><a href="Ch08Omega/#omega-what-it-solves">8.1 omega 解决什么问题</a></td></tr><tr class="numbered"><td class="num">9.2.</td><td><a href="Ch08Omega/#omega-theory">8.2 理论基础：Omega 算法</a></td></tr><tr class="numbered"><td class="num">9.3.</td><td><a href="Ch08Omega/#omega-capabilities">8.3 omega 的能力范围</a></td></tr><tr class="numbered"><td class="num">9.4.</td><td><a href="Ch08Omega/#nat-sub-handling">8.4 Nat.sub 的特殊处理</a></td></tr><tr class="numbered"><td class="num">9.5.</td><td><a href="Ch08Omega/#common-failure-modes">8.5 常见失败模式</a></td></tr><tr class="numbered"><td class="num">9.6.</td><td><a href="Ch08Omega/#omega-in-tactic-programming">8.6 在 tactic 编程中使用 omega</a></td></tr><tr class="numbered"><td class="num">9.7.</td><td><a href="Ch08Omega/#omega-vs-other-tactics">8.7 omega 与其他算术 tactic 的对比</a></td></tr><tr class="numbered"><td class="num">9.8.</td><td><a href="Ch08Omega/#ch08-exercises">8.8 练习</a></td></tr><tr class="numbered"><td class="num">9.9.</td><td><a href="Ch08Omega/#ch08-summary">8.9 小结</a></td></tr></table></div>
+              <table><tr class="numbered"><td class="num">9.1.</td><td><a href="Ch08Omega/#ch08-usage">用法详解</a></td></tr><tr class="numbered"><td class="num">9.2.</td><td><a href="Ch08Omega/#ch08-source-overview">源码全景</a></td></tr><tr class="numbered"><td class="num">9.3.</td><td><a href="Ch08Omega/#ch08-data-structures">核心数据结构</a></td></tr><tr class="numbered"><td class="num">9.4.</td><td><a href="Ch08Omega/#ch08-preprocessing">预处理：命题翻译</a></td></tr><tr class="numbered"><td class="num">9.5.</td><td><a href="Ch08Omega/#ch08-elimination">消元算法</a></td></tr><tr class="numbered"><td class="num">9.6.</td><td><a href="Ch08Omega/#ch08-proof-construction">证明构造</a></td></tr><tr class="numbered"><td class="num">9.7.</td><td><a href="Ch08Omega/#ch08-omega-monad">OmegaM monad</a></td></tr><tr class="numbered"><td class="num">9.8.</td><td><a href="Ch08Omega/#ch08-omega-impl">omegaImpl 与析取处理</a></td></tr><tr class="numbered"><td class="num">9.9.</td><td><a href="Ch08Omega/#ch08-debugging">调试手册</a></td></tr><tr class="numbered"><td class="num">9.10.</td><td><a href="Ch08Omega/#ch08-theory">Omega Test 的理论背景</a></td></tr><tr class="numbered"><td class="num">9.11.</td><td><a href="Ch08Omega/#ch08-exercises">练习</a></td></tr></table></div>
             </div>
           </div>
         <div class="last"></div>
@@ -961,493 +961,1353 @@ window.onload = () => {
             <h1>
               9. omega：Presburger 算术决策过程<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-omega" title="Permalink">🔗</a></span></h1>
             <p>
-              <strong>本章目标</strong>：理解 <code>omega</code> 的理论基础、能力边界和常见失败模式，
-学会在 tactic 编程中正确使用它。</p>
+              <strong>本章目标</strong>：前半章掌握 <code>omega</code> 的用法、能力边界与调试技巧；后半章从 Lean 4 真实源码层面拆解 omega 的完整实现——入口调用链、核心数据结构、预处理管线、消元算法、证明项构造——面向想深入理解内部机制的读者。</p>
+            <p>
+              <code>omega</code> 是 Lean 4 内置的 <strong>Presburger 算术</strong>决策过程，完全在 Lean 核心实现，不依赖 Mathlib。它能自动证明关于 <code>Nat</code> 和 <code>Int</code> 的<strong>线性算术</strong>命题——即只涉及加法、常数乘法和比较的等式与不等式。实现基于 William Pugh 的 Omega Test（1991），但做了面向程序验证的工程化取舍：实现了最常用的 real shadow（Fourier-Motzkin 消元），未实现 dark shadow 和 grey shadow——在实际编程验证中几乎不会遇到需要它们的场景。</p>
             <section>
-              <h2 id="omega-what-it-solves">
-                9.1. 8.1 omega 解决什么问题<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=omega-what-it-solves" title="Permalink">🔗</a></span></h2>
-              <p>
-                <code>omega</code> 是 Lean 4 内置的 <strong>Presburger 算术</strong> 决策过程。
-它能自动证明关于 <code>ℕ</code> 和 <code>ℤ</code> 的<strong>线性算术</strong>命题——
-即只涉及加法、常数乘法和比较的等式与不等式。</p>
-              <pre>-- 基本不等式
-example (n : ℕ) : n + 1 &gt; n := by
-  omega                          -- ⊢ n + 1 &gt; n，线性，直接判定
+              <h2 id="ch08-usage">
+                9.1. 用法详解<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-usage" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="ch08-what-omega-solves">
+                  9.1.1. omega 解决什么问题<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-what-omega-solves" title="Permalink">🔗</a></span></h3>
+                <p>
+                  omega 判定<strong>整数线性算术</strong>——变量取值在 <code>Nat</code> 或 <code>Int</code> 上，运算只涉及加法、常数乘法、比较、整除和取模：</p>
+                <pre>-- 基本不等式
+example (n : Nat) : n + 1 &gt; n := by omega
 
 -- 整数线性约束
-example (a b : ℤ) (h : a &lt; b) : a + 1 ≤ b := by
-  omega                          -- 从 h : a &lt; b 推出 a + 1 ≤ b
+example (a b : Int) (h : a &lt; b) : a + 1 ≤ b := by omega
 
 -- 多变量线性组合
-example (x y : ℕ) (h1 : x ≤ 10) (h2 : y ≤ 10) : x + y ≤ 20 := by
-  omega                          -- 把 h1, h2 收集为线性约束系统
-</pre><p>
-                "Presburger 算术" 是整数上只允许加法和比较（不允许变量间乘法）的一阶理论。
-Presburger 在 1929 年证明了该理论的<strong>可判定性</strong>，
-意味着存在算法能判定任意 Presburger 公式的真假。
-<code>omega</code> tactic 实现的正是这样一个决策过程。</p>
-              </section>
-            <section>
-              <h2 id="omega-theory">
-                9.2. 8.2 理论基础：Omega 算法<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=omega-theory" title="Permalink">🔗</a></span></h2>
-              <p>
-                Lean 4 使用的 omega 算法基于 Pugh (1991)。
-核心思路：把目标和假设归约为整数线性不等式系统，
-通过<strong>变量消去</strong>判定系统是否有解。</p>
-              <section>
-                <h3 id="variable-elimination">
-                  9.2.1. 变量消去<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=variable-elimination" title="Permalink">🔗</a></span></h3>
-                <p>
-                  给定不等式系统 <code>{aᵢ x + bᵢ y + ⋯ ≤ cᵢ}</code>，算法逐步消去变量：</p>
-                <ol start="1">
-                  <li>
-                    <p>
-                      <strong>选择变量</strong> x</p>
-                    </li>
-                  <li>
-                    <p>
-                      <strong>分离约束</strong>：找到所有关于 x 的下界 <code>ℓⱼ ≤ x</code> 和上界 <code>x ≤ uₖ</code></p>
-                    </li>
-                  <li>
-                    <p>
-                      <strong>组合</strong>：对每对 <code>(ℓⱼ, uₖ)</code>，生成新约束 <code>ℓⱼ ≤ uₖ</code></p>
-                    </li>
-                  <li>
-                    <p>
-                      <strong>整数修正</strong>：对整数情形，添加 "dark shadow" 约束以保证精确性</p>
-                    </li>
-                  <li>
-                    <p>
-                      <strong>递归</strong>：对消去后的系统重复以上步骤</p>
-                    </li>
-                  </ol>
-                <p>
-                  当所有变量被消去后，系统退化为常数不等式。
-如果出现矛盾（如 <code class="math inline">0 \leq -1</code>），则原系统无整数解——目标得证。</p>
-                </section>
-              <section>
-                <h3 id="fourier-motzkin-difference">
-                  9.2.2. 与 Fourier-Motzkin 消去的区别<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=fourier-motzkin-difference" title="Permalink">🔗</a></span></h3>
-                <p>
-                  Fourier-Motzkin 消去适用于<strong>实数</strong>，只做步骤 1-3。
-omega 算法额外处理<strong>整数约束</strong>（步骤 4），
-因为实数解存在不意味着整数解存在：</p>
-                <pre>-- x + y = 1, x + y = 2 在实数上无解，整数上也无解
--- 但 2x = 3 在实数上有解 x = 1.5，整数上无解
-example : ¬ ∃ x : ℤ, 2 * x = 3 := by
-  omega                          -- omega 知道 2x = 3 无整数解
+example (x y : Nat) (h1 : x ≤ 10) (h2 : y ≤ 10) : x + y ≤ 20 := by omega
+
+-- 整除与模运算
+example (n : Int) (h : n % 2 = 0) : ∃ k, n = 2 * k := by omega
+
+-- Nat 截断减法
+example (n : Nat) : n - (n + 1) = 0 := by omega
+
+-- min / max
+example (a b : Nat) : max a b ≥ a := by omega
 </pre></section>
               <section>
-                <h3 id="lean-execution-flow">
-                  9.2.3. Lean 中的执行流程<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=lean-execution-flow" title="Permalink">🔗</a></span></h3>
-                <ol start="1">
-                  <li>
-                    <p>
-                      <strong>收集</strong>：从 <code>LocalContext</code> 自动提取所有线性算术假设</p>
-                    </li>
-                  <li>
-                    <p>
-                      <strong>规范化</strong>：统一到 ℤ 域，处理 Nat.sub，化为标准形 <code class="math inline">a_1 x_1 + \cdots \leq c</code></p>
-                    </li>
-                  <li>
-                    <p>
-                      <strong>判定</strong>：运行 omega 算法</p>
-                    </li>
-                  <li>
-                    <p>
-                      <strong>输出</strong>：矛盾 → 构造证明项关闭目标；有解 → 报错并给出反例</p>
-                    </li>
-                  </ol>
-                </section>
-              </section>
-            <section>
-              <h2 id="omega-capabilities">
-                9.3. 8.3 omega 的能力范围<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=omega-capabilities" title="Permalink">🔗</a></span></h2>
-              <section>
-                <h3 id="omega-can-handle">
-                  9.3.1. 能处理的命题<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=omega-can-handle" title="Permalink">🔗</a></span></h3>
-                <pre>-- [1] 线性等式与不等式
-example (a b c : ℤ) (h : a + b ≤ c) : a ≤ c - b := by
-  omega                          -- 线性重排
-
--- [2] 常数系数乘法（不是变量乘变量）
-example (x : ℤ) (h : 3 * x ≤ 9) : x ≤ 3 := by
-  omega                          -- 3 * x 中 3 是常数，OK
-
--- [3] 整除与模运算
-example (n : ℤ) (h : n % 2 = 0) : ∃ k, n = 2 * k := by
-  omega                          -- omega 理解 % 的语义
-
--- [4] 析取（通过分支搜索）
-example (n : ℕ) : n % 2 = 0 ∨ n % 2 = 1 := by
-  omega                          -- 穷举 n mod 2 的可能值
-
--- [5] Nat 的截断减法
-example (n : ℕ) : n - n = 0 := by
-  omega                          -- 知道 Nat.sub 截断到 0
-
--- [6] max / min
-example (a b : ℕ) : max a b ≥ a := by
-  omega                          -- omega 展开 max 的定义
-</pre></section>
-              <section>
-                <h3 id="omega-cannot-handle">
-                  9.3.2. 不能处理的命题<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=omega-cannot-handle" title="Permalink">🔗</a></span></h3>
-                <pre>-- [1] 变量乘法（非线性）
--- example (x y : ℤ) (h : x * y = 0) : x = 0 ∨ y = 0 := by omega
--- ✗ omega 不处理 x * y（两个变量相乘）
-
--- [2] 指数 / 幂运算
--- example (n : ℕ) : 2 ^ n ≥ 1 := by omega
--- ✗ 2 ^ n 不是线性的，需要归纳法
-
--- [3] 实数或其他域
--- example (x : ℝ) : x + 1 &gt; x := by omega
--- ✗ omega 只处理 ℕ 和 ℤ
-
--- [4] 带量词交替的复杂公式
--- ∀ x, ∃ y, P(x, y) 形式的嵌套量词超出处理范围
-</pre></section>
-              </section>
-            <section>
-              <h2 id="nat-sub-handling">
-                9.4. 8.4 Nat.sub 的特殊处理<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=nat-sub-handling" title="Permalink">🔗</a></span></h2>
-              <p>
-                自然数减法是截断的：<code>a - b = 0</code> 当 <code>a &lt; b</code>。
-这让 <code>ℕ</code> 上的推理比 <code>ℤ</code> 复杂，但 <code>omega</code> 内置了对此的处理。</p>
-              <section>
-                <h3 id="nat-sub-conversion">
-                  9.4.1. 转换策略<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=nat-sub-conversion" title="Permalink">🔗</a></span></h3>
+                <h3 id="ch08-omega-limitations">
+                  9.1.2. omega 不能做什么<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-omega-limitations" title="Permalink">🔗</a></span></h3>
                 <p>
-                  omega 把 <code>ℕ</code> 表达式翻译到 <code>ℤ</code> 时，遵循以下规则：</p>
+                  omega 的边界清晰——超出线性算术的命题一律拒绝：</p>
                 <ul>
                   <li>
                     <p>
-                      ℕ 表达式：<code>(n : ℕ)</code> —— ℤ 翻译：<code>n</code> —— 附加约束：<code>n ≥ 0</code></p>
+                      <strong>变量乘法</strong>（非线性）：<code>x * y = 0</code> 涉及两个变量相乘，omega 无法处理</p>
                     </li>
                   <li>
                     <p>
-                      ℕ 表达式：<code>a - b</code> (Nat) —— ℤ 翻译：<code>max(a - b, 0)</code> —— 附加约束：—</p>
+                      <strong>指数 / 幂运算</strong>：<code>2 ^ n ≥ 1</code> 不是线性的，需要归纳法</p>
                     </li>
                   <li>
                     <p>
-                      ℕ 表达式：<code>a / k</code> (Nat) —— ℤ 翻译：整数除法 —— 附加约束：<code>0 ≤ a / k</code></p>
+                      <strong>实数或其他域</strong>：omega 只处理 <code>Nat</code>、<code>Int</code> 和 <code>Fin n</code></p>
                     </li>
                   <li>
                     <p>
-                      ℕ 表达式：<code>a % k</code> (Nat) —— ℤ 翻译：<code>a - k * (a / k)</code> —— 附加约束：<code>0 ≤ a % k &lt; k</code></p>
+                      <strong>未展开的定义</strong>：omega 不会展开自定义定义，需要先 <code>unfold</code> 或 <code>simp only [...]</code></p>
                     </li>
                   </ul>
                 </section>
               <section>
-                <h3 id="nat-sub-examples">
-                  9.4.2. 示例<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=nat-sub-examples" title="Permalink">🔗</a></span></h3>
-                <pre>-- 截断减法的典型场景
-example (n m : ℕ) (h : m ≤ n) : n - m + m = n := by
-  omega                          -- h : m ≤ n 保证不截断
-
-example (n : ℕ) (h : n ≥ 1) : n - 1 + 1 = n := by
-  omega                          -- h 保证 n - 1 不截断
-
--- omega 知道截断的全部语义
-example (n : ℕ) : n - (n + 1) = 0 := by
-  omega                          -- n &lt; n + 1，截断到 0
-
--- 不需要前置条件也能处理
-example (a b : ℕ) : a - b ≤ a := by
-  omega                          -- 无论是否截断都成立
-</pre></section>
-              </section>
-            <section>
-              <h2 id="common-failure-modes">
-                9.5. 8.5 常见失败模式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=common-failure-modes" title="Permalink">🔗</a></span></h2>
-              <p>
-                理解 omega 何时会失败，以及<strong>为什么</strong>失败，是高效使用它的关键。</p>
-              <section>
-                <h3 id="failure-nonlinear">
-                  9.5.1. 失败模式 1：非线性项<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-nonlinear" title="Permalink">🔗</a></span></h3>
-                <pre>-- omega 拒绝包含变量乘法的目标
-example (n : ℕ) (h : n * n = 4) : n = 2 := by
-  omega  -- ✗ omega does not handle multiplication of variables
-         -- 修复：nlinarith 或 interval_cases + omega
-</pre><p>
-                  <strong>诊断</strong>：错误信息通常包含 "omega does not handle" 或
-"could not prove"。检查目标和假设中是否有变量间相乘的项。</p>
-                </section>
-              <section>
-                <h3 id="failure-unsupported-type">
-                  9.5.2. 失败模式 2：目标中有不支持的类型<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-unsupported-type" title="Permalink">🔗</a></span></h3>
-                <pre>-- omega 只支持 ℕ 和 ℤ
-example (x : Fin 5) (h : x.val &lt; 3) : x.val + 2 &lt; 5 := by
-  omega  -- ✓ x.val : ℕ，omega 可以处理
-         -- 但如果目标直接涉及 Fin 的运算（取模），可能失败
-</pre><p>
-                  <strong>诊断</strong>：如果 omega 报错说无法处理某个表达式，
-检查是否需要先用 <code>simp</code> 或手动 <code>show</code> 把类型转换为 ℕ/ℤ。</p>
-                </section>
-              <section>
-                <h3 id="failure-insufficient-hypotheses">
-                  9.5.3. 失败模式 3：假设不足<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-insufficient-hypotheses" title="Permalink">🔗</a></span></h3>
-                <pre>-- omega 只使用上下文中已有的假设
-example (n : ℕ) : n - 1 + 1 = n := by
-  omega  -- ✗ 需要 n ≥ 1 但上下文中没有
-         -- omega 会给出反例：n = 0
-</pre><p>
-                  <strong>诊断</strong>：omega 的报错通常会给出反例。
-检查反例是否暴露了缺失的前置条件。</p>
-                </section>
-              <section>
-                <h3 id="failure-hidden-definition">
-                  9.5.4. 失败模式 4：隐藏在定义背后的线性关系<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-hidden-definition" title="Permalink">🔗</a></span></h3>
-                <pre>def myDouble (n : ℕ) := 2 * n
-
--- omega 不会展开自定义定义
-example (n : ℕ) : myDouble n ≥ n := by
-  omega  -- ✗ omega 看到的是 myDouble n，不知道它等于 2 * n
-         -- 修复：先 unfold myDouble，再 omega
-</pre><p>
-                  <strong>诊断</strong>：如果目标"看起来"是线性的但 omega 失败，
-检查是否有未展开的定义。用 <code>unfold</code> 或 <code>simp only [myDouble]</code> 先展开。</p>
-                </section>
-              <section>
-                <h3 id="failure-too-many-variables">
-                  9.5.5. 失败模式 5：变量太多导致超时<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=failure-too-many-variables" title="Permalink">🔗</a></span></h3>
+                <h3 id="ch08-nat-int-fin">
+                  9.1.3. Nat / Int / Fin 的处理<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-nat-int-fin" title="Permalink">🔗</a></span></h3>
                 <p>
-                  omega 算法的复杂度随变量数指数增长。
-虽然实际中很少触发，但当假设中包含大量不相关变量时，
-omega 可能显著变慢。</p>
-                <pre>-- 如果上下文有 20+ 个线性假设，omega 可能变慢
--- 修复：在调用前用 clear 清除不相关假设
-example (a b c d e f : ℕ)
-    (h1 : a ≤ b) (h2 : b ≤ c) (h3 : c ≤ d)
-    (h4 : d ≤ e) (h5 : e ≤ f) : a ≤ f := by
-  omega                          -- 变量不多，正常工作
-</pre></section>
-              </section>
-            <section>
-              <h2 id="omega-in-tactic-programming">
-                9.6. 8.6 在 tactic 编程中使用 omega<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=omega-in-tactic-programming" title="Permalink">🔗</a></span></h2>
-              <section>
-                <h3 id="omega-direct-call">
-                  9.6.1. 直接调用<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=omega-direct-call" title="Permalink">🔗</a></span></h3>
-                <pre>-- 在 tactic block 中调用
-evalTactic (← `(tactic| omega))
+                  omega 内部统一在 <code>Int</code> 域上工作。所有 <code>Nat</code> 表达式都被提升（cast）到 <code>Int</code>，附加非负约束 <code>0 ≤ ↑x</code>。</p>
+                <p>
+                  <strong>Nat 截断减法</strong>是特殊难点：<code>3 - 5 = 0</code> 在 <code>Nat</code> 上成立，但在 <code>Int</code> 上 <code>3 - 5 = -2</code>。omega 通过<strong>二分法</strong>处理——对每个 <code>↑(a - b : Nat)</code>，生成析取：</p>
+                <ul>
+                  <li>
+                    <p>
+                      情况 1：<code>b ≤ a → ↑(a - b) = ↑a - ↑b</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      情况 2：<code>a &lt; b → ↑(a - b) = 0</code></p>
+                    </li>
+                  </ul>
+                <pre>-- omega 知道截断减法的完整语义
+example (n m : Nat) (h : m ≤ n) : n - m + m = n := by omega
+example (a b : Nat) : a - b ≤ a := by omega
 </pre><p>
-                  这是最简单的方式：生成 <code>omega</code> 的 syntax 对象，然后执行它。
-如果 omega 无法关闭目标，<code>evalTactic</code> 会抛出异常。</p>
+                  <strong>整数除法和取模</strong>：<code>x / k</code>（<code>k</code> 为正常数）被注册为新原子 <code>α</code>，生成约束 <code>k * α ≤ x &lt; k * α + k</code>。取模 <code>x % k</code> 改写为 <code>x - (x / k) * k</code>。</p>
+                <p>
+                  <strong>Fin n</strong>：<code>Fin n</code> 的值被提升到 <code>Nat</code>，自动添加 <code>0 ≤ x.val</code> 和 <code>x.val &lt; n</code> 约束。但 <code>Fin</code> 的模算术运算（如 <code>Fin</code> 上的加法）需要先用 <code>simp [Fin.val_add]</code> 展开。</p>
                 </section>
               <section>
-                <h3 id="omega-probing-call">
-                  9.6.2. 探测性调用<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=omega-probing-call" title="Permalink">🔗</a></span></h3>
+                <h3 id="ch08-config">
+                  9.1.4. 配置选项<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-config" title="Permalink">🔗</a></span></h3>
                 <p>
-                  有时你想<strong>尝试</strong> omega 但不希望失败中断流程：</p>
-                <pre>-- 尝试用 omega 关闭目标，失败则返回 false
-def tryOmega (goal : MVarId) : MetaM Bool := do
-  try
-    let (remaining, _) ←              -- remaining : 剩余子目标列表
-      Lean.Elab.runTactic goal         -- 在 goal 上运行 tactic
-        (← `(tactic| omega))
-    return remaining.isEmpty           -- 全部关闭则返回 true
-  catch _ =&gt;
-    return false                       -- omega 失败，静默返回 false
+                  omega 的行为通过 <code>OmegaConfig</code> 控制：</p>
+                <pre>-- 关闭 Nat 减法二分（避免指数爆炸）
+omega (config := { splitNatSub := false })
+
+-- 关闭所有 case split，只做纯线性判定
+omega (config := { splitDisjunctions := false, splitNatSub := false,
+                    splitNatAbs := false, splitMinMax := false })
+</pre><p>
+                  四个配置项：<code>splitDisjunctions</code>（析取 case split）、<code>splitNatSub</code>（Nat 减法二分）、<code>splitNatAbs</code>（Int.natAbs 二分）、<code>splitMinMax</code>（展开 min/max）。默认全部为 <code>true</code>。</p>
+                </section>
+              <section>
+                <h3 id="ch08-omega-vs-linarith">
+                  9.1.5. omega 与 linarith 的区别<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-omega-vs-linarith" title="Permalink">🔗</a></span></h3>
+                <p>
+                  omega 和 Mathlib 的 <code>linarith</code> 都处理线性算术，但定位不同：</p>
+                <p>
+                  | 维度 | omega | linarith |
+|------|-------|----------|
+| 所在位置 | Lean 核心 | Mathlib |
+| 数域 | Int、Nat、Fin | 任意线性有序域（R、Q、Z 等） |
+| 整除性 | 支持（<code>k ∣ x</code>、<code>x % k</code>） | 不支持 |
+| Nat 减法 | 自动二分处理 | 不处理 |
+| 实数 | 不支持 | 支持 |</p>
+                <p>
+                  <strong>选择原则</strong>：Nat/Int 线性 + 整除 → <code>omega</code>；实数线性 → <code>linarith</code>；非线性 → <code>nlinarith</code>。</p>
+                <pre>-- omega 的强项：整除推理（linarith 做不到）
+example (a b : Int) (h : a % 2 = 0) (h2 : b % 2 = 0) :
+    (a + b) % 2 = 0 := by omega
+
+-- linarith 的强项：实数域（omega 做不到）
+-- example (x : Real) (h : x &gt; 0) : x + 1 &gt; 1 := by linarith
 </pre></section>
               <section>
-                <h3 id="omega-combining-tactics">
-                  9.6.3. 与其他 tactic 组合<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=omega-combining-tactics" title="Permalink">🔗</a></span></h3>
+                <h3 id="ch08-omega-combos">
+                  9.1.6. 与其他 tactic 的组合<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-omega-combos" title="Permalink">🔗</a></span></h3>
                 <p>
-                  omega 经常作为 "收尾" tactic 出现在组合策略中：</p>
-                <pre>-- 先简化，再尝试 omega
-macro "simp_omega" : tactic =&gt;
-  `(tactic| (simp &lt;;&gt; try omega))
+                  omega 经常作为"收尾"tactic 出现：</p>
+                <pre>-- 先简化，再 omega
+-- simp &lt;;&gt; try omega
+
+-- 作为 simp 的 discharger
+-- simp (discharger := omega)
 
 -- 在 decide 策略中作为后备
-macro "auto_arith" : tactic =&gt;
-  `(tactic| first | omega | norm_num | simp [Nat.add_comm])
-</pre></section>
+-- first | omega | norm_num | simp
+</pre><p>
+                  omega 会自动扫描 <code>LocalContext</code> 中所有线性算术假设，<strong>无需手动指定</strong>。但自定义定义不会被展开——调用前先 <code>unfold</code> 或 <code>simp only [...]</code>。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch08-source-overview">
+                9.2. 源码全景<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-source-overview" title="Permalink">🔗</a></span></h2>
+              <p>
+                omega 的源码分布在两个目录：<code>Lean/Elab/Tactic/Omega/</code>（tactic 层与算法）和 <code>Init/Omega/</code>（数据结构与引理）。核心文件：</p>
+              <p>
+                | 文件 | 内容 | 行数 |
+|------|------|------|
+| <code>Frontend.lean</code> | tactic 入口、预处理管线、<code>omegaImpl</code>、case split | ~714 |
+| <code>Core.lean</code> | <code>Problem</code>、<code>Fact</code>、<code>Justification</code>、消元算法 | ~578 |
+| <code>OmegaM.lean</code> | <code>OmegaM</code> monad、原子管理、缓存 | ~262 |
+| <code>MinNatAbs.lean</code> | 系数分析辅助（困难等式选择） | ~150 |</p>
+              <p>
+                omega 的工程复杂度远超核心消元算法。复杂度来自三个方面：<strong>(a)</strong> 命题翻译层——把 Lean 语法世界的命题逐步降解为约束求解器的内部表示；<strong>(b)</strong> Nat/Int/Fin 语义桥接——截断减法、整数除法、Fin 模算术的精确翻译；<strong>(c)</strong> 延迟证明构造——<code>Justification</code> 追踪每一步推导的来源，最终构造可检查的证明项。</p>
               <section>
-                <h3 id="omega-as-discharger">
-                  9.6.4. 在 discharger 中使用<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=omega-as-discharger" title="Permalink">🔗</a></span></h3>
-                <p>
-                  许多 tactic 接受 discharger 参数来关闭 side goal。
-omega 是线性算术 side goal 的理想 discharger：</p>
-                <pre>-- simp 产生的算术 side goal 由 omega 关闭
-example (xs : List ℕ) (h : xs.length &gt; 2) :
-    xs.length - 1 &gt; 0 := by
-  simp (config := { decide := false }) at *
-  omega                          -- 关闭 simp 留下的算术目标
+                <h3 id="ch08-architecture">
+                  9.2.1. 架构全景图<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-architecture" title="Permalink">🔗</a></span></h3>
+                <pre>用户层
+┌─────────────────────────────────────────────────────┐
+│  omega                                              │
+│  omega (config := { splitNatSub := false })         │
+└─────────┬───────────────────────────────────────────┘
+          │
+Tactic 层 (TacticM)
+┌─────────┴───────────────────────────────────────────┐
+│  evalOmega                                          │
+│  · 先尝试 assumption                                │
+│  · 解析配置                                          │
+│  · omegaTactic                                      │
+│    · falseOrByContra (转化目标为 False)              │
+│    · 收集局部假设                                    │
+│    · 调用 omega (MetaM 入口)                         │
+└─────────┬───────────────────────────────────────────┘
+          │
+Meta 层 (OmegaM)
+┌─────────┴───────────────────────────────────────────┐
+│  omegaImpl  ←── 主循环                              │
+│  ├── processFacts (预处理)                           │
+│  │   └── addFact (命题分类)                          │
+│  │       └── asLinearCombo (线性化)                  │
+│  ├── Problem.elimination (消元)                     │
+│  │   ├── solveEqualities (等式消元)                  │
+│  │   └── fourierMotzkin (FM 消元)                   │
+│  └── splitDisjunction (析取 case split)             │
+│      └── omegaImpl (递归)                            │
+└─────────────────────────────────────────────────────┘
+
+数据层
+┌─────────────────────────────────────────────────────┐
+│  Coeffs (稠密系数向量)                               │
+│  LinearCombo { const, coeffs }                      │
+│  Constraint { lowerBound, upperBound }              │
+│  Fact { coeffs, constraint, justification }         │
+│  Problem { assumptions, constraints, equalities }   │
+│  MetaProblem { problem, facts, disjunctions }       │
+└─────────────────────────────────────────────────────┘
 </pre></section>
               </section>
             <section>
-              <h2 id="omega-vs-other-tactics">
-                9.7. 8.7 omega 与其他算术 tactic 的对比<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=omega-vs-other-tactics" title="Permalink">🔗</a></span></h2>
-              <ul>
-                <li>
-                  <p>
-                    tactic：<code>omega</code> —— 理论域：ℕ, ℤ（线性） —— 强项：整除、模运算、Nat.sub —— 弱项：非线性、实数</p>
-                  </li>
-                <li>
-                  <p>
-                    tactic：<code>linarith</code> —— 理论域：任意 ordered field —— 强项：实数线性、可扩展 —— 弱项：不懂整除、不处理 Nat.sub</p>
-                  </li>
-                <li>
-                  <p>
-                    tactic：<code>nlinarith</code> —— 理论域：同上 + 非线性提示 —— 强项：非线性（带 hint） —— 弱项：需要手动提供非线性项</p>
-                  </li>
-                <li>
-                  <p>
-                    tactic：<code>norm_num</code> —— 理论域：具体数值 —— 强项：计算确定值 —— 弱项：不处理变量</p>
-                  </li>
-                <li>
-                  <p>
-                    tactic：<code>decide</code> —— 理论域：Decidable 实例 —— 强项：有限类型穷举 —— 弱项：无限类型</p>
-                  </li>
-                <li>
-                  <p>
-                    tactic：<code>ring</code> —— 理论域：交换环 —— 强项：多项式等式 —— 弱项：不等式</p>
-                  </li>
-                </ul>
-              <p>
-                <strong>选择原则</strong>：ℕ/ℤ 线性 → <code>omega</code>；实数线性 → <code>linarith</code>；
-非线性 → <code>nlinarith</code>；纯数值 → <code>norm_num</code>；多项式等式 → <code>ring</code>。</p>
+              <h2 id="ch08-data-structures">
+                9.3. 核心数据结构<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-data-structures" title="Permalink">🔗</a></span></h2>
               <section>
-                <h3 id="combination-examples">
-                  9.7.1. 组合示例<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=combination-examples" title="Permalink">🔗</a></span></h3>
-                <pre>-- 非线性目标，omega 不行，用 nlinarith
-example (n : ℕ) (h : n ≥ 2) : n * n ≥ 4 := by
-  nlinarith [sq_nonneg (n - 2)]
+                <h3 id="ch08-coeffs">
+                  9.3.1. Coeffs：稠密系数向量<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-coeffs" title="Permalink">🔗</a></span></h3>
+                <p>
+                  最底层是 <code>IntList</code>（<code>List Int</code> 的类型别名），用于稠密表示整数系数向量。<code>Coeffs</code> 是 <code>IntList</code> 的类型别名，超出列表长度的位置视为 0。核心运算定义在 <code>Init/Omega/IntList.lean</code> 和 <code>Init/Omega/Coeffs.lean</code>：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Init/Omega/IntList.lean]
+abbrev IntList := List Int
+abbrev Coeffs := IntList
 
--- omega 处理模运算（linarith 做不到）
-example (a b : ℤ) (h : a % 2 = 0) (h2 : b % 2 = 0) :
-    (a + b) % 2 = 0 := by
-  omega                          -- omega 的整除推理能力
+def get (xs : IntList) (i : Nat) : Int := xs[i]?.getD 0
 
--- omega 自动展开 Nat.succ
-example (n : ℕ) (h : Nat.succ n &gt; 3) : n ≥ 3 := by
-  omega                          -- 知道 Nat.succ n = n + 1
-</pre></section>
+-- 点积——约束求值的核心
+def dot (xs ys : IntList) : Int := (xs * ys).sum
+
+-- 线性组合——FM 消元的基本操作
+def combo (a : Int) (xs : IntList) (b : Int) (ys : IntList) : IntList :=
+  List.zipWithAll (fun x y =&gt; a * x.getD 0 + b * y.getD 0) xs ys
+</pre><p>
+                  其他操作包括 <code>neg</code>、<code>smul</code>（标量乘法）、<code>sdiv</code>（带符号除法）、<code>gcd</code>（所有元素绝对值的最大公因数）、<code>bmod</code>（平衡取模）等。</p>
+                </section>
               <section>
-                <h3 id="practical-tips">
-                  9.7.2. 实用技巧<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=practical-tips" title="Permalink">🔗</a></span></h3>
+                <h3 id="ch08-linear-combo">
+                  9.3.2. LinearCombo：线性组合<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-linear-combo" title="Permalink">🔗</a></span></h3>
                 <p>
-                  omega 会自动扫描 <code>LocalContext</code> 中所有线性算术假设，
-<strong>无需手动指定</strong>。但自定义定义不会被展开——
-调用前先 <code>unfold</code> 或 <code>simp only [...]</code>。</p>
+                  <code>LinearCombo</code> 表示一个<strong>常数项 + 系数向量</strong>的线性表达式：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Init/Omega/LinearCombo.lean]
+structure LinearCombo where
+  const : Int := 0       -- 常数项
+  coeffs : Coeffs := []  -- 各原子的系数
+</pre><p>
+                  语义：<code>const + Σᵢ coeffs[i] * atoms[i]</code>。算术运算（<code>add</code>、<code>sub</code>、<code>neg</code>）逐分量操作。<strong>乘法只在一个因子是常数时有效</strong>——代码在使用前检查 <code>xl.coeffs.isZero ∨ yl.coeffs.isZero</code>。</p>
+                </section>
+              <section>
+                <h3 id="ch08-constraint">
+                  9.3.3. Constraint：约束的上下界<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-constraint" title="Permalink">🔗</a></span></h3>
                 <p>
-                  <code>norm_num</code> 擅长具体计算（如 <code>100 * 99 / 2 = 4950</code>），
-<code>omega</code> 擅长带变量的线性推理。两者互补，几乎不重叠。</p>
+                  <code>Constraint</code> 用一对可选的上下界表示约束：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Init/Omega/Constraint.lean]
+structure Constraint where
+  lowerBound : Option Int
+  upperBound : Option Int
+</pre><p>
+                  语义是 <code>lowerBound ≤ value ≤ upperBound</code>，<code>none</code> 表示无约束。预定义特殊约束：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Init/Omega/Constraint.lean]
+def trivial    : Constraint := ⟨none, none⟩       -- 无约束
+def impossible : Constraint := ⟨some 1, some 0⟩   -- 不可满足（1 ≤ x ≤ 0）
+def exact (r : Int) : Constraint := ⟨some r, some r⟩  -- 等式（x = r）
+</pre><p>
+                  关键操作：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Init/Omega/Constraint.lean]
+-- 合取（取更紧的界）
+def combine (x y : Constraint) : Constraint where
+  lowerBound := Option.merge max x.lowerBound y.lowerBound
+  upperBound := Option.merge min x.upperBound y.upperBound
+
+-- 线性组合
+def combo (a : Int) (x : Constraint) (b : Int) (y : Constraint) : Constraint :=
+  add (scale a x) (scale b y)
+
+-- 不可满足判定
+def isImpossible (c : Constraint) : Bool :=
+  match c.lowerBound, c.upperBound with
+  | some l, some u =&gt; u &lt; l
+  | _, _ =&gt; false
+</pre><p>
+                  <code>combine</code> 是同系数约束合并的核心——把两个约束取交集（更紧的界）。<code>combo</code> 是 Fourier-Motzkin 消元的基本操作——两个约束的线性组合。</p>
+                </section>
+              <section>
+                <h3 id="ch08-justification">
+                  9.3.4. Justification：推导树<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-justification" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>Justification</code> 是一个归纳类型，记录约束的推导历史。它的索引类型参数精确追踪约束和系数，保证证明项构造的类型安全：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:42-59]
+inductive Justification : Constraint → Coeffs → Type
+  | assumption (s : Constraint) (x : Coeffs) (i : Nat) : Justification s x
+  | tidy (j : Justification s c) :
+      Justification (tidyConstraint s c) (tidyCoeffs s c)
+  | combine {s t c} (j : Justification s c) (k : Justification t c) :
+      Justification (s.combine t) c
+  | combo {s t x y} (a : Int) (j : Justification s x)
+                     (b : Int) (k : Justification t y) :
+      Justification (Constraint.combo a s b t) (Coeffs.combo a x b y)
+  | bmod (m : Nat) (r : Int) (i : Nat) {x}
+      (j : Justification (.exact r) x) :
+      Justification (.exact (Int.bmod r m)) (bmod_coeffs m i x)
+</pre><p>
+                  各构造子对应不同的推导步骤：</p>
+                <p>
+                  | 构造子 | 含义 |
+|--------|------|
+| <code>assumption</code> | 来自原始假设 <code>Problem.assumptions[i]</code> |
+| <code>tidy</code> | 约束规范化（GCD 除法、系数归正） |
+| <code>combine</code> | 同系数约束的合取（取更紧界） |
+| <code>combo</code> | 两个约束的线性组合（Fourier-Motzkin 的核心操作） |
+| <code>bmod</code> | 平衡取模（处理困难等式消元） |</p>
+                <p>
+                  <strong>关键设计</strong>：omega 不在搜索过程中构造 Lean 证明项——先在 <code>Justification</code> 中记录推导树，只有找到矛盾后才调用 <code>Justification.proof</code> 转化为 <code>Expr</code>。这种<strong>延迟证明构造</strong>避免了为最终不需要的搜索分支生成证明。</p>
+                </section>
+              <section>
+                <h3 id="ch08-fact-and-problem">
+                  9.3.5. Fact 与 Problem<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-fact-and-problem" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>Fact</code> 把约束、系数和推导绑定在一起：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:129-136]
+structure Fact where
+  coeffs : Coeffs
+  constraint : Constraint
+  justification : Justification constraint coeffs
+</pre><p>
+                  <code>Problem</code> 是约束求解器的核心状态：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:167-195]
+structure Problem where
+  assumptions : Array Proof := ∅
+  numVars : Nat := 0
+  constraints : Std.HashMap Coeffs Fact := ∅
+  equalities : Std.HashSet Coeffs := ∅
+  eliminations : List (Fact × Nat × Int) := []
+  possible : Bool := true
+  proveFalse? : Option Proof := none
+  proveFalse?_spec : possible || proveFalse?.isSome := by rfl
+  explanation? : Thunk String := ""
+</pre><p>
+                  设计要点：</p>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>以 <strong><code>Coeffs</code> 为键的 HashMap</strong></strong>：同系数约束自动合并（通过 <code>combine</code> 取更紧界）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong><strong><code>equalities</code> 集合</strong></strong>：追踪等式以便优先消元</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong><strong><code>possible</code> + <code>proveFalse?</code> 不变量</strong></strong>：一旦发现矛盾就停止，<code>proveFalse?_spec</code> 在类型层面保证这个不变量</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong><strong><code>eliminations</code> 列表</strong></strong>：记录已用于消元的等式，新约束入库时需要 <code>replayEliminations</code> 重放</p>
+                    </li>
+                  </ul>
+                <p>
+                  <code>MetaProblem</code> 在 <code>Problem</code> 之上加了预处理队列：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:59-69]
+structure MetaProblem where
+  problem : Problem := {}
+  facts : List Expr := []
+  disjunctions : List Expr := []
+  processedFacts : Std.HashSet Expr := ∅
+</pre><p>
+                  <code>facts</code> 是待处理的假设队列，<code>disjunctions</code> 是待 case split 的析取，<code>processedFacts</code> 做去重。</p>
                 </section>
               </section>
+            <section>
+              <h2 id="ch08-preprocessing">
+                9.4. 预处理：命题翻译<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-preprocessing" title="Permalink">🔗</a></span></h2>
+              <p>
+                omega 的预处理分两步：<strong>命题分类</strong>（<code>addFact</code>）和<strong>表达式线性化</strong>（<code>asLinearCombo</code>）。</p>
+              <section>
+                <h3 id="ch08-eval-omega">
+                  9.4.1. 入口：evalOmega<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-eval-omega" title="Permalink">🔗</a></span></h3>
+                <p>
+                  omega 的 tactic 入口定义在 <code>Frontend.lean</code>：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:703-710]
+@[builtin_tactic Lean.Parser.Tactic.omega]
+def evalOmega : Tactic
+  | `(tactic| omega%$tk $cfg:optConfig) =&gt; do
+    Meta.withReducibleAndInstances (evalAssumption tk) &lt;|&gt; do
+    let cfg ← elabOmegaConfig cfg
+    omegaTactic cfg
+  | _ =&gt; throwUnsupportedSyntax
+</pre><p>
+                  注意第一行的 <code>evalAssumption</code>：omega 会<strong>先尝试 <strong><code>assumption</code></strong></strong>——如果目标已经在假设中，直接结束，避免启动重型算法。这种"短路"模式是高效 tactic 设计的常见手法。</p>
+                <p>
+                  <code>omegaTactic</code> 做三件关键的事：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:680-696]
+def omegaTactic (cfg : OmegaConfig) : TacticM Unit := do
+  recordExtraModUse (isMeta := false) `Init.Omega
+  liftMetaFinishingTactic fun g =&gt; do
+    if debug.terminalTacticsAsSorry.get (← getOptions) then
+      g.admit
+    else
+      let some g ← g.falseOrByContra | return ()
+      g.withContext do
+        let type ← g.getType
+        let g' ← mkFreshExprSyntheticOpaqueMVar type
+        let hyps := (← getLocalHyps).toList
+        trace[omega] "analyzing {hyps.length} hypotheses:\n\
+          {← hyps.mapM inferType}"
+        omega hyps g'.mvarId! cfg
+        let e ← mkAuxTheorem type
+          (← instantiateMVarsProfiling g') (zetaDelta := true)
+        g.assign e
+</pre><ol start="1">
+                  <li>
+                    <p>
+                      <strong><strong><code>falseOrByContra</code></strong></strong>：把目标转化为 <code>False</code>——omega 通过矛盾法证明</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>收集假设</strong>：<code>getLocalHyps</code> 获取所有局部假设</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong><strong><code>mkAuxTheorem</code> 封装</strong></strong>：omega 的证明项通常非常大，封装为辅助定义避免拖慢类型检查</p>
+                    </li>
+                  </ol>
+                </section>
+              <section>
+                <h3 id="ch08-add-fact">
+                  9.4.2. 命题分类：addFact<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-add-fact" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>addFact</code> 对每个假设进行模式匹配，把数学命题分类并翻译为线性约束：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:425-508]
+partial def addFact (p : MetaProblem) (h : Expr) :
+    OmegaM (MetaProblem × Nat) := do
+  if ! p.problem.possible then return (p, 0)
+  let t ← instantiateMVars (← whnfR (← inferType h))
+  match t with
+  | .forallE _ x y _ =&gt;
+    if ← pure t.isArrow &lt;&&&gt; isProp x &lt;&&&gt; isProp y then
+      -- 蕴含 p → q 转化为析取 ¬p ∨ q
+      p.addFact (mkApp4 (.const ``Decidable.not_or_of_imp []) x y
+        (.app (.const ``Classical.propDecidable []) x) h)
+    ...
+  | .app _ _ =&gt;
+    match_expr t with
+    | Eq α x y =&gt; ...       -- 等式
+    | LE.le α _ x y =&gt; ...  -- ≤
+    | LT.lt α _ x y =&gt; ...  -- &lt;
+    | Not p =&gt; ...           -- ¬
+    | And p q =&gt; ...         -- ∧
+    | Or _ _ =&gt; ...          -- ∨（加入析取队列）
+    | Dvd.dvd α _ x y =&gt; ...-- ∣
+    ...
+</pre><p>
+                  各类命题的转化方式：</p>
+                <p>
+                  | 输入命题 | 转化为 | 说明 |
+|----------|--------|------|
+| <code>x = y</code> (Int) | <code>x - y = 0</code> | 等式 → 常数约束 |
+| <code>x = y</code> (Nat) | <code>↑x - ↑y = 0</code> | 提升到 Int |
+| <code>x ≤ y</code> (Int) | <code>0 ≤ y - x</code> | 不等式 → 下界约束 |
+| <code>x &lt; y</code> (Int) | <code>0 ≤ y - x - 1</code> | 严格 → 非严格 |
+| <code>x ≠ y</code> | <code>x &lt; y ∨ x &gt; y</code> | 不等 → 析取 |
+| <code>p ∧ q</code> | 拆分为两个独立假设 | 合取直接拆分 |
+| <code>p ∨ q</code> | 加入析取队列 | 延后 case split |
+| <code>k ∣ x</code> | <code>x % k = 0</code> | 整除 → 模约束 |
+| <code>¬(k ∣ x)</code> | <code>x % k &gt; 0</code> | 不整除 → 模正约束 |
+| <code>p → q</code> | <code>¬p ∨ q</code> | 蕴含 → 析取 |</p>
+                <p>
+                  <strong>关键细节</strong>：所有 Nat 运算都被提升到 Int 处理。<code>addFact</code> 自动把 <code>Nat</code> 类型的等式/不等式通过 <code>Int.ofNat</code> 提升，然后在 Int 域上工作。</p>
+                <p>
+                  析取的处理是<strong>延迟的</strong>——先加入 <code>disjunctions</code> 队列，等核心消元无法找到矛盾时再做 case split。这种策略避免了不必要的分支搜索。</p>
+                <p>
+                  对于否定假设，<code>pushNot</code> 函数把否定推入内部：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:371-420]
+def pushNot (h P : Expr) : MetaM (Option Expr) := do
+  let P ← whnfR P
+  match P with
+  | .app _ _ =&gt;
+    match_expr P with
+    | LT.lt α _ x y =&gt; match_expr α with
+      | Nat =&gt; return some (mkApp3 (.const ``Nat.le_of_not_lt []) x y h)
+      | Int =&gt; return some (mkApp3 (.const ``Int.le_of_not_lt []) x y h)
+      ...
+    | LE.le α _ x y =&gt; match_expr α with
+      | Nat =&gt; return some (mkApp3 (.const ``Nat.lt_of_not_le []) x y h)
+      ...
+    | Eq α x y =&gt; match_expr α with
+      | Nat =&gt; return some
+          (mkApp3 (.const ``Nat.lt_or_gt_of_ne []) x y h)
+      ...
+    | Not P =&gt;
+      return some (mkApp3 (.const ``Decidable.of_not_not []) P
+        (.app (.const ``Classical.propDecidable []) P) h)
+    ...
+</pre><p>
+                  <code>¬(x &lt; y)</code> 变为 <code>y ≤ x</code>，<code>¬(x = y)</code> 变为 <code>x &lt; y ∨ x &gt; y</code>（析取），<code>¬¬P</code> 变为 <code>P</code>。</p>
+                </section>
+              <section>
+                <h3 id="ch08-as-linear-combo">
+                  9.4.3. 表达式线性化：asLinearCombo<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-as-linear-combo" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>asLinearComboImpl</code> 递归地把一个整数表达式转化为 <code>LinearCombo</code>，返回三元组 <code>(LinearCombo, Proof, NewFacts)</code>：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:131-241]
+partial def asLinearComboImpl (e : Expr) :
+    OmegaM (LinearCombo × OmegaM Expr × List Expr) := do
+  match groundInt? e with
+  | some i =&gt;
+    -- 地面整数常量：直接作为常数项
+    let lc := {const := i}
+    return ⟨lc, mkEvalRflProof e lc, ∅⟩
+  | none =&gt; ...
+    match e.getAppFnArgs with
+  | (``HAdd.hAdd, #[_, _, _, _, e₁, e₂]) =&gt; do
+    -- 加法：递归分解，合并系数
+    let (l₁, prf₁, facts₁) ← asLinearCombo e₁
+    let (l₂, prf₂, facts₂) ← asLinearCombo e₂
+    ...
+    pure (l₁ + l₂, prf, facts₁ ++ facts₂)
+  | (``HSub.hSub, #[_, _, _, _, e₁, e₂]) =&gt; do
+    -- 减法：类似加法
+    ...
+  | (``HMul.hMul, #[_, _, _, _, x, y]) =&gt;
+    -- 乘法：仅当一个因子是常数时展开
+    let (xl, ...) ← asLinearCombo x
+    let (yl, ...) ← asLinearCombo y
+    if xl.coeffs.isZero ∨ yl.coeffs.isZero then
+      pure (LinearCombo.mul xl yl, ...)
+    else
+      mkAtomLinearCombo e  -- 非线性乘法 → 当作原子
+  | (``HMod.hMod, #[_, _, _, _, n, k]) =&gt;
+    -- 取模：改写为 x - (x / k) * k
+    match groundNat? k with
+    | some k' =&gt; do rewrite ... (mkApp2 (.const ``Int.emod_def []) n k')
+    | none =&gt; mkAtomLinearCombo e
+  | (``HDiv.hDiv, #[_, _, _, _, x, z]) =&gt;
+    -- 除以常数 → 新原子 + 界约束
+    ...
+  | _ =&gt; mkAtomLinearCombo e  -- 无法分解 → 新原子
+</pre><p>
+                  <strong>Nat → Int 的提升</strong>（<code>handleNatCast</code>）把各种 Nat 运算推入 cast 内部：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:255-298]
+  handleNatCast (e i n : Expr) : ... := do
+    match n.getAppFnArgs with
+    | (``Nat.succ, #[n]) =&gt;
+        rewrite e (.app (.const ``Int.natCast_succ []) n)
+    | (``HAdd.hAdd, #[_, _, _, _, a, b]) =&gt;
+        rewrite e (mkApp2 (.const ``Int.natCast_add []) a b)
+    | (``HMul.hMul, #[_, _, _, _, a, b]) =&gt;
+        -- ↑(a * b) → ↑a * ↑b，并添加非负约束
+        let (lc, prf, r) ←
+          rewrite e (mkApp2 (.const ``Int.natCast_mul []) a b)
+        pure (lc, prf,
+          r.insert (mkApp2 (.const ``Int.ofNat_mul_nonneg []) a b))
+    | (``HDiv.hDiv, #[_, _, _, _, a, b]) =&gt;
+        rewrite e (mkApp2 (.const ``Int.natCast_ediv []) a b)
+    | (``HMod.hMod, #[_, _, _, _, a, b]) =&gt;
+        rewrite e (mkApp2 (.const ``Int.natCast_emod []) a b)
+    ...
+</pre><p>
+                  <code>↑(a + b)</code> 变为 <code>↑a + ↑b</code>，<code>↑(a * b)</code> 变为 <code>↑a * ↑b</code> 并附加非负约束。这种"提升推入"（push cast inward）使 omega 能在纯 Int 域工作。</p>
+                </section>
+              <section>
+                <h3 id="ch08-process-facts">
+                  9.4.4. processFacts：批量预处理<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-process-facts" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>processFacts</code> 反复从队列中取出假设调用 <code>addFact</code>，直到队列为空：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:515-527]
+partial def processFacts (p : MetaProblem) :
+    OmegaM (MetaProblem × Nat) := do
+  match p.facts with
+  | [] =&gt; pure (p, 0)
+  | h :: t =&gt;
+    if p.processedFacts.contains h then
+      processFacts { p with facts := t }
+    else
+      let (p₁, n₁) ← MetaProblem.addFact { p with
+        facts := t
+        processedFacts := p.processedFacts.insert h } h
+      let (p₂, n₂) ← p₁.processFacts
+      return (p₂, n₁ + n₂)
+</pre><p>
+                  去重通过 <code>processedFacts : HashSet Expr</code> 实现——同一个假设不会被处理两次。注意 <code>addFact</code> 可能生成新的假设（如 Nat 提升的非负约束），这些新假设会被追加到队列头部，确保完整处理。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch08-elimination">
+                9.5. 消元算法<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-elimination" title="Permalink">🔗</a></span></h2>
+              <p>
+                预处理完成后，<code>Problem</code> 包含一组线性约束。核心算法分两阶段：<strong>等式消元</strong> → <strong>Fourier-Motzkin 消元</strong>。</p>
+              <section>
+                <h3 id="ch08-main-loop">
+                  9.5.1. 算法主循环<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-main-loop" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>runOmega</code> 和 <code>elimination</code> 是互相递归的：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:555-573]
+partial def runOmega (p : Problem) : OmegaM Problem := do
+  trace[omega] "Running omega on:\n{p}"
+  if p.possible then
+    let p' ← p.solveEqualities
+    elimination p'
+  else
+    return p
+
+partial def elimination (p : Problem) : OmegaM Problem :=
+  if p.possible then
+    if p.isEmpty then
+      return p
+    else do
+      trace[omega] "Running Fourier-Motzkin elimination on:\n{p}"
+      runOmega (← p.fourierMotzkin)
+  else
+    return p
+</pre><p>
+                  流程：先用等式消元消去所有等式约束，然后做一轮 FM 消元（消去一个变量），递归。直到问题为空（所有变量被消去）或发现矛盾。</p>
+                </section>
+              <section>
+                <h3 id="ch08-equality-elimination">
+                  9.5.2. 等式消元<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-equality-elimination" title="Permalink">🔗</a></span></h3>
+                <p>
+                  等式约束（上下界相等）可以直接用来消去一个变量，是优先处理的。</p>
+                <p>
+                  <strong>选择等式</strong>——<code>selectEquality</code> 从 <code>equalities</code> 集合中选择最优等式：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:289-300]
+def selectEquality (p : Problem) : Option (Coeffs × Nat) :=
+  p.equalities.fold (init := none) fun
+  | none, c =&gt; (c, c.minNatAbs)
+  | some (r, m), c =&gt;
+    if 2 ≤ m then
+      let m' := c.minNatAbs
+      if (m' &lt; m || m' = m && c.maxNatAbs &lt; r.maxNatAbs) then
+        (c, m')
+      else
+        (r, m)
+    else
+      (r, m)
+</pre><p>
+                  优先选系数绝对值最小的等式——理想情况是 ±1，这是"简单等式"。</p>
+                <section>
+                  <h4 id="ch08-easy-equality">
+                    9.5.2.1. 简单等式消元（系数为 ±1）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-easy-equality" title="Permalink">🔗</a></span></h4>
+                  <p>
+                    如果变量 <code>xᵢ</code> 的系数是 ±1，可以直接求解 <code>xᵢ = -(c₀ + c₂·x₂ + ...)</code>，然后代入所有其他约束：</p>
+                  <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:316-331]
+def solveEasyEquality (p : Problem) (c : Coeffs) : Problem :=
+  let i := c.findIdx? (·.natAbs = 1) |&gt;.getD 0
+  let sign := c.get i |&gt; Int.sign
+  match p.constraints[c]? with
+  | some f =&gt;
+    let init :=
+    { assumptions := p.assumptions
+      eliminations := (f, i, sign) :: p.eliminations }
+    p.constraints.fold (init := init) fun p' coeffs g =&gt;
+      match Coeffs.get coeffs i with
+      | 0 =&gt;
+        p'.addConstraint g
+      | ci =&gt;
+        let k := -1 * sign * ci
+        p'.addConstraint (Fact.combo k f 1 g).tidy
+  | _ =&gt; p
+</pre><p>
+                    找到系数为 ±1 的变量 <code>xᵢ</code>，用等式把它从所有约束中代入消去。消元结果记录在 <code>eliminations</code> 列表中，之后新加入的约束需要 <code>replayEliminations</code> 重放这些消元。</p>
+                  </section>
+                <section>
+                  <h4 id="ch08-hard-equality">
+                    9.5.2.2. 困难等式消元（平衡取模）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-hard-equality" title="Permalink">🔗</a></span></h4>
+                  <p>
+                    当所有系数绝对值都大于 1 时，使用<strong>平衡取模</strong>（balanced mod, bmod）技巧。设最小系数绝对值为 <code>m-1</code>，取 <code>m = minNatAbs + 1</code>：</p>
+                  <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:340-356]
+def dealWithHardEquality (p : Problem) (c : Coeffs) :
+    OmegaM Problem :=
+  match p.constraints[c]? with
+  | some ⟨_, ⟨some r, some r'⟩, j⟩ =&gt; do
+    let m := c.minNatAbs + 1
+    let x := mkApp3 (.const ``bmod_div_term [])
+      (toExpr m) (toExpr c) (← atomsCoeffs)
+    let (i, facts?) ← lookup x
+    if hr : r' = r then
+      match facts? with
+      | none =&gt; throwError
+          "When solving hard equality, new atom had been seen before!"
+      | some facts =&gt; if ! facts.isEmpty then
+        throwError
+          "When solving hard equality, unexpected new facts!"
+      return p.addConstraint
+        { coeffs := _, constraint := _,
+          justification := (hr ▸ j).bmod m r i }
+    else
+      throwError "Invalid constraint, expected an equation."
+  | _ =&gt; return p
+</pre><p>
+                    思路：对等式 <code>r + c₀·x₀ + c₁·x₁ + ... = 0</code> 做 bmod m，得到新等式 <code>bmod(r,m) + bmod(c₀,m)·x₀ + ... = m·α</code>，其中 <code>α</code> 是新变量。由于 <code>bmod(m-1, m)</code> 的值为 ±1，原来系数最小的变量在新等式中系数变为 ±1——困难等式变成了简单等式。</p>
+                  <p>
+                    虽然引入了新变量，但词典序 <code>(minNatAbs, maxNatAbs)</code> 严格递减，保证终止。</p>
+                  <p>
+                    <code>solveEqualities</code> 循环处理所有等式：</p>
+                  <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:369-374]
+partial def solveEqualities (p : Problem) : OmegaM Problem :=
+  if p.possible then
+    match p.selectEquality with
+    | some (c, m) =&gt; do (← p.solveEquality c m).solveEqualities
+    | none =&gt; return p
+  else return p
+</pre></section>
+                </section>
+              <section>
+                <h3 id="ch08-min-nat-abs">
+                  9.5.3. MinNatAbs：辅助系数分析<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-min-nat-abs" title="Permalink">🔗</a></span></h3>
+                <p>
+                  困难等式消元依赖 <code>minNatAbs</code>——系数列表中最小的非零绝对值。它定义在 <code>MinNatAbs.lean</code>：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/MinNatAbs.lean:41]
+def nonzeroMinimum (xs : List Nat) : Nat :=
+  xs.filter (· ≠ 0) |&gt;.min? |&gt;.getD 0
+
+-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/MinNatAbs.lean:134]
+def minNatAbs (xs : List Int) : Nat :=
+  xs.map Int.natAbs |&gt; nonzeroMinimum
+</pre><p>
+                  该文件还包含 <code>minNatAbs</code> 的完整形式化性质证明（<code>minNatAbs_eq_zero_iff</code>、<code>minNatAbs_eq_nonzero_iff</code>、<code>nonzeroMinimum_le</code> 等），这些引理用于保证等式消元的终止性和正确性。</p>
+                </section>
+              <section>
+                <h3 id="ch08-fourier-motzkin">
+                  9.5.4. Fourier-Motzkin 消元<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-fourier-motzkin" title="Permalink">🔗</a></span></h3>
+                <p>
+                  等式消元后，剩下的约束都是不等式。Fourier-Motzkin 消元选一个变量，把涉及它的约束配对消去。</p>
+                <section>
+                  <h4 id="ch08-fm-classify">
+                    9.5.4.1. 步骤 1：分类约束<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-fm-classify" title="Permalink">🔗</a></span></h4>
+                  <p>
+                    <code>fourierMotzkinData</code> 对每个变量分类所有约束：</p>
+                  <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:481-503]
+def fourierMotzkinData (p : Problem) :
+    Array FourierMotzkinData := Id.run do
+  let n := p.numVars
+  let mut data : Array FourierMotzkinData :=
+    (List.range p.numVars).foldl
+      (fun a i =&gt; a.push { var := i}) #[]
+  for (_, f@⟨xs, s, _⟩) in p.constraints do
+    for i in *...n do
+      let x := Coeffs.get xs i
+      data := data.modify i fun d =&gt;
+        if x = 0 then
+          { d with irrelevant := f :: d.irrelevant }
+        else Id.run do
+          let s' := s.scale x
+          let mut d' := d
+          if s'.lowerBound.isSome then
+            d' := { d' with
+              lowerBounds := (f, x) :: d'.lowerBounds
+              lowerExact := d'.lowerExact && x.natAbs = 1 }
+          if s'.upperBound.isSome then
+            d' := { d' with
+              upperBounds := (f, x) :: d'.upperBounds
+              upperExact := d'.upperExact && x.natAbs = 1 }
+          return d'
+  return data
+</pre><p>
+                    对每个变量 <code>xᵢ</code>，约束被分为三类：</p>
+                  <p>
+                    | 分类 | 条件 | 含义 |
+|------|------|------|
+| 下界 (lower) | <code>coeffs[i] &gt; 0</code> | 给出 <code>xᵢ</code> 的下界 |
+| 上界 (upper) | <code>coeffs[i] &lt; 0</code> | 给出 <code>xᵢ</code> 的上界 |
+| 无关 (irrelevant) | <code>coeffs[i] = 0</code> | 不含 <code>xᵢ</code> |</p>
+                  <p>
+                    <code>FourierMotzkinData</code> 还记录 <code>lowerExact</code> 和 <code>upperExact</code>——所有系数是否为 ±1。如果是，消元是<strong>精确的</strong>（real shadow = dark shadow），不会引入伪解。</p>
+                  </section>
+                <section>
+                  <h4 id="ch08-fm-select">
+                    9.5.4.2. 步骤 2：选择变量<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-fm-select" title="Permalink">🔗</a></span></h4>
+                  <p>
+                    <code>fourierMotzkinSelect</code> 选择消去"代价"最小的变量：</p>
+                  <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:511-532]
+def fourierMotzkinSelect (data : Array FourierMotzkinData) :
+    MetaM FourierMotzkinData := do
+  let data := data.filter fun d =&gt; ¬ d.isEmpty
+  trace[omega] "Selecting variable to eliminate from \
+    (idx, size, exact) triples:\n\
+    {data.map fun d =&gt; (d.var, d.size, d.exact)}"
+  let mut bestIdx := 0
+  let mut bestSize := data[0]!.size
+  let mut bestExact := data[0]!.exact
+  if bestSize = 0 then return data[0]!
+  for h : i in 1...data.size do
+    let exact := data[i].exact
+    let size := data[i].size
+    if size = 0 || !bestExact && exact
+        || (bestExact == exact) && size &lt; bestSize then
+      if size = 0 then return data[i]
+      bestIdx := i
+      bestExact := exact
+      bestSize := size
+  return data[bestIdx]!
+</pre><p>
+                    优先级：</p>
+                  <ol start="1">
+                    <li>
+                      <p>
+                        <strong>size = 0</strong>：所有约束都与该变量无关，免费消去</p>
+                      </li>
+                    <li>
+                      <p>
+                        <strong>精确消元</strong>（exact = true）：所有系数为 ±1，不引入伪解</p>
+                      </li>
+                    <li>
+                      <p>
+                        <strong>最小乘积</strong>：<code>|lower| × |upper|</code> 最小，生成最少新约束</p>
+                      </li>
+                    </ol>
+                  </section>
+                <section>
+                  <h4 id="ch08-fm-eliminate">
+                    9.5.4.3. 步骤 3：消元<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-fm-eliminate" title="Permalink">🔗</a></span></h4>
+                  <p>
+                    对每对 (下界, 上界) 做线性组合消去选定变量：</p>
+                  <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:538-548]
+def fourierMotzkin (p : Problem) : MetaM Problem := do
+  let data := p.fourierMotzkinData
+  let ⟨_, irrelevant, lower, upper, _, _⟩ ←
+    fourierMotzkinSelect data
+  let mut r : Problem :=
+    { assumptions := p.assumptions,
+      eliminations := p.eliminations }
+  for f in irrelevant do
+    r := r.insertConstraint f
+  for ⟨f, b⟩ in lower do
+    for ⟨g, a⟩ in upper do
+      r := r.addConstraint (Fact.combo a f (-b) g).tidy
+  return r
+</pre><p>
+                    新约束数 = <code>|lower| × |upper|</code>——这就是 FM 的复杂度瓶颈，每消一个变量约束数可能平方增长。但实际问题中约束通常稀疏，增长可控。</p>
+                  <p>
+                    每个新约束都经过 <code>tidy</code> 规范化：<strong>(1)</strong> 令首个非零系数为正；<strong>(2)</strong> 除以所有系数的 GCD（常数项取整保持整数正确性）；<strong>(3)</strong> 如果已有同系数约束，用 <code>combine</code> 取更紧界。</p>
+                  </section>
+                </section>
+              <section>
+                <h3 id="ch08-constraint-insertion">
+                  9.5.5. 约束插入与矛盾检测<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-constraint-insertion" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>addConstraint</code> 是约束入库的核心——同系数约束自动合并：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:254-278]
+def addConstraint (p : Problem) : Fact → Problem
+  | f@⟨x, s, j⟩ =&gt;
+    if p.possible then
+      match p.constraints[x]? with
+      | none =&gt;
+        match s with
+        | .trivial =&gt; p
+        | _ =&gt; p.insertConstraint f
+      | some ⟨x', t, k⟩ =&gt;
+        if h : x = x' then
+          let r := s.combine t
+          if r = t then p           -- 旧约束已经更紧
+          else if r = s then
+            p.insertConstraint ⟨x, s, j⟩  -- 新约束严格更紧
+          else
+            p.insertConstraint
+              ⟨x, s.combine t, j.combine (h ▸ k)⟩
+        else p
+    else p
+</pre><p>
+                  <code>insertConstraint</code> 在插入时检查矛盾——如果约束的 <code>isImpossible</code> 返回 <code>true</code>（<code>upperBound &lt; lowerBound</code>），问题立即标记为不可满足：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:231-248]
+def insertConstraint (p : Problem) : Fact → Problem
+  | f@⟨x, s, j⟩ =&gt;
+    if s.isImpossible then
+      { p with
+        possible := false
+        proveFalse? := some (proveFalse j p.assumptions)
+        explanation? := Thunk.mk fun _ =&gt; j.toString
+        proveFalse?_spec := rfl }
+    else
+      { p with
+        numVars := max p.numVars x.length
+        constraints := p.constraints.insert x f
+        proveFalse?_spec := p.proveFalse?_spec
+        equalities :=
+        if f.constraint.isExact then p.equalities.insert x
+        else p.equalities }
+</pre></section>
+              </section>
+            <section>
+              <h2 id="ch08-proof-construction">
+                9.6. 证明构造<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-proof-construction" title="Permalink">🔗</a></span></h2>
+              <p>
+                omega 的证明构造采用<strong>延迟策略</strong>：先在 <code>Justification</code> 中记录推导树，只有找到矛盾后才转化为 Lean 证明项。</p>
+              <section>
+                <h3 id="ch08-justification-to-proof">
+                  9.6.1. Justification → Proof<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-justification-to-proof" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>Justification.proof</code> 递归地把推导树转化为 <code>Expr</code>：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:117-124]
+def proof (v : Expr) (assumptions : Array Proof) :
+    Justification s c → Proof
+  | assumption s c i =&gt; assumptions[i]!
+  | @tidy s c j =&gt;
+      return tidyProof s c v (← proof v assumptions j)
+  | @combine s t c j k =&gt;
+    return combineProof s t c v
+      (← proof v assumptions j) (← proof v assumptions k)
+  | @combo s t x y a j b k =&gt;
+    return comboProof s t a x b y v
+      (← proof v assumptions j) (← proof v assumptions k)
+  | @bmod m r i x j =&gt; do
+      bmodProof m r i x v (← proof v assumptions j)
+</pre><p>
+                  每个构造子对应一个证明项构造函数：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:88-112]
+def tidyProof (s : Constraint) (x : Coeffs)
+    (v prf : Expr) : Expr :=
+  mkApp4 (.const ``tidy_sat []) (toExpr s) (toExpr x) v prf
+
+def combineProof (s t : Constraint) (x : Coeffs)
+    (v ps pt : Expr) : Expr :=
+  mkApp6 (.const ``Constraint.combine_sat' [])
+    (toExpr s) (toExpr t) (toExpr x) v ps pt
+
+def comboProof (s t : Constraint) (a : Int) (x : Coeffs)
+    (b : Int) (y : Coeffs) (v px py : Expr) : Expr :=
+  mkApp9 (.const ``combo_sat' [])
+    (toExpr s) (toExpr t) (toExpr a) (toExpr x)
+    (toExpr b) (toExpr y) v px py
+</pre></section>
+              <section>
+                <h3 id="ch08-prove-false">
+                  9.6.2. proveFalse：从矛盾到 False<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-prove-false" title="Permalink">🔗</a></span></h3>
+                <p>
+                  最终的 <code>False</code> 证明通过 <code>Constraint.not_sat'_of_isImpossible</code> 引理构造：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:218-225]
+def proveFalse {s x} (j : Justification s x)
+    (assumptions : Array Proof) : Proof := do
+  let v := ← atomsCoeffs
+  let prf ← j.proof v assumptions
+  let x := toExpr x
+  let s := toExpr s
+  let impossible ←
+    mkDecideProof (← mkEq
+      (mkApp (.const ``Constraint.isImpossible []) s)
+      (.const ``true []))
+  return mkApp5
+    (.const ``Constraint.not_sat'_of_isImpossible [])
+    s impossible x v prf
+</pre><p>
+                  逻辑链条：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <code>prf</code> 证明 <code>s.sat' x atoms</code>（矛盾约束在当前原子赋值下成立）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>impossible</code> 通过 <code>decide</code> 证明 <code>s.isImpossible = true</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>not_sat'_of_isImpossible</code> 结合两者导出 <code>False</code></p>
+                    </li>
+                  </ol>
+                <p>
+                  证明项通常非常大（嵌套的 <code>combo_sat'</code>、<code>tidy_sat</code> 和 <code>decide</code>），所以 <code>omegaTactic</code> 用 <code>mkAuxTheorem</code> 封装为辅助定义，避免拖慢后续类型检查。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch08-omega-monad">
+                9.7. OmegaM monad<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-omega-monad" title="Permalink">🔗</a></span></h2>
+              <p>
+                omega 使用多层 monad 栈管理状态。</p>
+              <section>
+                <h3 id="ch08-monad-stack">
+                  9.7.1. Monad 栈结构<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-monad-stack" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/OmegaM.lean:49-71]
+structure Context where
+  cfg : OmegaConfig
+
+structure State where
+  atoms : Std.HashMap Expr Nat := {}
+
+abbrev OmegaM' :=
+  StateRefT State (ReaderT Context CanonM)
+
+@[expose] def Cache : Type :=
+  Std.HashMap Expr (LinearCombo × OmegaM' Expr)
+
+abbrev OmegaM := StateRefT Cache OmegaM'
+</pre><p>
+                  两层状态分别管理：<strong>State.atoms</strong>（<code>Expr → Nat</code> 映射，通过 <code>CanonM</code> 保证 defeq 的表达式映射到同一编号）和 <strong>Cache</strong>（子表达式 → <code>(LinearCombo, Proof)</code> 的缓存，避免重复分析）。</p>
+                <p>
+                  整个 monad 栈通过 <code>OmegaM.run</code> 初始化和运行：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/OmegaM.lean:74-75]
+def OmegaM.run (m : OmegaM α) (cfg : OmegaConfig) : MetaM α :=
+  m.run' (∅ : Std.HashMap ..) |&gt;.run' {} { cfg } |&gt;.run'
+</pre></section>
+              <section>
+                <h3 id="ch08-lookup">
+                  9.7.2. 原子管理：lookup<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-lookup" title="Permalink">🔗</a></span></h3>
+                <p>
+                  当遇到无法进一步分解的表达式时，omega 把它注册为一个<strong>原子</strong>：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/OmegaM.lean:247-260]
+def lookup (e : Expr) :
+    OmegaM (Nat × Option (List Expr)) := do
+  let c ← getThe State
+  let e ← canon e
+  match c.atoms[e]? with
+  | some i =&gt; return (i, none)
+  | none =&gt;
+  trace[omega] "New atom: {e}"
+  let facts ← analyzeAtom e
+  if ← isTracingEnabledFor `omega then
+    unless facts.isEmpty do
+      trace[omega] "New facts: \
+        {← facts.mapM fun e =&gt; inferType e}"
+  let i ← modifyGetThe State fun c =&gt;
+    (c.atoms.size,
+     { c with atoms := c.atoms.insert e c.atoms.size })
+  return (i, some facts)
+</pre><p>
+                  <code>canon e</code> 先做规范化（处理 definitional equality），然后查找。如果是新原子，调用 <code>analyzeAtom</code> 生成附加约束。</p>
+                </section>
+              <section>
+                <h3 id="ch08-analyze-atom">
+                  9.7.3. analyzeAtom：原子约束生成<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-analyze-atom" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>analyzeAtom</code> 根据原子的结构自动生成额外的线性约束：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/OmegaM.lean:166-235]
+def analyzeAtom (e : Expr) : OmegaM (List Expr) := do
+  match e.getAppFnArgs with
+  | (``Nat.cast, #[.const ``Int [], _, e']) =&gt;
+    -- ↑(x : Nat) 非负
+    let mut r :=
+      [Expr.app (.const ``Int.natCast_nonneg []) e']
+    match (← cfg).splitNatSub, e'.getAppFnArgs with
+      | true, (``HSub.hSub, #[_, _, _, _, a, b]) =&gt;
+        -- ↑(a - b : Nat) 二分
+        r := r.insert
+          (mkApp2 (.const ``Int.ofNat_sub_dichotomy []) a b)
+      | _, (``Int.natAbs, #[x]) =&gt;
+        r := r.insert
+          (mkApp (.const ``Int.le_natAbs []) x)
+        r := r.insert
+          (mkApp (.const ``Int.neg_le_natAbs []) x)
+      | _, (``Fin.val, #[n, i]) =&gt;
+        r := r.insert (mkApp2 (.const ``Fin.isLt []) n i)
+      ...
+    return r
+  | (``HDiv.hDiv, #[_, _, _, _, x, k]) =&gt;
+    -- x / k 的界约束
+    match natCast? k with
+    | some _ =&gt;
+      pure [mkApp3 (.const ``Int.mul_ediv_self_le [])
+              x k ...,
+            mkApp3 (.const ``Int.lt_mul_ediv_self_add [])
+              x k ...]
+    ...
+  | (``Min.min, #[_, _, x, y]) =&gt;
+    pure [mkApp2 (.const ``Int.min_le_left []) x y,
+          mkApp2 (.const ``Int.min_le_right []) x y]
+  | (``Max.max, #[_, _, x, y]) =&gt;
+    pure [mkApp2 (.const ``Int.le_max_left []) x y,
+          mkApp2 (.const ``Int.le_max_right []) x y]
+  ...
+</pre><p>
+                  | 原子类型 | 生成的约束 |
+|----------|-----------|
+| <code>↑(x : Nat)</code> | <code>0 ≤ ↑x</code> |
+| <code>x / k</code> | <code>k * (x/k) ≤ x &lt; k * (x/k) + k</code> |
+| <code>x % k</code> | <code>0 ≤ x % k &lt; k</code> |
+| <code>↑(a - b : Nat)</code> | 二分：<code>b ≤ a ∧ result = a - b</code> 或 <code>a &lt; b ∧ result = 0</code> |
+| <code>Int.natAbs a</code> | <code>a ≤ natAbs a</code> 且 <code>-a ≤ natAbs a</code> |
+| <code>min a b</code> | <code>min a b ≤ a</code> 且 <code>min a b ≤ b</code> |
+| <code>max a b</code> | <code>a ≤ max a b</code> 且 <code>b ≤ max a b</code> |
+| <code>Fin.val i</code> | <code>i.val &lt; n</code> |</p>
+                <p>
+                  这些自动生成的约束是 omega 能处理 Nat 减法、绝对值、min/max 等非线性构造的关键——它们把超出线性算术的构造"线性化"。</p>
+                </section>
+              <section>
+                <h3 id="ch08-cache-transactions">
+                  9.7.4. 缓存与事务<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-cache-transactions" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>asLinearCombo</code> 使用缓存避免重复分析同一子表达式：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:105-114]
+partial def asLinearCombo (e : Expr) :
+    OmegaM (LinearCombo × OmegaM Expr × List Expr) := do
+  let cache ← get
+  match cache.get? e with
+  | some (lc, prf) =&gt;
+    return (lc, prf, ∅)
+  | none =&gt;
+    let (lc, proof, r) ← asLinearComboImpl e
+    modifyThe Cache fun cache =&gt;
+      (cache.insert e (lc, proof.run' cache))
+    pure (lc, proof, r)
+</pre><p>
+                  <code>commitWhen</code> 提供事务性操作——用于乘法处理时的试探性分析。如果两个因子都有非零系数（非线性乘法），回滚状态，把整个乘积当作原子：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/OmegaM.lean:92-99]
+def commitWhen (t : OmegaM (α × Bool)) : OmegaM α := do
+  let state ← getThe State
+  let cache ← getThe Cache
+  let (a, r) ← t
+  if !r then do
+    modifyThe State fun _ =&gt; state
+    modifyThe Cache fun _ =&gt; cache
+  pure a
+</pre></section>
+              </section>
+            <section>
+              <h2 id="ch08-omega-impl">
+                9.8. omegaImpl 与析取处理<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-omega-impl" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code>omegaImpl</code> 是 omega 的算法主循环：</p>
+              <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:649-664]
+partial def omegaImpl (m : MetaProblem) : OmegaM Expr := do
+  let (m, _) ← m.processFacts
+  guard m.facts.isEmpty
+  let p := m.problem
+  trace[omega] "Extracted linear arithmetic problem:\n\
+    Atoms: {← atomsList}\n{p}"
+  let p' ← if p.possible then p.elimination else pure p
+  trace[omega] "After elimination:\n\
+    Atoms: {← atomsList}\n{p'}"
+  match h₁ : p'.possible, h₂ : p'.proveFalse?,
+      p'.proveFalse?_spec with
+  | true, _, _ =&gt;
+    splitDisjunction m
+  | false, .some prf, _ =&gt;
+    trace[omega] "Justification:\n{p'.explanation?.get}"
+    let prf ← instantiateMVars (← prf)
+    return prf
+  | false, none, h₃ =&gt; by simp [h₁, h₂] at h₃
+</pre><p>
+                流程：<strong>(1)</strong> 预处理所有假设（<code>processFacts</code>）；<strong>(2)</strong> 消元求解（<code>elimination</code>）；<strong>(3)</strong> 如果发现矛盾，返回 <code>False</code> 证明；如果未发现矛盾，尝试 case split。</p>
+              <p>
+                析取处理通过 <code>splitDisjunction</code>——逐个拆分析取，在每个分支中递归调用 <code>omegaImpl</code>：</p>
+              <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:620-646]
+partial def splitDisjunction (m : MetaProblem) :
+    OmegaM Expr := do
+  match m.disjunctions with
+  | [] =&gt; throwError "omega could not prove the goal:\n\
+      {← formatErrorMessage m.problem}"
+  | h :: t =&gt; do
+    let hType ← whnfD (← inferType h)
+    let_expr Or hType₁ hType₂ := hType | ...
+    -- 分支 1：假设 h₁ : P
+    let p?₁ ← withoutModifyingState do
+      withLocalDeclD `h₁ hType₁ fun h₁ =&gt; do
+        let m₁ := { m with facts := [h₁], disjunctions := t }
+        let (m₁, n) ← m₁.processFacts
+        if 0 &lt; n then
+          some (← omegaImpl m₁ &gt;&gt;= mkLambdaFVars #[h₁])
+        else none
+    -- 分支 2：假设 h₂ : Q（类似）
+    ...
+    -- 合并：Or.elim h proof₁ proof₂
+</pre><p>
+                <strong>优化</strong>：尝试分支 1 时使用 <code>withoutModifyingState</code>——如果分支 1 没有贡献新约束（<code>n = 0</code>），跳过这个析取。这避免了无用的 case split。</p>
+              <p>
+                析取处理是递归的——每个分支内可能产生新析取需要进一步 split，最坏情况下是指数级的。这就是为什么 Nat 减法太多时 omega 会超时。</p>
+              </section>
+            <section>
+              <h2 id="ch08-debugging">
+                9.9. 调试手册<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-debugging" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="ch08-trace">
+                  9.9.1. trace 开关<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-trace" title="Permalink">🔗</a></span></h3>
+                <p>
+                  omega 提供详细的 trace 输出：</p>
+                <pre>set_option trace.omega true in
+example : ... := by omega
+</pre><p>
+                  trace 输出涵盖：</p>
+                <ul>
+                  <li>
+                    <p>
+                      假设分析：<code>"adding fact: ..."</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      新原子发现：<code>"New atom: ..."</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      自动生成的约束：<code>"New facts: ..."</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      提取的线性问题：<code>"Extracted linear arithmetic problem: ..."</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      变量选择：<code>"Selecting variable to eliminate from ..."</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      消元后的问题：<code>"After elimination: ..."</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      Case split：<code>"Case splitting on ..."</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      矛盾发现：<code>"omega found a contradiction"</code></p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="ch08-failure-modes">
+                  9.9.2. 常见失败模式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-failure-modes" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong>模式 1：omega 成功但很慢</strong></p>
+                <p>
+                  症状：trace 中出现大量嵌套 case split。原因：Nat 减法或 min/max 引入了过多二分（n 个产生 2^n 种情况）。修复：手动 <code>have</code> 确定不等式后再 <code>omega</code>；或 <code>omega (config := { splitNatSub := false })</code>。</p>
+                <p>
+                  <strong>模式 2：omega 报 "could not prove the goal"</strong></p>
+                <p>
+                  症状：报错并给出可能的反例。原因：目标涉及非线性乘法、缺少假设、或 <code>a * b</code> 与 <code>b * a</code> 被视为不同原子。修复：检查反例，补充假设或改用 <code>nlinarith</code>。</p>
+                <p>
+                  <strong>模式 3：非线性项被当作原子</strong></p>
+                <p>
+                  症状：<code>x * y ≤ z * w</code> 中 omega 把 <code>x * y</code> 和 <code>z * w</code> 当作独立原子。原因：<code>asLinearCombo</code> 只在一个因子是常数时展开乘法。修复：用 <code>nlinarith</code> 或手动 <code>have</code>。</p>
+                <p>
+                  <strong>模式 4：Fin 的模算术</strong></p>
+                <p>
+                  症状：<code>Fin n</code> 上的加法不被正确处理。原因：omega 把 <code>Fin.val</code> 提升到 Nat 但不处理模算术。修复：<code>simp [Fin.val_add]</code> 先展开，再 <code>omega</code>。</p>
+                <p>
+                  <strong>模式 5：未展开的定义</strong></p>
+                <p>
+                  症状：目标"看起来"是线性的但 omega 失败。原因：自定义定义未展开。修复：<code>unfold myDef</code> 或 <code>simp only [myDef]</code> 后再 <code>omega</code>。</p>
+                </section>
+              <section>
+                <h3 id="ch08-error-messages">
+                  9.9.3. 错误信息解读<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-error-messages" title="Permalink">🔗</a></span></h3>
+                <p>
+                  omega 失败时的错误信息格式：</p>
+                <pre>omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  a ≥ 0
+  -a + b ≤ 1
+where
+  a := ↑n
+  b := ↑m
+</pre><p>
+                  "可能反例"是从剩余约束中推导的赋值——展示的是"omega 看到的世界"。它能帮你判断是缺假设、目标不可证、还是预处理丢失了关键信息。注意这只是线性约束系统的满足赋值，不一定是原始命题的真反例。</p>
+                <p>
+                  错误信息的生成逻辑在 <code>formatErrorMessage</code> 中：</p>
+                <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:533-548]
+def formatErrorMessage (p : Problem) :
+    OmegaM MessageData := do
+  if p.possible then
+    if p.isEmpty then
+      return m!"No usable constraints found. ..."
+    else
+      let as ← atoms
+      return .ofLazyM (es := as) do
+        let mask ← mentioned as p.constraints
+        let names ← varNames mask
+        return m!"a possible counterexample may satisfy \
+          the constraints\n"
+          ++ m!"{prettyConstraints names p.constraints}\n\
+               where\n{prettyAtoms names as mask}"
+  else
+    return "it is trivially solvable"
+</pre><p>
+                  如果看到 <code>"No usable constraints found"</code>，说明 omega 完全无法从假设和目标中提取线性算术信息——通常是类型不匹配或定义未展开。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch08-theory">
+                9.10. Omega Test 的理论背景<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-theory" title="Permalink">🔗</a></span></h2>
+              <p>
+                omega tactic 实现的是 Omega Test 的变种。经典 Omega Test 基于三个"影子"（shadow）：</p>
+              <p>
+                | 影子 | 含义 | Lean 实现 |
+|------|------|-----------|
+| Real shadow | Fourier-Motzkin 消元（当作实数） | 已实现 |
+| Dark shadow | 加强的 FM 约束（考虑整数间隙） | 未实现 |
+| Grey shadow | 枚举整数解候选 | 未实现 |</p>
+              <p>
+                Real shadow 是必要条件——如果不可满足，原问题一定不可满足。但 real shadow 可满足不代表存在整数解——当系数不全为 ±1 时，FM 消元可能引入非整数解。</p>
+              <p>
+                <strong>为什么通常够用</strong>：实际编程验证中，大多数线性约束的系数都是 ±1 或小常数（如数组索引界 <code>0 ≤ i &lt; n</code>）。这种情况下 real shadow 就足够了。omega 的变量选择启发式也优先选精确消元（系数为 ±1），进一步保证了 real shadow 的充分性。</p>
+              <p>
+                源码中 <code>Lean/Elab/Tactic/Omega.lean</code> 的模块文档详细讨论了三个影子的理论：</p>
+              <pre>-- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega.lean:101-166]
+-- 实现注释节选：
+-- Currently we do not implement either the dark or grey shadows,
+-- and thus if the real shadow is satisfiable we must fail...
+-- In practical problems, it appears to be relatively rare that
+-- we fail because of not handling the dark and grey shadows.
+-- Fortunately, in many cases it is possible to choose a variable
+-- to eliminate such that the real and dark shadows coincide,
+-- and the grey shadows are empty.
+</pre></section>
             <section>
               <h2 id="ch08-exercises">
-                9.8. 8.8 练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-exercises" title="Permalink">🔗</a></span></h2>
+                9.11. 练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-exercises" title="Permalink">🔗</a></span></h2>
               <section>
-                <h3 id="exercise-8-1">
-                  9.8.1. 练习 1：基础线性推理<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-8-1" title="Permalink">🔗</a></span></h3>
+                <h3 id="ch08-exercise-1">
+                  9.11.1. 练习 1：基础线性推理<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-exercise-1" title="Permalink">🔗</a></span></h3>
                 <p>
-                  判断以下哪些目标 <code>omega</code> 能直接证明，并尝试证明它们。</p>
-                <pre>-- (a) 能否用 omega 证明？
-example (n : ℕ) (h : n &gt; 0) : 2 * n ≥ 2 := by
+                  判断以下哪些目标 <code>omega</code> 能直接证明，并尝试证明：</p>
+                <pre>-- (a)
+example (n : Nat) (h : n &gt; 0) : 2 * n ≥ 2 := by
   sorry
 
--- (b) 能否用 omega 证明？
-example (a b : ℤ) (h1 : a + b = 10) (h2 : a - b = 4) : a = 7 := by
+-- (b)
+example (a b : Int) (h1 : a + b = 10) (h2 : a - b = 4) :
+    a = 7 := by
   sorry
 
--- (c) 能否用 omega 证明？
-example (n : ℕ) : n * (n + 1) / 2 ≥ 0 := by
+-- (c) 包含变量乘法
+example (n : Nat) : n * (n + 1) / 2 ≥ 0 := by
   sorry
 
--- (d) 能否用 omega 证明？
-example (x : ℤ) (h : x % 3 = 0) : x % 6 = 0 ∨ x % 6 = 3 := by
+-- (d)
+example (x : Int) (h : x % 3 = 0) :
+    x % 6 = 0 ∨ x % 6 = 3 := by
   sorry
 </pre><p>
-                  <strong>提示</strong>：(a) 和 (d) 是线性的，(b) 看起来线性但检查一下解，
-(c) 包含变量乘法。</p>
+                  提示：(a) 和 (d) 是线性的，omega 能直接处理；(b) 检查解是否正确（a = 7, b = 3）；(c) 包含 <code>n * (n + 1)</code> 变量乘法。</p>
                 </section>
               <section>
-                <h3 id="exercise-8-2">
-                  9.8.2. 练习 2：诊断失败<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-8-2" title="Permalink">🔗</a></span></h3>
+                <h3 id="ch08-exercise-2">
+                  9.11.2. 练习 2：诊断失败<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-exercise-2" title="Permalink">🔗</a></span></h3>
                 <p>
-                  以下每个 <code>omega</code> 调用都会失败。解释失败原因，并给出修复方案。</p>
-                <pre>-- (a) 为什么失败？如何修复？
-example (n : ℕ) : n ^ 2 ≥ 0 := by
-  omega
+                  以下每个 <code>omega</code> 调用都会失败。解释失败原因，给出修复方案：</p>
+                <pre>-- (a) 非线性项
+example (n : Nat) : n ^ 2 ≥ 0 := by
+  omega  -- ✗
 
--- (b) 为什么失败？如何修复？
-def triple (n : ℕ) := 3 * n
-example (n : ℕ) : triple n ≥ n := by
-  omega
+-- (b) 未展开的定义
+def triple (n : Nat) := 3 * n
+example (n : Nat) : triple n ≥ n := by
+  omega  -- ✗
 
--- (c) 为什么失败？如何修复？
-example (n : ℕ) : n - 3 + 3 = n := by
+-- (c) 缺少前置条件
+example (n : Nat) : n - 1 + 1 = n := by
+  omega  -- ✗
+</pre><p>
+                  提示：(a) 用 <code>positivity</code> 或 <code>exact Nat.zero_le _</code>；(b) 先 <code>unfold triple</code>；(c) 需要 <code>n ≥ 1</code> 假设。</p>
+                </section>
+              <section>
+                <h3 id="ch08-exercise-3">
+                  9.11.3. 练习 3：trace 分析<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-exercise-3" title="Permalink">🔗</a></span></h3>
+                <p>
+                  对以下目标开启 <code>set_option trace.omega true</code>，观察 trace 输出，回答问题：</p>
+                <pre>example (a b : Nat) (h : a + b = 10) : a ≤ 10 := by
   omega
 </pre><p>
-                  <strong>提示</strong>：(a) 非线性项，(b) 未展开的定义，(c) 缺少前置条件。</p>
+                  问题：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      omega 发现了哪些原子？</p>
+                    </li>
+                  <li>
+                    <p>
+                      预处理后生成了哪些约束？</p>
+                    </li>
+                  <li>
+                    <p>
+                      消元过程中选择了哪个变量消去？</p>
+                    </li>
+                  </ol>
                 </section>
               <section>
-                <h3 id="exercise-8-3">
-                  9.8.3. 练习 3：tactic 编程<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-8-3" title="Permalink">🔗</a></span></h3>
+                <h3 id="ch08-exercise-4">
+                  9.11.4. 练习 4：omega 与 linarith 的边界<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-exercise-4" title="Permalink">🔗</a></span></h3>
                 <p>
-                  编写一个 tactic <code>omega_or_sorry</code>，尝试用 omega 关闭目标，
-如果失败则用 <code>sorry</code> 关闭并在 info log 中输出警告。</p>
-                <pre>-- 骨架
-elab "omega_or_sorry" : tactic =&gt; do
-  sorry -- 你的实现
-</pre><p>
-                  <strong>提示</strong>：使用 <code>try</code>/<code>catch</code> 包裹 <code>evalTactic</code>，
-在 <code>catch</code> 分支中调用 <code>logWarning</code> 后再执行 <code>sorry</code>。</p>
-                </section>
-              <section>
-                <h3 id="exercise-8-4">
-                  9.8.4. 练习 4：omega 与 linarith 的边界<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-8-4" title="Permalink">🔗</a></span></h3>
+                  找出一个命题使得 <code>omega</code> 能证明但 <code>linarith</code> 不能，以及一个命题使得 <code>linarith</code> 能证明但 <code>omega</code> 不能。解释原因。</p>
                 <p>
-                  找出一个命题，使得 <code>omega</code> 能证明但 <code>linarith</code> 不能，
-以及一个命题，使得 <code>linarith</code> 能证明但 <code>omega</code> 不能。
-解释原因。</p>
-                <p>
-                  <strong>提示</strong>：考虑整除性（omega 的强项）和实数域（linarith 的强项）。</p>
-                </section>
-              </section>
-            <section>
-              <h2 id="ch08-summary">
-                9.9. 8.9 小结<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch08-summary" title="Permalink">🔗</a></span></h2>
-              <ul>
-                <li>
-                  <p>
-                    <code>理论基础</code>：Presburger 算术——整数上只有加法的一阶理论，可判定</p>
-                  </li>
-                <li>
-                  <p>
-                    <code>算法核心</code>：变量消去 + dark shadow 整数修正</p>
-                  </li>
-                <li>
-                  <p>
-                    <code>适用范围</code>：ℕ 和 ℤ 上的线性等式、不等式、整除、模运算</p>
-                  </li>
-                <li>
-                  <p>
-                    <code>Nat.sub</code>：自动处理截断语义，翻译为 max(a-b, 0)</p>
-                  </li>
-                <li>
-                  <p>
-                    <code>能力边界</code>：变量乘法、指数、实数 → 超出范围</p>
-                  </li>
-                <li>
-                  <p>
-                    <code>失败诊断</code>：检查非线性项、未展开定义、缺失假设、不支持的类型</p>
-                  </li>
-                <li>
-                  <p>
-                    <code>编程使用</code>：<code>evalTactic</code> 直接调用，<code>try</code>/<code>catch</code> 探测性调用</p>
-                  </li>
-                <li>
-                  <p>
-                    <code>与 linarith</code>：omega 处理整数整除，linarith 处理实数有序域</p>
-                  </li>
-                </ul>
-              <p>
-                下一章将介绍 <code>linarith</code>、<code>nlinarith</code> 和 <code>polyrith</code>——从线性到非线性的算术自动化。
+                  提示：考虑整除性（omega 的强项）和实数域（linarith 的强项）。
 </p>
+                </section>
               </section>
             </section>
           <nav class="prev-next-buttons">
