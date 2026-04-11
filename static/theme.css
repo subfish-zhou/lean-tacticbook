@@ -1,0 +1,14 @@
+/* P1: Visual distinction for compiled vs uncompiled code blocks */
+code.hl.lean.block {
+  border-left: 3px solid #4caf50;
+  background-color: #f8fdf8;
+}
+
+pre:not(:has(code.hl)) {
+  border-left: 3px solid #ccc;
+}
+
+/* Inline compiled code hover hint */
+.hl.lean [data-verso-hover] {
+  cursor: help;
+}
