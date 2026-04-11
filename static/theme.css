@@ -1,3 +1,5 @@
+/* === Lean Tactic Book — Custom Theme === */
+
 /* P1: Visual distinction for compiled vs uncompiled code blocks */
 code.hl.lean.block {
   border-left: 3px solid #4caf50;
@@ -5,10 +7,117 @@ code.hl.lean.block {
 }
 
 pre:not(:has(code.hl)) {
-  border-left: 3px solid #ccc;
+  border-left: 3px solid #9e9e9e;
+  background-color: #f9f9f9;
+}
+
+/* Better code block styling */
+pre {
+  padding: 12px 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 0.88em;
+  line-height: 1.5;
+  margin: 1em 0;
+}
+
+/* Inline code styling */
+code:not(.hl) {
+  background-color: #f0f0f0;
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-size: 0.9em;
 }
 
 /* Inline compiled code hover hint */
 .hl.lean [data-verso-hover] {
   cursor: help;
+}
+
+/* Source code annotation styling */
+pre code {
+  font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
+}
+
+/* Table styling (from table directive) */
+table.md-table {
+  border-collapse: collapse;
+  margin: 1em 0;
+  width: 100%;
+  font-size: 0.95em;
+}
+
+table.md-table th,
+table.md-table td {
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+table.md-table thead th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+  border-bottom: 2px solid #ccc;
+}
+
+table.md-table tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+table.md-table tbody tr:hover {
+  background-color: #f0f0f0;
+}
+
+/* Better heading spacing */
+h1, h2, h3, h4 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+/* Source annotation badges in code comments */
+/* Lines like: -- [Lean 4 v4.30.0-rc1, path:line] */
+
+/* Blockquote styling for notes/warnings */
+blockquote {
+  border-left: 4px solid #42a5f5;
+  background-color: #f5f9ff;
+  padding: 8px 16px;
+  margin: 1em 0;
+  border-radius: 0 4px 4px 0;
+}
+
+/* Better list styling */
+ul, ol {
+  padding-left: 1.5em;
+}
+
+li {
+  margin-bottom: 0.3em;
+}
+
+/* Chapter navigation */
+.next-prev {
+  margin-top: 2em;
+  padding-top: 1em;
+  border-top: 1px solid #eee;
+}
+
+/* Search result highlighting */
+.search-highlight {
+  background-color: #fff3cd;
+  padding: 1px 3px;
+  border-radius: 2px;
+}
+
+/* Print-friendly adjustments */
+@media print {
+  pre {
+    border: 1px solid #ddd;
+    page-break-inside: avoid;
+  }
+  
+  blockquote {
+    border-left-color: #999;
+    background-color: #f9f9f9;
+  }
 }
