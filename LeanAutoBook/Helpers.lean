@@ -757,10 +757,55 @@ private partial def tokeniseBashLine (line : String) : String := Id.run do
       i := i + 1
   pure acc
 
-/-- Turn a full multi-line body into inner HTML for `<code>`. -/
-private def tokeniseBashBody (body : String) : String :=
+/-- Detect a heredoc opener on a line and return the terminator word if any.
+    Recognises `<<WORD`, `<<'WORD'`, `<<"WORD"`, `<<-WORD` (with optional
+    trailing junk on the same line). Returns `none` if the line has no
+    heredoc opener. -/
+private def heredocTerminator (line : String) : Option String := Id.run do
+  let cs : Array Char := line.toList.toArray
+  let n := cs.size
+  let mut i := 0
+  -- Scan for `<<` (not `<<<`, which is a here-string in bash).
+  while i + 1 < n do
+    if cs[i]! == '<' && cs[i+1]! == '<' && (i + 2 ≥ n || cs[i+2]! != '<') then
+      let mut j := i + 2
+      if j < n && cs[j]! == '-' then j := j + 1
+      let mut quote : Option Char := none
+      if j < n && (cs[j]! == '\'' || cs[j]! == '"') then
+        quote := some cs[j]!
+        j := j + 1
+      let start := j
+      match quote with
+      | some q =>
+        while j < n && cs[j]! != q do j := j + 1
+      | none =>
+        while j < n && cs[j]!.isAlphanum do j := j + 1
+      if j > start then
+        let word := (cs.extract start j).foldl String.push ""
+        return some word
+      else
+        return none
+    i := i + 1
+  return none
+
+/-- Turn a full multi-line body into inner HTML for `<code>`.
+    Tracks heredoc state: after `<< 'EOF'` (etc.) subsequent lines are
+    emitted as plain escaped text until a line equals the terminator. -/
+private def tokeniseBashBody (body : String) : String := Id.run do
   let ls := body.splitOn "\n"
-  String.intercalate "\n" (ls.map tokeniseBashLine)
+  let mut out : Array String := #[]
+  let mut heredoc : Option String := none
+  for line in ls do
+    match heredoc with
+    | some term =>
+      -- Inside a heredoc body: emit raw (escaped) text.
+      out := out.push (htmlEscape line)
+      if line.trimAscii.toString == term then
+        heredoc := none
+    | none =>
+      out := out.push (tokeniseBashLine line)
+      heredoc := heredocTerminator line
+  pure (String.intercalate "\n" out.toList)
 
 private def bashCss : String := "
 pre.hl.bash.block {
