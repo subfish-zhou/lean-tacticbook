@@ -840,6 +840,21 @@ pre.hl.bash.block .envvar {
   color: var(--verso-code-var-color, #e36209);
   font-weight: 600;
 }
+
+/* Give the Lean highlighter the same block-box treatment as bashFence.
+   verso emits `<code class=\"hl lean block\">` inline; force it to display
+   as a block, padded and framed like the shell blocks. */
+code.hl.lean.block {
+  display: block;
+  padding: 0.75em 1em;
+  border-left: 3px solid #4caf50;
+  background-color: #f8fdf8;
+  overflow-x: auto;
+  border-radius: 4px;
+  margin: 1em 0;
+  font-family: var(--verso-code-font-family, monospace);
+  font-size: 0.95em;
+}
 "
 
 block_extension Block.bashCode (body : String) where
