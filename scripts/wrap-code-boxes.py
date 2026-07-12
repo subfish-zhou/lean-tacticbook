@@ -105,19 +105,22 @@ CSS = r'''
 /* === codebox: labelled wrappers around code fences ===================== */
 .codebox {
   margin: 1em 0;
-  border-radius: 6px;
+  border-left: 3px solid #ccc;
+  border-radius: 4px;
   overflow: hidden;
-  border: 1px solid rgba(0,0,0,0.08);
 }
 .codebox-header {
-  padding: 4px 12px;
-  font-size: 0.82em;
+  display: inline-block;
+  padding: 1px 10px;
+  margin: 0;
+  font-size: 0.72em;
   font-weight: 600;
-  letter-spacing: 0.02em;
-  border-bottom: 1px solid rgba(0,0,0,0.08);
-  display: block;
+  letter-spacing: 0.03em;
+  border-radius: 0 0 6px 0;
+  line-height: 1.6;
+  vertical-align: top;
 }
-/* strip the inner block's own margin so the header sits flush */
+/* strip the inner block's own margin so the pill sits flush to the top */
 .codebox pre,
 .codebox > code.hl.lean.block {
   margin: 0 !important;
@@ -131,61 +134,64 @@ CSS = r'''
 .codebox-hint,
 .codebox-excerpt {
   background-color: #f8fdf8;
-  border-color: #cfe6cf;
+  border-left-color: #4caf50;
 }
 .codebox-runnable > .codebox-header,
 .codebox-hint > .codebox-header,
 .codebox-excerpt > .codebox-header {
-  background-color: #e3f4e3;
-  color: #1e5a1e;
-  border-bottom-color: #cfe6cf;
+  background-color: #4caf50;
+  color: #fff;
 }
 
 /* Pseudo-code: light yellow */
 .codebox-pseudo {
   background-color: #fffbea;
-  border-color: #f0e2a3;
+  border-left-color: #d4a017;
 }
 .codebox-pseudo > .codebox-header {
-  background-color: #fdf3c5;
-  color: #7a5a00;
-  border-bottom-color: #f0e2a3;
+  background-color: #d4a017;
+  color: #fff;
 }
 
 /* Deliberate error: light red */
 .codebox-bug {
   background-color: #fff4f4;
-  border-color: #f2c5c5;
+  border-left-color: #d9534f;
 }
 .codebox-bug > .codebox-header {
-  background-color: #fddede;
-  color: #8b1a1a;
-  border-bottom-color: #f2c5c5;
+  background-color: #d9534f;
+  color: #fff;
 }
 
-/* Exercise template: light red-orange (tan warning) */
+/* Exercise template: warm tan */
 .codebox-template {
   background-color: #fff7ec;
-  border-color: #f3d3a8;
+  border-left-color: #e6913a;
 }
 .codebox-template > .codebox-header {
-  background-color: #fde6c3;
-  color: #7a4a00;
-  border-bottom-color: #f3d3a8;
+  background-color: #e6913a;
+  color: #fff;
 }
 
-/* Special-case bash blocks kept inside a runnable box: keep the light blue
-   background for the code area so shell blocks stand out visually. */
-.codebox-runnable pre.hl.bash.block {
+/* Inner pre backgrounds: keep transparent so the box tint shows through,
+   except bash which keeps its light-blue code area to stay distinct. */
+.codebox > pre {
+  background-color: transparent;
+  padding: 0.6em 1em;
+}
+.codebox-runnable > pre.hl.bash.block {
   background-color: #f4faff;
 }
 '''
 
 def inject_css(html: str) -> str:
     """Insert our extra CSS before </head>. Idempotent via unique marker."""
-    marker = '/* codebox-injected-v1 */'
+    marker = '/* codebox-injected-v2 */'
     if marker in html:
         return html
+    # remove any older version to avoid stale styles
+    html = re.sub(r'<style>/\* codebox-injected-v\d+ \*/.*?</style>',
+                  '', html, flags=re.S)
     style_block = f'<style>{marker}{CSS}</style>'
     if '</head>' in html:
         return html.replace('</head>', style_block + '</head>', 1)
