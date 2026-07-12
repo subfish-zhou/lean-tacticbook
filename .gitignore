@@ -5,3 +5,6 @@ _out/
 *.c
 *.o
 lake-packages/
+
+# examples 自带 lake build 产物（symlink 到旧仓库共享 mathlib cache）
+examples/.lake
