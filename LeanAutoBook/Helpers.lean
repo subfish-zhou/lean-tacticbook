@@ -811,8 +811,8 @@ private def bashCss : String := "
 pre.hl.bash.block {
   white-space: pre;
   padding: 0.75em 1em;
-  border-left: 3px solid #8bc34a;
-  background-color: #fafcf7;
+  border-left: 3px solid #2196f3;
+  background-color: #f4faff;
   overflow-x: auto;
   border-radius: 4px;
   margin: 1em 0;
