@@ -8,7 +8,9 @@ right before the corresponding code block. This script:
   2. removes that `<p>`
   3. wraps the immediately following `<pre>...</pre>` or bare
      `<code class="hl lean block">...</code>` in
-     `<div class="codebox codebox-<slug>"><header>...</header>...</div>`
+     `<div class="codebox codebox-<slug>"><div class="codebox-header">...</div>...</div>`
+     (NOT <header> tag — verso's book.css has `header { position:fixed; top:0 }`
+      which would pin every codebox header to the viewport top.)
 
 Idempotent — running twice is safe (already-wrapped blocks have no matching
 `<p>` before them).
@@ -65,7 +67,7 @@ def wrap_html(html: str) -> tuple[str, int]:
             total += 1
             wrapped = (
                 f'<div class="codebox codebox-{slug}">'
-                f'<header class="codebox-header">{label}</header>'
+                f'<div class="codebox-header">{label}</div>'
                 f'{block}'
                 f'</div>'
             )
@@ -93,7 +95,7 @@ def wrap_html(html: str) -> tuple[str, int]:
             total += 1
             out.append(
                 f'<div class="codebox codebox-{slug}">'
-                f'<header class="codebox-header">{label}</header>'
+                f'<div class="codebox-header">{label}</div>'
                 f'{block}'
                 f'</div>'
             )
