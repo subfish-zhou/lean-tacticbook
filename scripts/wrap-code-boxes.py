@@ -132,7 +132,7 @@ def _lean_tokenize_line(line: str) -> str:
         c = line[i]
         # -- comment
         if c == '-' and i+1 < n and line[i+1] == '-':
-            out.append('<span class="comment">' + esc(line[i:]) + '</span>')
+            out.append('<span class="token comment">' + esc(line[i:]) + '</span>')
             i = n
         # "…" string
         elif c == '"':
@@ -140,7 +140,7 @@ def _lean_tokenize_line(line: str) -> str:
             while j < n and line[j] != '"':
                 j += 1
             j = j + 1 if j < n else j
-            out.append('<span class="literal">' + esc(line[i:j]) + '</span>')
+            out.append('<span class="token literal">' + esc(line[i:j]) + '</span>')
             i = j
         # identifier / keyword
         elif c.isalpha() or c == '_':
@@ -149,7 +149,7 @@ def _lean_tokenize_line(line: str) -> str:
                 j += 1
             word = line[i:j]
             if word in LEAN_KEYWORDS:
-                out.append('<span class="keyword">' + esc(word) + '</span>')
+                out.append('<span class="token keyword">' + esc(word) + '</span>')
             else:
                 out.append(esc(word))
             i = j
@@ -158,7 +158,7 @@ def _lean_tokenize_line(line: str) -> str:
             j = i
             while j < n and (line[j].isdigit() or line[j] == '.'):
                 j += 1
-            out.append('<span class="literal">' + esc(line[i:j]) + '</span>')
+            out.append('<span class="token literal">' + esc(line[i:j]) + '</span>')
             i = j
         else:
             out.append(esc(c))
@@ -221,12 +221,41 @@ CSS = r'''
   --verso-code-sort-color:    #22863a;   /* green - Type/Prop/Sort       */
   --verso-code-typed-color:   #24292e;
 }
-.hl.lean .keyword { color: var(--verso-code-keyword-color); font-weight: bold; }
-.hl.lean .const   { color: var(--verso-code-const-color); }
-.hl.lean .literal { color: var(--verso-code-literal-color); }
-.hl.lean .var     { color: var(--verso-code-var-color); font-style: italic; }
-.hl.lean .sort    { color: var(--verso-code-sort-color); font-weight: bold; }
-.hl.lean .comment { color: #6a737d; font-style: italic; }
+/* Highlight rules — cover both verso's `.token.keyword` (inline `style=color:...`
+   uses !important-worthy override) and our post-wrap fallback `.keyword` spans. */
+.hl.lean .token.keyword, .hl.lean .keyword,
+pre.hl.lean .token.keyword, pre.hl.lean .keyword {
+  color: #a626a4 !important;   /* purple — Lean IDE 传统 */
+  font-weight: bold;
+}
+.hl.lean .token.const, .hl.lean .const,
+pre.hl.lean .token.const, pre.hl.lean .const {
+  color: #005cc5 !important;   /* blue — known constants */
+}
+.hl.lean .token.literal, .hl.lean .literal,
+pre.hl.lean .token.literal, pre.hl.lean .literal {
+  color: #005cc5 !important;
+}
+.hl.lean .token.sort, .hl.lean .sort,
+pre.hl.lean .token.sort, pre.hl.lean .sort {
+  color: #22863a !important;   /* green — Type/Prop/Sort */
+  font-weight: bold;
+}
+.hl.lean .token.var, .hl.lean .var {
+  color: #24292e !important;
+  font-style: italic;
+}
+.hl.lean .token.comment, .hl.lean .comment,
+pre.hl.lean .token.comment, pre.hl.lean .comment {
+  color: #6a737d !important;
+  font-style: italic;
+}
+
+/* Bash fence highlighting — verso emits .cmd (command name), .opt (flags), .string. */
+.hl.bash .cmd,    pre.hl.bash .cmd    { color: #6f42c1 !important; font-weight: bold; }  /* purple - command */
+.hl.bash .opt,    pre.hl.bash .opt    { color: #e36209 !important; }                      /* orange - flag */
+.hl.bash .string, pre.hl.bash .string { color: #22863a !important; }                      /* green  - "..." */
+.hl.bash .comment,pre.hl.bash .comment{ color: #6a737d !important; font-style: italic; }
 
 .codebox {
   margin: 1em 0;
