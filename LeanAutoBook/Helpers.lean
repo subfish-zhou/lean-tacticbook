@@ -488,6 +488,162 @@ def leanCmdBlock : CodeBlockExpander
         return #[← ``(sorry)]
       | e => throw e
 
+/-! ## Multi-command Lean block (`leanBlock`)
+
+The SubVerso helper's `command` endpoint only accepts a single top-level
+command per request and rejects `import` (which is header syntax, not a
+command). But most real teaching fences contain `import Lean` / `open ...`
+plus several `def`/`example`/`elab` declarations back-to-back.
+
+`leanBlock` splits the fence into command chunks by scanning for lines whose
+first non-whitespace token is a command keyword (`import`, `open`, `namespace`,
+`end`, `section`, `variable`, `def`, `theorem`, `lemma`, `example`, `abbrev`,
+`structure`, `class`, `inductive`, `instance`, `elab`, `elab_rules`, `syntax`,
+`macro`, `macro_rules`, `notation`, `#check`, `#eval`, `#print`, `#reduce`,
+`@[`, `deriving`, `attribute`).
+
+  * `import` / `open` chunks are rendered as **plain keyword-highlighted text**
+    (helper environment already has Mathlib + Lean.Elab loaded, so re-importing
+    would fail; but readers still see the declaration visually).
+  * Every other chunk is sent to `helper.command` individually and gets full
+    semantic highlighting.
+  * All chunks are concatenated via `Highlighted.seq`, preserving order and
+    original whitespace between chunks.
+-/
+
+/-- Command-start keywords: a line whose first non-space token is one of these
+    starts a new command chunk. -/
+private def leanBlockCmdKeywords : Array String := #[
+  "import", "open", "namespace", "end", "section", "variable",
+  "universe", "universes",
+  "def", "theorem", "lemma", "example", "abbrev", "structure", "class",
+  "inductive", "instance", "elab", "elab_rules", "syntax", "macro",
+  "macro_rules", "notation", "infix", "infixl", "infixr", "prefix", "postfix",
+  "deriving", "attribute", "export", "@[",
+  "#check", "#eval", "#print", "#reduce", "#synth"
+]
+
+private def firstToken (line : String) : String :=
+  let trimmed := line.trimLeft
+  let toks := trimmed.splitOn " "
+  toks.headD ""
+
+private def isCmdStart (line : String) : Bool :=
+  let t := firstToken line
+  -- Attribute application `@[simp] theorem …` starts with `@[`.
+  if t.startsWith "@[" then true
+  else leanBlockCmdKeywords.contains t
+
+private def isImportOrOpenLine (line : String) : Bool :=
+  let t := firstToken line
+  t == "import" || t == "open"
+
+/-- Split fence body into an array of command-shaped chunks by driving Lean's
+    own `Parser.parseCommand` loop until EOI. Each chunk is a substring of
+    the original body extracted from the command syntax's position range.
+
+    `import ...` / `open ...` lines up top are peeled off before running the
+    loop so they can be rendered as keyword-highlighted text without going
+    through the helper (which parses in `command` category, rejecting import). -/
+private def splitLeanChunks (body : String) : DocElabM (Array String) := do
+  let lines := body.splitOn "\n"
+  let mut headerChunks : Array String := #[]
+  let mut idx := 0
+  while idx < lines.length do
+    let l := lines[idx]!
+    let t := firstToken l
+    if t == "import" || t == "open" || l.trim.isEmpty then
+      headerChunks := headerChunks.push l
+      idx := idx + 1
+    else
+      break
+  let rest := "\n".intercalate (lines.drop idx)
+  if rest.trim.isEmpty then
+    return headerChunks
+
+  let env ← getEnv
+  let ictx := Parser.mkInputContext rest "<fence>"
+  let mut pstate : Parser.ModuleParserState := {}
+  let mut cmdChunks : Array String := #[]
+  let mut safety : Nat := 0
+  repeat
+    safety := safety + 1
+    if safety > 1024 then break
+    let pmctx := { env := env, options := ({} : Options), currNamespace := .anonymous, openDecls := [] }
+    let (cmd, ps', _msgs) :=
+      Parser.parseCommand ictx pmctx pstate {}
+    pstate := ps'
+    -- Extract the substring corresponding to this command via its Syntax range.
+    let sp? := cmd.getPos? (canonicalOnly := false)
+    let ep? := cmd.getTailPos? (canonicalOnly := false)
+    match sp?, ep? with
+    | some sp, some ep =>
+      let chunk := (rest.toSubstring.extract sp ep).toString
+      unless chunk.trim.isEmpty do
+        cmdChunks := cmdChunks.push chunk
+    | _, _ => pure ()
+    if Parser.isTerminalCommand cmd then break
+  return headerChunks ++ cmdChunks
+
+/-- Render an `import`/`open` chunk as keyword-token highlighted text so the
+    reader still sees a colored block, even though we cannot round-trip it
+    through the helper. -/
+private def highlightImportChunk (chunk : String) : Highlighted := Id.run do
+  -- Simple approach: mark the first word as .keyword, rest as plain text.
+  let trimmed := chunk.trimLeft
+  let toks := trimmed.splitOn " "
+  match toks with
+  | [] => .text chunk
+  | kw :: rest =>
+    let leadingWS := (chunk.take (chunk.length - trimmed.length)).toString
+    let restStr := " ".intercalate rest
+    .seq #[
+      .text leadingWS,
+      .token ⟨.keyword none none none, kw⟩,
+      .text (" " ++ restStr)
+    ]
+
+/-- Placeholder constant so `@[code_block_expander leanFence]` resolves. -/
+def leanFence : Unit := ()
+
+/-- The `leanFence` code block: split multi-command Lean fence and highlight
+    each command chunk via the helper. Non-command lines and `import`/`open`
+    declarations are preserved as keyword-highlighted text. -/
+@[code_block_expander leanFence]
+def leanFenceBlock : CodeBlockExpander
+  | args, code => do
+    let _type? ← ArgParse.done.run args
+    let codeStr := code.getString
+    try
+      let chunks ← splitLeanChunks codeStr
+      -- Elaborate every non-import/open chunk; for imports we produce a
+      -- keyword-highlighted placeholder rather than sending to the helper
+      -- (which would reject the import as parse error).
+      let mut hls : Array Highlighted := #[]
+      let mut first : Bool := true
+      for chunk in chunks do
+        unless first do
+          hls := hls.push (.text "\n")
+        first := false
+        if chunk.trim.isEmpty then
+          hls := hls.push (.text chunk)
+        else if isImportOrOpenLine chunk then
+          hls := hls.push (highlightImportChunk chunk)
+        else
+          let chunkHl ← highlightCommand chunk
+          saveBackref chunkHl
+          for (msg, _) in _root_.allInfo chunkHl do
+            let k := match msg.severity with | .info => "info" | .error => "error" | .warning => "warning"
+            Verso.Log.logSilentInfo m!"{k}: {msg.toString}"
+          hls := hls.push chunkHl
+      let hl : Highlighted := .seq hls
+      return #[← ``(Block.other (Block.lean $(quote hl) {}) #[Block.code $(quote codeStr)])]
+    catch
+      | .error refStx e =>
+        logErrorAt refStx e
+        return #[← ``(sorry)]
+      | e => throw e
+
 /-! ## Markdown-style table code block
 
 Write tables in verso using fenced code blocks:

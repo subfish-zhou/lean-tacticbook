@@ -241,7 +241,7 @@ tag := "tactic-origins"
 本书多数证明示例使用：
 
 \[可运行\]
-```
+```leanFence
 import Mathlib
 ```
 
@@ -264,7 +264,7 @@ tag := "code-conventions"
 练习中还会出现 **\[练习模板\]**。它不是独立的代码性质类别，而是对练习用途的补充说明：模板可以含 `sorry`，因此文件可能通过编译，但你必须替换 `sorry` 才算完成练习。代码块仍会明确写 `\[练习模板\]`，避免把“能编译”误当成“已经证明”。`sorry` 很擅长制造这种虚假的平静。
 
 \[可运行\]
-```
+```leanFence
 import Mathlib
 
 example (x : ℝ) : x + 0 = x := by
@@ -336,7 +336,7 @@ tag := "exercise-0-1"
 %%%
 
 \[可运行\]
-```
+```leanFence
 import Mathlib
 
 #check Nat.add_comm
@@ -351,7 +351,7 @@ tag := "exercise-0-2"
 %%%
 
 \[可运行\]
-```
+```leanFence
 import Mathlib
 
 example : 2 + 3 = 5 := by
@@ -386,7 +386,7 @@ example (x y : ℤ) : (x + y) * (x + y) = x * x + 2 * x * y + y * y := by
 4. 把 `omega` 换成 `ring`。
 
 \[可运行\]
-```
+```leanFence
 import Mathlib
 
 example (x y : ℤ) : (x + y) * (x + y) = x * x + 2 * x * y + y * y := by

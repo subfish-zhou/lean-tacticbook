@@ -124,7 +124,7 @@ pure : α → M α
 > **本节以下四个 `\[可运行\]` 代码块按顺序放在同一 `.lean` 文件中：`CounterM`、`tick`、`twoTicks`、`twoTicksExpanded`、`twoTicksDo` 是同一份代码的连续片段，后块依赖前块。若你分别复制会报 `unknown identifier`。**
 
 \[可运行\]
-```
+```leanFence
 abbrev CounterM (α : Type) := StateM Nat α
 
 
@@ -135,7 +135,7 @@ def tick : CounterM Nat := fun oldState =>
 `tick` 接收旧状态 `oldState`，返回结果 `oldState` 和新状态 `oldState + 1`。现在连续运行两次 `tick`：
 
 \[可运行\]
-```
+```leanFence
 def twoTicks : CounterM (Nat × Nat) :=
   tick >>= fun first =>
   tick >>= fun second =>
@@ -147,7 +147,7 @@ def twoTicks : CounterM (Nat × Nat) :=
 输出是 `((10, 11), 12)`：计算结果是 `(10, 11)`，最终状态是 `12`。下面不使用 `>>=`，把同一过程手动展开：
 
 \[可运行\]
-```
+```leanFence
 def twoTicksExpanded : CounterM (Nat × Nat) := fun oldState =>
   let (first, stateAfterFirst) := tick oldState
   let (second, stateAfterSecond) := tick stateAfterFirst
@@ -168,7 +168,7 @@ def twoTicksExpanded : CounterM (Nat × Nat) := fun oldState =>
 `bind` 做的关键工作就是把上一步产生的新状态交给下一步。`do` 语法隐藏了这条管线，但没有删除它：
 
 \[可运行\]
-```
+```leanFence
 def twoTicksDo : CounterM (Nat × Nat) := do
   let first ← tick
   let second ← tick
@@ -192,7 +192,7 @@ tag := "reader-context"
 在 `CoreM` 中，`Options`、当前文件名、当前命名空间等位于 `Core.Context`，适合作为 Reader 能力的例子。下面用一个独立小例子展示读取选项：
 
 \[可运行\]
-```
+```leanFence
 import Lean
 open Lean
 
@@ -216,7 +216,7 @@ tag := "state-updates"
 `StateM σ α` 可以理解为函数 `σ → α × σ`：输入旧状态，输出普通结果和新状态。`StateT σ m α` 把同一结构叠在下层 monad `m` 上。
 
 \[可运行\]
-```
+```leanFence
 abbrev NatState (α : Type) := StateM Nat α
 
 
@@ -242,7 +242,7 @@ tag := "except-failure"
 下面读取一个字符串并解析整数；失败分支与返回类型一致，不再出现“先读 `Nat`，再检查它是否小于零”这种不可能条件。
 
 \[可运行\]
-```
+```leanFence
 
 def parseInt (input : String) : Except String Int := do
   match input.toInt? with
@@ -263,7 +263,7 @@ tag := "monad-transformer-stack"
 真实 tactic 同时需要读上下文、写状态和失败。可以把这些能力逐层叠加：
 
 \[可运行\]
-```
+```leanFence
 abbrev MyM (α : Type) :=
   ReaderT String (StateT Nat (Except String)) α
 ```
@@ -450,7 +450,7 @@ show_elab_examples
 隐式参数插入也依赖预期类型。考虑多态函数：
 
 \[可运行\]
-```
+```leanFence
 import Mathlib
 
 #check @id
@@ -502,7 +502,7 @@ tag := "name-type"
 `Name` 是 Lean 声明和标识符的结构化名字。完全限定名 `Nat.add` 可以用双反引号引用：
 
 \[可运行\]
-```
+```leanFence
 import Lean
 open Lean
 
@@ -546,7 +546,7 @@ Lean 需要先知道一段文本属于 tactic 语法，再决定如何处理它�
 `macro` 做语法到语法的改写。宏本身不进入 `TacticM`，也不直接读取当前目标；但宏展开得到的 tactic 语法仍会交给 tactic elaborator，后者在 `TacticM` 中执行。
 
 \[可运行\]
-```
+```leanFence
 import Lean
 
 macro "my_assumption_macro" : tactic => `(tactic| assumption)
@@ -560,7 +560,7 @@ example (P : Prop) (h : P) : P := by
 `elab` 或 `elab_rules` 可以直接注册 tactic elaborator。下面的实现进入 `TacticM`，读取目标与局部上下文：
 
 \[可运行\]
-```
+```leanFence
 import Lean
 open Lean Elab Tactic Meta
 
@@ -651,7 +651,7 @@ tag := "exact-if-rfl-tactic"
 %%%
 
 \[可运行\]
-```
+```leanFence
 import Lean
 open Lean Elab Tactic Meta
 
@@ -710,7 +710,7 @@ tag := "running-with-context"
 Lean v4.30 中，`Lean.Elab.Tactic.run` 的完整类型是：
 
 \[可运行\]
-```
+```leanFence
 import Lean
 open Lean Elab
 
@@ -767,7 +767,7 @@ tag := "failure-get-main-goal"
 `getMainGoal` 位于 `Lean.Elab.Tactic` 命名空间。确认导入和 `open`：
 
 \[可运行\]
-```
+```leanFence
 import Lean
 open Lean Elab Tactic Meta
 
@@ -894,7 +894,7 @@ tag := "exercise-1-2"
 不要只填写层名。把下面代码放进文件，让 Lean 显示每个函数的完整类型，再记录其返回 monad。
 
 \[可运行\]
-```
+```leanFence
 import Lean
 open Lean Elab Term Tactic Meta
 
@@ -963,7 +963,7 @@ example : (42 : Nat) = 42 := by
 <summary>参考修复</summary>
 
 \[可运行\]
-```
+```leanFence
 import Lean
 open Lean Elab Tactic Meta
 
