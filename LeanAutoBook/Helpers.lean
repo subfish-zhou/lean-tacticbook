@@ -750,7 +750,7 @@ pre.hl.lean.block.bug {
   font-size: 0.95em;
 }
 pre.hl.lean.block.bug code { font-family: inherit; font-size: inherit; }
-pre.hl.lean.block.bug .keyword { color: #d73a49; font-weight: bold; }
+pre.hl.lean.block.bug .keyword { color: #a626a4; font-weight: bold; }
 pre.hl.lean.block.bug .literal { color: #005cc5; }
 pre.hl.lean.block.bug .comment { color: #6a737d; font-style: italic; }
 "
@@ -784,6 +784,9 @@ def leanBugBlock : CodeBlockExpander
     let body := code.getString
     return #[← ``(Block.other (Block.leanBugCode $(quote body)) #[Block.code $(quote body)])]
 
+-- Hint variant: keyword-only Lean highlighter, rendered without any
+-- elaboration. Outputs pre.hl.lean.block.hint so the wrapping codebox
+-- can style it green (see wrap-code-boxes.py).
 /-! ## Bash / shell code block (`bashFence`)
 
 A dependency-free shell highlighter. Tokenises each line into:

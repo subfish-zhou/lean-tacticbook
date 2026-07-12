@@ -101,16 +101,121 @@ def wrap_html(html: str) -> tuple[str, int]:
             )
             pos = m.end() + block_m.end()
         html = ''.join(out)
+    # Second pass: tokenize plain <pre>Lean-content</pre> inside hint / excerpt /
+    # bug / template codeboxes. Verso's `leanBug` code_block_expander is flaky
+    # about certain bodies (empirically only bodies starting with `import …`
+    # get the .hl.lean.block.bug treatment), so we do it here for guaranteed
+    # coverage. Idempotent: <pre class="hl …"> is skipped.
+    html = highlight_hint_bug_boxes(html)
     return html, total
 
-CSS = r'''
-/* === codebox: labelled wrappers around code fences ===================== */
 
+LEAN_KEYWORDS = frozenset("""
+import open namespace end section variable universe def theorem lemma example
+abbrev structure class inductive instance elab elab_rules syntax macro
+macro_rules notation infix infixl infixr prefix postfix deriving attribute
+export let fun match with do if then else return pure have show by at in for
+while where mutual unless sorry admit exact intro intros apply cases induction
+refine rw simp trivial ring linarith omega constructor assumption contradiction
+decide aesop
+""".split())
+
+def _lean_tokenize_line(line: str) -> str:
+    """Return HTML-safe tokenised line: keywords → span.keyword, strings → span.literal,
+    -- comments → span.comment, digits → span.literal. Non-alnum passes through."""
+    out = []
+    i = 0
+    n = len(line)
+    def esc(s: str) -> str:
+        return s.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;').replace('"','&quot;')
+    while i < n:
+        c = line[i]
+        # -- comment
+        if c == '-' and i+1 < n and line[i+1] == '-':
+            out.append('<span class="comment">' + esc(line[i:]) + '</span>')
+            i = n
+        # "…" string
+        elif c == '"':
+            j = i + 1
+            while j < n and line[j] != '"':
+                j += 1
+            j = j + 1 if j < n else j
+            out.append('<span class="literal">' + esc(line[i:j]) + '</span>')
+            i = j
+        # identifier / keyword
+        elif c.isalpha() or c == '_':
+            j = i
+            while j < n and (line[j].isalnum() or line[j] in "_'"):
+                j += 1
+            word = line[i:j]
+            if word in LEAN_KEYWORDS:
+                out.append('<span class="keyword">' + esc(word) + '</span>')
+            else:
+                out.append(esc(word))
+            i = j
+        # digits → literal
+        elif c.isdigit():
+            j = i
+            while j < n and (line[j].isdigit() or line[j] == '.'):
+                j += 1
+            out.append('<span class="literal">' + esc(line[i:j]) + '</span>')
+            i = j
+        else:
+            out.append(esc(c))
+            i += 1
+    return ''.join(out)
+
+
+def _looks_like_lean_snippet(body: str) -> bool:
+    """Heuristic: text looks like Lean (has keyword / arrow / colon pattern),
+    NOT just plain prose like pseudocode."""
+    # keyword match
+    for kw in LEAN_KEYWORDS:
+        if re.search(rf'\b{re.escape(kw)}\b', body):
+            return True
+    # arrow / bind
+    if '←' in body or '→' in body or ':=' in body or '=>' in body:
+        return True
+    # type-signature form  identifier ':' with capital letters after
+    if re.search(r'\b[A-Za-z_][A-Za-z_0-9.]*\s*:\s*[A-Z]', body):
+        return True
+    return False
+
+
+_HIGHLIGHT_PRE_RE = re.compile(
+    r'(<div class="codebox codebox-(hint|excerpt|bug|template)">'
+    r'<div class="codebox-header">[^<]*</div>)'
+    r'<pre>([\s\S]*?)</pre>'
+    r'(</div>)',
+)
+
+def highlight_hint_bug_boxes(html: str) -> str:
+    def repl(m: re.Match[str]) -> str:
+        head, kind, body_html, tail = m.group(1), m.group(2), m.group(3), m.group(4)
+        # decode HTML entities back to raw text for retokenization
+        raw = (body_html
+               .replace('&lt;', '<')
+               .replace('&gt;', '>')
+               .replace('&quot;', '"')
+               .replace('&amp;', '&'))
+        if not _looks_like_lean_snippet(raw):
+            return m.group(0)
+        lines = raw.split('\n')
+        highlighted = '\n'.join(_lean_tokenize_line(line) for line in lines)
+        return (
+            f'{head}'
+            f'<pre class="hl lean block bug"><code>{highlighted}</code></pre>'
+            f'{tail}'
+        )
+    return _HIGHLIGHT_PRE_RE.sub(repl, html)
+
+
+CSS = r'''
 /* Override verso's default all-black Lean palette with a proper syntax scheme
    (defaults live in verso-vars.css and map every token colour to `black`). */
 :root {
-  --verso-code-keyword-color: #d73a49;   /* red   - import/def/example/… */
-  --verso-code-const-color:   #6f42c1;   /* purple- known constants      */
+  --verso-code-keyword-color: #a626a4;   /* purple- import/def/example/… (Lean 传统) */
+  --verso-code-const-color:   #005cc5;   /* blue  - known constants      */
   --verso-code-literal-color: #005cc5;   /* blue  - number/string lit    */
   --verso-code-var-color:     #24292e;   /* dark  - bound variables      */
   --verso-code-sort-color:    #22863a;   /* green - Type/Prop/Sort       */

@@ -140,7 +140,7 @@ lake env lean Test.lean
 你应该看到这样的类型（或者字面等价的）：
 
 \[示意\]
-```
+```leanBug
 Nat.add_comm : ∀ (n m : Nat), n + m = m + n
 ```
 
@@ -278,7 +278,7 @@ example (x : ℝ) : x + 0 = x := by
 ```
 
 \[示意\]
-```
+```leanBug
 elab "my_tactic" : tactic => do
   let goal ← getMainGoal
   -- 这里省略具体实现
@@ -321,7 +321,7 @@ tag := "book-overview"
 %%%
 
 \[示意\]
-```
+```leanBug
 Part I   Ch1–Ch5    元编程模型、Expr、tactic 编写、目标管理、typeclass
 Part II  Ch6–Ch13   simp、ring、omega、linarith、norm_num、aesop、grind、decide
 Part III Ch14–Ch19  positivity、fun_prop、gcongr、field_simp、逻辑变换、自定义自动化

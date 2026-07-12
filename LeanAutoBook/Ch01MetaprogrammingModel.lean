@@ -82,7 +82,7 @@ Monad 给的是**统一接口**：把"结果类型"和"这段计算需要的效�
 举几个例子：
 
 \[示意\]
-```
+```leanBug
 getMainGoal : TacticM MVarId
 getMainTarget : TacticM Expr
 setGoals : List MVarId → TacticM Unit
@@ -100,7 +100,7 @@ tag := "pure-bind-state-passing"
 一个 monad 主要提供两个操作：
 
 \[示意\]
-```
+```leanBug
 pure : α → M α
 (>>=) : M α → (α → M β) → M β
 ```
@@ -325,7 +325,7 @@ tag := "four-monad-layers"
 四层里每一层都有自己叫 `Context` 和 `State` 的类型，但**它们是不同命名空间下的四个不同结构**：`Core.Context`、`Meta.Context`、`TermElab.Context`、`Tactic.Context` 不是同一个类型；四个 `State` 同理。你在源码里看到只写 `Context`、`State`，那是打开命名空间后省了前缀。第一次读很容易看成"一家四胞胎"，其实是一家四个不同的孩子。
 
 \[源码节选\]
-```
+```leanBug
 -- Lean/CoreM.lean
 abbrev CoreM := ReaderT Core.Context (StateRefT Core.State (EIO Exception))
 
@@ -346,7 +346,7 @@ abbrev TacticM :=
 把括号全展开，长这样：
 
 \[示意\]
-```
+```leanBug
 CoreM α
 = ReaderT Core.Context
     (StateRefT Core.State
@@ -380,7 +380,7 @@ tag := "corem-environment"
 `CoreM` 是元编程的公共底座。下面只列跟本章相关的字段；真实源码里字段更多。
 
 \[源码节选\]
-```
+```leanBug
 structure Core.State where
   env      : Environment
   messages : MessageLog
@@ -415,7 +415,7 @@ tag := "metam-metavariables"
 Meta 常用操作：
 
 \[示意\]
-```
+```leanBug
 inferType e
 isDefEq e₁ e₂
 whnf e
@@ -474,7 +474,7 @@ tag := "tacticm-goals"
 `TacticM` 在 `TermElabM` 外再加 tactic 自己的上下文和状态。核心状态就是**待处理目标列表**：
 
 \[源码节选\]
-```
+```leanBug
 -- Lean/Elab/Tactic/Basic.lean；省略 Tactic.State 的其他细节
 structure Tactic.State where
   goals : List MVarId
@@ -485,7 +485,7 @@ abbrev Tactic := Syntax → TacticM Unit
 常用目标操作：
 
 \[示意\]
-```
+```leanBug
 getGoals : TacticM (List MVarId)
 setGoals : List MVarId → TacticM Unit
 getMainGoal : TacticM MVarId
