@@ -644,6 +644,189 @@ def leanFenceBlock : CodeBlockExpander
         return #[← ``(sorry)]
       | e => throw e
 
+/-! ## Bash / shell code block (`bashFence`)
+
+A dependency-free shell highlighter. Tokenises each line into:
+
+  * comment (`#` to end-of-line)
+  * string (`"…"` and `'…'`)
+  * command word (first token if it is a known shell/tool name)
+  * option (`-x`, `--long-opt`)
+  * env-var assignment (`FOO=bar` before any command)
+  * heredoc marker (`<<'EOF'` … `EOF`)
+  * plain text (everything else)
+
+Rendered as `<pre class="hl bash block"><code>…</code></pre>` with span classes
+that pick up the same CSS variables as the Lean highlighter, so the palette
+stays consistent.
+-/
+
+private def bashCommandWords : Array String := #[
+  "cat", "curl", "wget", "cp", "mv", "rm", "ln", "mkdir", "rmdir", "touch",
+  "chmod", "chown", "ls", "cd", "pwd", "pushd", "popd", "echo", "printf",
+  "grep", "rg", "sed", "awk", "find", "xargs", "sort", "uniq", "head", "tail",
+  "less", "more", "wc", "tar", "zip", "unzip", "gzip", "gunzip", "diff",
+  "patch", "cmp", "tr", "cut", "paste",
+  "export", "unset", "source", "alias", "which", "env", "set",
+  "sh", "bash", "zsh", "sudo", "su",
+  "git", "gh", "ssh", "scp", "rsync",
+  "make", "cmake", "ninja",
+  "python", "python3", "pip", "pip3", "poetry", "conda",
+  "npm", "yarn", "pnpm", "node", "npx",
+  "go", "cargo", "rustc",
+  "docker", "kubectl", "helm",
+  "elan", "lake", "lean",
+  "systemctl", "journalctl", "service",
+  "brew", "apt", "apt-get", "yum", "dnf", "pacman"
+]
+
+private def isBashWordChar (c : Char) : Bool :=
+  c.isAlphanum || c == '_' || c == '-' || c == '.' || c == '/' || c == '+'
+
+/-- Escape `<`, `>`, `&`, quotes for safe HTML text. -/
+private def htmlEscape (s : String) : String :=
+  s.foldl (init := "") fun acc c =>
+    match c with
+    | '<' => acc ++ "&lt;"
+    | '>' => acc ++ "&gt;"
+    | '&' => acc ++ "&amp;"
+    | '"' => acc ++ "&quot;"
+    | '\'' => acc ++ "&#39;"
+    | _ => acc.push c
+
+private def spanOpen (cls : String) : String :=
+  "<span class=\"" ++ cls ++ "\">"
+
+private def spanClose : String := "</span>"
+
+/-- Tokenise a single shell line into HTML with syntax-class spans.
+    Works on `List Char` internally to avoid `String.Pos` API churn. -/
+private partial def tokeniseBashLine (line : String) : String := Id.run do
+  let cs : Array Char := line.toList.toArray
+  let n := cs.size
+  let mut acc : String := ""
+  let mut i : Nat := 0
+  let mut seenCmd : Bool := false
+  -- helper: extract substring cs[a..b] as a String
+  let sub := fun (a b : Nat) =>
+    (cs.extract a b).foldl String.push ""
+  -- leading whitespace
+  while i < n && (cs[i]! == ' ' || cs[i]! == '\t') do
+    acc := acc.push cs[i]!
+    i := i + 1
+  while i < n do
+    let c := cs[i]!
+    if c == '#' then
+      acc := acc ++ spanOpen "comment" ++ htmlEscape (sub i n) ++ spanClose
+      i := n
+    else if c == '"' || c == '\'' then
+      let quote := c
+      let mut j := i + 1
+      while j < n && cs[j]! != quote do
+        j := j + 1
+      let endPos := if j < n then j + 1 else j
+      acc := acc ++ spanOpen "string" ++ htmlEscape (sub i endPos) ++ spanClose
+      i := endPos
+    else if c == ' ' || c == '\t' then
+      acc := acc.push c
+      i := i + 1
+    else if c == '-' && i + 1 < n && (cs[i+1]!.isAlpha || cs[i+1]! == '-') then
+      let mut j := i + 1
+      while j < n && (isBashWordChar cs[j]! || cs[j]! == '=') do
+        j := j + 1
+      acc := acc ++ spanOpen "opt" ++ htmlEscape (sub i j) ++ spanClose
+      i := j
+    else if isBashWordChar c then
+      let mut j := i
+      while j < n && isBashWordChar cs[j]! do
+        j := j + 1
+      let word := sub i j
+      let isAssign := j < n && cs[j]! == '='
+      if isAssign && !seenCmd then
+        acc := acc ++ spanOpen "envvar" ++ htmlEscape word ++ spanClose ++ "="
+        i := j + 1
+      else if !seenCmd && bashCommandWords.contains word then
+        acc := acc ++ spanOpen "cmd" ++ htmlEscape word ++ spanClose
+        seenCmd := true
+        i := j
+      else
+        acc := acc ++ htmlEscape word
+        i := j
+    else
+      acc := acc.push c
+      i := i + 1
+  pure acc
+
+/-- Turn a full multi-line body into inner HTML for `<code>`. -/
+private def tokeniseBashBody (body : String) : String :=
+  let ls := body.splitOn "\n"
+  String.intercalate "\n" (ls.map tokeniseBashLine)
+
+private def bashCss : String := "
+pre.hl.bash.block {
+  white-space: pre;
+  padding: 0.75em 1em;
+  border-left: 3px solid #8bc34a;
+  background-color: #fafcf7;
+  overflow-x: auto;
+  border-radius: 4px;
+  margin: 1em 0;
+}
+pre.hl.bash.block code {
+  font-family: var(--verso-code-font-family, monospace);
+  font-size: 0.95em;
+  color: #2b2b2b;
+}
+pre.hl.bash.block .cmd {
+  color: var(--verso-code-keyword-color, #005cc5);
+  font-weight: var(--verso-code-keyword-weight, bold);
+}
+pre.hl.bash.block .opt {
+  color: var(--verso-code-const-color, #6f42c1);
+}
+pre.hl.bash.block .string {
+  color: var(--verso-code-literal-color, #032f62);
+}
+pre.hl.bash.block .comment {
+  color: #6a737d;
+  font-style: italic;
+}
+pre.hl.bash.block .envvar {
+  color: var(--verso-code-var-color, #e36209);
+  font-weight: 600;
+}
+"
+
+block_extension Block.bashCode (body : String) where
+  data := ToJson.toJson body
+  traverse _ _ _ := pure none
+  toTeX := none
+  extraCss := [bashCss]
+  toHtml :=
+    open Verso.Output Html in
+    open Verso.Output.Html in
+    some <| fun _goI _goB _id data _content => do
+      match FromJson.fromJson? (α := String) data with
+      | .error _e => return .empty
+      | .ok body =>
+        let inner := tokeniseBashBody body
+        -- Emit raw HTML via `Html.text false` so span markup passes through.
+        pure {{
+          <pre class="hl bash block"><code>{{Html.text false inner}}</code></pre>
+        }}
+
+/-- Placeholder constant so `@[code_block_expander bashFence]` resolves. -/
+def bashFence : Unit := ()
+
+/-- The `bashFence` code block renders a shell / bash snippet with light syntax
+    highlighting. It does not execute the code. -/
+@[code_block_expander bashFence]
+def bashFenceBlock : CodeBlockExpander
+  | args, code => do
+    ArgParse.done.run args
+    let body := code.getString
+    return #[← ``(Block.other (Block.bashCode $(quote body)) #[Block.code $(quote body)])]
+
 /-! ## Markdown-style table code block
 
 Write tables in verso using fenced code blocks:

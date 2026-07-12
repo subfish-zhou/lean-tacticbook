@@ -20,7 +20,7 @@ tag := "ch00-setup"
 > 本书对版本相关的命令、API 和 tactic 行为，只承诺与配套仓库 `examples/` 目录中的 `lean-toolchain` 和 `lake-manifest.json` 一致。遇到差异时，以这两个文件为准，不以本机全局安装的 Lean 版本为准。
 
 \[可运行\]
-```
+```bashFence
 cat examples/lean-toolchain
 rg -n '0692ef80fb13' examples/lake-manifest.json
 cd examples
@@ -55,7 +55,7 @@ tag := "install-lean4"
 Lean 通常通过 `elan` 管理。`elan` 负责下载并切换 Lean 工具链；项目根目录中的 `lean-toolchain` 决定该项目使用哪一个版本。
 
 \[可运行\]
-```
+```bashFence
 curl https://elan.lean-lang.org/install.sh -sSf | sh
 export PATH="$HOME/.elan/bin:$PATH"
 elan --version
@@ -73,7 +73,7 @@ tag := "install-troubleshooting"
 `elan` 默认把可执行文件放在 `~/.elan/bin`。把这个目录加入 `PATH`，并将同一行写入你的 shell 配置文件，例如 `~/.bashrc` 或 `~/.zshrc`。
 
 \[可运行\]
-```
+```bashFence
 export PATH="$HOME/.elan/bin:$PATH"
 ```
 
@@ -82,7 +82,7 @@ export PATH="$HOME/.elan/bin:$PATH"
 这表示 `elan` 已安装，但当前目录没有项目工具链，本机也没有默认工具链。进入带有 `lean-toolchain` 的项目目录后，`elan` 会按文件内容选择并下载对应版本。对本书而言，应进入配套仓库的 `examples/` 目录，再运行：
 
 \[可运行\]
-```
+```bashFence
 lake env lean --version
 ```
 
@@ -118,7 +118,7 @@ unknown module prefix 'Mathlib'
 进入项目并获取缓存：
 
 \[可运行\]
-```
+```bashFence
 cd examples
 lake exe cache get
 ```
@@ -126,7 +126,7 @@ lake exe cache get
 新建一个最小测试文件：
 
 \[可运行\]
-```
+```bashFence
 cat > Test.lean <<'EOF'
 import Mathlib
 
@@ -152,7 +152,7 @@ tag := "project-troubleshooting"
 Mathlib 缓存通过网络下载。先检查网络和代理配置。需要代理时，可以只对当前 shell 设置：
 
 \[可运行\]
-```
+```bashFence
 export https_proxy=http://your-proxy:port
 lake exe cache get
 ```
@@ -164,7 +164,7 @@ lake exe cache get
 这通常说明缓存没有完整下载。重新在 `examples/` 根目录执行：
 
 \[可运行\]
-```
+```bashFence
 lake exe cache get
 ```
 
@@ -173,7 +173,7 @@ lake exe cache get
 检查当前目录和实际命令：
 
 \[可运行\]
-```
+```bashFence
 pwd
 ls lean-toolchain lake-manifest.json
 lake env lean Test.lean
