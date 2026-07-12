@@ -644,6 +644,146 @@ def leanFenceBlock : CodeBlockExpander
         return #[← ``(sorry)]
       | e => throw e
 
+/-! ## Shared HTML tokeniser helpers (used by `leanBug`, `bashFence`) -/
+
+/-- Escape `<`, `>`, `&`, quotes for safe HTML text. -/
+private def htmlEscape (s : String) : String :=
+  s.foldl (init := "") fun acc c =>
+    match c with
+    | '<' => acc ++ "&lt;"
+    | '>' => acc ++ "&gt;"
+    | '&' => acc ++ "&amp;"
+    | '"' => acc ++ "&quot;"
+    | '\'' => acc ++ "&#39;"
+    | _ => acc.push c
+
+private def spanOpen (cls : String) : String :=
+  "<span class=\"" ++ cls ++ "\">"
+
+private def spanClose : String := "</span>"
+
+/-! ## Deliberate-error Lean block (`leanBug`)
+
+`leanFence` sends fence contents through the SubVerso helper subprocess,
+which throws on any elaboration error and aborts the whole build. That's the
+right behaviour for a `[可运行]` fence, but a `[练习·故意错误]` snippet is
+_expected_ to fail elaboration — we want it rendered with a light Lean
+syntax highlight (keywords in colour, strings in colour, comments dimmed)
+and no error to abort the build.
+
+`leanBug` uses a small hand-written keyword-list tokeniser (same shape as
+`bashFence`). It intentionally does not talk to the helper.
+-/
+
+private def leanBugKeywords : Array String := #[
+  "import", "open", "namespace", "end", "section", "variable", "universe",
+  "def", "theorem", "lemma", "example", "abbrev", "structure", "class",
+  "inductive", "instance", "instance*", "elab", "elab_rules", "syntax",
+  "macro", "macro_rules", "notation", "infix", "infixl", "infixr", "prefix",
+  "postfix", "deriving", "attribute", "export",
+  "let", "fun", "match", "with", "do", "if", "then", "else", "return", "pure",
+  "have", "show", "by", "at", "in", "for", "while", "where", "mutual",
+  "unless", "sorry", "admit", "exact", "intro", "intros", "apply", "cases",
+  "induction", "refine", "rw", "simp", "trivial", "ring", "linarith", "omega",
+  "constructor", "assumption", "contradiction", "decide", "aesop"
+]
+
+private def isLeanIdentChar (c : Char) : Bool :=
+  c.isAlphanum || c == '_' || c == '\''
+
+/-- Tokenise a single Lean line into HTML: keywords → span.keyword,
+    "…" → span.literal, `--…` → span.comment. -/
+private partial def tokeniseLeanLine (line : String) : String := Id.run do
+  let cs : Array Char := line.toList.toArray
+  let n := cs.size
+  let mut acc : String := ""
+  let mut i : Nat := 0
+  let sub := fun (a b : Nat) => (cs.extract a b).foldl String.push ""
+  while i < n do
+    let c := cs[i]!
+    -- comment `--…`
+    if c == '-' && i + 1 < n && cs[i+1]! == '-' then
+      acc := acc ++ "<span class=\"comment\">" ++ htmlEscape (sub i n) ++ "</span>"
+      i := n
+    -- string "…"
+    else if c == '"' then
+      let mut j := i + 1
+      while j < n && cs[j]! != '"' do j := j + 1
+      let endPos := if j < n then j + 1 else j
+      acc := acc ++ "<span class=\"literal\">" ++ htmlEscape (sub i endPos) ++ "</span>"
+      i := endPos
+    -- identifier / keyword
+    else if c.isAlpha || c == '_' then
+      let mut j := i
+      while j < n && isLeanIdentChar cs[j]! do j := j + 1
+      let word := sub i j
+      if leanBugKeywords.contains word then
+        acc := acc ++ "<span class=\"keyword\">" ++ htmlEscape word ++ "</span>"
+      else
+        acc := acc ++ htmlEscape word
+      i := j
+    -- digits → literal
+    else if c.isDigit then
+      let mut j := i
+      while j < n && (cs[j]!.isDigit || cs[j]! == '.') do j := j + 1
+      acc := acc ++ "<span class=\"literal\">" ++ htmlEscape (sub i j) ++ "</span>"
+      i := j
+    else
+      acc := acc.push c  -- unescaped ASCII punct is fine; & < > handled below via `htmlEscape`
+      i := i + 1
+  pure acc
+
+private def tokeniseLeanBody (body : String) : String :=
+  let ls := body.splitOn "\n"
+  String.intercalate "\n" (ls.map tokeniseLeanLine)
+
+/-- CSS piggy-backing on the existing `.hl.lean` palette so bug blocks share
+    the same colours as elaborated Lean fences. -/
+private def leanBugCss : String := "
+pre.hl.lean.block.bug {
+  white-space: pre;
+  padding: 0.6em 1em;
+  overflow-x: auto;
+  margin: 1em 0;
+  background-color: transparent;
+  font-family: var(--verso-code-font-family, monospace);
+  font-size: 0.95em;
+}
+pre.hl.lean.block.bug code { font-family: inherit; font-size: inherit; }
+pre.hl.lean.block.bug .keyword { color: #d73a49; font-weight: bold; }
+pre.hl.lean.block.bug .literal { color: #005cc5; }
+pre.hl.lean.block.bug .comment { color: #6a737d; font-style: italic; }
+"
+
+block_extension Block.leanBugCode (body : String) where
+  data := ToJson.toJson body
+  traverse _ _ _ := pure none
+  toTeX := none
+  extraCss := [leanBugCss]
+  toHtml :=
+    open Verso.Output Html in
+    open Verso.Output.Html in
+    some <| fun _goI _goB _id data _content => do
+      match FromJson.fromJson? (α := String) data with
+      | .error _e => return .empty
+      | .ok body =>
+        let inner := tokeniseLeanBody body
+        pure {{
+          <pre class="hl lean block bug"><code>{{Html.text false inner}}</code></pre>
+        }}
+
+/-- Placeholder constant so `@[code_block_expander leanBug]` resolves. -/
+def leanBug : Unit := ()
+
+/-- Render a Lean snippet that is expected to fail to elaborate. Does not go
+    through the helper — uses a simple keyword-list highlighter. -/
+@[code_block_expander leanBug]
+def leanBugBlock : CodeBlockExpander
+  | args, code => do
+    ArgParse.done.run args
+    let body := code.getString
+    return #[← ``(Block.other (Block.leanBugCode $(quote body)) #[Block.code $(quote body)])]
+
 /-! ## Bash / shell code block (`bashFence`)
 
 A dependency-free shell highlighter. Tokenises each line into:
@@ -682,22 +822,6 @@ private def bashCommandWords : Array String := #[
 
 private def isBashWordChar (c : Char) : Bool :=
   c.isAlphanum || c == '_' || c == '-' || c == '.' || c == '/' || c == '+'
-
-/-- Escape `<`, `>`, `&`, quotes for safe HTML text. -/
-private def htmlEscape (s : String) : String :=
-  s.foldl (init := "") fun acc c =>
-    match c with
-    | '<' => acc ++ "&lt;"
-    | '>' => acc ++ "&gt;"
-    | '&' => acc ++ "&amp;"
-    | '"' => acc ++ "&quot;"
-    | '\'' => acc ++ "&#39;"
-    | _ => acc.push c
-
-private def spanOpen (cls : String) : String :=
-  "<span class=\"" ++ cls ++ "\">"
-
-private def spanClose : String := "</span>"
 
 /-- Tokenise a single shell line into HTML with syntax-class spans.
     Works on `List Char` internally to avoid `String.Pos` API churn. -/

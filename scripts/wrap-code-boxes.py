@@ -103,6 +103,24 @@ def wrap_html(html: str) -> tuple[str, int]:
 
 CSS = r'''
 /* === codebox: labelled wrappers around code fences ===================== */
+
+/* Override verso's default all-black Lean palette with a proper syntax scheme
+   (defaults live in verso-vars.css and map every token colour to `black`). */
+:root {
+  --verso-code-keyword-color: #d73a49;   /* red   - import/def/example/… */
+  --verso-code-const-color:   #6f42c1;   /* purple- known constants      */
+  --verso-code-literal-color: #005cc5;   /* blue  - number/string lit    */
+  --verso-code-var-color:     #24292e;   /* dark  - bound variables      */
+  --verso-code-sort-color:    #22863a;   /* green - Type/Prop/Sort       */
+  --verso-code-typed-color:   #24292e;
+}
+.hl.lean .keyword { color: var(--verso-code-keyword-color); font-weight: bold; }
+.hl.lean .const   { color: var(--verso-code-const-color); }
+.hl.lean .literal { color: var(--verso-code-literal-color); }
+.hl.lean .var     { color: var(--verso-code-var-color); font-style: italic; }
+.hl.lean .sort    { color: var(--verso-code-sort-color); font-weight: bold; }
+.hl.lean .comment { color: #6a737d; font-style: italic; }
+
 .codebox {
   margin: 1em 0;
   border-left: 3px solid #ccc;
@@ -127,20 +145,32 @@ CSS = r'''
   border-left: none !important;
   border-radius: 0 !important;
 }
-.codebox > code.hl.lean.block { display: block; }
+.codebox > code.hl.lean.block {
+  display: block;
+  padding: 0.6em 1em;
+  background-color: transparent;
+}
 
-/* Lean-highlighted variants (runnable / hint / excerpt): light green */
+/* Lean-highlighted variants (runnable / hint / excerpt / bug): light green */
 .codebox-runnable,
 .codebox-hint,
-.codebox-excerpt {
+.codebox-excerpt,
+.codebox-bug {
   background-color: #f8fdf8;
   border-left-color: #4caf50;
 }
 .codebox-runnable > .codebox-header,
 .codebox-hint > .codebox-header,
-.codebox-excerpt > .codebox-header {
+.codebox-excerpt > .codebox-header,
+.codebox-bug > .codebox-header {
   background-color: #4caf50;
   color: #fff;
+}
+
+/* Deliberate error: keep code green (it's Lean), but tint the pill red so
+   readers spot it as "this is meant to fail". */
+.codebox-bug > .codebox-header {
+  background-color: #d9534f;
 }
 
 /* Pseudo-code: light yellow */
@@ -150,16 +180,6 @@ CSS = r'''
 }
 .codebox-pseudo > .codebox-header {
   background-color: #d4a017;
-  color: #fff;
-}
-
-/* Deliberate error: light red */
-.codebox-bug {
-  background-color: #fff4f4;
-  border-left-color: #d9534f;
-}
-.codebox-bug > .codebox-header {
-  background-color: #d9534f;
   color: #fff;
 }
 
@@ -173,14 +193,20 @@ CSS = r'''
   color: #fff;
 }
 
-/* Inner pre backgrounds: keep transparent so the box tint shows through,
-   except bash which keeps its light-blue code area to stay distinct. */
+/* If the runnable box contains a bash snippet, switch its accent to blue
+   (bash shell blocks are visually distinct from Lean). */
+.codebox-runnable:has(pre.hl.bash.block) {
+  background-color: #f4faff;
+  border-left-color: #2196f3;
+}
+.codebox-runnable:has(pre.hl.bash.block) > .codebox-header {
+  background-color: #2196f3;
+}
+
+/* Inner pre backgrounds transparent so the box tint shows through. */
 .codebox > pre {
   background-color: transparent;
   padding: 0.6em 1em;
-}
-.codebox-runnable > pre.hl.bash.block {
-  background-color: #f4faff;
 }
 '''
 

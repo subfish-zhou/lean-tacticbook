@@ -287,7 +287,7 @@ elab "my_tactic" : tactic => do
 ```
 
 \[练习·故意错误\]
-```
+```leanBug
 import Mathlib
 
 example : False := by
@@ -371,7 +371,7 @@ tag := "exercise-0-3"
 下面故意用 `omega` 处理非线性整数等式。`omega` 处理 Presburger 算术，其中不允许变量与变量相乘。
 
 \[练习·故意错误\]
-```
+```leanBug
 import Mathlib
 
 example (x y : ℤ) : (x + y) * (x + y) = x * x + 2 * x * y + y * y := by
@@ -403,7 +403,7 @@ tag := "exercise-0-4"
 下面是含 `sorry` 的练习模板。`sorry` 允许模板通过编译；你要逐个替换它，最终文件中不得保留 `sorry`。
 
 \[练习模板\]
-```
+```leanBug
 import Mathlib
 
 example : (3 : ℤ) + 4 = 7 := by
