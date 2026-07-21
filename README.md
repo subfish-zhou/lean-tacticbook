@@ -6,9 +6,10 @@
 
 ### Part I: Foundations — How Tactics Work
 - Ch0: 环境与运行约定
-- Ch1: Lean 4 元编程模型
-- Ch2: Expr：Lean 4 的内部表示
-- Ch3: 编写你的第一个 Tactic
+- Ch1: tactic 心智模型
+- Ch2: Lean 中的 tactic 基础设施
+- Ch3: Expr：Lean 4 的内部表示
+- Ch4: 编写你的第一个 Tactic
 
 _(更多章节持续更新中)_
 

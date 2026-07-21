@@ -322,10 +322,10 @@ tag := "book-overview"
 
 \[示意\]
 ```leanBug
-Part I   Ch1–Ch5    元编程模型、Expr、tactic 编写、目标管理、typeclass
-Part II  Ch6–Ch13   simp、ring、omega、linarith、norm_num、aesop、grind、decide
-Part III Ch14–Ch19  positivity、fun_prop、gcongr、field_simp、逻辑变换、自定义自动化
-Part IV  Ch20–Ch24  反射、性能、外部工具、方法论、分析自动化展望
+Part I   Ch1–Ch6    tactic 心智模型、tactic 基础设施、Expr、tactic 编写、目标管理、typeclass
+Part II  Ch7–Ch14   simp、ring、omega、linarith、norm_num、aesop、grind、decide
+Part III Ch15–Ch20  positivity、fun_prop、gcongr、field_simp、逻辑变换、自定义自动化
+Part IV  Ch21–Ch25  反射、性能、外部工具、方法论、分析自动化展望
 ```
 
 Part I 和 Part II 是后面所有章节的共同基础，建议按顺序读。Part III 按任务挑着看；Part IV 更偏架构和方法论，第一遍读不需要每个都动手实现。

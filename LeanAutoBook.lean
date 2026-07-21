@@ -2,6 +2,7 @@ import VersoManual
 
 import LeanAutoBook.Helpers
 import LeanAutoBook.Ch00Setup
+import LeanAutoBook.Ch01TacticMentalModel
 import LeanAutoBook.Ch01MetaprogrammingModel
 import LeanAutoBook.Ch02Expr
 import LeanAutoBook.Ch03FirstTactic
@@ -46,6 +47,8 @@ tag := "lean-automation-internals"
 _本书校验版本_：Lean 4 `v4.30.0-rc1`，Mathlib 同期主线（2026 年 4 月）。
 
 {include 0 LeanAutoBook.Ch00Setup}
+
+{include 0 LeanAutoBook.Ch01TacticMentalModel}
 
 {include 0 LeanAutoBook.Ch01MetaprogrammingModel}
 
