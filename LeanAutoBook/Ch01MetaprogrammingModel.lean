@@ -24,7 +24,7 @@ tag := "ch01-metaprogramming-model"
 tag := "tactic-metaprogram"
 %%%
 
-上一章我们没碰 Lean 一行真代码，却把 tactic 这台机器造了出来：证明状态是*一列*目标；每个目标是局部假设加待证命题；tactic 是*状态转移*，成功不承诺目标变少；关目标等于往一张带洞的证明里合法填结构；组合靠 `then`/`orElse`/`repeat`/`allGoals`，全落在 `pure`/`bind` 上；效果分只读背景、可变状态、失败、IO 四种。最后我们发现，这个被逼出来的形状，名字叫 monad。
+上一章我们没碰 Lean 一行真代码，却把 tactic 这台机器造了出来：证明状态管理*一列*目标；每个目标是局部假设加待证命题；tactic 是*状态转移*，成功不承诺目标变少；关目标等于往一张带洞的证明里合法填结构；顺序接力靠 `pure`/`bind` 抽象，而 `orElse`/`repeat` 还另需选择与回滚语义；效果分只读背景、可变状态、失败、IO 四种。最后我们发现，这个被逼出来的顺序组合形状，名字叫 monad。
 
 这一章把每个发明的零件，对到 Lean 现实里的名字。先给全表，本章其余部分就是逐行展开它、并核对“现实比玩具多了什么”：
 
@@ -41,7 +41,7 @@ tag := "tactic-metaprogram"
 | 带洞证明里“同一个构造子的洞” | `MetavarContext` 里的元变量与赋值（住在 `Meta.State`，可写） |
 | `assumption` 里那句含糊的“命题相同” | `isDefEq`：定义等价，且*有副作用* |
 | “靠预期类型补全表面语法” | `TermElabM` 的精译（elaboration） |
-| “扔副本白嫖回滚” | `StateRefT` 下用 `withoutModifyingState` 等显式事务操作 |
+| “扔副本白嫖回滚” | 可回溯状态的存档/恢复，以及 `TacticM` 在失败分支上的恢复策略 |
 
 看懂 tactic 源码，你要能回答四个问题，它们正是上一章“状态怎么传、背景怎么读”那套追问的现实版：
 
@@ -254,7 +254,7 @@ def bumpTwice : NatState Nat := do
 
 Lean 元编程里常见的是 `StateRefT`——它的接口跟纯 `StateT` 类似，底层却基于 `ST.Ref`（可变引用；`get` 读、`set` 写，原地更新那个保存值，不复制整份状态）。`Meta.State` 里的 `MetavarContext` 和 `Tactic.State` 里的目标列表都要频繁更新，复制大状态会拖累性能，所以走 `ST.Ref` 路径。
 
-这正是上一章埋的雷。玩具里 `orElse` 的回滚之所以“免费”，是因为状态是个到处复制的值，失败支弄脏的是副本，一扔就干净。现在 Lean 为了性能把状态换成了*原地修改的可变引用*——`t1` 的改动就地生效，`orElse` 再也白嫖不到回滚了。所以 Lean 必须提供*显式*的事务操作（下面 `withoutModifyingState` 就是），先存档、失败了再回档。回滚不是 `StateRefT` 白送的，是这些操作手动做出来的——跟你上一章的推断一字不差。
+这正是上一章埋的雷。玩具里 `orElse` 的回滚之所以“免费”，是因为状态是个到处复制的值，失败支弄脏的是副本，一扔就干净。现在 Lean 为了性能把状态换成了*原地修改的可变引用*——`t1` 的改动就地生效，`StateRefT` 的通用异常实例本身不会自动把引用恢复到旧值。Lean 因而另外提供可回溯状态的存档/恢复机制：`withoutModifyingState` 会在子计算结束后无条件丢弃其中的可回溯修改，适合“探查但不提交”；按成功与否决定提交的组合器则在失败时恢复存档；`TacticM` 自己的异常处理也会在尝试分支前保存状态、捕获失败后恢复。这里恢复的是被指定为*可回溯*的那部分状态，不是整个世界。回滚不是“只要用了 monad/StateRefT 就白送”，而是额外设计出来的事务策略——跟你上一章的推断一字不差。
 
 ### Except：要么成功要么失败
 %%%
@@ -317,10 +317,10 @@ tag := "why-lean-uses-monads"
 1. *签名只暴露能力层*：`getMainGoal : TacticM MVarId` 告诉你它跑在 `TacticM` 里，不用展开几十个环境、状态、异常、IO 参数。
 2. *状态按顺序传递*：`bind` 帮你把前一步的新状态交给后一步，`do` 管理这条管线。
 3. *异常自动传播*：中间某步失败，后面的自动跳过，错误一路冒泡到调用者。
-4. *局部控制可回溯状态*：`withoutModifyingState` 能跑一次探查然后丢掉这段的状态修改（这就是你玩具里 `orElse` 需要的事务性回滚，Lean 把它做成了显式操作）；`withLCtx` 能在临时局部上下文里跑一段 Meta 计算（对应你的“带作用域的局部换 Env”）。
+4. *局部控制可回溯状态*：`withoutModifyingState` 能跑一次探查，并且无论成功失败都丢掉其中的可回溯修改；“成功提交、失败恢复”则由相应的提交/异常组合器负责，`TacticM` 的尝试分支也采用先存档、失败后恢复的策略。`withLCtx` 能在临时局部上下文里跑一段 Meta 计算（对应你的“带作用域的局部换 Env”）。
 5. *层之间可 lifting*：只要实例存在，外层 monad 直接调下层操作，你不用手写每一层的封装。
 
-第 4 点有边界：*回滚 monad 状态不等于回滚世界*。已经打印到终端的字符、写到文件的内容、走出去的网络请求，都不会因为你恢复了状态而消失。打印出去的话比元变量更难收回来——这就是上一章“状态可回滚，IO 不可回滚”那条，在真实 API 上的兑现。
+第 4 点有边界：*恢复可回溯状态不等于回滚全部内部缓存，更不等于回滚世界*。已经打印到终端的字符、写到文件的内容、走出去的网络请求，都不会因为你恢复了状态而消失。打印出去的话比元变量更难收回来——这就是上一章“状态可回滚，IO 不可回滚”那条，在真实 API 上的兑现。
 
 还有一条上一章反复强调、这里必须落地的区分：*失败通道里塞的不都是一回事*。“没找到匹配假设”“目标不是等式”是*预期内*的失败，`orElse` 该据此换路；而“往环境里加了个类型不对的声明”“内核拒绝了一个证明项”是*真出错*，不该被 `orElse` 悄悄吞掉。Lean 的异常通道两种都能装，`throwError` 抛的多是前者；区分它们、别让回溯组合器把真错误当成“换条路就好”，仍然是写 tactic 的人的责任。
 
@@ -440,7 +440,7 @@ tag := "metam-metavariables"
 
 `LocalContext` 记录当前的局部声明。进 `∀ x, ...` 的 body 时，`forallTelescope` 会在扩展后的局部上下文里跑你给的回调；回调跑完，外层看到的还是原来那份上下文。这就是"进函数体临时借一份，出来还回去"的意思。
 
-`MetavarContext` 记录元变量的声明和赋值。`mkFreshExprMVar` 会加新元变量；`isDefEq` *可能*给现有元变量赋值——所以它不是纯粹的判断，是有副作用的。后面 §常见失败模式会专门讲这一条。
+`MetavarContext` 记录元变量的声明和赋值。`mkFreshExprMVar` 会加新元变量；`isDefEq` *可能*给现有元变量赋值——所以它不是纯粹的判断，是有副作用的。不过它也不是“比较失败后照样留下一地赋值”：外层定义等价检查会设检查点，返回 `false` 或抛异常时恢复相关状态，成功时才提交求解出的赋值。这个事务边界，正是扫描多个候选时不互相污染的保障。
 
 Meta 常用操作：
 
@@ -456,7 +456,7 @@ lambdaTelescope expr callback
 
 它们完整的类型签名（带上参数和隐式参数）会长得很长。学 API 时用 `#check` 看完整签名，别只记表里的短写。
 
-单独点名 `isDefEq`，因为它填的正是上一章那个坑。玩具里 `assumption` 有句含糊的“命题相同”，我当时就警告它将来要出事。现实里这个“相同”就是 `isDefEq e₁ e₂`——它判的不是逐字符相等，而是*定义等价*（`Nat` 和 `ℕ`、`n + 0` 和 `n` 会被判成相等）。更要命的是它*不纯*：判一次可能顺手给某个元变量赋值，改了 `MetavarContext`。所以 `isDefEq` 不是一个安静的谓词，是一次可能改状态的操作。上一章担心的“这里要出事”，出的就是这种事——你以为在做一次无害的比较，其实动了共享状态。
+单独点名 `isDefEq`，因为它填的正是上一章那个坑。玩具里 `assumption` 有句含糊的“命题相同”，我当时就警告它将来要出事。现实里这个“相同”就是 `isDefEq e₁ e₂`——它判的不是逐字符相等，而是*定义等价*（`Nat` 和 `ℕ`、`n + 0` 和 `n` 会被判成相等）。更要命的是它*不纯*：一次成功的检查可能顺手给某个元变量赋值，改了 `MetavarContext`。所以 `isDefEq` 不是一个安静的谓词，是一次带检查点、可能提交状态变化的操作；失败检查会撤回自己的试探，成功检查则可能留下求解结果。上一章担心的“这里要出事”，出的就是这种事——你以为在做布尔比较，其实是在进行一次受事务保护的约束求解。
 
 ## TermElabM：由预期类型驱动的精译
 %%%
@@ -468,15 +468,15 @@ tag := "termelabm-elaboration"
 看一下"预期类型"的意思：同一段语法 `3`，在 `Nat` 预期下和 `Real` 预期下会被精译成不同表达式。下面在命令精译里分别要求这两种：
 
 \[可运行\]
-```
+```leanFence
 import Mathlib
 open Lean Elab Term Meta
 
 elab "show_elab_examples" : command => do
   Command.liftTermElabM do
-    let natExpr ← elabTerm (← `(3)) (some (mkConst ``Nat))
-    let realType ← elabTerm (← `(Real)) none
-    let realExpr ← elabTerm (← `(3)) (some realType)
+    let natExpr ← Lean.Elab.Term.elabTerm (← `(3)) (some (mkConst ``Nat))
+    let realType ← Lean.Elab.Term.elabTerm (← `(Real)) none
+    let realExpr ← Lean.Elab.Term.elabTerm (← `(3)) (some realType)
     logInfo m!"Nat expression: {← ppExpr natExpr}"
     logInfo m!"Real expression: {← ppExpr realExpr}"
 
@@ -507,14 +507,15 @@ tag := "tacticm-goals"
 
 \[源码节选\]
 ```leanBug
--- Lean/Elab/Tactic/Basic.lean；省略 Tactic.State 的其他细节
+-- Lean/Elab/Term/TermElabM.lean；省略 Tactic.State 的其他细节
 structure Tactic.State where
   goals : List MVarId
 
+-- Lean/Elab/Tactic/Basic.lean
 abbrev Tactic := Syntax → TacticM Unit
 ```
 
-注意 `goals : List MVarId`——是一列元变量，正是玩具里“目标列表只是那些洞的索引”这句话的字面兑现：每个目标就是带洞证明里的一个洞（元变量），列表记的是“还有哪些洞没填”。
+注意 `goals : List MVarId`——是一列元变量标识，正是玩具里“目标列表是洞的工作索引”这句话的现实版本。这里要比玩具精确一步：raw `Tactic.State.goals` 是当前 tactic 的*工作队列*，可能暂时还含有已经被赋值的元变量；`pruneSolvedGoals`/`getUnsolvedGoals` 才会过滤出真正尚未解决的目标。也就是说，队列和“未填洞集合”通常同步，但不是每个瞬间都字面相等。
 
 常用目标操作：
 
@@ -526,11 +527,11 @@ getMainGoal : TacticM MVarId
 getMainTarget : TacticM Expr
 ```
 
-心智模型：*一个 tactic 读并更新目标列表*。但要注意——*目标数不保证变少*。`constructor` 会把一个合取目标拆成两个子目标，`skip` 保持不变，`swap` 只重排。tactic 成功返回也不代表它"关掉"了目标；只有整个 tactic block 结束时目标列表*必须*为空，证明才算完整。这跟你上一章亲手在 `intro`（不变）、`constructor`（变多）、`swap`（重排）、`skip`（不动）上验证过的结论完全一致——现实没有推翻它，只是给它配了真实的类型。
+心智模型：*一个 tactic 读并更新目标工作队列，同时在共享的元变量状态里推进证明*。但要注意——*未解决目标数不保证变少*。`constructor` 会把一个合取目标拆成两个子目标，`skip` 保持不变，`swap` 只重排。tactic 成功返回也不代表它"关掉"了目标；整个 tactic block 结束时，经过清理后得到的*未解决目标*必须为空，证明才算完整。raw `goals` 队列在中间步骤里则可能尚未清走已赋值项。这跟你上一章亲手在 `intro`（不变）、`constructor`（变多）、`swap`（重排）、`skip`（不动）上验证过的结论完全一致——现实没有推翻它，只是把“队列”和“未解决集合”分得更细。
 
 所以要把这句话钉死并当心一个常见的误导说法：“tactic 的本质是接收目标列表、返回更小的目标列表。” 这是错的，上一章四个例子已经从三个方向把它打死了。tactic 的本质是*在共享的元变量状态上，合法地推进那张带洞证明*；目标列表变长、变短、原地重排都可能发生。
 
-回滚那一环（第 6 个坑）也在这里落地：`goals` 和 `MetavarContext` 都住在 `StateRefT` 的可变引用里，`orElse`（在 Lean 里是 `<|>` 一类的组合器）要做事务性回滚，靠的正是前面说的 `withoutModifyingState` 式的显式存档/回档，而不是玩具里“扔副本”那种免费午餐。
+回滚那一环（第 6 个坑）也在这里落地：`goals` 和 `MetavarContext` 都通过可变状态层被更新，`orElse`（在 Lean 里是 `<|>` 一类的组合器）不能指望 `StateRefT` 自动撤销。`TacticM` 的尝试/异常路径会先保存可回溯状态，分支失败时恢复；`withoutModifyingState` 则是另一种策略——连成功分支的可回溯修改也丢掉，专供只观察不提交的探查。两者都不是玩具里“扔副本”那种免费午餐。
 
 # 现在你能读什么源码，还缺什么
 
