@@ -17,7 +17,7 @@ tag := "ch00-setup"
 >
 > *版本基准*：Lean 工具链 `leanprover/lean4:v4.30.0-rc1`；Mathlib revision `0692ef80fb13`。
 >
-> 本书所有可运行代码均在上述版本上校验。实际版本以配套仓库 `examples/` 中的 `lean-toolchain` 和 `lake-manifest.json` 为准。验证示例时不要使用全局安装的 Lean；元编程 API 可能在小版本间发生不兼容变化。
+> 本书所有可运行代码均在上述版本上校验。配套仓库 `examples/` 中包含相应示例。元编程 API 可能在小版本间发生不兼容变化。
 
 \[可运行\]
 ```bashFence
@@ -27,7 +27,7 @@ cd examples
 lake env lean --version
 ```
 
-`cat` 和 `rg` 应分别显示 `leanprover/lean4:v4.30.0-rc1` 与 Mathlib revision `0692ef80fb13`。进入 `examples/` 后，`lake env lean --version` 显示项目实际调用的 Lean 版本。三项分别与上述基准相符，才说明工具链和依赖版本正确。
+`cat` 和 `rg` 应分别显示 `leanprover/lean4:v4.30.0-rc1` 与 Mathlib revision `0692ef80fb13`。进入 `examples/` 后，`lake env lean --version` 显示项目实际调用的 Lean 版本。
 
 
 # 你需要什么基础
