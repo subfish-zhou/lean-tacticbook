@@ -156,10 +156,10 @@ omega 的源码分布在两个目录：`Lean/Elab/Tactic/Omega/`（tactic 层与
 
 | 文件 | 内容 | 行数 |
 |------|------|------|
-| `Frontend.lean` | tactic 入口、预处理管线、`omegaImpl`、case split | ~714 |
-| `Core.lean` | `Problem`、`Fact`、`Justification`、消元算法 | ~578 |
-| `OmegaM.lean` | `OmegaM` monad、原子管理、缓存 | ~262 |
-| `MinNatAbs.lean` | 系数分析辅助（困难等式选择） | ~150 |
+| `Frontend.lean` | tactic 入口、预处理管线、`omegaImpl`、case split | 714 |
+| `Core.lean` | `Problem`、`Fact`、`Justification`、消元算法 | 578 |
+| `OmegaM.lean` | `OmegaM` monad、原子管理、缓存 | 262 |
+| `MinNatAbs.lean` | 系数分析辅助（困难等式选择） | 150 |
 
 omega 的工程复杂度远超核心消元算法。复杂度来自三个方面：**(a)** 命题翻译层——把 Lean 语法世界的命题逐步降解为约束求解器的内部表示；**(b)** Nat/Int/Fin 语义桥接——截断减法、整数除法、Fin 模算术的精确翻译；**(c)** 延迟证明构造——`Justification` 追踪每一步推导的来源，最终构造可检查的证明项。
 
@@ -220,24 +220,39 @@ tag := "ch08-data-structures"
 tag := "ch08-coeffs"
 %%%
 
-最底层是 `IntList`（`List Int` 的类型别名），用于稠密表示整数系数向量。`Coeffs` 是 `IntList` 的类型别名，超出列表长度的位置视为 0。核心运算定义在 `Init/Omega/IntList.lean` 和 `Init/Omega/Coeffs.lean`：
+最底层是 `IntList`（`List Int` 的类型别名），用于稠密表示整数系数向量；超出列表长度的位置视为 0。类型别名和实际运算位于 `Lean.Omega.IntList` 命名空间：
 
 ```
--- [Lean 4 v4.32.2, Init/Omega/IntList.lean]
+-- [Lean 4 v4.32.2, Init/Omega/IntList.lean:71-84]
+namespace Lean.Omega
 abbrev IntList := List Int
-abbrev Coeffs := IntList
 
+namespace IntList
 def get (xs : IntList) (i : Nat) : Int := xs[i]?.getD 0
 
--- 点积——约束求值的核心
-def dot (xs ys : IntList) : Int := (xs * ys).sum
-
--- 线性组合——FM 消元的基本操作
+-- [Lean 4 v4.32.2, Init/Omega/IntList.lean:192-194]
 def combo (a : Int) (xs : IntList) (b : Int) (ys : IntList) : IntList :=
   List.zipWithAll (fun x y => a * x.getD 0 + b * y.getD 0) xs ys
+
+-- [Lean 4 v4.32.2, Init/Omega/IntList.lean:276-277]
+def dot (xs ys : IntList) : Int := (xs * ys).sum
 ```
 
-其他操作包括 `neg`、`smul`（标量乘法）、`sdiv`（带符号除法）、`gcd`（所有元素绝对值的最大公因数）、`bmod`（平衡取模）等。
+`Coeffs` 则在另一个文件中定义，并在独立的 `Lean.Omega.Coeffs` 命名空间里把求解器所需操作转发给 `IntList`：
+
+```
+-- [Lean 4 v4.32.2, Init/Omega/Coeffs.lean:34-50,57-66]
+namespace Lean.Omega
+abbrev Coeffs := IntList
+
+namespace Coeffs
+abbrev set (xs : Coeffs) (i : Nat) (y : Int) : Coeffs := IntList.set xs i y
+abbrev get (xs : Coeffs) (i : Nat) : Int := IntList.get xs i
+abbrev dot (xs ys : Coeffs) : Int := IntList.dot xs ys
+abbrev combo (a : Int) (xs : Coeffs) (b : Int) (ys : Coeffs) : Coeffs := IntList.combo a xs b ys
+```
+
+因此 `Coeffs` 目前仍是稠密表示，但算法只依赖这一层转发接口，未来可替换底层表示。其他 `IntList` 操作包括 `neg`、`smul`（标量乘法）、`sdiv`（带符号除法）、`gcd`（所有元素绝对值的最大公因数）、`bmod`（平衡取模）等。
 
 ## LinearCombo：线性组合
 %%%
@@ -247,10 +262,13 @@ tag := "ch08-linear-combo"
 `LinearCombo` 表示一个**常数项 + 系数向量**的线性表达式：
 
 ```
--- [Lean 4 v4.32.2, Init/Omega/LinearCombo.lean]
+-- [Lean 4 v4.32.2, Init/Omega/LinearCombo.lean:39-45]
 structure LinearCombo where
-  const : Int := 0       -- 常数项
-  coeffs : Coeffs := []  -- 各原子的系数
+  /-- Constant term. -/
+  const : Int := 0
+  /-- Coefficients of the atoms. -/
+  coeffs : Coeffs := []
+deriving DecidableEq, Repr
 ```
 
 语义：`const + Σᵢ coeffs[i] * atoms[i]`。算术运算（`add`、`sub`、`neg`）逐分量操作。**乘法只在一个因子是常数时有效**——代码在使用前检查 `xl.coeffs.isZero ∨ yl.coeffs.isZero`。
@@ -260,42 +278,46 @@ structure LinearCombo where
 tag := "ch08-constraint"
 %%%
 
-`Constraint` 用一对可选的上下界表示约束：
+`Constraint` 用一对可选的上下界表示约束。v4.32.2 为二者分别提供了 `LowerBound`、`UpperBound` 类型别名，字段并不直接写成 `Option Int`：
 
 ```
--- [Lean 4 v4.32.2, Init/Omega/Constraint.lean]
+-- [Lean 4 v4.32.2, Init/Omega/Constraint.lean:29-32,54-59]
+abbrev LowerBound : Type := Option Int
+abbrev UpperBound : Type := Option Int
+
 structure Constraint where
-  lowerBound : Option Int
-  upperBound : Option Int
+  /-- A lower bound. -/
+  lowerBound : LowerBound
+  /-- An upper bound. -/
+  upperBound : UpperBound
+deriving BEq, DecidableEq, Repr
 ```
 
 语义是 `lowerBound ≤ value ≤ upperBound`，`none` 表示无约束。预定义特殊约束：
 
 ```
--- [Lean 4 v4.32.2, Init/Omega/Constraint.lean]
-def trivial    : Constraint := ⟨none, none⟩       -- 无约束
-def impossible : Constraint := ⟨some 1, some 0⟩   -- 不可满足（1 ≤ x ≤ 0）
-def exact (r : Int) : Constraint := ⟨some r, some r⟩  -- 等式（x = r）
+-- [Lean 4 v4.32.2, Init/Omega/Constraint.lean:101-106]
+def trivial : Constraint := ⟨none, none⟩
+def impossible : Constraint := ⟨some 1, some 0⟩
+def exact (r : Int) : Constraint := ⟨some r, some r⟩
 ```
 
 关键操作：
 
 ```
--- [Lean 4 v4.32.2, Init/Omega/Constraint.lean]
--- 合取（取更紧的界）
+-- [Lean 4 v4.32.2, Init/Omega/Constraint.lean:190-193]
 def combine (x y : Constraint) : Constraint where
   lowerBound := Option.merge max x.lowerBound y.lowerBound
   upperBound := Option.merge min x.upperBound y.upperBound
 
--- 线性组合
+-- [Lean 4 v4.32.2, Init/Omega/Constraint.lean:182-184]
 def combo (a : Int) (x : Constraint) (b : Int) (y : Constraint) : Constraint :=
   add (scale a x) (scale b y)
 
--- 不可满足判定
-def isImpossible (c : Constraint) : Bool :=
-  match c.lowerBound, c.upperBound with
-  | some l, some u => u < l
-  | _, _ => false
+-- [Lean 4 v4.32.2, Init/Omega/Constraint.lean:115-118]
+def isImpossible : Constraint → Bool
+  | ⟨some x, some y⟩ => y < x
+  | _ => false
 ```
 
 `combine` 是同系数约束合并的核心——把两个约束取交集（更紧的界）。`combo` 是 Fourier-Motzkin 消元的基本操作——两个约束的线性组合。
@@ -313,13 +335,10 @@ inductive Justification : Constraint → Coeffs → Type
   | assumption (s : Constraint) (x : Coeffs) (i : Nat) : Justification s x
   | tidy (j : Justification s c) :
       Justification (tidyConstraint s c) (tidyCoeffs s c)
-  | combine {s t c} (j : Justification s c) (k : Justification t c) :
-      Justification (s.combine t) c
-  | combo {s t x y} (a : Int) (j : Justification s x)
-                     (b : Int) (k : Justification t y) :
-      Justification (Constraint.combo a s b t) (Coeffs.combo a x b y)
-  | bmod (m : Nat) (r : Int) (i : Nat) {x}
-      (j : Justification (.exact r) x) :
+  | combine {s t c} (j : Justification s c) (k : Justification t c) : Justification (s.combine t) c
+  | combo {s t x y} (a : Int) (j : Justification s x) (b : Int) (k : Justification t y) :
+    Justification (Constraint.combo a s b t) (Coeffs.combo a x b y)
+  | bmod (m : Nat) (r : Int) (i : Nat) {x} (j : Justification (.exact r) x) :
       Justification (.exact (Int.bmod r m)) (bmod_coeffs m i x)
 ```
 
@@ -343,7 +362,7 @@ tag := "ch08-fact-and-problem"
 `Fact` 把约束、系数和推导绑定在一起：
 
 ```
--- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Core.lean:129-136]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Core.lean:129-135]
 structure Fact where
   coeffs : Coeffs
   constraint : Constraint
@@ -428,11 +447,10 @@ def omegaTactic (cfg : OmegaConfig) : TacticM Unit := do
         let type ← g.getType
         let g' ← mkFreshExprSyntheticOpaqueMVar type
         let hyps := (← getLocalHyps).toList
-        trace[omega] "analyzing {hyps.length} hypotheses:\n\
-          {← hyps.mapM inferType}"
+        trace[omega] "analyzing {hyps.length} hypotheses:\n{← hyps.mapM inferType}"
         omega hyps g'.mvarId! cfg
-        let e ← mkAuxTheorem type
-          (← instantiateMVarsProfiling g') (zetaDelta := true)
+        -- Omega proofs are typically rather large, so hide them in a separate definition
+        let e ← mkAuxTheorem type (← instantiateMVarsProfiling g') (zetaDelta := true)
         g.assign e
 ```
 
@@ -445,10 +463,11 @@ def omegaTactic (cfg : OmegaConfig) : TacticM Unit := do
 tag := "ch08-add-fact"
 %%%
 
-`addFact` 对每个假设进行模式匹配，把数学命题分类并翻译为线性约束：
+`addFact` 对每个假设进行模式匹配，把数学命题分类并翻译为线性约束。下面是便于展示分支结构的**伪代码/删节**，不是逐字源码；完整定义精确位于所标行号：
 
 ```
--- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Frontend.lean:425-508]
+-- [伪代码/删节；Lean 4 v4.32.2 完整源码：
+--  Lean/Elab/Tactic/Omega/Frontend.lean:425-508]
 partial def addFact (p : MetaProblem) (h : Expr) :
     OmegaM (MetaProblem × Nat) := do
   if ! p.problem.possible then return (p, 0)
@@ -491,10 +510,11 @@ partial def addFact (p : MetaProblem) (h : Expr) :
 
 析取的处理是**延迟的**——先加入 `disjunctions` 队列，等核心消元无法找到矛盾时再做 case split。这种策略避免了不必要的分支搜索。
 
-对于否定假设，`pushNot` 函数把否定推入内部：
+对于否定假设，`pushNot` 函数把否定推入内部。下列代码同样是**伪代码/删节**（用 `...` 省略了分支），不是逐字源码：
 
 ```
--- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Frontend.lean:371-420]
+-- [伪代码/删节；Lean 4 v4.32.2 完整源码：
+--  Lean/Elab/Tactic/Omega/Frontend.lean:371-420]
 def pushNot (h P : Expr) : MetaM (Option Expr) := do
   let P ← whnfR P
   match P with
@@ -524,10 +544,11 @@ def pushNot (h P : Expr) : MetaM (Option Expr) := do
 tag := "ch08-as-linear-combo"
 %%%
 
-`asLinearComboImpl` 递归地把一个整数表达式转化为 `LinearCombo`，返回三元组 `(LinearCombo, Proof, NewFacts)`：
+`asLinearComboImpl` 递归地把一个整数表达式转化为 `LinearCombo`，返回三元组 `(LinearCombo, Proof, NewFacts)`。下面是**伪代码/删节**，不是逐字源码：
 
 ```
--- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Frontend.lean:131-241]
+-- [伪代码/删节；Lean 4 v4.32.2 完整源码：
+--  Lean/Elab/Tactic/Omega/Frontend.lean:131-241]
 partial def asLinearComboImpl (e : Expr) :
     OmegaM (LinearCombo × OmegaM Expr × List Expr) := do
   match groundInt? e with
@@ -565,10 +586,11 @@ partial def asLinearComboImpl (e : Expr) :
   | _ => mkAtomLinearCombo e  -- 无法分解 → 新原子
 ```
 
-**Nat → Int 的提升**（`handleNatCast`）把各种 Nat 运算推入 cast 内部：
+**Nat → Int 的提升**（`handleNatCast`）把各种 Nat 运算推入 cast 内部。下面是**伪代码/删节**，不是逐字源码：
 
 ```
--- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Frontend.lean:255-298]
+-- [伪代码/删节；Lean 4 v4.32.2 完整源码：
+--  Lean/Elab/Tactic/Omega/Frontend.lean:255-301]
   handleNatCast (e i n : Expr) : ... := do
     match n.getAppFnArgs with
     | (``Nat.succ, #[n]) =>
@@ -598,9 +620,8 @@ tag := "ch08-process-facts"
 `processFacts` 反复从队列中取出假设调用 `addFact`，直到队列为空：
 
 ```
--- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Frontend.lean:515-527]
-partial def processFacts (p : MetaProblem) :
-    OmegaM (MetaProblem × Nat) := do
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Frontend.lean:515-526]
+partial def processFacts (p : MetaProblem) : OmegaM (MetaProblem × Nat) := do
   match p.facts with
   | [] => pure (p, 0)
   | h :: t =>
@@ -718,27 +739,23 @@ tag := "ch08-hard-equality"
 
 ```
 -- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Core.lean:340-356]
-def dealWithHardEquality (p : Problem) (c : Coeffs) :
-    OmegaM Problem :=
+def dealWithHardEquality (p : Problem) (c : Coeffs) : OmegaM Problem :=
   match p.constraints[c]? with
   | some ⟨_, ⟨some r, some r'⟩, j⟩ => do
     let m := c.minNatAbs + 1
-    let x := mkApp3 (.const ``bmod_div_term [])
-      (toExpr m) (toExpr c) (← atomsCoeffs)
+    -- We have to store the valid value of the newly introduced variable in the atoms.
+    let x := mkApp3 (.const ``bmod_div_term []) (toExpr m) (toExpr c) (← atomsCoeffs)
     let (i, facts?) ← lookup x
     if hr : r' = r then
       match facts? with
-      | none => throwError
-          "When solving hard equality, new atom had been seen before!"
+      | none => throwError "When solving hard equality, new atom had been seen before!"
       | some facts => if ! facts.isEmpty then
-        throwError
-          "When solving hard equality, unexpected new facts!"
-      return p.addConstraint
-        { coeffs := _, constraint := _,
-          justification := (hr ▸ j).bmod m r i }
+        throwError "When solving hard equality, there were unexpected new facts!"
+      return p.addConstraint { coeffs := _, constraint := _, justification := (hr ▸ j).bmod m r i }
     else
-      throwError "Invalid constraint, expected an equation."
-  | _ => return p
+      throwError "Invalid constraint, expected an equation." -- unreachable
+  | _ =>
+    return p -- unreachable
 ```
 
 思路：对等式 `r + c₀·x₀ + c₁·x₁ + ... = 0` 做 bmod m，得到新等式 `bmod(r,m) + bmod(c₀,m)·x₀ + ... = m·α`，其中 `α` 是新变量。由于 `bmod(m-1, m)` 的值为 ±1，原来系数最小的变量在新等式中系数变为 ±1——困难等式变成了简单等式。
@@ -792,12 +809,10 @@ tag := "ch08-fm-classify"
 
 ```
 -- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Core.lean:481-503]
-def fourierMotzkinData (p : Problem) :
-    Array FourierMotzkinData := Id.run do
+def fourierMotzkinData (p : Problem) : Array FourierMotzkinData := Id.run do
   let n := p.numVars
   let mut data : Array FourierMotzkinData :=
-    (List.range p.numVars).foldl
-      (fun a i => a.push { var := i}) #[]
+    (List.range p.numVars).foldl (fun a i => a.push { var := i}) #[]
   for (_, f@⟨xs, s, _⟩) in p.constraints do
     for i in *...n do
       let x := Coeffs.get xs i
@@ -823,11 +838,11 @@ def fourierMotzkinData (p : Problem) :
 
 | 分类 | 条件 | 含义 |
 |------|------|------|
-| 下界 (lower) | `coeffs[i] > 0` | 给出 `xᵢ` 的下界 |
-| 上界 (upper) | `coeffs[i] < 0` | 给出 `xᵢ` 的上界 |
+| 下界 (lower) | `(s.scale coeffs[i]).lowerBound.isSome` | 缩放后给出 `xᵢ` 的下界 |
+| 上界 (upper) | `(s.scale coeffs[i]).upperBound.isSome` | 缩放后给出 `xᵢ` 的上界 |
 | 无关 (irrelevant) | `coeffs[i] = 0` | 不含 `xᵢ` |
 
-`FourierMotzkinData` 还记录 `lowerExact` 和 `upperExact`——所有系数是否为 ±1。如果是，消元是**精确的**（real shadow = dark shadow），不会引入伪解。
+`FourierMotzkinData` 还分别记录 `lowerExact` 和 `upperExact`——该侧所有系数是否为 ±1。源码中的 `exact` 是二者的析取：只要所有下界系数或所有上界系数为 ±1，消元就是**精确的**（real shadow = dark shadow），不会引入伪解。
 
 ### 步骤 2：选择变量
 %%%
@@ -838,32 +853,34 @@ tag := "ch08-fm-select"
 
 ```
 -- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Core.lean:511-532]
-def fourierMotzkinSelect (data : Array FourierMotzkinData) :
-    MetaM FourierMotzkinData := do
+def fourierMotzkinSelect (data : Array FourierMotzkinData) : MetaM FourierMotzkinData := do
   let data := data.filter fun d => ¬ d.isEmpty
-  trace[omega] "Selecting variable to eliminate from \
-    (idx, size, exact) triples:\n\
+  trace[omega] "Selecting variable to eliminate from (idx, size, exact) triples:\n\
     {data.map fun d => (d.var, d.size, d.exact)}"
   let mut bestIdx := 0
   let mut bestSize := data[0]!.size
   let mut bestExact := data[0]!.exact
-  if bestSize = 0 then return data[0]!
+  if bestSize = 0 then
+    trace[omega] "Selected variable {data[0]!.var}."
+    return data[0]!
   for h : i in 1...data.size do
     let exact := data[i].exact
     let size := data[i].size
-    if size = 0 || !bestExact && exact
-        || (bestExact == exact) && size < bestSize then
-      if size = 0 then return data[i]
+    if size = 0 || !bestExact && exact || (bestExact == exact) && size < bestSize then
+      if size = 0 then
+        trace[omega] "Selected variable {data[i].var}"
+        return data[i]
       bestIdx := i
       bestExact := exact
       bestSize := size
+  trace[omega] "Selected variable {data[bestIdx]!.var}."
   return data[bestIdx]!
 ```
 
 优先级：
 
 1. **size = 0**：所有约束都与该变量无关，免费消去
-2. **精确消元**（exact = true）：所有系数为 ±1，不引入伪解
+2. **精确消元**（exact = true）：下界侧或上界侧的所有系数为 ±1，不引入伪解
 3. **最小乘积**：`|lower| × |upper|` 最小，生成最少新约束
 
 ### 步骤 3：消元
@@ -914,14 +931,20 @@ def addConstraint (p : Problem) : Fact → Problem
       | some ⟨x', t, k⟩ =>
         if h : x = x' then
           let r := s.combine t
-          if r = t then p           -- 旧约束已经更紧
-          else if r = s then
-            p.insertConstraint ⟨x, s, j⟩  -- 新约束严格更紧
+          if r = t then
+            -- No need to overwrite the existing fact
+            -- with the same fact with a more complicated justification
+            p
           else
-            p.insertConstraint
-              ⟨x, s.combine t, j.combine (h ▸ k)⟩
-        else p
-    else p
+            if r = s then
+              -- The new constraint is strictly stronger, no need to combine with the old one:
+              p.insertConstraint ⟨x, s, j⟩
+            else
+              p.insertConstraint ⟨x, s.combine t, j.combine (h ▸ k)⟩
+        else
+          p -- unreachable
+    else
+      p
 ```
 
 `insertConstraint` 在插入时检查矛盾——如果约束的 `isImpossible` 返回 `true`（`upperBound < lowerBound`），问题立即标记为不可满足：
@@ -942,8 +965,10 @@ def insertConstraint (p : Problem) : Fact → Problem
         constraints := p.constraints.insert x f
         proveFalse?_spec := p.proveFalse?_spec
         equalities :=
-        if f.constraint.isExact then p.equalities.insert x
-        else p.equalities }
+        if f.constraint.isExact then
+          p.equalities.insert x
+        else
+          p.equalities }
 ```
 
 # 证明构造
@@ -962,39 +987,30 @@ tag := "ch08-justification-to-proof"
 
 ```
 -- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Core.lean:117-124]
-def proof (v : Expr) (assumptions : Array Proof) :
-    Justification s c → Proof
+def proof (v : Expr) (assumptions : Array Proof) : Justification s c → Proof
   | assumption s c i => assumptions[i]!
-  | @tidy s c j =>
-      return tidyProof s c v (← proof v assumptions j)
+  | @tidy s c j => return tidyProof s c v (← proof v assumptions j)
   | @combine s t c j k =>
-    return combineProof s t c v
-      (← proof v assumptions j) (← proof v assumptions k)
+    return combineProof s t c v (← proof v assumptions j) (← proof v assumptions k)
   | @combo s t x y a j b k =>
-    return comboProof s t a x b y v
-      (← proof v assumptions j) (← proof v assumptions k)
-  | @bmod m r i x j => do
-      bmodProof m r i x v (← proof v assumptions j)
+    return comboProof s t a x b y v (← proof v assumptions j) (← proof v assumptions k)
+  | @bmod m r i x j => do bmodProof m r i x v (← proof v assumptions j)
 ```
 
 每个构造子对应一个证明项构造函数：
 
 ```
--- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Core.lean:88-112]
-def tidyProof (s : Constraint) (x : Coeffs)
-    (v prf : Expr) : Expr :=
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Core.lean:88-99]
+def tidyProof (s : Constraint) (x : Coeffs) (v : Expr) (prf : Expr) : Expr :=
   mkApp4 (.const ``tidy_sat []) (toExpr s) (toExpr x) v prf
 
-def combineProof (s t : Constraint) (x : Coeffs)
-    (v ps pt : Expr) : Expr :=
-  mkApp6 (.const ``Constraint.combine_sat' [])
-    (toExpr s) (toExpr t) (toExpr x) v ps pt
+def combineProof (s t : Constraint) (x : Coeffs) (v : Expr) (ps pt : Expr) : Expr :=
+  mkApp6 (.const ``Constraint.combine_sat' []) (toExpr s) (toExpr t) (toExpr x) v ps pt
 
-def comboProof (s t : Constraint) (a : Int) (x : Coeffs)
-    (b : Int) (y : Coeffs) (v px py : Expr) : Expr :=
-  mkApp9 (.const ``combo_sat' [])
-    (toExpr s) (toExpr t) (toExpr a) (toExpr x)
-    (toExpr b) (toExpr y) v px py
+def comboProof (s t : Constraint) (a : Int) (x : Coeffs) (b : Int) (y : Coeffs)
+    (v : Expr) (px py : Expr) : Expr :=
+  mkApp9 (.const ``combo_sat' []) (toExpr s) (toExpr t) (toExpr a) (toExpr x) (toExpr b) (toExpr y)
+    v px py
 ```
 
 ## proveFalse：从矛盾到 False
@@ -1006,19 +1022,14 @@ tag := "ch08-prove-false"
 
 ```
 -- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Core.lean:218-225]
-def proveFalse {s x} (j : Justification s x)
-    (assumptions : Array Proof) : Proof := do
+def proveFalse {s x} (j : Justification s x) (assumptions : Array Proof) : Proof := do
   let v := ← atomsCoeffs
   let prf ← j.proof v assumptions
   let x := toExpr x
   let s := toExpr s
   let impossible ←
-    mkDecideProof (← mkEq
-      (mkApp (.const ``Constraint.isImpossible []) s)
-      (.const ``true []))
-  return mkApp5
-    (.const ``Constraint.not_sat'_of_isImpossible [])
-    s impossible x v prf
+    mkDecideProof (← mkEq (mkApp (.const ``Constraint.isImpossible []) s) (.const ``true []))
+  return mkApp5 (.const ``Constraint.not_sat'_of_isImpossible []) s impossible x v prf
 ```
 
 逻辑链条：
@@ -1049,11 +1060,9 @@ structure Context where
 structure State where
   atoms : Std.HashMap Expr Nat := {}
 
-abbrev OmegaM' :=
-  StateRefT State (ReaderT Context CanonM)
+abbrev OmegaM' := StateRefT State (ReaderT Context CanonM)
 
-@[expose] def Cache : Type :=
-  Std.HashMap Expr (LinearCombo × OmegaM' Expr)
+@[expose] def Cache : Type := Std.HashMap Expr (LinearCombo × OmegaM' Expr)
 
 abbrev OmegaM := StateRefT Cache OmegaM'
 ```
@@ -1077,8 +1086,7 @@ tag := "ch08-lookup"
 
 ```
 -- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/OmegaM.lean:247-260]
-def lookup (e : Expr) :
-    OmegaM (Nat × Option (List Expr)) := do
+def lookup (e : Expr) : OmegaM (Nat × Option (List Expr)) := do
   let c ← getThe State
   let e ← canon e
   match c.atoms[e]? with
@@ -1088,11 +1096,9 @@ def lookup (e : Expr) :
   let facts ← analyzeAtom e
   if ← isTracingEnabledFor `omega then
     unless facts.isEmpty do
-      trace[omega] "New facts: \
-        {← facts.mapM fun e => inferType e}"
+      trace[omega] "New facts: {← facts.mapM fun e => inferType e}"
   let i ← modifyGetThe State fun c =>
-    (c.atoms.size,
-     { c with atoms := c.atoms.insert e c.atoms.size })
+    (c.atoms.size, { c with atoms := c.atoms.insert e c.atoms.size })
   return (i, some facts)
 ```
 
@@ -1103,10 +1109,11 @@ def lookup (e : Expr) :
 tag := "ch08-analyze-atom"
 %%%
 
-`analyzeAtom` 根据原子的结构自动生成额外的线性约束：
+`analyzeAtom` 根据原子的结构自动生成额外的线性约束。下面是**伪代码/删节**，不是逐字源码：
 
 ```
--- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/OmegaM.lean:166-235]
+-- [伪代码/删节；Lean 4 v4.32.2 完整源码：
+--  Lean/Elab/Tactic/Omega/OmegaM.lean:166-235]
 def analyzeAtom (e : Expr) : OmegaM (List Expr) := do
   match e.getAppFnArgs with
   | (``Nat.cast, #[.const ``Int [], _, e']) =>
@@ -1167,16 +1174,15 @@ tag := "ch08-cache-transactions"
 
 ```
 -- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Frontend.lean:105-114]
-partial def asLinearCombo (e : Expr) :
-    OmegaM (LinearCombo × OmegaM Expr × List Expr) := do
+partial def asLinearCombo (e : Expr) : OmegaM (LinearCombo × OmegaM Expr × List Expr) := do
   let cache ← get
   match cache.get? e with
   | some (lc, prf) =>
+    trace[omega] "Found in cache: {e}"
     return (lc, prf, ∅)
   | none =>
     let (lc, proof, r) ← asLinearComboImpl e
-    modifyThe Cache fun cache =>
-      (cache.insert e (lc, proof.run' cache))
+    modifyThe Cache fun cache => (cache.insert e (lc, proof.run' cache))
     pure (lc, proof, r)
 ```
 
@@ -1207,28 +1213,27 @@ partial def omegaImpl (m : MetaProblem) : OmegaM Expr := do
   let (m, _) ← m.processFacts
   guard m.facts.isEmpty
   let p := m.problem
-  trace[omega] "Extracted linear arithmetic problem:\n\
-    Atoms: {← atomsList}\n{p}"
+  trace[omega] "Extracted linear arithmetic problem:\nAtoms: {← atomsList}\n{p}"
   let p' ← if p.possible then p.elimination else pure p
-  trace[omega] "After elimination:\n\
-    Atoms: {← atomsList}\n{p'}"
-  match h₁ : p'.possible, h₂ : p'.proveFalse?,
-      p'.proveFalse?_spec with
+  trace[omega] "After elimination:\nAtoms: {← atomsList}\n{p'}"
+  match h₁ : p'.possible, h₂ : p'.proveFalse?, p'.proveFalse?_spec with
   | true, _, _ =>
     splitDisjunction m
   | false, .some prf, _ =>
     trace[omega] "Justification:\n{p'.explanation?.get}"
     let prf ← instantiateMVars (← prf)
+    trace[omega] "omega found a contradiction, proving {← inferType prf}"
     return prf
   | false, none, h₃ => by simp [h₁, h₂] at h₃
 ```
 
 流程：**(1)** 预处理所有假设（`processFacts`）；**(2)** 消元求解（`elimination`）；**(3)** 如果发现矛盾，返回 `False` 证明；如果未发现矛盾，尝试 case split。
 
-析取处理通过 `splitDisjunction`——逐个拆分析取，在每个分支中递归调用 `omegaImpl`：
+析取处理通过 `splitDisjunction`——逐个拆分析取，在每个分支中递归调用 `omegaImpl`。下面是**伪代码/删节**，不是逐字源码：
 
 ```
--- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Frontend.lean:620-646]
+-- [伪代码/删节；Lean 4 v4.32.2 完整源码：
+--  Lean/Elab/Tactic/Omega/Frontend.lean:620-646]
 partial def splitDisjunction (m : MetaProblem) :
     OmegaM Expr := do
   match m.disjunctions with
@@ -1280,7 +1285,7 @@ trace 输出涵盖：
 - 变量选择：`"Selecting variable to eliminate from ..."`
 - 消元后的问题：`"After elimination: ..."`
 - Case split：`"Case splitting on ..."`
-- 矛盾发现：`"omega found a contradiction"`
+- 矛盾发现：`"omega found a contradiction, proving ..."`
 
 ## 常见失败模式
 %%%
@@ -1330,21 +1335,21 @@ where
 
 ```
 -- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Frontend.lean:533-548]
-def formatErrorMessage (p : Problem) :
-    OmegaM MessageData := do
+def formatErrorMessage (p : Problem) : OmegaM MessageData := do
   if p.possible then
     if p.isEmpty then
-      return m!"No usable constraints found. ..."
+      return m!"No usable constraints found. You may need to unfold definitions so `omega` can see \
+      linear arithmetic facts about `Nat` and `Int`, which may also involve multiplication, \
+      division, and modular remainder by constants."
     else
       let as ← atoms
       return .ofLazyM (es := as) do
         let mask ← mentioned as p.constraints
         let names ← varNames mask
-        return m!"a possible counterexample may satisfy \
-          the constraints\n"
-          ++ m!"{prettyConstraints names p.constraints}\n\
-               where\n{prettyAtoms names as mask}"
+        return m!"a possible counterexample may satisfy the constraints\n" ++
+          m!"{prettyConstraints names p.constraints}\nwhere\n{prettyAtoms names as mask}"
   else
+    -- formatErrorMessage should not be used in this case
     return "it is trivially solvable"
 ```
 
@@ -1370,15 +1375,18 @@ Real shadow 是必要条件——如果不可满足，原问题一定不可满�
 源码中 `Lean/Elab/Tactic/Omega.lean` 的模块文档详细讨论了三个影子的理论：
 
 ```
--- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega.lean:101-166]
--- 实现注释节选：
--- Currently we do not implement either the dark or grey shadows,
--- and thus if the real shadow is satisfiable we must fail...
--- In practical problems, it appears to be relatively rare that
--- we fail because of not handling the dark and grey shadows.
--- Fortunately, in many cases it is possible to choose a variable
--- to eliminate such that the real and dark shadows coincide,
--- and the grey shadows are empty.
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega.lean:110-120；模块文档逐字节选]
+Currently we do not implement either the dark or grey shadows, and thus if the real shadow is
+satisfiable we must fail, and report that we couldn't find a contradiction, even though the
+problem may be unsatisfiable.
+
+In practical problems, it appears to be relatively rare that we fail because of not handling the
+dark and grey shadows.
+
+Fortunately, in many cases it is possible to choose a variable to eliminate such that
+the real and dark shadows coincide, and the grey shadows are empty. In this situation
+we don't lose anything by ignoring the dark and grey shadows.
+We call this situation an exact elimination.
 ```
 
 # 练习
