@@ -26,7 +26,7 @@ type information.
 open System in
 open SubVerso.Helper in
 
-private def projectDir : System.FilePath := "../examples/"
+private def projectDir : System.FilePath := "examples"
 
 private def alphabet := "abcdefghijklmnopqrstuvwxyz0123456789"
 
