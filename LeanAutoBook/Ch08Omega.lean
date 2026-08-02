@@ -4,7 +4,7 @@ import LeanAutoBook.Helpers
 open Verso.Genre Manual
 open Verso Code External
 
-set_option verso.exampleProject "../examples"
+set_option verso.exampleProject "examples"
 set_option verso.exampleModule "Examples.Ch08Omega"
 
 #doc (Manual) "omega：Presburger 算术决策过程" =>
@@ -223,7 +223,7 @@ tag := "ch08-coeffs"
 最底层是 `IntList`（`List Int` 的类型别名），用于稠密表示整数系数向量。`Coeffs` 是 `IntList` 的类型别名，超出列表长度的位置视为 0。核心运算定义在 `Init/Omega/IntList.lean` 和 `Init/Omega/Coeffs.lean`：
 
 ```
--- [Lean 4 v4.30.0-rc1, Init/Omega/IntList.lean]
+-- [Lean 4 v4.32.2, Init/Omega/IntList.lean]
 abbrev IntList := List Int
 abbrev Coeffs := IntList
 
@@ -247,7 +247,7 @@ tag := "ch08-linear-combo"
 `LinearCombo` 表示一个**常数项 + 系数向量**的线性表达式：
 
 ```
--- [Lean 4 v4.30.0-rc1, Init/Omega/LinearCombo.lean]
+-- [Lean 4 v4.32.2, Init/Omega/LinearCombo.lean]
 structure LinearCombo where
   const : Int := 0       -- 常数项
   coeffs : Coeffs := []  -- 各原子的系数
@@ -263,7 +263,7 @@ tag := "ch08-constraint"
 `Constraint` 用一对可选的上下界表示约束：
 
 ```
--- [Lean 4 v4.30.0-rc1, Init/Omega/Constraint.lean]
+-- [Lean 4 v4.32.2, Init/Omega/Constraint.lean]
 structure Constraint where
   lowerBound : Option Int
   upperBound : Option Int
@@ -272,7 +272,7 @@ structure Constraint where
 语义是 `lowerBound ≤ value ≤ upperBound`，`none` 表示无约束。预定义特殊约束：
 
 ```
--- [Lean 4 v4.30.0-rc1, Init/Omega/Constraint.lean]
+-- [Lean 4 v4.32.2, Init/Omega/Constraint.lean]
 def trivial    : Constraint := ⟨none, none⟩       -- 无约束
 def impossible : Constraint := ⟨some 1, some 0⟩   -- 不可满足（1 ≤ x ≤ 0）
 def exact (r : Int) : Constraint := ⟨some r, some r⟩  -- 等式（x = r）
@@ -281,7 +281,7 @@ def exact (r : Int) : Constraint := ⟨some r, some r⟩  -- 等式（x = r）
 关键操作：
 
 ```
--- [Lean 4 v4.30.0-rc1, Init/Omega/Constraint.lean]
+-- [Lean 4 v4.32.2, Init/Omega/Constraint.lean]
 -- 合取（取更紧的界）
 def combine (x y : Constraint) : Constraint where
   lowerBound := Option.merge max x.lowerBound y.lowerBound
@@ -308,7 +308,7 @@ tag := "ch08-justification"
 `Justification` 是一个归纳类型，记录约束的推导历史。它的索引类型参数精确追踪约束和系数，保证证明项构造的类型安全：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:42-59]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Core.lean:42-59]
 inductive Justification : Constraint → Coeffs → Type
   | assumption (s : Constraint) (x : Coeffs) (i : Nat) : Justification s x
   | tidy (j : Justification s c) :
@@ -343,7 +343,7 @@ tag := "ch08-fact-and-problem"
 `Fact` 把约束、系数和推导绑定在一起：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:129-136]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Core.lean:129-136]
 structure Fact where
   coeffs : Coeffs
   constraint : Constraint
@@ -353,7 +353,7 @@ structure Fact where
 `Problem` 是约束求解器的核心状态：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:167-195]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Core.lean:167-195]
 structure Problem where
   assumptions : Array Proof := ∅
   numVars : Nat := 0
@@ -376,7 +376,7 @@ structure Problem where
 `MetaProblem` 在 `Problem` 之上加了预处理队列：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:59-69]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Frontend.lean:59-69]
 structure MetaProblem where
   problem : Problem := {}
   facts : List Expr := []
@@ -401,7 +401,7 @@ tag := "ch08-eval-omega"
 omega 的 tactic 入口定义在 `Frontend.lean`：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:703-710]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Frontend.lean:703-710]
 @[builtin_tactic Lean.Parser.Tactic.omega]
 def evalOmega : Tactic
   | `(tactic| omega%$tk $cfg:optConfig) => do
@@ -416,7 +416,7 @@ def evalOmega : Tactic
 `omegaTactic` 做三件关键的事：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:680-696]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Frontend.lean:680-696]
 def omegaTactic (cfg : OmegaConfig) : TacticM Unit := do
   recordExtraModUse (isMeta := false) `Init.Omega
   liftMetaFinishingTactic fun g => do
@@ -448,7 +448,7 @@ tag := "ch08-add-fact"
 `addFact` 对每个假设进行模式匹配，把数学命题分类并翻译为线性约束：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:425-508]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Frontend.lean:425-508]
 partial def addFact (p : MetaProblem) (h : Expr) :
     OmegaM (MetaProblem × Nat) := do
   if ! p.problem.possible then return (p, 0)
@@ -494,7 +494,7 @@ partial def addFact (p : MetaProblem) (h : Expr) :
 对于否定假设，`pushNot` 函数把否定推入内部：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:371-420]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Frontend.lean:371-420]
 def pushNot (h P : Expr) : MetaM (Option Expr) := do
   let P ← whnfR P
   match P with
@@ -527,7 +527,7 @@ tag := "ch08-as-linear-combo"
 `asLinearComboImpl` 递归地把一个整数表达式转化为 `LinearCombo`，返回三元组 `(LinearCombo, Proof, NewFacts)`：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:131-241]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Frontend.lean:131-241]
 partial def asLinearComboImpl (e : Expr) :
     OmegaM (LinearCombo × OmegaM Expr × List Expr) := do
   match groundInt? e with
@@ -568,7 +568,7 @@ partial def asLinearComboImpl (e : Expr) :
 **Nat → Int 的提升**（`handleNatCast`）把各种 Nat 运算推入 cast 内部：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:255-298]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Frontend.lean:255-298]
   handleNatCast (e i n : Expr) : ... := do
     match n.getAppFnArgs with
     | (``Nat.succ, #[n]) =>
@@ -598,7 +598,7 @@ tag := "ch08-process-facts"
 `processFacts` 反复从队列中取出假设调用 `addFact`，直到队列为空：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:515-527]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Frontend.lean:515-527]
 partial def processFacts (p : MetaProblem) :
     OmegaM (MetaProblem × Nat) := do
   match p.facts with
@@ -631,7 +631,7 @@ tag := "ch08-main-loop"
 `runOmega` 和 `elimination` 是互相递归的：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:555-573]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Core.lean:555-573]
 partial def runOmega (p : Problem) : OmegaM Problem := do
   trace[omega] "Running omega on:\n{p}"
   if p.possible then
@@ -663,7 +663,7 @@ tag := "ch08-equality-elimination"
 **选择等式**——`selectEquality` 从 `equalities` 集合中选择最优等式：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:289-300]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Core.lean:289-300]
 def selectEquality (p : Problem) : Option (Coeffs × Nat) :=
   p.equalities.fold (init := none) fun
   | none, c => (c, c.minNatAbs)
@@ -688,7 +688,7 @@ tag := "ch08-easy-equality"
 如果变量 `xᵢ` 的系数是 ±1，可以直接求解 `xᵢ = -(c₀ + c₂·x₂ + ...)`，然后代入所有其他约束：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:316-331]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Core.lean:316-331]
 def solveEasyEquality (p : Problem) (c : Coeffs) : Problem :=
   let i := c.findIdx? (·.natAbs = 1) |>.getD 0
   let sign := c.get i |> Int.sign
@@ -717,7 +717,7 @@ tag := "ch08-hard-equality"
 当所有系数绝对值都大于 1 时，使用**平衡取模**（balanced mod, bmod）技巧。设最小系数绝对值为 `m-1`，取 `m = minNatAbs + 1`：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:340-356]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Core.lean:340-356]
 def dealWithHardEquality (p : Problem) (c : Coeffs) :
     OmegaM Problem :=
   match p.constraints[c]? with
@@ -748,7 +748,7 @@ def dealWithHardEquality (p : Problem) (c : Coeffs) :
 `solveEqualities` 循环处理所有等式：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:369-374]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Core.lean:369-374]
 partial def solveEqualities (p : Problem) : OmegaM Problem :=
   if p.possible then
     match p.selectEquality with
@@ -765,11 +765,11 @@ tag := "ch08-min-nat-abs"
 困难等式消元依赖 `minNatAbs`——系数列表中最小的非零绝对值。它定义在 `MinNatAbs.lean`：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/MinNatAbs.lean:41]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/MinNatAbs.lean:41]
 def nonzeroMinimum (xs : List Nat) : Nat :=
   xs.filter (· ≠ 0) |>.min? |>.getD 0
 
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/MinNatAbs.lean:134]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/MinNatAbs.lean:134]
 def minNatAbs (xs : List Int) : Nat :=
   xs.map Int.natAbs |> nonzeroMinimum
 ```
@@ -791,7 +791,7 @@ tag := "ch08-fm-classify"
 `fourierMotzkinData` 对每个变量分类所有约束：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:481-503]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Core.lean:481-503]
 def fourierMotzkinData (p : Problem) :
     Array FourierMotzkinData := Id.run do
   let n := p.numVars
@@ -837,7 +837,7 @@ tag := "ch08-fm-select"
 `fourierMotzkinSelect` 选择消去"代价"最小的变量：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:511-532]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Core.lean:511-532]
 def fourierMotzkinSelect (data : Array FourierMotzkinData) :
     MetaM FourierMotzkinData := do
   let data := data.filter fun d => ¬ d.isEmpty
@@ -874,7 +874,7 @@ tag := "ch08-fm-eliminate"
 对每对 (下界, 上界) 做线性组合消去选定变量：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:538-548]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Core.lean:538-548]
 def fourierMotzkin (p : Problem) : MetaM Problem := do
   let data := p.fourierMotzkinData
   let ⟨_, irrelevant, lower, upper, _, _⟩ ←
@@ -902,7 +902,7 @@ tag := "ch08-constraint-insertion"
 `addConstraint` 是约束入库的核心——同系数约束自动合并：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:254-278]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Core.lean:254-278]
 def addConstraint (p : Problem) : Fact → Problem
   | f@⟨x, s, j⟩ =>
     if p.possible then
@@ -927,7 +927,7 @@ def addConstraint (p : Problem) : Fact → Problem
 `insertConstraint` 在插入时检查矛盾——如果约束的 `isImpossible` 返回 `true`（`upperBound < lowerBound`），问题立即标记为不可满足：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:231-248]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Core.lean:231-248]
 def insertConstraint (p : Problem) : Fact → Problem
   | f@⟨x, s, j⟩ =>
     if s.isImpossible then
@@ -961,7 +961,7 @@ tag := "ch08-justification-to-proof"
 `Justification.proof` 递归地把推导树转化为 `Expr`：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:117-124]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Core.lean:117-124]
 def proof (v : Expr) (assumptions : Array Proof) :
     Justification s c → Proof
   | assumption s c i => assumptions[i]!
@@ -980,7 +980,7 @@ def proof (v : Expr) (assumptions : Array Proof) :
 每个构造子对应一个证明项构造函数：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:88-112]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Core.lean:88-112]
 def tidyProof (s : Constraint) (x : Coeffs)
     (v prf : Expr) : Expr :=
   mkApp4 (.const ``tidy_sat []) (toExpr s) (toExpr x) v prf
@@ -1005,7 +1005,7 @@ tag := "ch08-prove-false"
 最终的 `False` 证明通过 `Constraint.not_sat'_of_isImpossible` 引理构造：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Core.lean:218-225]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Core.lean:218-225]
 def proveFalse {s x} (j : Justification s x)
     (assumptions : Array Proof) : Proof := do
   let v := ← atomsCoeffs
@@ -1042,7 +1042,7 @@ tag := "ch08-monad-stack"
 %%%
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/OmegaM.lean:49-71]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/OmegaM.lean:49-71]
 structure Context where
   cfg : OmegaConfig
 
@@ -1063,7 +1063,7 @@ abbrev OmegaM := StateRefT Cache OmegaM'
 整个 monad 栈通过 `OmegaM.run` 初始化和运行：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/OmegaM.lean:74-75]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/OmegaM.lean:74-75]
 def OmegaM.run (m : OmegaM α) (cfg : OmegaConfig) : MetaM α :=
   m.run' (∅ : Std.HashMap ..) |>.run' {} { cfg } |>.run'
 ```
@@ -1076,7 +1076,7 @@ tag := "ch08-lookup"
 当遇到无法进一步分解的表达式时，omega 把它注册为一个**原子**：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/OmegaM.lean:247-260]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/OmegaM.lean:247-260]
 def lookup (e : Expr) :
     OmegaM (Nat × Option (List Expr)) := do
   let c ← getThe State
@@ -1106,7 +1106,7 @@ tag := "ch08-analyze-atom"
 `analyzeAtom` 根据原子的结构自动生成额外的线性约束：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/OmegaM.lean:166-235]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/OmegaM.lean:166-235]
 def analyzeAtom (e : Expr) : OmegaM (List Expr) := do
   match e.getAppFnArgs with
   | (``Nat.cast, #[.const ``Int [], _, e']) =>
@@ -1166,7 +1166,7 @@ tag := "ch08-cache-transactions"
 `asLinearCombo` 使用缓存避免重复分析同一子表达式：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:105-114]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Frontend.lean:105-114]
 partial def asLinearCombo (e : Expr) :
     OmegaM (LinearCombo × OmegaM Expr × List Expr) := do
   let cache ← get
@@ -1183,7 +1183,7 @@ partial def asLinearCombo (e : Expr) :
 `commitWhen` 提供事务性操作——用于乘法处理时的试探性分析。如果两个因子都有非零系数（非线性乘法），回滚状态，把整个乘积当作原子：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/OmegaM.lean:92-99]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/OmegaM.lean:92-99]
 def commitWhen (t : OmegaM (α × Bool)) : OmegaM α := do
   let state ← getThe State
   let cache ← getThe Cache
@@ -1202,7 +1202,7 @@ tag := "ch08-omega-impl"
 `omegaImpl` 是 omega 的算法主循环：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:649-664]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Frontend.lean:649-664]
 partial def omegaImpl (m : MetaProblem) : OmegaM Expr := do
   let (m, _) ← m.processFacts
   guard m.facts.isEmpty
@@ -1228,7 +1228,7 @@ partial def omegaImpl (m : MetaProblem) : OmegaM Expr := do
 析取处理通过 `splitDisjunction`——逐个拆分析取，在每个分支中递归调用 `omegaImpl`：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:620-646]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Frontend.lean:620-646]
 partial def splitDisjunction (m : MetaProblem) :
     OmegaM Expr := do
   match m.disjunctions with
@@ -1329,7 +1329,7 @@ where
 错误信息的生成逻辑在 `formatErrorMessage` 中：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega/Frontend.lean:533-548]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega/Frontend.lean:533-548]
 def formatErrorMessage (p : Problem) :
     OmegaM MessageData := do
   if p.possible then
@@ -1370,7 +1370,7 @@ Real shadow 是必要条件——如果不可满足，原问题一定不可满�
 源码中 `Lean/Elab/Tactic/Omega.lean` 的模块文档详细讨论了三个影子的理论：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Omega.lean:101-166]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Omega.lean:101-166]
 -- 实现注释节选：
 -- Currently we do not implement either the dark or grey shadows,
 -- and thus if the real shadow is satisfiable we must fail...

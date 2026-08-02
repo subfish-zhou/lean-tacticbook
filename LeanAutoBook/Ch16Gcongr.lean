@@ -4,7 +4,7 @@ import LeanAutoBook.Helpers
 open Verso.Genre Manual
 open Verso Code External
 
-set_option verso.exampleProject "../examples"
+set_option verso.exampleProject "examples"
 set_option verso.exampleModule "Examples.Ch16Gcongr"
 
 #doc (Manual) "gcongr：广义合同性" =>

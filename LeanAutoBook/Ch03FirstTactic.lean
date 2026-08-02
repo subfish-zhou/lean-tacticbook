@@ -4,7 +4,7 @@ import LeanAutoBook.Helpers
 open Verso.Genre Manual
 open Verso Code External
 
-set_option verso.exampleProject "../examples"
+set_option verso.exampleProject "examples"
 set_option verso.exampleModule "Examples.Ch03FirstTactic"
 
 #doc (Manual) "编写你的第一个 Tactic" =>

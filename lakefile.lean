@@ -8,7 +8,7 @@ package «lean-auto-book» where
     ⟨`autoImplicit, false⟩
   ]
 
-require verso from git "https://github.com/leanprover/verso.git"@"v4.30.0-rc1"
+require verso from git "https://github.com/leanprover/verso.git"@"v4.32.0"
 
 private def examplePath : System.FilePath := "./examples"
 

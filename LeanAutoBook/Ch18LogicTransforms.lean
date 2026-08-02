@@ -4,10 +4,10 @@ import LeanAutoBook.Helpers
 open Verso.Genre Manual
 open Verso Code External
 
-set_option verso.exampleProject "../examples"
+set_option verso.exampleProject "examples"
 set_option verso.exampleModule "Examples.Ch18LogicTransforms"
 
-#doc (Manual) "push_neg、contrapose、by_contra" =>
+#doc (Manual) "否定下推、逆否与反证" =>
 %%%
 file := "Ch18LogicTransforms"
 tag := "ch18-logic-transforms"
@@ -31,13 +31,13 @@ tag := "logic-transforms-problem"
 手工展开需要反复应用 De Morgan 律和量词否定，
 同时把 `¬(a < b)` 翻译成 `b ≤ a`——枯燥且容易出错。
 
-`push_neg`、`contrapose`、`by_contra` 为三类场景设计：
+`push Not`、`contrapose`、`by_contra` 为三类场景设计：
 
-- `push_neg`：把 `¬` 向内推到原子公式
+- `push Not`：把 `¬` 向内推到原子公式
 - `contrapose`：把 `P → Q` 变为 `¬Q → ¬P`
 - `by_contra`：假设目标的否定，转为推导矛盾
 
-# 18.2 `push_neg`：否定下推
+# 18.2 `push Not`：否定下推
 %%%
 tag := "push-neg"
 %%%
@@ -47,7 +47,7 @@ tag := "push-neg"
 tag := "push-neg-basic"
 %%%
 
-`push_neg` 对目标或假设中的否定做 De Morgan 展开，
+`push Not` 对目标或假设中的否定做 De Morgan 展开，
 直到否定落在原子公式上：
 
 ```anchor pushNegEpsilonDelta
@@ -56,10 +56,10 @@ example (f : ℝ → ℝ) (a : ℝ) :
     ∃ ε > 0, ∀ δ > 0, ∃ x, |x - a| < δ ∧ ε ≤ |f x - f a| := by
   constructor
   · intro h
-    push_neg at h
+    push Not at h
     exact h
   · intro h
-    push_neg
+    push Not
     exact h
 ```
 
@@ -78,21 +78,21 @@ example (f : ℝ → ℝ) (a : ℝ) :
 tag := "push-neg-internals"
 %%%
 
-`push_neg` 是一个*特化的 `simp`*，使用 `@[push_neg]` 引理集：
+`push Not` 是一个*特化的 `simp`*，使用 `@[push]` 引理集：
 
 ```
 -- Mathlib 核心引理（简化）
-@[push_neg] theorem not_and_or : ¬(P ∧ Q) ↔ ¬P ∨ ¬Q   -- ❶ De Morgan
-@[push_neg] theorem not_or     : ¬(P ∨ Q) ↔ ¬P ∧ ¬Q   -- ❷ De Morgan
-@[push_neg] theorem not_forall : (¬∀ x, P x) ↔ ∃ x, ¬P x  -- ❸ 量词翻转
-@[push_neg] theorem not_exists : (¬∃ x, P x) ↔ ∀ x, ¬P x  -- ❹ 量词翻转
-@[push_neg] theorem not_le     : ¬(a ≤ b) ↔ b < a     -- ❺ 序关系
+@[push] theorem not_and_or : ¬(P ∧ Q) ↔ ¬P ∨ ¬Q   -- ❶ De Morgan
+@[push] theorem not_or     : ¬(P ∨ Q) ↔ ¬P ∧ ¬Q   -- ❷ De Morgan
+@[push] theorem not_forall : (¬∀ x, P x) ↔ ∃ x, ¬P x  -- ❸ 量词翻转
+@[push] theorem not_exists : (¬∃ x, P x) ↔ ∀ x, ¬P x  -- ❹ 量词翻转
+@[push] theorem not_le     : ¬(a ≤ b) ↔ b < a     -- ❺ 序关系
 ```
 
-能力完全由引理集决定——自定义类型需注册 `@[push_neg]` 引理。
+能力完全由引理集决定——自定义类型需注册 `@[push]` 引理。
 
-作用位置：`push_neg`（目标）、`push_neg at h`（假设）、
-`push_neg at h ⊢`（两者）、`push_neg at *`（全部）。
+作用位置：`push Not`（目标）、`push Not at h`（假设）、
+`push Not at h ⊢`（两者）、`push Not at *`（全部）。
 
 # 18.3 contrapose：逆否变换
 %%%
@@ -115,7 +115,7 @@ example (a b : ℤ) : a ∣ b → b ≠ 0 → a ≠ 0 := by
 tag := "contrapose-bang"
 %%%
 
-`contrapose!` = `contrapose` + `push_neg`，
+`contrapose!` = `contrapose` + `push Not`，
 否定中含 `≤`、`<`、量词时特别有用：
 
 ```anchor contraposeSquare
@@ -164,7 +164,7 @@ rcases Classical.em P with h | h
 tag := "logic-transforms-combinations"
 %%%
 
-## 模式 A：`push_neg` 消除否定前缀
+## 模式 A：`push Not` 消除否定前缀
 %%%
 tag := "combination-push-neg-prefix"
 %%%
@@ -173,7 +173,7 @@ tag := "combination-push-neg-prefix"
 example (a : ℕ → ℝ) (L : ℝ)
     (h : ∀ ε > 0, ∃ N, ∀ n ≥ N, |a n - L| < ε) :
     ¬(∃ ε > 0, ∀ N, ∃ n ≥ N, ε ≤ |a n - L|) := by
-  push_neg
+  push Not
   exact h
 ```
 
@@ -189,7 +189,7 @@ example (f : ℝ → ℝ) (hf : StrictMono f) (a b : ℝ) :
   exact fun h => hf.injective.ne h
 ```
 
-## 模式 C：by_contra + push_neg + 分步推理
+## 模式 C：`by_contra` + `push Not` + 分步推理
 %%%
 tag := "combination-by-contra-push-neg"
 %%%
@@ -197,7 +197,7 @@ tag := "combination-by-contra-push-neg"
 ```anchor byContraEpsilon
 example (a b : ℝ) (h : ∀ ε > 0, a ≤ b + ε) : a ≤ b := by
   by_contra h'
-  push_neg at h'
+  push Not at h'
   have := h ((a - b) / 2) (by linarith)
   linarith
 ```
@@ -220,17 +220,17 @@ tag := "logic-transforms-when-to-use"
 
 ```
 目标含 ¬ 或需要否定展开？
-  ├─ 是 → push_neg（或 push_neg at h）
+  ├─ 是 → push Not（或 push Not at h）
   └─ 否 → 目标形如 P → Q？
            ├─ 是，且逆否更自然 → contrapose / contrapose!
            └─ 否，或正面证明困难 → by_contra / by_contra!
 ```
 
 *经验法则*：
-- 否定展开后直接匹配假设 → `push_neg`
+- 否定展开后直接匹配假设 → `push Not`
 - 逆否方向更容易 → `contrapose`
 - 需要制造矛盾 → `by_contra`
-- 带 `!` 的变体在含 `≤`/`<`/量词时省去手动 `push_neg`
+- 带 `!` 的变体在含 `≤`/`<`/量词时省去手动 `push Not`
 
 *不该用的场景*：
 - 目标有直接证明路径——不要为了"保险"加 `by_contra`
@@ -241,18 +241,18 @@ tag := "logic-transforms-when-to-use"
 tag := "logic-transforms-failures"
 %%%
 
-## 失败 1：`push_neg` 遇到无注册引理的类型
+## 失败 1：`push Not` 遇到无注册引理的类型
 %%%
 tag := "logic-fail-unregistered-type"
 %%%
 
 ```
 example (a b : MyOrder) : ¬(a ≤ₘ b) := by
-  push_neg   -- ❌ 目标不变——不知道 ¬(≤ₘ) 等于什么
+  push Not   -- ❌ 目标不变——不知道 ¬(≤ₘ) 等于什么
 ```
 
-*诊断*：`push_neg` 不报错但目标不变。
-*修复*：注册 `@[push_neg] theorem not_myLe : ¬(a ≤ₘ b) ↔ b <ₘ a`。
+*诊断*：`push Not` 不报错但目标不变。
+*修复*：注册 `@[push] theorem not_myLe : ¬(a ≤ₘ b) ↔ b <ₘ a`。
 
 ## 失败 2：contrapose 的目标不是蕴含
 %%%
@@ -278,14 +278,14 @@ example : P → Q → R := by
 
 *修复*：先 `intro` 到需要的位置，再 `contrapose`。
 
-## 失败 4：`push_neg` 不处理 ↔ 的否定
+## 失败 4：`push Not` 不处理 ↔ 的否定
 %%%
 tag := "logic-fail-push-neg-iff"
 %%%
 
 ```
 example : ¬(P ↔ Q) := by
-  push_neg    -- ❌ 无化简规则
+  push Not    -- ❌ 无化简规则
 ```
 
 *修复*：先 `rw [not_iff]` 手动拆解。
@@ -295,7 +295,7 @@ example : ¬(P ↔ Q) := by
 tag := "logic-fail-by-contra-incomplete"
 %%%
 
-`by_contra!` 内部调用 `push_neg`，若 `push_neg` 无法处理某层否定，
+`by_contra!` 内部调用 `push Not`，若 `push Not` 无法处理某层否定，
 展开会在中途停止。检查 `h` 的类型是否符合预期。
 
 # 18.8 调试
@@ -303,15 +303,15 @@ tag := "logic-fail-by-contra-incomplete"
 tag := "logic-transforms-debugging"
 %%%
 
-*检查 `push_neg` 做了什么*：在 `push_neg` 后暂停，观察 Infoview。
-如果目标不变，原因有三：否定已在原子位置；缺少 `@[push_neg]` 引理；
+*检查 `push Not` 做了什么*：在 `push Not` 后暂停，观察 Infoview。
+如果目标不变，原因有三：否定已在原子位置；缺少 `@[push]` 引理；
 表达式模式不匹配。
 
 *查看使用的引理*：
 
 ```
 set_option trace.Meta.Tactic.simp true in
-example : ¬(∀ x, P x) := by push_neg; sorry
+example : ¬(∀ x, P x) := by push Not; sorry
 -- trace 显示使用了 not_forall 等引理
 ```
 
@@ -327,8 +327,8 @@ example : P → Q := by
 tag := "logic-transforms-comparison"
 %%%
 
-- 简洁度 —— `push_neg`：高 —— `simp only [not_forall, ...]`：中 —— 手动 `rw`：低
-- 可控性 —— `push_neg`：低（全部展开） —— `simp only [not_forall, ...]`：高（选引理） —— 手动 `rw`：最高
+- 简洁度 —— `push Not`：高 —— `simp only [not_forall, ...]`：中 —— 手动 `rw`：低
+- 可控性 —— `push Not`：低（全部展开） —— `simp only [not_forall, ...]`：高（选引理） —— 手动 `rw`：最高
 
 - 前提 —— `contrapose`：目标是蕴含 —— `by_contra`：任意
 - 构造性 —— `contrapose`：是 —— `by_contra`：否（排中律）
@@ -339,7 +339,7 @@ tag := "logic-transforms-comparison"
 tag := "logic-transforms-exercises"
 %%%
 
-## 练习 1（基础 · `push_neg`）
+## 练习 1（基础 · `push Not`）
 %%%
 tag := "logic-exercise-1"
 %%%
@@ -349,7 +349,7 @@ example : ¬(∀ n : ℕ, n = 0) → ∃ n : ℕ, n ≠ 0 := by
   sorry
 ```
 
-提示：`push_neg` 一步到位后 `exact`。
+提示：`push Not` 一步到位后 `exact`。
 
 ## 练习 2（基础 · contrapose）
 %%%
@@ -362,14 +362,14 @@ example (m n : ℕ) : m * n = 0 → m = 0 ∨ n = 0 := by
   sorry
 ```
 
-提示：逆否后 `push_neg`，然后用 `Nat.mul_ne_zero`。
+提示：逆否后 `push Not`，然后用 `Nat.mul_ne_zero`。
 
 ## 练习 3（判断 · 选择 tactic）
 %%%
 tag := "logic-exercise-3"
 %%%
 
-以下三个目标分别最适合 `push_neg`、`contrapose`、`by_contra` 中的哪个？
+以下三个目标分别最适合 `push Not`、`contrapose`、`by_contra` 中的哪个？
 
 ```
 -- (a) 直接证明
@@ -425,12 +425,12 @@ example (a b : ℝ) (hab : a < b) : ∃ q : ℚ, a < ↑q ∧ ↑q < b := by
 tag := "logic-transforms-summary"
 %%%
 
-- tactic：`push_neg` —— 作用：否定下推到原子公式 —— 内部机制：特化 `simp` + `@[push_neg]` 引理集 —— 变体：`at h`、`at *`
+- tactic：`push Not` —— 作用：否定下推到原子公式 —— 内部机制：特化 `simp` + `@[push]` 引理集 —— 变体：`at h`、`at *`
 - tactic：`contrapose` —— 作用：蕴含 → 逆否 —— 内部机制：逻辑等价变换 —— 变体：`contrapose!`（+ push\_neg）
 - tactic：`by_contra` —— 作用：反证法 —— 内部机制：排中律 `Classical.em` —— 变体：`by_contra!`（+ push\_neg）
 
 *核心要点*：
-- `push_neg` 的能力取决于 `@[push_neg]` 引理集——自定义类型需注册
+- `push Not` 的能力取决于 `@[push]` 引理集——自定义类型需注册
 - `contrapose` 要求目标是蕴含形式
 - `by_contra` 是非构造性的，尽量只在直接证明困难时使用
-- 带 `!` 的变体自动 `push_neg`，在含 `≤`/`<`/量词时省去手动步骤
+- 带 `!` 的变体自动 `push Not`，在含 `≤`/`<`/量词时省去手动步骤

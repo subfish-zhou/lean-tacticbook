@@ -4,7 +4,7 @@ import LeanAutoBook.Helpers
 open Verso.Genre Manual
 open Verso Code External
 
-set_option verso.exampleProject "../examples"
+set_option verso.exampleProject "examples"
 set_option verso.exampleModule "Examples.Ch00Setup"
 
 #doc (Manual) "环境与运行约定" =>
@@ -15,19 +15,19 @@ tag := "ch00-setup"
 
 > *本章目标*：搭好与本书一致的环境，理解代码块标签，并运行最小示例验证配置。
 >
-> *版本基准*：Lean 工具链 `leanprover/lean4:v4.30.0-rc1`；Mathlib revision `0692ef80fb13`。
+> *版本基准*：Lean 工具链 `leanprover/lean4:v4.32.2`；Mathlib revision `905b95818eb3`。
 >
 > 本书所有可运行代码均在上述版本上校验。配套仓库 `examples/` 中包含相应示例。元编程 API 可能在小版本间发生不兼容变化。
 
 \[可运行\]
 ```bashFence
 cat examples/lean-toolchain
-rg -n '0692ef80fb13' examples/lake-manifest.json
+rg -n '905b95818eb3' examples/lake-manifest.json
 cd examples
 lake env lean --version
 ```
 
-`cat` 和 `rg` 应分别显示 `leanprover/lean4:v4.30.0-rc1` 与 Mathlib revision `0692ef80fb13`。进入 `examples/` 后，`lake env lean --version` 显示项目实际调用的 Lean 版本。
+`cat` 和 `rg` 应分别显示 `leanprover/lean4:v4.32.2` 与 Mathlib revision `905b95818eb3`。进入 `examples/` 后，`lake env lean --version` 显示项目实际调用的 Lean 版本。
 
 
 # 你需要什么基础

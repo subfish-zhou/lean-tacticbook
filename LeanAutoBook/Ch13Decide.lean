@@ -4,7 +4,7 @@ import LeanAutoBook.Helpers
 open Verso.Genre Manual
 open Verso Code External
 
-set_option verso.exampleProject "../examples"
+set_option verso.exampleProject "examples"
 set_option verso.exampleModule "Examples.Ch13Decide"
 
 #doc (Manual) "decide 与 `native_decide`：有限计算判定" =>

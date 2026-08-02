@@ -44,7 +44,7 @@ tag := "lean-automation-internals"
 
 本书假设你已有基本的 Lean 4 使用经验，了解 `theorem`、`by`、`simp` 等基础语法。
 
-_本书校验版本_：Lean 4 `v4.30.0-rc1`，Mathlib 同期主线（2026 年 4 月）。
+_本书校验版本_：Lean 4 `v4.32.2`，Mathlib 同期主线（2026 年 8 月）。
 
 {include 0 LeanAutoBook.Ch00Setup}
 

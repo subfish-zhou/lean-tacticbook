@@ -524,7 +524,7 @@ private def leanBlockCmdKeywords : Array String := #[
 ]
 
 private def firstToken (line : String) : String :=
-  let trimmed := line.trimLeft
+  let trimmed := line.trimAsciiStart.toString
   let toks := trimmed.splitOn " "
   toks.headD ""
 
@@ -552,13 +552,13 @@ private def splitLeanChunks (body : String) : DocElabM (Array String) := do
   while idx < lines.length do
     let l := lines[idx]!
     let t := firstToken l
-    if t == "import" || t == "open" || l.trim.isEmpty then
+    if t == "import" || t == "open" || l.trimAscii.isEmpty then
       headerChunks := headerChunks.push l
       idx := idx + 1
     else
       break
   let rest := "\n".intercalate (lines.drop idx)
-  if rest.trim.isEmpty then
+  if rest.trimAscii.isEmpty then
     return headerChunks
 
   let env ← getEnv
@@ -578,8 +578,8 @@ private def splitLeanChunks (body : String) : DocElabM (Array String) := do
     let ep? := cmd.getTailPos? (canonicalOnly := false)
     match sp?, ep? with
     | some sp, some ep =>
-      let chunk := (rest.toSubstring.extract sp ep).toString
-      unless chunk.trim.isEmpty do
+      let chunk := (rest.toRawSubstring.extract sp ep).toString
+      unless chunk.trimAscii.isEmpty do
         cmdChunks := cmdChunks.push chunk
     | _, _ => pure ()
     if Parser.isTerminalCommand cmd then break
@@ -590,7 +590,7 @@ private def splitLeanChunks (body : String) : DocElabM (Array String) := do
     through the helper. -/
 private def highlightImportChunk (chunk : String) : Highlighted := Id.run do
   -- Simple approach: mark the first word as .keyword, rest as plain text.
-  let trimmed := chunk.trimLeft
+  let trimmed := chunk.trimAsciiStart.toString
   let toks := trimmed.splitOn " "
   match toks with
   | [] => .text chunk
@@ -625,7 +625,7 @@ def leanFenceBlock : CodeBlockExpander
         unless first do
           hls := hls.push (.text "\n")
         first := false
-        if chunk.trim.isEmpty then
+        if chunk.trimAscii.isEmpty then
           hls := hls.push (.text chunk)
         else if isImportOrOpenLine chunk then
           hls := hls.push (highlightImportChunk chunk)
@@ -1031,7 +1031,7 @@ Write tables in verso using fenced code blocks:
 private def parseTableRow (line : String) : Array String :=
   let line := line.trimAscii.toString
   let line := if line.startsWith "|" then (line.drop 1).trimAscii.toString else line
-  let line := if line.endsWith "|" then (line.dropRight 1).trimAscii.toString else line
+  let line := if line.endsWith "|" then (line.dropEnd 1).toString.trimAscii.toString else line
   (line.splitOn "|").toArray.map fun s => s.trimAscii.toString
 
 private def isSeparatorRow (line : String) : Bool :=
@@ -1105,7 +1105,7 @@ and renders it as an HTML table. -/
 def tableBlock : CodeBlockExpander
   | args, code => do
     ArgParse.done.run args
-    let lines := (code.getString.splitOn "\n").filter (·.trim != "")
+    let lines := (code.getString.splitOn "\n").filter (·.trimAscii.isEmpty == false)
     match lines with
     | [] => throwError "Empty table"
     | [_] => throwError "Table needs at least a header and separator row"

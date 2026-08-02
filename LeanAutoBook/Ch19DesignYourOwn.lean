@@ -4,7 +4,7 @@ import LeanAutoBook.Helpers
 open Verso.Genre Manual
 open Verso Code External
 
-set_option verso.exampleProject "../examples"
+set_option verso.exampleProject "examples"
 set_option verso.exampleModule "Examples.Ch19DesignYourOwn"
 
 #doc (Manual) "设计你自己的领域自动化" =>
@@ -281,7 +281,7 @@ tag := "combining-patterns"
 
 - 组合方式：递归 + simp 收尾 —— 例子：`field_simp`（第十七章） —— 各模式分工：模式 C 消分母 → 模式 A 化简
 - 组合方式：搜索 + 递归子程序 —— 例子：`fun_prop`（第十五章） —— 各模式分工：模式 B 选规则 → 模式 C 验证
-- 组合方式：前处理 + 核心算法 —— 例子：`linarith`（第九章） —— 各模式分工：`push_neg` 标准化 → 模式 D 判定
+- 组合方式：前处理 + 核心算法 —— 例子：`linarith`（第九章） —— 各模式分工：`push Not` 标准化 → 模式 D 判定
 
 *设计原则*：每种模式处理它擅长的部分，
 通过管线（pipeline）串联，不要用一种模式硬撑所有场景。

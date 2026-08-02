@@ -4,7 +4,7 @@ import LeanAutoBook.Helpers
 open Verso.Genre Manual
 open Verso Code External
 
-set_option verso.exampleProject "../examples"
+set_option verso.exampleProject "examples"
 set_option verso.exampleModule "Examples.Ch06Simp"
 
 #doc (Manual) "simp——化简的瑞士军刀" =>
@@ -235,9 +235,9 @@ tag := "more-alternatives"
 tag := "source-overview"
 %%%
 
-从这一节开始，我们进入 Lean 4 v4.30.0-rc1 的真实源码。下面所有代码片段都标注了文件路径和行号。
+从这一节开始，我们进入 Lean 4 v4.32.2 的真实源码。下面所有代码片段都标注了文件路径和行号。
 
-> **版本说明**：本章源码拆解基于 Lean 4 **v4.30.0-rc1**（与本书运行环境一致）。读者若使用不同版本，函数签名和行号可能有细微差异，但核心架构稳定——`simpLoop`、`rewrite?`、`Methods` 等骨架自 v4.4 以来基本未变。
+> **版本说明**：本章源码拆解基于 Lean 4 **v4.32.2**（与本书运行环境一致）。读者若使用不同版本，函数签名和行号可能有细微差异，但核心架构稳定——`simpLoop`、`rewrite?`、`Methods` 等骨架自 v4.4 以来基本未变。
 
 > **Lean 核心 vs Mathlib**：本章拆解的是 **Lean 核心**的 simp 引擎实现（`Lean/Meta/Tactic/Simp/`）。Mathlib 不修改核心引擎骨架，而是贡献大量 `@[simp]` 引理、simproc 扩展（如 `norm_num` 作为 simproc）、以及 `field_simp` / `simp_rw` 等变体 tactic。读者在 Mathlib 环境下使用 simp 时，引擎不变，但可用的规则库大幅扩展。
 
@@ -281,7 +281,7 @@ tag := "eval-simp"
 以下是 `evalSimp` 的真实源码：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Simp.lean:L684-L696]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Simp.lean:L684-L696]
 @[builtin_tactic Lean.Parser.Tactic.simp] def evalSimp : Tactic := fun stx =>
   withMainContext do withSimpDiagnostics do
   let r@{ ctx, simprocs, dischargeWrapper, simpArgs } ← mkSimpContext stx (eraseLocal := false)
@@ -304,7 +304,7 @@ tag := "eval-simp"
 这里的 `mkSimpContext` 是关键入口——它解析全部 tactic 参数并构建 `Simp.Context`：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Simp.lean:L452-L477]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Simp.lean:L452-L477]
 def mkSimpContext (stx : Syntax) (eraseLocal : Bool) (kind := SimpKind.simp)
     (ignoreStarArg : Bool := false) (simpTheorems : CoreM SimpTheorems := getSimpTheorems) :
     TacticM MkSimpContextResult := do
@@ -342,7 +342,7 @@ tag := "elab-simp-args"
 `elabSimpArgs` 逐个处理方括号内的参数，每个参数可以是多种形式：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Simp.lean:L220-L278]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Simp.lean:L220-L278]
 private def elabSimpArg (indexConfig : Meta.ConfigWithKey) (eraseLocal : Bool)
     (kind : SimpKind) (arg : Syntax) : TacticM ElabSimpArgResult := withRef arg do
   try
@@ -389,7 +389,7 @@ private def elabSimpArg (indexConfig : Meta.ConfigWithKey) (eraseLocal : Bool)
 参数处理后的结果在主循环中逐一加入 `SimpTheorems`：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Simp.lean:L334-L361]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Simp.lean:L334-L361]
 -- (在 elabSimpArgs 内部)
 for (ref, arg) in args do
   match arg with
@@ -426,7 +426,7 @@ tag := "simp-match"
 `simpMatch` 是一个内置 simproc，处理 `match` 表达式。它先尝试直接规约（ι 规约），失败则尝试用 match 的方程引理逐一匹配：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Rewrite.lean:L366-L377]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L366-L377]
 def simpMatch : Simproc := fun e => do
   unless (← getConfig).iota do
     return .continue
@@ -458,7 +458,7 @@ tag := "simp-result"
 每一步重写的结果。注意 `proof?` 的存在——simp 是一个 **proof-producing rewriter**。
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Types.lean:L24-L37]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L24-L37]
 structure Result where
   /-- The simplified version of `e` -/
   expr           : Expr
@@ -477,7 +477,7 @@ structure Result where
 `proof? = none` 表示改写前后 definitionally equal（证明是 `rfl`）。当多步改写链式组合时，用 `Eq.trans` 拼接：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Types.lean:L47-L48]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L47-L48]
 def Result.mkEqTrans (r₁ r₂ : Result) : MetaM Result :=
   mkEqTransOptProofResult r₁.proof? r₁.cache r₂
 ```
@@ -490,7 +490,7 @@ tag := "simp-step"
 `pre`/`post` 钩子的返回值，决定后续控制流：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Types.lean:L313-L334]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L313-L334]
 inductive Step where
   /-- For `pre`: returns result without visiting subexpressions.
       For `post`: returns the result. -/
@@ -512,7 +512,7 @@ tag := "simp-context"
 simp 引擎的只读上下文：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Types.lean:L61-L120]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L61-L120]
 structure Context where
   private mk ::
   config            : Config := {}
@@ -542,7 +542,7 @@ tag := "simp-state"
 可变状态——缓存、步数计数、已使用引理记录：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Types.lean:L245-L251]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L245-L251]
 structure State where
   cache        : Cache := {}
   congrCache   : CongrCache := {}
@@ -558,7 +558,7 @@ tag := "simp-m"
 %%%
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Types.lean:L265]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L265]
 abbrev SimpM := ReaderT MethodsRef $ ReaderT Context $ StateRefT State MetaM
 ```
 
@@ -572,7 +572,7 @@ tag := "simp-methods"
 这是 simp 可扩展性的关键。`dsimp`、`simp_all` 等变体通过替换这些方法改变行为：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Types.lean:L421-L434]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L421-L434]
 structure Methods where
   pre        : Simproc  := fun _ => return .continue
   post       : Simproc  := fun e => return .done { expr := e }
@@ -592,7 +592,7 @@ structure Methods where
 `Simproc` 就是 `Expr → SimpM Step`：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Types.lean:L340]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L340]
 abbrev Simproc := Expr → SimpM Step
 ```
 
@@ -602,7 +602,7 @@ tag := "simp-theorem"
 %%%
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/SimpTheorems.lean:L143-L165]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/SimpTheorems.lean:L143-L165]
 structure SimpTheorem where
   keys        : Array SimpTheoremKey := #[]
   -- ^^^ DiscrTree 索引键，从 LHS 编码而来
@@ -625,7 +625,7 @@ tag := "simp-origin"
 %%%
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/SimpTheorems.lean:L57-L79]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/SimpTheorems.lean:L57-L79]
 inductive Origin where
   | decl (declName : Name) (post := true) (inv := false)
   -- ^^^ 全局声明，post=应用阶段，inv=是否反向 (←)
@@ -657,7 +657,7 @@ simp 的性能关键在于**不用逐一尝试所有引理**。DiscrTree（discr
 在 Rewrite.lean 中，`rewrite?` 使用 DiscrTree 进行候选查找：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Rewrite.lean:L207-L235]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L207-L235]
 def rewrite? (e : Expr) (s : SimpTheoremTree) (erased : PHashSet Origin)
     (tag : String) (rflOnly : Bool) : SimpM (Option Result) := do
   if (← getConfig).index then
@@ -698,7 +698,7 @@ tag := "config-index"
 `rewrite?` 同时实现了两种查找模式。当 `config.index = false` 时，退化为 Lean 3 风格的线性扫描：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Rewrite.lean:L241-L262]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L241-L262]
   rewriteNoIndex? : SimpM (Option Result) := do
     let (candidates, numArgs) ← withSimpIndexConfig <| s.getMatchLiberal e
     -- ^^^ getMatchLiberal：只看根 symbol，忽略 DiscrTree 的精细结构
@@ -734,7 +734,7 @@ tag := "rewrite-pre-post"
 重写分为 pre（子项递归前）和 post（子项递归后）两个阶段。每个阶段遍历所有 `SimpTheorems` 层：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Rewrite.lean:L379-L389]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L379-L389]
 def rewritePre (rflOnly := false) : Simproc := fun e => do
   for thms in (← getContext).simpTheorems do
     -- ^^^ 遍历所有 SimpTheorems 层（全局 + 用户传入 + 局部假设）
@@ -763,7 +763,7 @@ tag := "simp-impl"
 %%%
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Main.lean:L686-L691]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Main.lean:L686-L691]
 @[export lean_simp]
 def simpImpl (e : Expr) : SimpM Result := withIncRecDepth do
   checkSystem "simp"
@@ -782,7 +782,7 @@ tag := "simp-loop"
 这是 simp 的核心循环——pre → reduce → 结构递归 → post → 可能重入：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Main.lean:L648-L683]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Main.lean:L648-L683]
 partial def simpLoop (e : Expr) : SimpM Result := withIncRecDepth do
   let cfg ← getConfig
   if cfg.memoize then
@@ -837,7 +837,7 @@ tag := "simp-step-dispatch"
 %%%
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Main.lean:L628-L641]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Main.lean:L628-L641]
 def simpStep (e : Expr) : SimpM Result := do
   match e with
   | .mdata m e   => let r ← simp e; return { r with expr := mkMData m r.expr }
@@ -862,7 +862,7 @@ tag := "simp-app"
 函数应用 `f a₁ a₂ ... aₙ` 是最常见的表达式形式。`simpApp` 先排除字面量，然后委托给 `congr`：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Main.lean:L621-L626]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Main.lean:L621-L626]
 def simpApp (e : Expr) : SimpM Result := do
   if isOfNatNatLit e || isOfScientificLit e || isCharLit e then
     -- ^^^ 字面量（如 OfNat.ofNat 42）不递归进入
@@ -874,7 +874,7 @@ def simpApp (e : Expr) : SimpM Result := do
 `congr` 先查用户标注的 `@[congr]` lemma，然后退回自动生成的 congruence theorem：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Main.lean:L608-L619]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Main.lean:L608-L619]
 def congr (e : Expr) : SimpM Result := do
   let f := e.getAppFn
   if f.isConst then
@@ -894,7 +894,7 @@ def congr (e : Expr) : SimpM Result := do
 `congrDefault` 尝试自动生成的 congruence theorem，失败则用 `simpAppUsingCongr`（逐参数 `congrArg`/`congrFun`）：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Main.lean:L516-L520]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Main.lean:L516-L520]
 def congrDefault (e : Expr) : SimpM Result := do
   if let some result ← tryAutoCongrTheorem? e then
     result.mkEqTrans (← visitFn result.expr)
@@ -910,7 +910,7 @@ tag := "reduce-step"
 在 pre 和结构递归之间，`reduceStep` 做 beta/iota/zeta/proj/unfold：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Main.lean:L189-L220]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Main.lean:L189-L220]
 private def reduceStep (e : Expr) : SimpM Expr := do
   let cfg ← getConfig
   let f := e.getAppFn
@@ -954,7 +954,7 @@ tag := "simp-forall"
 `simpForall` 处理 `∀` 和 `→`。当 `contextual = true` 且箭头两侧都是命题时，化简右侧会**把左侧加入局部假设**：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Main.lean:L309-L339]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Main.lean:L309-L339]
 def simpArrow (e : Expr) : SimpM Result := do
   trace[Debug.Meta.Tactic.simp] "arrow {e}"
   let p := e.bindingDomain!
@@ -983,7 +983,7 @@ def simpArrow (e : Expr) : SimpM Result := do
 `withNewLemmas` 是 contextual simp 的核心辅助——它把新引入的局部变量（如果是 proof）加入 simp 引理集：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Main.lean:L244-L263]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Main.lean:L244-L263]
 def withNewLemmas {α} (xs : Array Expr) (f : SimpM α) : SimpM α := do
   if (← getConfig).contextual then
     withFreshCache do
@@ -1015,7 +1015,7 @@ tag := "proof-composition"
 **proof 组合的核心原语**——在 Types.lean 中定义：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Types.lean:L582-L598]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L582-L598]
 -- 函数参数化简：f = g → f a = g a
 def mkCongrFun (r : Result) (a : Expr) : MetaM Result :=
   match r.proof? with
@@ -1043,7 +1043,7 @@ def mkCongr (r₁ r₂ : Result) : MetaM Result :=
 **λ 抽象的 proof 组合**——需要 `funExt`：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Types.lean:L925-L933]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L925-L933]
 def Result.addLambdas (r : Result) (xs : Array Expr) : MetaM Result := do
   if xs.isEmpty then return r
   let eNew ← mkLambdaFVars xs r.expr
@@ -1072,7 +1072,7 @@ tag := "congr-args"
 `congrArgs` 展示了 simp 如何逐参数化简函数应用并正确组合 proof：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Types.lean:L633-L663]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L633-L663]
 def congrArgs (r : Result) (args : Array Expr) : SimpM Result := do
   if args.isEmpty then
     return r
@@ -1118,7 +1118,7 @@ tag := "try-theorem"
 这是 simp 的最内层核心。给定一个表达式 `e` 和一条引理 `thm`，尝试用 `isDefEq` 匹配 LHS，然后 synthesize 隐式参数和 discharge 前提：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Rewrite.lean:L187-L202]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L187-L202]
 def tryTheorem? (e : Expr) (thm : SimpTheorem) : SimpM (Option Result) := do
   withNewMCtxDepth do
     -- ^^^ 创建新的 metavariable 上下文，确保不污染外层
@@ -1144,7 +1144,7 @@ def tryTheorem? (e : Expr) (thm : SimpTheorem) : SimpM (Option Result) := do
 `tryTheoremCore` 做实际的匹配工作：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Rewrite.lean:L115-L176]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L115-L176]
 private def tryTheoremCore (lhs : Expr) (xs : Array Expr) (bis : Array BinderInfo)
     (val : Expr) (type : Expr) (e : Expr) (thm : SimpTheorem)
     (numExtraArgs : Nat) : SimpM (Option Result) := do
@@ -1191,7 +1191,7 @@ tag := "synthesize-args"
 %%%
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Rewrite.lean:L58-L95]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L58-L95]
 def synthesizeArgs (thmId : Origin) (bis : Array BinderInfo) (xs : Array Expr) :
     SimpM Bool := do
   let skipAssignedInstances := tactic.skipAssignedInstances.get (← getOptions)
@@ -1222,7 +1222,7 @@ tag := "default-pre-post"
 默认的 pre/post 钩子组合了多个 simproc。以 `postDefault` 为例：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Rewrite.lean:L532-L537]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L532-L537]
 def postDefault (s : SimprocsArray) : Simproc :=
   rewritePost >>
   -- ^^^ 用 post DiscrTree 查找并尝试引理
@@ -1256,7 +1256,7 @@ tag := "simp-congr-theorem"
 %%%
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/SimpCongrTheorems.lean:L23-L28]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/SimpCongrTheorems.lean:L23-L28]
 structure SimpCongrTheorem where
   theoremName   : Name
   funName       : Name
@@ -1272,7 +1272,7 @@ tag := "congr-registration"
 %%%
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/SimpCongrTheorems.lean:L142-L150]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/SimpCongrTheorems.lean:L142-L150]
 builtin_initialize
   registerBuiltinAttribute {
     name  := `congr
@@ -1291,7 +1291,7 @@ tag := "try-congr-theorem"
 这是一个复杂但关键的函数。它用 `isDefEq` 匹配 LHS，然后对每个 hypothesis 位置调用 `processCongrHypothesis`（实质上是递归 `simp` 子项）：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Main.lean:L557-L606]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Main.lean:L557-L606]
 def trySimpCongrTheorem? (c : SimpCongrTheorem) (e : Expr) :
     SimpM (Option Result) := withNewMCtxDepth do withParent e do
   recordCongrTheorem c.theoremName
@@ -1334,7 +1334,7 @@ def trySimpCongrTheorem? (c : SimpCongrTheorem) (e : Expr) :
 `processCongrHypothesis` 对每个 hypothesis 做递归 simp：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Main.lean:L523-L554]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Main.lean:L523-L554]
 def processCongrHypothesis (h : Expr) (hType : Expr) : SimpM Bool := do
   forallTelescopeReducing hType fun xs hType => withNewLemmas xs do
     -- ^^^ 展开 hypothesis 的全称量化（可能带来新的局部假设）
@@ -1373,7 +1373,7 @@ tag := "discharge-impl"
 当引理有前提时，`synthesizeArgs` 会调用 `discharge?'` 来证明。以下是完整实现：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Rewrite.lean:L32-L56]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L32-L56]
 def discharge?' (thmId : Origin) (x : Expr) (type : Expr) : SimpM Bool := do
   let r : DischargeResult ← withTraceNode `Meta.Tactic.simp.discharge (fun
       | .ok .proved       => return m!"{← ppOrigin thmId} discharge {checkEmoji}{indentExpr type}"
@@ -1412,7 +1412,7 @@ tag := "default-discharger"
 默认 discharger 定义在 Rewrite.lean 末尾：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Rewrite.lean:L627-L638]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L627-L638]
 def dischargeDefault? (e : Expr) : SimpM (Option Expr) := do
   let e := e.cleanupAnnotations
   if isEqnThmHypothesis e then
@@ -1438,7 +1438,7 @@ tag := "custom-discharger"
 用户写 `simp (discharger := omega)` 时，`tacticToDischarge` 把 tactic 包装成 `discharge?`：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Simp.lean:L37-L62]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Simp.lean:L37-L62]
 def tacticToDischarge (tacticCode : Syntax) :
     TacticM (IO.Ref Term.State × Simp.Discharge) := do
   let tacticCode ← `(tactic| try ($tacticCode:tacticSeq))
@@ -1478,7 +1478,7 @@ tag := "simp-all-entry"
 %%%
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Elab/Tactic/Simp.lean:L698-L713]
+-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Simp.lean:L698-L713]
 @[builtin_tactic Lean.Parser.Tactic.simpAll] def evalSimpAll : Tactic := fun stx =>
   withMainContext do withSimpDiagnostics do
   let r@{ ctx, simprocs, dischargeWrapper := _, simpArgs } ←
@@ -1533,7 +1533,7 @@ tag := "dsimp-impl-detail"
 %%%
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Main.lean:L492-L500]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Main.lean:L492-L500]
 @[export lean_dsimp]
 private partial def dsimpImpl (e : Expr) : SimpM Expr := do
   let cfg ← getConfig
@@ -1571,14 +1571,14 @@ tag := "dsimp-simproc"
 `DSimproc` 类似 `Simproc` 但返回 `DStep`（即 `TransformStep`），不需要 proof：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Types.lean:L339]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L339]
 abbrev DSimproc := Expr → SimpM DStep
 ```
 
 dsimp 的 drewritePre/drewritePost 只用 `rflOnly := true` 的引理：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Rewrite.lean:L391-L401]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L391-L401]
 def drewritePre : DSimproc := fun e => do
   for thms in (← getContext).simpTheorems do
     if let some r ← rewrite? e thms.pre thms.erased (tag := "dpre") (rflOnly := true) then
@@ -1673,7 +1673,7 @@ tag := "simproc-mechanism"
 例如 `simpUsingDecide`——用 `decide` 证明布尔命题：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Rewrite.lean:L276-L291]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L276-L291]
 @[inline] def simpUsingDecide : Simproc := fun e => do
   unless (← getConfig).decide do
     return .continue
@@ -1703,7 +1703,7 @@ tag := "simproc-composition"
 多个 Simproc 用 `>>` (`andThen`) 组合成管道：
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Types.lean:L370-L377]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L370-L377]
 @[always_inline]
 def andThen (f g : Simproc) : Simproc := fun e => do
   match (← f e) with
@@ -1723,7 +1723,7 @@ tag := "mk-default-methods"
 %%%
 
 ```
--- [Lean 4 v4.30.0-rc1, Lean/Meta/Tactic/Simp/Rewrite.lean:L642-L652]
+-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L642-L652]
 def mkMethods (s : SimprocsArray) (discharge? : Discharge)
     (wellBehavedDischarge : Bool) : Methods := {
   pre        := preDefault s

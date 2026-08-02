@@ -15,7 +15,7 @@ _(更多章节持续更新中)_
 
 ## 构建
 
-需要 Lean 4 v4.30.0-rc1（通过 elan 安装）。
+需要 Lean 4 v4.32.2（通过 elan 安装）。
 
 ```bash
 lake build           # 编译

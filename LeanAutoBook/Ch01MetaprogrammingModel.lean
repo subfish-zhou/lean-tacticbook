@@ -4,7 +4,7 @@ import LeanAutoBook.Helpers
 open Verso.Genre Manual
 open Verso Code External
 
-set_option verso.exampleProject "../examples"
+set_option verso.exampleProject "examples"
 set_option verso.exampleModule "Examples.Ch01MetaprogrammingModel"
 
 #doc (Manual) "Lean 中的 tactic 基础设施" =>
@@ -15,7 +15,7 @@ tag := "ch01-metaprogramming-model"
 
 > *本章目标*：把上一章的抽象模型对应到 Lean 的实际实现，包括四层 monad、Reader/State/Except、目标列表、局部上下文、元变量上下文与 lifting，并说明抽象模型省略的实现细节及其技术后果。
 >
-> *版本基准*：Lean `leanprover/lean4:v4.30.0-rc1`，Mathlib revision `0692ef80fb13`。本章的 API 签名和源码路径都按这个版本对齐。
+> *版本基准*：Lean `leanprover/lean4:v4.32.2`，Mathlib revision `905b95818eb3`。本章的 API 签名和源码路径都按这个版本对齐。
 
 
 # 从发明回到现实：一张对照表

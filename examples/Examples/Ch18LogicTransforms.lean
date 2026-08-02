@@ -8,10 +8,10 @@ example (f : ℝ → ℝ) (a : ℝ) :
     ∃ ε > 0, ∀ δ > 0, ∃ x, |x - a| < δ ∧ ε ≤ |f x - f a| := by
   constructor
   · intro h
-    push_neg at h
+    push Not at h
     exact h
   · intro h
-    push_neg
+    push Not
     exact h
 -- ANCHOR_END: pushNegEpsilonDelta
 
@@ -43,7 +43,7 @@ example : ∀ n : ℕ, ∃ m, m > n := by
 example (a : ℕ → ℝ) (L : ℝ)
     (h : ∀ ε > 0, ∃ N, ∀ n ≥ N, |a n - L| < ε) :
     ¬(∃ ε > 0, ∀ N, ∃ n ≥ N, ε ≤ |a n - L|) := by
-  push_neg
+  push Not
   exact h
 -- ANCHOR_END: pushNegConvergence
 
@@ -57,7 +57,7 @@ example (f : ℝ → ℝ) (hf : StrictMono f) (a b : ℝ) :
 -- ANCHOR: byContraEpsilon
 example (a b : ℝ) (h : ∀ ε > 0, a ≤ b + ε) : a ≤ b := by
   by_contra h'
-  push_neg at h'
+  push Not at h'
   have := h ((a - b) / 2) (by linarith)
   linarith
 -- ANCHOR_END: byContraEpsilon
