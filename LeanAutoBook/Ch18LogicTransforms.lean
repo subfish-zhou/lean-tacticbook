@@ -65,8 +65,9 @@ example (f : ℝ → ℝ) (a : ℝ) :
 
 变换规则一览：
 
-- `¬(P ∧ Q)`：`¬P ∨ ¬Q`
+- `¬(P ∧ Q)`：默认变为 `P → ¬Q`；`push +distrib Not` 才变为 `¬P ∨ ¬Q`
 - `¬(P ∨ Q)`：`¬P ∧ ¬Q`
+- `¬(P ↔ Q)`：`(P ∧ ¬Q) ∨ (¬P ∧ Q)`
 - `¬(∀ x, P x)`：`∃ x, ¬P x`
 - `¬(∃ x, P x)`：`∀ x, ¬P x`
 - `¬(a ≤ b)`：`b < a`
@@ -78,18 +79,25 @@ example (f : ℝ → ℝ) (a : ℝ) :
 tag := "push-neg-internals"
 %%%
 
-`push Not` 是一个*特化的 `simp`*，使用 `@[push]` 引理集：
+`push Not` 建立在 `simp` 上，但实现不只是一组 `@[push]` 引理。普通规则由
+`@[push]` 注册；`¬(P ∧ Q)` 和 `¬∀ x, P x` 还经过 `pushNegBuiltin`，以便读取
+`distrib` 配置并保留量词变量名。
 
 ```
--- Mathlib 核心引理（简化）
-@[push] theorem not_and_or : ¬(P ∧ Q) ↔ ¬P ∨ ¬Q   -- ❶ De Morgan
-@[push] theorem not_or     : ¬(P ∨ Q) ↔ ¬P ∧ ¬Q   -- ❷ De Morgan
-@[push] theorem not_forall : (¬∀ x, P x) ↔ ∃ x, ¬P x  -- ❸ 量词翻转
-@[push] theorem not_exists : (¬∃ x, P x) ↔ ∀ x, ¬P x  -- ❹ 量词翻转
-@[push] theorem not_le     : ¬(a ≤ b) ↔ b < a     -- ❺ 序关系
+-- Mathlib/Tactic/Push.lean 中的代表性规则（节选）
+attribute [push] not_not not_or Classical.not_imp
+@[push] theorem not_iff :
+    ¬(P ↔ Q) ↔ (P ∧ ¬Q) ∨ (¬P ∧ Q) := ...
+@[push] theorem not_exists :
+    (¬∃ x, P x) ↔ ∀ x, ¬P x := ...
+
+-- And 与 forall 的否定由 pushNegBuiltin 特判：
+--   ¬(P ∧ Q)  ↦  P → ¬Q                 （默认）
+--   ¬(P ∧ Q)  ↦  ¬P ∨ ¬Q                （+distrib）
+--   ¬∀ x, P x ↦  ∃ x, ¬P x              （保留 binder 名）
 ```
 
-能力完全由引理集决定——自定义类型需注册 `@[push]` 引理。
+除上述内置特判外，扩展能力来自 `@[push]` 引理；自定义关系通常需要注册相应规则。
 
 作用位置：`push Not`（目标）、`push Not at h`（假设）、
 `push Not at h ⊢`（两者）、`push Not at *`（全部）。
@@ -278,17 +286,19 @@ example : P → Q → R := by
 
 *修复*：先 `intro` 到需要的位置，再 `contrapose`。
 
-## 失败 4：`push Not` 不处理 ↔ 的否定
+## 失败 4：误以为 `push Not` 默认产生析取
 %%%
 tag := "logic-fail-push-neg-iff"
 %%%
 
 ```
-example : ¬(P ↔ Q) := by
-  push Not    -- ❌ 无化简规则
+example : ¬(P ∧ Q) := by
+  push Not
+  -- 目标默认变为 P → ¬Q，而不是 ¬P ∨ ¬Q
 ```
 
-*修复*：先 `rw [not_iff]` 手动拆解。
+`push Not` 本身支持 `↔` 的否定；这里的问题是 `∧` 的默认正规形。
+若后续证明需要 De Morgan 析取式，使用 `push +distrib Not`。
 
 ## 失败 5：`by_contra!` 展开不完全
 %%%
@@ -425,12 +435,12 @@ example (a b : ℝ) (hab : a < b) : ∃ q : ℚ, a < ↑q ∧ ↑q < b := by
 tag := "logic-transforms-summary"
 %%%
 
-- tactic：`push Not` —— 作用：否定下推到原子公式 —— 内部机制：特化 `simp` + `@[push]` 引理集 —— 变体：`at h`、`at *`
-- tactic：`contrapose` —— 作用：蕴含 → 逆否 —— 内部机制：逻辑等价变换 —— 变体：`contrapose!`（+ push\_neg）
-- tactic：`by_contra` —— 作用：反证法 —— 内部机制：排中律 `Classical.em` —— 变体：`by_contra!`（+ push\_neg）
+- tactic：`push Not` —— 作用：否定下推到原子公式 —— 内部机制：`simp` + `@[push]` + `pushNegBuiltin` —— 变体：`+distrib`、`at h`、`at *`
+- tactic：`contrapose` —— 作用：蕴含 → 逆否 —— 内部机制：逻辑等价变换 —— 变体：`contrapose!`（随后自动下推否定）
+- tactic：`by_contra` —— 作用：反证法 —— 内部机制：排中律 `Classical.em` —— 变体：`by_contra!`（随后自动下推否定）
 
 *核心要点*：
-- `push Not` 的能力取决于 `@[push]` 引理集——自定义类型需注册
+- `push Not` 结合内置否定处理与 `@[push]` 引理；自定义关系通常需要注册规则
 - `contrapose` 要求目标是蕴含形式
 - `by_contra` 是非构造性的，尽量只在直接证明困难时使用
 - 带 `!` 的变体自动 `push Not`，在含 `≤`/`<`/量词时省去手动步骤
