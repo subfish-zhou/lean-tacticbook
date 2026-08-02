@@ -145,6 +145,7 @@ const Verso_DOT_Genre_DOT_Manual_DOT_section = {
             address: `${value[0].address}#${value[0].id}`,
             domainId: 'Verso.Genre.Manual.section',
             ref: value,
+            priority: value[0].data.searchPriority ?? 50,
           })),
     className: "section-domain",
     displayName: "Section",
@@ -182,3 +183,9 @@ export const domainMappers = {"Verso.Genre.Manual.doc.suggestion":
   "Verso.Genre.Manual.doc.tactic":
     Verso_DOT_Genre_DOT_Manual_DOT_doc_DOT_tactic
 };
+
+export const searchPriorities = {
+  semantic: 50,
+    fullText: 50,
+    domains: { }
+  };

@@ -1,0 +1,3001 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      (function(){
+  const {protocol:proto, host:hostName, pathname:path, search:srch, hash:hsh} = window.location;
+  if (!(path.endsWith("/") || path.endsWith(".html"))) {
+    window.location.replace(`${proto}//${hostName}${path}/${srch}${hsh}`);
+  }
+})()</script>
+    <script>
+      // Enable TypeScript checking.
+// @ts-check
+
+// Applies a saved table-of-contents width before the first paint.
+//
+// This is a tiny inline counterpart to toc-resize.js: it runs in the page head so that
+// returning desktop readers do not see the default width flash to their saved width.
+// It only records the width in the --verso-toc-user-width custom property; the
+// stylesheet clamps it and ignores it on mobile, and toc-resize.js then takes over the
+// interactive resizing. Keep the storage key in sync with toc-resize.js.
+
+(function () {
+    try {
+        const saved = localStorage.getItem("verso-toc-width");
+        // Parse to a number (as toc-resize.js does) and write that back, so a stored
+        // value with stray whitespace becomes a valid length rather than `" 420 px"`.
+        const width = saved === null ? NaN : Number(saved);
+        if (Number.isFinite(width)) {
+            document.documentElement.style.setProperty("--verso-toc-user-width", `${width}px`);
+        }
+    } catch (_) {
+        // Leave the default width in place when local storage is unavailable.
+    }
+})();
+</script>
+    <base href="./../"><meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <title>simp——化简的瑞士军刀</title><link rel="stylesheet" href="book.css">
+    <link rel="stylesheet" href="verso-vars.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js" integrity="sha384-zbcZAIxlvJtNE3Dp5nxLXdXtXyxwOdnILY1TDPVmKFhl4r4nSUG1r8bcFXGVa4Te" crossorigin="anonymous"></script>
+    <script defer="defer" src="-verso-search/elasticlunr.min.js"></script>
+    <script defer="defer" src="-verso-search/fuzzysort.min.js"></script>
+    <script defer="defer" src="-verso-search/searchIndex.js"></script>
+    <script defer="defer" src="-verso-search/search-config.js"></script>
+    <script type="module" src="-verso-search/search-init.js"></script>
+    <link rel="stylesheet" href="-verso-search/search-box.css">
+    <link rel="stylesheet" href="-verso-search/search-page.css">
+    <link rel="stylesheet" href="-verso-search/search-highlight.css">
+    <link rel="stylesheet" href="-verso-search/domain-display.css">
+    <script src="-verso-search/search-highlight.js" defer="defer"></script>
+    <script src="toc-resize.js" defer="defer"></script>
+    <script src="-verso-data/katex/katex.js"></script>
+    <script src="-verso-data/katex/math.js"></script>
+    <script src="-verso-data/popper.min.js"></script>
+    <script src="-verso-data/tippy-bundle.umd.min.js"></script>
+    <link rel="stylesheet" href="-verso-data/tippy-border.css">
+    <link rel="stylesheet" href="-verso-data/katex/katex.css">
+    <style>
+pre.hl.lean.block.bug {
+  white-space: pre;
+  padding: 0.6em 1em;
+  overflow-x: auto;
+  margin: 1em 0;
+  background-color: transparent;
+  font-family: var(--verso-code-font-family, monospace);
+  font-size: 0.95em;
+}
+pre.hl.lean.block.bug code { font-family: inherit; font-size: inherit; }
+pre.hl.lean.block.bug .keyword { color: #a626a4; font-weight: bold; }
+pre.hl.lean.block.bug .literal { color: #005cc5; }
+pre.hl.lean.block.bug .comment { color: #6a737d; font-style: italic; }
+</style><style>
+pre.hl.bash.block {
+  white-space: pre;
+  padding: 0.75em 1em;
+  border-left: 3px solid #2196f3;
+  background-color: #f4faff;
+  overflow-x: auto;
+  border-radius: 4px;
+  margin: 1em 0;
+}
+pre.hl.bash.block code {
+  font-family: var(--verso-code-font-family, monospace);
+  font-size: 0.95em;
+  color: #2b2b2b;
+}
+pre.hl.bash.block .cmd {
+  color: var(--verso-code-keyword-color, #005cc5);
+  font-weight: var(--verso-code-keyword-weight, bold);
+}
+pre.hl.bash.block .opt {
+  color: var(--verso-code-const-color, #6f42c1);
+}
+pre.hl.bash.block .string {
+  color: var(--verso-code-literal-color, #032f62);
+}
+pre.hl.bash.block .comment {
+  color: #6a737d;
+  font-style: italic;
+}
+pre.hl.bash.block .envvar {
+  color: var(--verso-code-var-color, #e36209);
+  font-weight: 600;
+}
+
+/* Give the Lean highlighter the same block-box treatment as bashFence.
+   verso emits `<code class="hl lean block">` inline; force it to display
+   as a block, padded and framed like the shell blocks. */
+code.hl.lean.block {
+  display: block;
+  padding: 0.75em 1em;
+  border-left: 3px solid #4caf50;
+  background-color: #f8fdf8;
+  overflow-x: auto;
+  border-radius: 4px;
+  margin: 1em 0;
+  font-family: var(--verso-code-font-family, monospace);
+  font-size: 0.95em;
+}
+</style><style>
+
+.hl.lean {
+  white-space: pre;
+  font-weight: normal;
+  font-style: normal;
+  font-size: inherit;
+}
+
+.hl.lean .keyword {
+  color: var(--verso-code-keyword-color,);
+  font-weight: var(--verso-code-keyword-weight, bold);
+  font-style: var(--verso-code-keyword-style, normal);
+  font-family: var(--verso-code-keyword-font-family,);
+}
+
+.hl.lean .const {
+  color: var(--verso-code-const-color,);
+  font-weight: var(--verso-code-const-weight, normal);
+  font-style: var(--verso-code-const-style, normal);
+  font-family: var(--verso-code-const-font-family,);
+}
+
+.hl.lean .var {
+  color: var(--verso-code-var-color,);
+  font-weight: var(--verso-code-var-weight, normal);
+  font-style: var(--verso-code-var-style, italic);
+  font-family: var(--verso-code-var-font-family,);
+
+  position: relative;
+}
+
+.hl.lean .literal, .hl.lean .unknown {
+  color: var(--verso-code-color,);
+  font-weight: normal;
+  font-style: normal;
+  font-family: var(--verso-code-font-family,);
+}
+
+/* These lexically-classified token kinds default to the `.unknown` appearance. The rule follows
+   `.const` so it wins for the `anon-ctor` tokens, which also carry the `const` class. */
+.hl.lean .anon-ctor,
+.hl.lean .number,
+.hl.lean .char,
+.hl.lean .comment,
+.hl.lean .punctuation,
+.hl.lean .delim,
+.hl.lean .wildcard {
+  color: var(--verso-code-color,);
+  font-weight: normal;
+  font-style: normal;
+  font-family: var(--verso-code-font-family,);
+}
+
+.hover-container {
+  width: 0;
+  height: 0;
+  position: relative;
+  display: inline;
+}
+
+.hl.lean a {
+  color: inherit;
+  text-decoration: currentcolor underline dotted;
+}
+
+.hl.lean a:hover {
+  text-decoration: currentcolor underline solid;
+}
+
+.hl.lean .hover-info {
+  white-space: normal;
+}
+
+.hl.lean .token .hover-info {
+  display: none;
+  position: absolute;
+  background-color: #e5e5e5;
+  border: 1px solid black;
+  padding: 0.5rem;
+  z-index: 300;
+}
+
+.hl.lean .hover-info.messages {
+  max-height: 10rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  padding: 0 0.5rem 0 0;
+  display: block;
+}
+
+.hl.lean .hover-info code {
+  white-space: pre-wrap;
+  background: none;
+  color: black;
+}
+
+.hl.lean .hover-info.messages > code {
+  padding: 0.5rem;
+  display: block;
+  width: fit-content;
+}
+
+.hl.lean .hover-info.messages > code:only-child {
+  margin: 0;
+}
+
+.hl.lean .hover-info.messages > code {
+  margin: 0.1rem;
+}
+
+.hl.lean .hover-info.messages > code:not(:first-child) {
+  margin-top: 0rem;
+}
+
+.hl.lean {
+}
+
+.hl.lean.block {
+  display: block;
+}
+
+.hl.lean.inline {
+  display: inline;
+  white-space: pre-wrap;
+}
+
+.hl.lean * {
+}
+
+.hl.lean .token {
+  transition: all 0.25s; /* Slight fade for highlights */
+}
+
+@media (hover: hover) {
+  .hl.lean .token.binding-hl, .hl.lean .literal:hover, .hl.lean .token.typed:hover {
+    background-color: #eee;
+    border-radius: 2px;
+    transition: none;
+  }
+}
+
+
+.hl.lean .has-info .token:not(.tactic-state):not(.tactic-state *), .hl.lean .has-info .inter-text:not(.tactic-state):not(.tactic-state *) {
+  text-decoration-style: wavy;
+  text-decoration-line: underline;
+  text-decoration-thickness: from-font;
+  text-decoration-skip-ink: none;
+}
+
+.hl.lean .has-info .hover-info {
+  display: none;
+  position: absolute;
+  transform: translate(0.25rem, 0.3rem);
+  border: 1px solid black;
+  padding: 0.5rem;
+  z-index: 400;
+  text-align: left;
+}
+
+.hl.lean .has-info.error :not(.tactic-state):not(.tactic-state *){
+  text-decoration-color: red;
+}
+
+@media (hover: hover) {
+  .hl.lean .has-info.error:hover {
+    background-color: #ffb3b3;
+  }
+}
+
+.hl.lean .hover-info.messages > code.error {
+  background-color: #e5e5e5;
+  border-left: 0.2rem solid #ffb3b3;
+}
+
+.tippy-box[data-theme~='error'] .hl.lean .hover-info.messages > code.error {
+  background: none;
+  border: none;
+}
+
+.error .verso-message, .error .verso-message .token, .error .verso-message label {
+  color: var(--verso-error-color);
+}
+
+.error .verso-message .case-label:has(input[type="checkbox"])::before {
+  background-color: var(--verso-error-color) !important;
+}
+
+.hl.lean .has-info.warning :not(.tactic-state):not(.tactic-state *) {
+  text-decoration-color: var(--verso-warning-indicator-color);
+}
+
+@media (hover: hover) {
+  .hl.lean .has-info.warning:hover {
+    background-color:var(--verso-warning-color);
+  }
+}
+
+.hl.lean .hover-info.messages > code.warning {
+  background-color: var(--verso-warning-color);
+}
+
+.lean-output {
+  border-left: 0.2em solid transparent;
+  padding: 0 0 0 0.5em;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.lean-output.error {
+  border-color: var(--verso-error-indicator-color);
+}
+
+.lean-output.information {
+  border-color: var(--verso-info-indicator-color);
+}
+
+.lean-output.warning {
+  border-color: var(--verso-warning-indicator-color);
+}
+
+.hl.lean .hover-info.messages > code.error {
+  background-color: #e5e5e5;
+  border-left: 0.2rem solid var(--verso-warning-color);
+}
+
+.tippy-box[data-theme~='warning'] .hl.lean .hover-info.messages > code.warning {
+  background: none;
+  border: none;
+}
+
+
+.hl.lean .has-info.information :not(.tactic-state):not(.tactic-state *) {
+  text-decoration-color: var(--verso-info-indicator-color, blue);
+}
+
+@media (hover: hover) {
+  .hl.lean .has-info.information:hover {
+    background-color: #4777ff;
+  }
+}
+
+
+.hl.lean .hover-info.messages > code.information {
+  background-color: #e5e5e5;
+  border-left: 0.2rem solid #4777ff;
+}
+
+.tippy-box[data-theme~='info'] .hl.lean .hover-info.messages > code.information {
+  background: none;
+  border: none;
+}
+
+.hl.lean div.docstring {
+  font-family: var(--verso-text-font-family, sans-serif);
+  white-space: normal;
+  max-width: calc(min(40rem, 90vw));
+  width: max-content;
+}
+
+.hl.lean div.docstring > :last-child {
+  margin-bottom: 0;
+}
+
+.hl.lean div.docstring > :first-child {
+  margin-top: 0;
+}
+
+.hl.lean .hover-info .sep {
+  display: block;
+  width: auto;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0;
+  height: 1px;
+  border-top: 1px solid #ccc;
+}
+
+.hl.lean code {
+  font-family: var(--verso-code-font-family);
+}
+
+.hl.lean .tactic-state {
+  display: none;
+  position: relative;
+  width: fit-content;
+  border: 1px solid #888888;
+  border-radius: 0.1rem;
+  padding: 0.5rem;
+  font-family: sans-serif;
+  background-color: #ffffff;
+}
+
+.hl.lean.popup .tactic-state {
+  position: static;
+  display: block;
+  width: auto;
+  border: none;
+  padding: 0.5rem;
+  font-family: sans-serif;
+  background-color: #ffffff;
+}
+
+
+.hl.lean .tactic {
+  position: relative;
+  display: inline;
+  vertical-align: top;
+  /* Without these, mobile Safari will start making font sizes inconsistent when its text size adjustment feature is triggered.*/
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.hl.lean .tactic:has(> .tactic-toggle:checked) {
+  display: inline-grid;
+  grid-template-columns: 1fr;
+}
+
+.hl.lean .tactic-toggle:checked ~ .tactic-state {
+  display: inline-block;
+  vertical-align: top;
+  grid-row: 2;
+  justify-self: start;
+}
+
+.hl.lean .tactic > label {
+  position: relative;
+  grid-row: 1;
+  display: inline;
+}
+
+@media (hover: hover) {
+  /* Highlight a region on hover only when its own toggle is unchecked, and only the innermost
+     hovered region: `label:hover` bubbles to ancestor labels, so suppress the highlight on a region
+     whose label contains a more deeply nested hovered tactic label. */
+  .hl.lean .tactic:has(> .tactic-toggle:not(:checked)) > label:hover:not(:has(.tactic > label:hover)) {
+    background-color: #eeeeee;
+  }
+}
+
+.hl.lean .tactic-toggle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  height: 0;
+  width: 0;
+  z-index: -10;
+}
+
+.hl.lean .tactic > label::after {
+  content: "";
+  border: 1px solid #bbbbbb;
+  /* These need to be em, not rem, to scale with the font */
+  border-radius: 1em;
+  height: 0.25em;
+  vertical-align: middle;
+  width: 0.6em;
+  margin-left: 0.1em;
+  margin-right: 0.1em;
+  display: inline-block;
+  transition: all 0.5s;
+}
+
+/*
+@media (hover: hover) {
+  .hl.lean .tactic > label:hover::after {
+    border: 1px solid #aaaaaa;
+    background-color: #aaaaaa;
+    transition: all 0.5s;
+  }
+}
+*/
+
+.hl.lean .tactic > label:has(+ .tactic-toggle:checked)::after {
+  border: 1px solid #999999;
+  background-color: #999999;
+  transition: all 0.5s;
+}
+
+.hl.lean .tactic-state .goal + .goal {
+  margin-top: 1.5em;
+}
+
+/*
+Some CSS frameworks customize details/summary in ways not compatible with Verso's output.
+*/
+
+.hl.lean details {
+  display: block !important;
+  margin: 0;
+}
+
+.hl.lean details summary {
+  display: list-item !important;
+  margin: 0;
+}
+
+.hl.lean details summary:focus {
+  outline: none;
+  outline-offset: none;
+  color: inherit;
+}
+
+.hl.lean ul > li {
+  margin-bottom: 0;
+}
+
+.hl.lean details summary::marker {
+  display: inline !important;
+}
+
+.hl.lean details > summary:first-of-type {
+  list-style-type: disclosure-closed;
+  list-style-position: inside;
+}
+
+.hl.lean details[open] > summary:first-of-type {
+  list-style-type: disclosure-open;
+}
+
+.hl.lean details summary::before, .hl.lean details summary::after {
+  content: "" !important;
+  background: none;
+  display: none;
+}
+
+.hl.lean .tactic-state summary {
+  /* These need to be em, not rem, to scale with the font */
+  margin-left: -0.5em;
+}
+
+.hl.lean .tactic-state details {
+  /* These need to be em, not rem, to scale with the font */
+  padding-left: 0.5em;
+}
+
+.hl.lean .case-label {
+  display: block;
+  position: relative;
+}
+
+.hl.lean .case-label input[type="checkbox"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  height: 0;
+  width: 0;
+  z-index: -10;
+}
+
+.hl.lean .case-label:has(input[type="checkbox"])::before {
+  display: inline-block;
+  background-color: black;
+  content: ' ';
+  transition: ease 0.2s;
+  margin-right: 0.7em;
+  clip-path: polygon(100% 0, 0 0, 50% 100%);
+  width: 0.6em;
+  height: 0.6em;
+  vertical-align: middle;
+}
+
+.hl.lean .case-label:has(input[type="checkbox"]:not(:checked))::before {
+  transform: rotate(-90deg);
+}
+
+.hl.lean .case-label:has(input[type="checkbox"]) {
+
+}
+
+.hl.lean .case-label:has(input[type="checkbox"]:checked) {
+
+}
+
+
+.hl.lean .labeled-case > :not(:first-child) {
+  max-height: 0px;
+  display: block;
+  overflow: hidden;
+  transition: max-height 0.1s ease-in;
+  /* These need to be em, not rem, to scale with the font */
+  margin-left: 0.5em;
+  margin-top: 0.1em;
+}
+
+.hl.lean .labeled-case:has(.case-label input[type="checkbox"]:checked) > :not(:first-child) {
+  max-height: 100%;
+}
+
+
+.hl.lean .goal-name::before {
+  font-style: normal;
+  content: "case ";
+}
+
+.hl.lean .goal-name {
+  font-style: italic;
+  font-family: var(--verso-code-font-family);
+  color: inherit;
+}
+
+.hl.lean .hypotheses {
+  display: table;
+}
+
+.hl.lean .hypothesis {
+  display: table-row;
+}
+
+.hl.lean .hypothesis > * {
+  display: table-cell;
+}
+
+
+.hl.lean .hypotheses .colon {
+  text-align: center;
+  /* This needs to be em, not rem, to scale with the font */
+  min-width: 1em;
+}
+
+.hl.lean .hypotheses .name {
+  text-align: right;
+}
+
+.hl.lean .hypotheses .name,
+.hl.lean .hypotheses .type,
+.hl.lean .conclusion .type {
+  font-family: var(--verso-code-font-family);
+}
+
+.tippy-box {
+  /* Without these, mobile Safari will start making font sizes inconsistent when its text size adjustment feature is triggered.*/
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.tippy-box[data-theme~='lean'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 1px solid black;
+}
+.tippy-box[data-theme~='lean'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: #e5e5e5;
+}
+.tippy-box[data-theme~='lean'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-bottom-color: #e5e5e5;
+}
+.tippy-box[data-theme~='lean'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: #e5e5e5;
+}
+.tippy-box[data-theme~='lean'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: #e5e5e5;
+}
+
+.tippy-box[data-theme~='message'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: #e5e5e5;
+  border-width: 11px 11px 0;
+}
+.tippy-box[data-theme~='message'][data-placement^='top'] > .tippy-arrow::after {
+  bottom: -11px;
+  border-width: 11px 11px 0;
+}
+.tippy-box[data-theme~='message'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-width: 0 11px 11px;
+}
+.tippy-box[data-theme~='message'][data-placement^='bottom'] > .tippy-arrow::after {
+  top: -11px;
+  border-width: 0 11px 11px;
+}
+.tippy-box[data-theme~='message'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: #e5e5e5;
+  border-width: 11px 0 11px 11px;
+}
+.tippy-box[data-theme~='message'][data-placement^='left'] > .tippy-arrow::after {
+  right: -11px;
+  border-width: 11px 0 11px 11px;
+}
+
+.tippy-box[data-theme~='message'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: #e5e5e5;
+  border-width: 11px 11px 11px 0;
+}
+.tippy-box[data-theme~='message'][data-placement^='right'] > .tippy-arrow::after {
+  left: -11px;
+  border-width: 11px 11px 11px 0;
+}
+
+
+
+.tippy-box[data-theme~='warning'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 3px solid var(--verso-warning-color);
+}
+
+.tippy-box[data-theme~='error'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 3px solid #f7a7af;
+}
+
+.tippy-box[data-theme~='info'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 3px solid #99b3c2;
+}
+
+.tippy-box[data-theme~='tactic'] {
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: white;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-bottom-color: white;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: white;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: white;
+}
+
+.extra-doc-links {
+  list-style-type: none;
+  margin-left: 0;
+  padding: 0;
+}
+
+.extra-doc-links > li {
+  display: inline-block;
+}
+
+.extra-doc-links > li:not(:last-child)::after {
+  content: '|';
+  display: inline-block;
+  margin: 0 0.25em;
+}
+
+.verso-message .trace {
+  display: block;
+}
+
+.verso-message .trace > summary::marker {
+  color: var(--verso-text-color);
+}
+
+.verso-message .trace-children {
+  margin: 0;
+  padding: 0;
+}
+
+.verso-message .trace-children > li {
+  list-style-type: none;
+  margin-left: 1.5em;
+}
+
+.verso-message .trace-children > li:not(:has(.trace)) {
+  margin-left: 0;
+}
+
+.verso-message .trace-class {
+  color: color-mix(in srgb, currentColor 70%, transparent);
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+}
+
+.verso-message .text {
+  white-space: pre-wrap;
+}
+
+</style><script>
+
+window.onload = async () => {
+
+    // Don't show hovers inside of closed tactic states
+    function blockedByTactic(elem) {
+      let parent = elem.parentNode;
+      while (parent && "classList" in parent) {
+        if (parent.classList.contains("tactic")) {
+          const toggle = parent.querySelector(":scope > input.tactic-toggle");
+          if (toggle) {
+            return !toggle.checked;
+          }
+        }
+        parent = parent.parentNode;
+      }
+      return false;
+    }
+
+    // Track whether any tippy is visible (O(1) check instead of DOM scan)
+    let visibleTippyCount = 0;
+    function blockedByTippy(elem) {
+      return visibleTippyCount > 0;
+    }
+
+    // Binding highlights via event delegation with cached lookups
+    const bindingCache = new Map(); // context+binding -> [token elements]
+    let highlightedTokens = [];
+    function getBindingTokens(context, binding) {
+      const key = context + "\0" + binding;
+      let tokens = bindingCache.get(key);
+      if (!tokens) {
+        tokens = [];
+        for (const example of document.querySelectorAll(".hl.lean")) {
+          if (example.dataset.leanContext == context) {
+            for (const tok of example.querySelectorAll(".token[data-binding=\"" + CSS.escape(binding) + "\"]")) {
+              tokens.push(tok);
+            }
+          }
+        }
+        bindingCache.set(key, tokens);
+      }
+      return tokens;
+    }
+    for (const container of document.querySelectorAll(".hl.lean")) {
+      container.addEventListener("mouseover", (event) => {
+        const c = event.target.closest(".token");
+        if (!c || !c.dataset.binding || c.dataset.binding === "" || !container.contains(c)) return;
+        if (blockedByTactic(c)) return;
+        const tokens = getBindingTokens(container.dataset.leanContext, c.dataset.binding);
+        for (const tok of tokens) {
+          tok.classList.add("binding-hl");
+        }
+        highlightedTokens = tokens;
+      });
+      container.addEventListener("mouseout", (event) => {
+        const c = event.target.closest(".token");
+        if (!c || !container.contains(c)) return;
+        for (const tok of highlightedTokens) {
+          tok.classList.remove("binding-hl");
+        }
+        highlightedTokens = [];
+      });
+    }
+    /* Render docstrings */
+    if ('undefined' !== typeof marked) {
+        for (const d of document.querySelectorAll("code.docstring, pre.docstring")) {
+            const str = d.innerText;
+            const html = marked.parse(str);
+            const rendered = document.createElement("div");
+            rendered.classList.add("docstring");
+            rendered.innerHTML = html;
+            d.parentNode.replaceChild(rendered, d);
+        }
+    }
+    // Add hovers
+    const versoDocData = await (fetch("-verso-docs.json").then((resp) => resp.json()));
+
+    function hideParentTooltips(element) {
+      let parent = element.parentElement;
+      while (parent) {
+        const tippyInstance = parent._tippy;
+        if (tippyInstance) {
+          tippyInstance.hide();
+        }
+        parent = parent.parentElement;
+      }
+    }
+
+
+
+    const defaultTippyProps = {
+      /* DEBUG -- remove the space: * /
+      onHide(any) { return false; },
+      trigger: "click",
+      // */
+      /* theme: "lean", */
+      maxWidth: "none",
+      appendTo: () => document.body,
+      interactive: true,
+      delay: [100, null],
+      /* ignoreAttributes: true, */
+      followCursor: 'initial',
+      onShow(inst) {
+        if (inst.reference.className == 'tactic') {
+          const toggle = inst.reference.querySelector(":scope > input.tactic-toggle");
+          if (toggle && toggle.checked) {
+            return false;
+          }
+          hideParentTooltips(inst.reference);
+          if (blockedByTippy(inst.reference)) { return false; }
+
+        } else if (inst.reference.querySelector(".hover-info") || "versoHover" in inst.reference.dataset) {
+          if (blockedByTactic(inst.reference)) { return false };
+          if (blockedByTippy(inst.reference)) { return false; }
+        } else { // Nothing to show here!
+          return false;
+        }
+      },
+      onShown(inst) { visibleTippyCount++; },
+      onHidden(inst) { visibleTippyCount = Math.max(0, visibleTippyCount - 1); },
+      content (tgt) {
+        const content = document.createElement("span");
+        if (tgt.className == 'tactic') {
+          const state = tgt.querySelector(":scope > .tactic-state").cloneNode(true);
+          state.style.display = "block";
+          content.appendChild(state);
+          content.style.display = "block";
+          content.className = "hl lean popup";
+        } else {
+          content.className = "hl lean";
+          content.style.display = "block";
+          content.style.maxHeight = "300px";
+          content.style.overflowY = "auto";
+          content.style.overflowX = "hidden";
+          const hoverId = tgt.dataset.versoHover;
+          const hoverInfo = tgt.querySelector(".hover-info");
+          if (hoverId) { // Docstrings from the table
+            // TODO stop doing an implicit conversion from string to number here
+            let data = versoDocData[hoverId];
+            if (data) {
+              const info = document.createElement("span");
+              info.className = "hover-info";
+              info.style.display = "block";
+              info.innerHTML = data;
+              content.appendChild(info);
+              /* Render docstrings - TODO server-side */
+              if ('undefined' !== typeof marked) {
+                  for (const d of content.querySelectorAll("code.docstring, pre.docstring")) {
+                      const str = d.innerText;
+                      const html = marked.parse(str);
+                      const rendered = document.createElement("div");
+                      rendered.classList.add("docstring");
+                      rendered.innerHTML = html;
+                      d.parentNode.replaceChild(rendered, d);
+                  }
+              }
+            } else {
+              content.innerHTML = "Failed to load doc ID: " + hoverId;
+            }
+          } else if (hoverInfo) { // The inline info, still used for compiler messages
+            content.appendChild(hoverInfo.cloneNode(true));
+          }
+          const extraLinks = tgt.parentElement.dataset['versoLinks'];
+          if (extraLinks) {
+            try {
+              const extras = JSON.parse(extraLinks);
+              const links = document.createElement('ul');
+              links.className = 'extra-doc-links';
+              extras.forEach((l) => {
+                const li = document.createElement('li');
+                li.innerHTML = "<a href=\"" + l['href'] + "\" title=\"" + l.long + "\">" + l.short + "</a>";
+                links.appendChild(li);
+              });
+              content.appendChild(links);
+            } catch (error) {
+              console.error(error);
+            }
+          }
+        }
+        return content;
+      }
+    };
+
+
+    document.querySelectorAll('.hl.lean .const.token, .hl.lean .keyword.token, .hl.lean .literal.token, .hl.lean .option.token, .hl.lean .var.token, .hl.lean .typed.token, .hl.lean .level-var, .hl.lean .level-const, .hl.lean .level-op, .hl.lean .sort').forEach(element => {
+      element.setAttribute('data-tippy-theme', 'lean');
+    });
+    document.querySelectorAll('.hl.lean .has-info.warning').forEach(element => {
+      element.setAttribute('data-tippy-theme', 'warning message');
+    });
+    document.querySelectorAll('.hl.lean .has-info.information').forEach(element => {
+      element.setAttribute('data-tippy-theme', 'info message');
+    });
+    document.querySelectorAll('.hl.lean .has-info.error').forEach(element => {
+      element.setAttribute('data-tippy-theme', 'error message');
+    });
+    document.querySelectorAll('.hl.lean .tactic').forEach(element => {
+      element.setAttribute('data-tippy-theme', 'tactic');
+    });
+    // Skip tokens inside closed tactics — they interfere with tactic tippys
+    const closedTactics = new Set();
+    document.querySelectorAll('.hl.lean .tactic').forEach(tactic => {
+      const toggle = tactic.querySelector(':scope > input.tactic-toggle');
+      if (toggle && !toggle.checked) closedTactics.add(tactic);
+    });
+    function isInsideClosedTactic(el) {
+      const tactic = el.closest('.tactic');
+      return tactic && tactic !== el && closedTactics.has(tactic);
+    }
+
+    const tokenSelector = '.hl.lean .const.token, .hl.lean .keyword.token, .hl.lean .literal.token, .hl.lean .option.token, .hl.lean .var.token, .hl.lean .typed.token, .hl.lean .has-info, .hl.lean .tactic, .hl.lean .level-var, .hl.lean .level-const, .hl.lean .level-op, .hl.lean .sort';
+    tippy(Array.from(document.querySelectorAll(tokenSelector)).filter(el => !isInsideClosedTactic(el)), defaultTippyProps);
+
+    // Create/destroy token tippys when tactic checkbox toggles
+    const tacticTippySelector = '.const.token, .keyword.token, .literal.token, .option.token, .var.token, .typed.token, .has-info, .level-var, .level-const, .level-op, .sort';
+    document.querySelectorAll('.hl.lean .tactic').forEach(tactic => {
+      const toggle = tactic.querySelector(':scope > input.tactic-toggle');
+      if (toggle) toggle.addEventListener('change', () => {
+        if (toggle.checked) {
+          closedTactics.delete(tactic);
+          tactic.querySelectorAll('.token').forEach(tok => {
+            if (!tok._tippy && tok.matches(tacticTippySelector)) {
+              tippy(tok, defaultTippyProps);
+            }
+          });
+        } else {
+          closedTactics.add(tactic);
+          tactic.querySelectorAll('.token').forEach(tok => {
+            if (tok._tippy) tok._tippy.destroy();
+          });
+        }
+      });
+  });
+}
+</script>
+    </head>
+  <body>
+    <header>
+      <div class="header-logo-wrapper"></div>
+      <div class="header-title-wrapper">
+        <a href="" class="header-title"><h1>
+            Lean 4 自动化内幕</h1>
+          </a></div>
+      </header>
+    <label for="toggle-toc" id="toggle-toc-click"><span class="line line1"></span><span class="line line2"></span><span class="line line3"></span></label><div class="with-toc">
+      <div class="toc-backdrop" onclick="document.getElementById('toggle-toc-click')?.click()"></div>
+      <nav id="toc">
+        <input type="checkbox" id="toggle-toc"><div class="first">
+          <a href="" class="toc-title"><h1>
+              Lean 4 自动化内幕</h1>
+            </a><div class="split-tocs">
+            <div class="split-toc book">
+              <div class="title">
+                <label for="--verso-manual-toc-----bookRoot" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-----bookRoot" checked="checked"></label><span class="">Table of Contents</span></div>
+              <table><tr class="numbered"><td class="num">1.</td><td><a href="Ch00Setup/#ch00-setup">环境与运行约定</a></td></tr><tr class="numbered"><td class="num">2.</td><td><a href="Ch01TacticMentalModel/#ch01-tactic-mental-model">tactic 心智模型</a></td></tr><tr class="numbered"><td class="num">3.</td><td><a href="Ch01MetaprogrammingModel/#ch01-metaprogramming-model">Lean 中的 tactic 基础设施</a></td></tr><tr class="numbered"><td class="num">4.</td><td><a href="Ch02Expr/#ch02-expr">Expr：Lean 4 的内部表示</a></td></tr><tr class="numbered"><td class="num">5.</td><td><a href="Ch03FirstTactic/#ch03-first-tactic">编写你的第一个 Tactic</a></td></tr><tr class="numbered"><td class="num">6.</td><td><a href="Ch04GoalManagement/#ch04-goal-management">目标管理</a></td></tr><tr class="numbered"><td class="num">7.</td><td><a href="Ch05TypeclassSynthesis/#ch05-typeclass-synthesis">Type Class Synthesis</a></td></tr><tr class="current numbered"><td class="num">8.</td><td><a href="Ch06Simp/#ch06-simp">simp——化简的瑞士军刀</a></td></tr><tr class="numbered"><td class="num">9.</td><td><a href="Ch07Ring/#ch07-ring">ring 和 <code>ring_nf</code>：代数范式化</a></td></tr><tr class="numbered"><td class="num">10.</td><td><a href="Ch08Omega/#ch08-omega">omega：Presburger 算术决策过程</a></td></tr><tr class="numbered"><td class="num">11.</td><td><a href="Ch09Linarith/#ch09-linarith">linarith、nlinarith 与 polyrith</a></td></tr><tr class="numbered"><td class="num">12.</td><td><a href="Ch10NormNum/#ch10-norm-num"><code>norm_num</code>：数值计算框架</a></td></tr><tr class="numbered"><td class="num">13.</td><td><a href="Ch11Aesop/#ch11-aesop">aesop：可配置的启发式搜索</a></td></tr><tr class="numbered"><td class="num">14.</td><td><a href="Ch12Grind/#ch12-grind">grind：E-matching 与 Congruence Closure</a></td></tr><tr class="numbered"><td class="num">15.</td><td><a href="Ch13Decide/#ch13-decide">decide 与 <code>native_decide</code>：有限计算判定</a></td></tr><tr class="numbered"><td class="num">16.</td><td><a href="Ch14Positivity/#ch14-positivity">positivity：符号非负性推理</a></td></tr><tr class="numbered"><td class="num">17.</td><td><a href="Ch15FunProp/#ch15-fun-prop"><code>fun_prop</code>：函数性质的自动证明</a></td></tr><tr class="numbered"><td class="num">18.</td><td><a href="Ch16Gcongr/#ch16-gcongr">gcongr：广义合同性</a></td></tr><tr class="numbered"><td class="num">19.</td><td><a href="Ch17FieldSimp/#ch17-field-simp"><code>field_simp</code>：分式化简</a></td></tr><tr class="numbered"><td class="num">20.</td><td><a href="Ch18LogicTransforms/#ch18-logic-transforms">否定下推、逆否与反证</a></td></tr><tr class="numbered"><td class="num">21.</td><td><a href="Ch19DesignYourOwn/#ch19-design-your-own">设计你自己的领域自动化</a></td></tr><tr class="numbered"><td class="num">22.</td><td><a href="Ch20Reflection/#ch20-reflection">反射证明模式</a></td></tr><tr class="numbered"><td class="num">23.</td><td><a href="Ch21Performance/#ch21-performance">性能工程</a></td></tr><tr class="numbered"><td class="num">24.</td><td><a href="Ch22ExternalTools/#ch22-external-tools">对接外部工具</a></td></tr><tr class="numbered"><td class="num">25.</td><td><a href="Ch23Methodology/#ch23-methodology">从证明模式到自动化：方法论</a></td></tr><tr class="numbered"><td class="num">26.</td><td><a href="Ch24TowardsAnalysis/#ch24-towards-analysis">迈向分析自动化</a></td></tr><tr class="numbered"><td class="num">27.</td><td><a href="AppendixApiReference/#appendix-api-reference">附录 A：Metaprogramming API 速查表</a></td></tr></table></div>
+            <div class="split-toc">
+              <div class="title">
+                <label for="--verso-manual-toc-ch06-simp" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-ch06-simp" checked="checked"></label><span class="number">8.</span> <span class="current"><a href="Ch06Simp/#ch06-simp">simp——化简的瑞士军刀</a></span></div>
+              <table><tr class="numbered"><td class="num">8.1.</td><td><a href="Ch06Simp/#simp-usage">用法详解</a></td></tr><tr class="numbered"><td class="num">8.2.</td><td><a href="Ch06Simp/#source-overview">源码全景：文件结构与调用链</a></td></tr><tr class="numbered"><td class="num">8.3.</td><td><a href="Ch06Simp/#core-types">核心类型拆解</a></td></tr><tr class="numbered"><td class="num">8.4.</td><td><a href="Ch06Simp/#discr-tree">DiscrTree：引理索引</a></td></tr><tr class="numbered"><td class="num">8.5.</td><td><a href="Ch06Simp/#rewrite-loop">重写循环：Main.lean 逐函数拆解</a></td></tr><tr class="numbered"><td class="num">8.6.</td><td><a href="Ch06Simp/#single-step-rewrite">单步重写：Rewrite.lean</a></td></tr><tr class="numbered"><td class="num">8.7.</td><td><a href="Ch06Simp/#congruence-lemma">Congruence Lemma</a></td></tr><tr class="numbered"><td class="num">8.8.</td><td><a href="Ch06Simp/#discharger">Discharger</a></td></tr><tr class="numbered"><td class="num">8.9.</td><td><a href="Ch06Simp/#simp-all">simp_all 的特殊逻辑</a></td></tr><tr class="numbered"><td class="num">8.10.</td><td><a href="Ch06Simp/#dsimp-impl">dsimp 的实现</a></td></tr><tr class="numbered"><td class="num">8.11.</td><td><a href="Ch06Simp/#trace-debugging">调试：trace 输出详解</a></td></tr><tr class="numbered"><td class="num">8.12.</td><td><a href="Ch06Simp/#extension-points">扩展点与自定义</a></td></tr><tr class="numbered"><td class="num">8.13.</td><td><a href="Ch06Simp/#architecture-overview">架构全景图</a></td></tr><tr class="numbered"><td class="num">8.14.</td><td><a href="Ch06Simp/#source-reading-guide">源码阅读路线图</a></td></tr><tr class="numbered"><td class="num">8.15.</td><td><a href="Ch06Simp/#ch06-exercises">练习</a></td></tr><tr class="numbered"><td class="num">8.16.</td><td><a href="Ch06Simp/#ch06-next-chapter">下一章预告</a></td></tr></table></div>
+            </div>
+          </div>
+        <div class="last"></div>
+        </nav>
+      <div class="toc-resize-handle"></div>
+      <main><div class="content-wrapper">
+          <nav class="prev-next-buttons">
+            <a class="local-button active" href="Ch05TypeclassSynthesis/#ch05-typeclass-synthesis" rel="prev" title="7. Type Class Synthesis"><span class="arrow">←</span><span class="where">7. Type Class Synthesis</span></a><a class="local-button active" href="Ch07Ring/#ch07-ring" rel="next" title="9. ring 和 ring_nf：代数范式化"><span class="where">9. ring 和 ring_nf：代数范式化</span><span class="arrow">→</span></a></nav>
+          <section>
+            <h1>
+              8. simp——化简的瑞士军刀<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch06-simp" title="Permalink">🔗</a></span></h1>
+            <p>
+              <strong>本章目标</strong>：前半章掌握 <code>simp</code> 的用法、配置与调试；后半章从 Lean 4 真实源码层面拆解 simp 的完整实现——入口分发、核心类型、重写循环、引理匹配、congruence、discharger——面向想深入理解内部机制的读者。</p>
+            <section>
+              <h2 id="simp-usage">
+                8.1. 用法详解<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-usage" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="simp-core-idea">
+                  8.1.1. 核心思想<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-core-idea" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>simp</code> 是一个<strong>项重写系统（term rewriting system）</strong>，工作流程概括为四步：</p>
+                <pre>loop:
+  1. 在目标（或假设）中找到一个子项 t
+  2. 在规则集中找到一条引理  lhs = rhs  使得 t 匹配 lhs
+  3. 把 t 替换为 rhs
+  4. 如果目标发生了变化，回到 1；否则停止
+</pre><p>
+                  停止的条件有两个：<strong>收敛</strong>（没有规则能继续应用）或<strong>超时</strong>（超过 <code>maxSteps</code> 限制）。</p>
+                </section>
+              <section>
+                <h3 id="simp-lemmas">
+                  8.1.2. 重写规则集：simp lemmas<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-lemmas" title="Permalink">🔗</a></span></h3>
+                <p>
+                  任何被标记了 <code>@[simp]</code> 的定理都会被加入全局 simp 规则集。</p>
+                <p>
+                  <strong>四种引理形式</strong>——等式引理、条件等式、命题引理、iff 引理：</p>
+                <pre>-- [可运行]
+@[simp] theorem Nat.add_zero (n : Nat) : n + 0 = n := by omega
+
+-- 条件等式：simp 必须先证明前提 h : p
+-- @[simp] theorem if_pos (h : p) : (if p then a else b) = a
+
+-- 命题引理：simp 遇到 n &lt; n 时化为 False
+-- @[simp] theorem Nat.lt_irrefl (n : Nat) : ¬(n &lt; n)
+
+-- iff 引理
+-- @[simp] theorem not_and : ¬(p ∧ q) ↔ (p → ¬q)
+</pre></section>
+              <section>
+                <h3 id="directionality-lhs-to-rhs">
+                  8.1.3. 方向性：只从左到右<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=directionality-lhs-to-rhs" title="Permalink">🔗</a></span></h3>
+                <p>
+                  simp 只会把引理的 <strong>LHS 重写为 RHS</strong>，永远不会反过来。编写原则：</p>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>LHS 比 RHS 复杂</strong>：化简应让表达式变"简单"</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>RHS 不引入新变量</strong>：RHS 的自由变量必须都出现在 LHS 中</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>不能左右对称</strong>：<code>a + b = b + a</code> 会导致无限循环</p>
+                    </li>
+                  </ul>
+                <p>
+                  反方向使用：<code>simp [← h]</code>。</p>
+                </section>
+              <section>
+                <h3 id="simp-family">
+                  8.1.4. simp 家族一览<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-family" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <code>simp</code>：通用重写化简，加载全局 <code>@[simp]</code> 集 + 用户传入引理</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>simp only [...]</code>：精确控制重写集，不加载全局集，只用方括号内指定的引理</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>simp?</code> / <code>simp_all?</code>：查找实际用到的引理，输出 <code>Try this: simp only [...]</code>，用于替换为精确版本</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>simp_all</code>：化简目标<strong>和</strong>所有假设，假设间可互相化简，多轮迭代到不动点</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>dsimp</code>：只做 definitional equality 化简，只用 <code>rfl</code> 引理 + beta/iota/zeta 规约，不生成 proof 项</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>simpa</code>：<code>simp</code> + <code>assumption</code>，化简后自动尝试用假设关闭目标</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>simp_rw</code>：精确控制重写位置，逐条应用引理，每条按 <code>rw</code> 语义（不化简子项）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>field_simp</code>：消分母，Mathlib 提供，先消分母再化简</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="when-simp-only">
+                  8.1.5. 何时该用 <code>simp only</code><span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=when-simp-only" title="Permalink">🔗</a></span></h3>
+                <p>
+                  在证明脚本中，<strong>首选 <strong><code>simp only</code></strong></strong>。原因：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <strong>可复现性</strong>——<code>simp only</code> 不受全局 <code>@[simp]</code> 集变化的影响。新增一条 <code>@[simp]</code> 引理可能让远处的 <code>simp</code> 调用行为突变甚至失败。</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>性能</strong>——全局 simp 集可能有数千条引理（Mathlib 下尤其如此），<code>simp only</code> 大幅缩小 DiscrTree 搜索空间。</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>可读性</strong>——读者可以一眼看出化简依赖了哪些引理。</p>
+                    </li>
+                  </ol>
+                <p>
+                  <strong>推荐工作流</strong>：先写 <code>simp?</code>，复制输出的 <code>simp only [...]</code> 替换原来的 <code>simp</code>。</p>
+                <pre>-- [可运行]
+-- 第一步：写 simp?
+-- example (n : Nat) : n + 0 = n := by simp?
+-- 第二步：替换为 simp? 的建议
+example (n : Nat) : n + 0 = n := by simp only [Nat.add_zero]
+</pre><p>
+                  <strong>例外</strong>——以下场景可以直接写 <code>simp</code>：</p>
+                <ul>
+                  <li>
+                    <p>
+                      一次性脚本或 <code>decide</code> 能解决的简单目标</p>
+                    </li>
+                  <li>
+                    <p>
+                      最终目标是 <code>True</code> / <code>rfl</code> 等显然命题</p>
+                    </li>
+                  <li>
+                    <p>
+                      探索阶段——先用 <code>simp</code> 快速推进，稳定后再替换为 <code>simp only</code></p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="when-not-to-simp">
+                  8.1.6. 什么时候不要第一反应用 simp<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=when-not-to-simp" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>simp</code> 是通用工具，但不是万能的。以下情况应优先考虑其他 tactic：</p>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>只需应用一条等式</strong> → <code>rw [h]</code>：精确、快速、可控</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>需要反方向重写</strong> → <code>rw [← h]</code>：<code>simp [← h]</code> 会同时做其他化简，可能不是你想要的</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>线性算术</strong> → <code>omega</code>：simp 的 arith 模块不如 omega 强大</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>多项式/环等式</strong> → <code>ring</code>：simp 无法处理多项式范式化</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>需要逐步控制位置</strong> → <code>conv</code> + <code>rw</code>：simp 递归遍历所有子项，无法精确定位</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>证明 <strong><code>False</code> 或矛盾</strong></strong> → <code>contradiction</code> / <code>omega</code>：simp 不擅长矛盾推理</p>
+                    </li>
+                  </ul>
+                <p>
+                  <strong>经验法则</strong>：如果你需要 simp 做的事情可以用一两个 <code>rw</code> 替代，就用 <code>rw</code>。<code>simp</code> 的价值在于<strong>批量</strong>化简和<strong>深层</strong>递归。</p>
+                </section>
+              <section>
+                <h3 id="simp-config">
+                  8.1.7. 配置<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-config" title="Permalink">🔗</a></span></h3>
+                <p>
+                  在 tactic 中传入 <code>(config := { ... })</code>。常用字段：</p>
+                <ul>
+                  <li>
+                    <p>
+                      <code>maxSteps</code>（默认 100000）：最大重写步数</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>maxDischargeDepth</code>（默认 2）：条件证明的递归深度</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>contextual</code>（默认 false）：上下文化简（if 分支）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>memoize</code>（默认 true）：缓存子项结果</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>zeta</code>（默认 true）：展开 let 绑定</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>beta</code> / <code>eta</code> / <code>iota</code>（默认 true）：对应规约</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>failIfUnchanged</code>（默认 true）：目标不变则报错</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="debugging-simp">
+                  8.1.8. 调试<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=debugging-simp" title="Permalink">🔗</a></span></h3>
+                <pre>-- [可运行]
+set_option trace.Meta.Tactic.simp.rewrite true in
+example : 0 + 1 = 1 := by simp
+
+-- simp? 告诉你实际使用了哪些引理
+example : 0 + 1 = 1 := by simp?
+-- Try this: simp only [Nat.zero_add]
+</pre></section>
+              <section>
+                <h3 id="ch06-common-failure-patterns">
+                  8.1.9. 常见失败模式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch06-common-failure-patterns" title="Permalink">🔗</a></span></h3>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <strong>循环</strong>（<code>a + b → b + a → ...</code>）：不要把交换律标 <code>@[simp]</code>。</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>无进展</strong>（<code>simp made no progress</code>）：自定义函数需要 <code>simp [myFun]</code> 展开。</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>意外展开</strong>：用 <code>simp only</code> 或关闭特定规约。</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>太慢</strong>：用 <code>simp only</code> 减小引理集。</p>
+                    </li>
+                  </ol>
+                </section>
+              <section>
+                <h3 id="more-debug-scenarios">
+                  8.1.10. 更多 debug 场景<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=more-debug-scenarios" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong>场景 1：simp 化简了一半就停了</strong></p>
+                <pre>-- [可运行]
+example (a b : Nat) (h : a = 0) : a + b = b := by
+  simp  -- stuck: simp 不知道 h
+  sorry
+-- 修复：
+-- simp [h]  或  simp_all
+</pre><p>
+                  诊断：局部假设默认不在 simp 集中。需要 <code>simp [h]</code> 显式传入，或用 <code>simp_all</code>（自动添加所有假设）。</p>
+                <p>
+                  <strong>场景 2：simp 超时或步数超限</strong></p>
+                <pre>`simp` failed: maximum number of steps exceeded
+</pre><p>
+                  诊断：通常因为引理集中有"几乎循环"的规则（每一步都在变化但不收敛），或目标表达式极大。</p>
+                <p>
+                  修复：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <code>set_option maxRecDepth 4096</code> 临时提高限制（不推荐长期使用）</p>
+                    </li>
+                  <li>
+                    <p>
+                      用 <code>simp only</code> 精确控制引理集</p>
+                    </li>
+                  <li>
+                    <p>
+                      先用 <code>rw</code> 手动化简到更小的目标，再 <code>simp</code></p>
+                    </li>
+                  </ol>
+                <p>
+                  <strong>场景 3：<strong><code>simp</code> 化简结果不是你想要的</strong></strong></p>
+                <pre>-- [可运行]
+set_option trace.Meta.Tactic.simp.rewrite true in
+example : (0 : Nat) + 1 + 2 = 3 := by
+  simp
+  -- trace 会显示每一步重写，帮你定位哪一步引入了意外变换
+</pre><p>
+                  诊断：开启 <code>trace.Meta.Tactic.simp.rewrite</code> 查看完整重写链，找到导致问题的那一步。然后用 <code>simp only</code> 排除该引理，或者用 <code>simp [-problematic_lemma]</code> 移除它。</p>
+                </section>
+              <section>
+                <h3 id="more-alternatives">
+                  8.1.11. 更多替代 tactic<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=more-alternatives" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>simp</code> 强大但不万能。以下场景应该优先考虑其他 tactic：</p>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>纯算术等式/不等式</strong> → <code>omega</code>（更快、更完备）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>多项式恒等式</strong> → <code>ring</code>（判定过程，保证成功）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>线性算术</strong> → <code>linarith</code>（实数/有理数线性不等式）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>目标是某个具体值</strong> → <code>decide</code> 或 <code>native_decide</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>需要搜索引理库</strong> → <code>exact?</code> 或 <code>apply?</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>simp 化简后还剩复杂目标</strong> → 先手动拆解（<code>constructor</code> / <code>intro</code> / <code>cases</code>），再对子目标用 simp</p>
+                    </li>
+                  </ul>
+                <p>
+                  记住：<code>simp</code> 不是万能胶水。它是重写引擎，不是搜索器（搜索器是 <code>aesop</code>），也不是判定过程（判定过程是 <code>ring</code> / <code>omega</code>）。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="source-overview">
+                8.2. 源码全景：文件结构与调用链<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=source-overview" title="Permalink">🔗</a></span></h2>
+              <p>
+                从这一节开始，我们进入 Lean 4 v4.32.2 的真实源码。下面所有代码片段都标注了文件路径和行号。</p>
+              <blockquote><p>
+                  <strong>片段标记约定</strong>：未另作说明的片段按对应行逐字引用；凡省略源码注释/分支、调整排版或插入中文讲解的片段，标题统一标作“节选，书稿注释”。示意算法与结构图只作为伪代码，不冒充逐字源码。</p>
+                </blockquote><blockquote><p>
+                  <strong>版本说明</strong>：本章源码拆解基于 Lean 4 <strong>v4.32.2</strong>（与本书运行环境一致）。读者若使用不同版本，函数签名和行号可能有细微差异，但核心架构稳定——<code>simpLoop</code>、<code>rewrite?</code>、<code>Methods</code> 等骨架自 v4.4 以来基本未变。</p>
+                </blockquote><blockquote><p>
+                  <strong>Lean 核心 vs Mathlib</strong>：本章拆解的是 <strong>Lean 核心</strong>的 simp 引擎实现（<code>Lean/Meta/Tactic/Simp/</code>）。Mathlib 不修改核心引擎骨架，而是贡献大量 <code>@[simp]</code> 引理、simproc 扩展（如 <code>norm_num</code> 作为 simproc）、以及 <code>field_simp</code> / <code>simp_rw</code> 等变体 tactic。读者在 Mathlib 环境下使用 simp 时，引擎不变，但可用的规则库大幅扩展。</p>
+                </blockquote><section>
+                <h3 id="source-files">
+                  8.2.1. 源码文件一览<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=source-files" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <code>Lean/Elab/Tactic/Simp.lean</code>（864 行）：tactic 入口、参数解析、<code>evalSimp</code>/<code>evalSimpAll</code>/<code>evalDSimp</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>Lean/Meta/Tactic/Simp/Types.lean</code>（1017 行）：核心类型：<code>SimpM</code>、<code>Methods</code>、<code>Config</code>、<code>Result</code>、<code>Step</code>、<code>Simproc</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>Lean/Meta/Tactic/Simp/Main.lean</code>（962 行）：主循环：<code>simpImpl</code>、<code>simpLoop</code>、<code>simpStep</code>、<code>simpApp</code>、<code>congr</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>Lean/Meta/Tactic/Simp/Rewrite.lean</code>（670 行）：重写逻辑：<code>rewrite?</code>、<code>tryTheorem?</code>、<code>discharge?'</code>、<code>synthesizeArgs</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>Lean/Meta/Tactic/Simp/SimpTheorems.lean</code>（795 行）：引理注册：<code>SimpTheorem</code>、<code>Origin</code>、<code>SimpTheorems</code>、<code>@[simp]</code> 属性</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>Lean/Meta/Tactic/Simp/SimpCongrTheorems.lean</code>（155 行）：congruence lemma：<code>SimpCongrTheorem</code>、<code>@[congr]</code> 属性</p>
+                    </li>
+                  </ul>
+                </section>
+              <section>
+                <h3 id="call-chain">
+                  8.2.2. 完整调用链<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=call-chain" title="Permalink">🔗</a></span></h3>
+                <pre>用户写 `simp [foo]`
+  → Parser 生成 Syntax
+    → evalSimp                          [Elab/Tactic/Simp.lean:L788]
+      → mkSimpContext                   [Elab/Tactic/Simp.lean:L554]
+        → elabSimpArgs                  [Elab/Tactic/Simp.lean:L411]
+      → simpLocation                    [Elab/Tactic/Simp.lean:L761]
+        → simpGoal                      [Meta/Tactic/Simp/Main.lean:L874]
+          → simp (MetaM 层)             [Meta/Tactic/Simp/Main.lean:L771]
+            → simpCore                  [Meta/Tactic/Simp/Main.lean:L765]
+              → Simp.mainCore           [Meta/Tactic/Simp/Main.lean:L744]
+                → simpImpl              [Meta/Tactic/Simp/Main.lean:L716]
+                  → simpLoop            [Meta/Tactic/Simp/Main.lean:L677]
+                    → pre / simpStep / post
+</pre></section>
+              <section>
+                <h3 id="eval-simp">
+                  8.2.3. tactic 入口：evalSimp<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=eval-simp" title="Permalink">🔗</a></span></h3>
+                <p>
+                  以下是 <code>evalSimp</code> 的真实源码：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Simp.lean:L788-L800；节选，书稿注释]
+@[builtin_tactic Lean.Parser.Tactic.simp] def evalSimp : Tactic := fun stx =&gt;
+  withMainContext do withSimpDiagnostics do
+  let r@{ ctx, simprocs, dischargeWrapper, simpArgs } ← mkSimpContext stx (eraseLocal := false)
+  -- ^^^ 解析 config、only、[lemmas]、discharger，构建 Simp.Context
+  if ctx.config.suggestions then
+    throwError "+suggestions requires using simp? instead of simp"
+  let stats ← dischargeWrapper.with fun discharge? =&gt;
+    withLoopChecking r do
+      simpLocation ctx simprocs discharge? (expandOptLocation stx[5])
+      -- ^^^ 根据 `at` 位置决定化简目标还是假设
+  if tactic.simp.trace.get (← getOptions) then
+    traceSimpCall stx stats.usedTheorems
+    -- ^^^ simp? 的核心：记录使用了哪些引理，输出 "Try this: simp only [...]"
+  else if Linter.getLinterValue linter.unusedSimpArgs (← Linter.getLinterOptions) then
+    withRef stx do
+      warnUnusedSimpArgs simpArgs stats.usedTheorems
+  return stats.diag
+</pre><p>
+                  这里的 <code>mkSimpContext</code> 是关键入口——它解析全部 tactic 参数并构建 <code>Simp.Context</code>：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Simp.lean:L554-L580；节选，书稿注释]
+def mkSimpContext (stx : Syntax) (eraseLocal : Bool) (kind := SimpKind.simp)
+    (ignoreStarArg : Bool := false) (simpTheorems : CoreM SimpTheorems := getSimpTheorems) :
+    TacticM MkSimpContextResult := do
+  -- ...
+  let dischargeWrapper ← mkDischargeWrapper stx[2]
+  let simpOnly := !stx[simpOnlyPos].isNone
+  -- ^^^ 判断是否 simp only
+  let mut simpTheorems ← if simpOnly then
+    simpOnlyBuiltins.foldlM (·.addConst ·) ({} : SimpTheorems)
+    -- ^^^ simp only 时从空集开始，只加入 eq_self 和 iff_self
+  else
+    simpTheorems
+    -- ^^^ 裸 simp 加载全局 @[simp] 集
+  let simprocs ← if simpOnly then pure {} else Simp.getSimprocs
+  let congrTheorems ← getSimpCongrTheorems
+  let { config, userConfig } ← elabSimpConfig stx[1] (kind := kind)
+  if config.locals then
+    simpTheorems ← elabSimpLocals simpTheorems kind
+    -- ^^^ +locals 模式：自动把局部定义加入展开集
+  let ctx ← Simp.mkContext
+     (config := config)
+     (userConfig := userConfig)
+     (simpTheorems := #[simpTheorems])
+     congrTheorems
+  let r ← elabSimpArgs stx[4] (eraseLocal := eraseLocal) (kind := kind)
+      (simprocs := #[simprocs]) (ignoreStarArg := ignoreStarArg) ctx
+  -- ^^^ 处理 [foo, bar, ← baz, -qux, *] 参数列表
+  return { r with dischargeWrapper }
+</pre></section>
+              <section>
+                <h3 id="elab-simp-args">
+                  8.2.4. 参数解析：elabSimpArgs 内部<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=elab-simp-args" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>elabSimpArgs</code> 逐个处理方括号内的参数，每个参数可以是多种形式：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Simp.lean:L322-L384；节选，书稿注释]
+private def elabSimpArg (indexConfig : Meta.ConfigWithKey) (eraseLocal : Bool)
+    (kind : SimpKind) (arg : Syntax) : TacticM ElabSimpArgResult := withRef arg do
+  try
+    if arg.getKind == ``Lean.Parser.Tactic.simpErase then
+      -- ^^^ `-foo` 语法：从引理集移除
+      let fvar? ← if eraseLocal then Term.isLocalIdent? arg[1] else pure none
+      if let some fvar := fvar? then
+        return .erase (.fvar fvar.fvarId!)
+      else
+        let id := arg[1]
+        if let .ok declName ← observing (realizeGlobalConstNoOverloadWithInfo id) then
+          if (← Simp.isSimproc declName) then
+            return .eraseSimproc declName
+          else
+            return .erase (.decl declName)
+        -- ...
+    else if arg.getKind == ``Lean.Parser.Tactic.simpLemma then
+      -- ^^^ `foo` 或 `← foo` 或 `↓ foo` 语法
+      let post :=
+        if arg[0].isNone then true
+        else arg[0][0].getKind == ``Parser.Tactic.simpPost
+      -- ^^^ `↓` 前缀表示 pre 阶段，默认（无前缀或 `↑`）是 post 阶段
+      let inv  := !arg[1].isNone
+      -- ^^^ `←` 表示反方向
+      let term := arg[2]
+      match (← resolveSimpIdTheorem? term) with
+      | .expr e  =&gt;
+        let name ← mkFreshId
+        elabDeclToUnfoldOrTheorem indexConfig (.stx name arg) e post inv kind
+        -- ^^^ 判断是定义展开还是等式引理
+      | .simproc declName =&gt;
+        return .addSimproc declName post
+        -- ^^^ 用户传入的是一个 simproc
+      | .ext ext₁? ext₂? h =&gt;
+        return .ext ext₁? ext₂? h
+        -- ^^^ 用户传入的是一个 simp 扩展集（如自定义 simp attribute 名）
+      -- ...
+    else if arg.getKind == ``Lean.Parser.Tactic.simpStar then
+      return .star
+      -- ^^^ `*` 语法：添加所有局部假设
+    -- ...
+</pre><p>
+                  参数处理后的结果在主循环中逐一加入 <code>SimpTheorems</code>：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Simp.lean:L436-L462；节选，书稿注释]
+-- (在 elabSimpArgs 内部)
+for (ref, arg) in args do
+  match arg with
+  | .addEntries entries =&gt;
+    for entry in entries do
+      thms := thms.uneraseSimpEntry entry
+      thms := thms.addSimpEntry entry
+      -- ^^^ 添加引理到 DiscrTree
+  | .addLetToUnfold fvarId =&gt;
+    thms := thms.addLetDeclToUnfold fvarId
+    -- ^^^ let 变量标记为可展开
+  | .addSimproc declName post =&gt;
+    simprocs ← simprocs.add declName post
+  | .erase origin =&gt;
+    if origin matches .fvar _ then
+      thms := thms.eraseCore origin
+    else if ctx.config.autoUnfold then
+      thms := thms.eraseCore origin
+    else
+      thms ← withRef ref &lt;| thms.erase origin
+      -- ^^^ 带检查的移除（确认引理确实存在）
+  | .ext simpExt? simprocExt? _ =&gt;
+    if let some simpExt := simpExt? then
+      thmsArray := thmsArray.push (← simpExt.getTheorems)
+      -- ^^^ 整个扩展集作为新的 SimpTheorems 层
+  -- ...
+</pre></section>
+              <section>
+                <h3 id="simp-match">
+                  8.2.5. simpMatch：match 表达式的化简<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-match" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>simpMatch</code> 是一个内置 simproc，处理 <code>match</code> 表达式。它先尝试直接规约（ι 规约），失败则尝试用 match 的方程引理逐一匹配：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L376-L387；节选，书稿注释]
+def simpMatch : Simproc := fun e =&gt; do
+  unless (← getConfig).iota do
+    return .continue
+    -- ^^^ config.iota = false 则跳过 match 化简
+  if let some e ← withSimpMetaConfig &lt;| reduceRecMatcher? e then
+    return .visit { expr := e }
+    -- ^^^ 直接 ι 规约成功（match 的判别式是构造子）
+  let .const declName _ := e.getAppFn
+    | return .continue
+  let some info ← getMatcherInfo? declName
+    | return .continue
+  if let some r ← simpMatchDiscrs? info e then
+    return .visit r
+    -- ^^^ 化简 match 的判别式（discriminant），看能否触发规约
+  simpMatchCore declName e
+  -- ^^^ 用 match 的方程引理逐一尝试匹配
+</pre></section>
+              </section>
+            <section>
+              <h2 id="core-types">
+                8.3. 核心类型拆解<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=core-types" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="simp-result">
+                  8.3.1. Simp.Result<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-result" title="Permalink">🔗</a></span></h3>
+                <p>
+                  每一步重写的结果。注意 <code>proof?</code> 的存在——simp 是一个 <strong>proof-producing rewriter</strong>。</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L25-L37]
+structure Result where
+  /-- The simplified version of `e` -/
+  expr           : Expr
+  /-- A proof that `$e = $expr`, where the simplified expression is on the RHS.
+  If `none`, the proof is assumed to be `refl`. -/
+  proof?         : Option Expr := none
+  /--
+  If `cache := true` the result is cached.
+  Warning: we will remove this field in the future. It is currently used by
+  `arith := true`, but we can now refactor the code to avoid the hack.
+  -/
+  cache          : Bool := true
+  deriving Inhabited
+</pre><p>
+                  <code>proof? = none</code> 表示改写前后 definitionally equal（证明是 <code>rfl</code>）。当多步改写链式组合时，用 <code>Eq.trans</code> 拼接：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L47-L48]
+def Result.mkEqTrans (r₁ r₂ : Result) : MetaM Result :=
+  mkEqTransOptProofResult r₁.proof? r₁.cache r₂
+</pre></section>
+              <section>
+                <h3 id="simp-step">
+                  8.3.2. Simp.Step<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-step" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>pre</code>/<code>post</code> 钩子的返回值，决定后续控制流：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L316-L337；节选，书稿注释]
+inductive Step where
+  /-- For `pre`: returns result without visiting subexpressions.
+      For `post`: returns the result. -/
+  | done (r : Result)
+  /-- For `pre`: the resulting expression is passed to `pre` again.
+      For `post`: passed to `pre` again IF not singlePass and expr changed. -/
+  | visit (e : Result)
+  /-- For `pre`: continue by visiting subexpressions, then executing `post`.
+      For `post`: equivalent to `visit`. -/
+  | continue (e? : Option Result := none)
+  deriving Inhabited
+</pre></section>
+              <section>
+                <h3 id="simp-context">
+                  8.3.3. Simp.Context<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-context" title="Permalink">🔗</a></span></h3>
+                <p>
+                  simp 引擎的只读上下文：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L61-L123；节选，书稿注释]
+structure Context where
+  private mk ::
+  config            : Config := {}
+  /-- `user.foo` 配置会映射为全局选项 `tactic.simp.user.foo`。 -/
+  userConfig        : Options := {}
+  zetaDeltaSet      : FVarIdSet := {}
+  initUsedZetaDelta : FVarIdSet := {}
+  metaConfig        : ConfigWithKey := default
+  indexConfig       : ConfigWithKey := default
+  maxDischargeDepth : UInt32 := UInt32.ofNatClamp config.maxDischargeDepth
+  simpTheorems      : SimpTheoremsArray := {}
+  -- ^^^ 引理集数组（全局 @[simp] + 用户传入 + 局部假设）
+  congrTheorems     : SimpCongrTheorems := {}
+  -- ^^^ congruence lemma 集
+  parent?           : Option Expr := none
+  -- ^^^ 当前子项的"父表达式"，用于 arith 等扩展避免重复处理
+  dischargeDepth    : UInt32 := 0
+  lctxInitIndices   : Nat := 0
+  inDSimp : Bool := false
+  -- ^^^ 是否在 dsimp 模式（只做 definitional equality 变换）
+  deriving Inhabited
+</pre></section>
+              <section>
+                <h3 id="simp-state">
+                  8.3.4. Simp.State<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-state" title="Permalink">🔗</a></span></h3>
+                <p>
+                  可变状态——缓存、步数计数、已使用引理记录：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L248-L254]
+structure State where
+  cache        : Cache := {}
+  congrCache   : CongrCache := {}
+  dsimpCache   : ExprStructMap Expr := {}
+  usedTheorems : UsedSimps := {}
+  numSteps     : Nat := 0
+  diag         : Diagnostics := {}
+</pre></section>
+              <section>
+                <h3 id="simp-m">
+                  8.3.5. SimpM monad<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-m" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L268]
+abbrev SimpM := ReaderT MethodsRef $ ReaderT Context $ StateRefT State MetaM
+</pre><p>
+                  三层 Reader/State 叠加在 <code>MetaM</code> 上：<code>MethodsRef</code>（可插拔方法）、<code>Context</code>（只读配置）、<code>State</code>（可变状态）。</p>
+                </section>
+              <section>
+                <h3 id="simp-methods">
+                  8.3.6. Methods：可插拔的钩子<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-methods" title="Permalink">🔗</a></span></h3>
+                <p>
+                  这是 simp 可扩展性的关键。<code>dsimp</code>、<code>simp_all</code> 等变体通过替换这些方法改变行为：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L424-L437]
+structure Methods where
+  pre        : Simproc  := fun _ =&gt; return .continue
+  post       : Simproc  := fun e =&gt; return .done { expr := e }
+  dpre       : DSimproc := fun _ =&gt; return .continue
+  dpost      : DSimproc := fun e =&gt; return .done e
+  discharge? : Expr → SimpM (Option Expr) := fun _ =&gt; return none
+  /--
+  `wellBehavedDischarge` must **not** be set to `true` IF `discharge?`
+  access local declarations with index &gt;= `Context.lctxInitIndices` when
+  `contextual := false`.
+  Reason: it would prevent us from aggressively caching `simp` results.
+  -/
+  wellBehavedDischarge : Bool := true
+  deriving Inhabited
+</pre><p>
+                  <code>Simproc</code> 就是 <code>Expr → SimpM Step</code>：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L343]
+abbrev Simproc := Expr → SimpM Step
+</pre></section>
+              <section>
+                <h3 id="simp-theorem">
+                  8.3.7. SimpTheorem：单条引理<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-theorem" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/SimpTheorems.lean:L155-L183；节选，书稿注释]
+structure SimpTheorem where
+  keys        : Array SimpTheoremKey := #[]
+  -- ^^^ DiscrTree 索引键，从 LHS 编码而来
+  levelParams : Array Name := #[]
+  proof       : Expr
+  priority    : Nat  := eval_prio default
+  post        : Bool := true
+  -- ^^^ true = post 阶段应用，false = pre 阶段应用
+  perm        : Bool := false
+  -- ^^^ true 表示 LHS 和 RHS 只差变量排列（如 a + b = b + a）
+  origin      : Origin
+  rfl         : Bool
+  -- ^^^ true 表示 proof 是 rfl / Eq.refl / @[defeq] 定理
+  backwardRfl : Bool := false
+  -- ^^^ proof 是否来自 @[backward_defeq]；由兼容选项控制是否用于 dsimp
+  deriving Inhabited
+</pre><p>
+                  v4.32.2 区分 <code>rfl</code> 与 <code>backwardRfl</code>：前者包括 <code>Eq.refl</code>、<code>rfl</code> 和 <code>@[defeq]</code>，后者记录 <code>@[backward_defeq]</code>。<code>useImplicitDefEqProof</code> 只有在 <code>backward.defeqAttrib.useBackward</code> 开启时才把后者视为可省略显式 proof 的 definitional rewrite。</p>
+                </section>
+              <section>
+                <h3 id="simp-origin">
+                  8.3.8. Origin：引理来源<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-origin" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/SimpTheorems.lean:L69-L91；节选，书稿注释]
+inductive Origin where
+  | decl (declName : Name) (post := true) (inv := false)
+  -- ^^^ 全局声明，post=应用阶段，inv=是否反向 (←)
+  | fvar (fvarId : FVarId)
+  -- ^^^ 局部假设
+  | stx (id : Name) (ref : Syntax)
+  -- ^^^ 用户在 simp [...] 中直接传入的证明项
+  | other (name : Name)
+  deriving Inhabited, Repr
+</pre></section>
+              </section>
+            <section>
+              <h2 id="discr-tree">
+                8.4. DiscrTree：引理索引<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=discr-tree" title="Permalink">🔗</a></span></h2>
+              <p>
+                simp 的性能关键在于<strong>不用逐一尝试所有引理</strong>。DiscrTree（discrimination tree）是实现这一点的核心数据结构。</p>
+              <p>
+                引理注册时，提取 LHS 的"骨架"编码为 <code>Key</code> 序列组织成前缀 trie；查找时用子项骨架快速定位候选集，再对候选做 <code>isDefEq</code> 精确匹配。</p>
+              <pre>-- 引理 List.length_cons : (a :: l).length = l.length + 1
+-- LHS = List.length (List.cons a l)
+-- 编码为 Key 序列：
+-- [const `List.length 1, const `List.cons 2, star, star]
+--  ^head symbol        ^第一个参数的 head    ^a,l 是变量 → 通配符
+</pre><p>
+                在 Rewrite.lean 中，<code>rewrite?</code> 使用 DiscrTree 进行候选查找：</p>
+              <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L207-L240；节选，书稿注释]
+def rewrite? (e : Expr) (s : SimpTheoremTree) (erased : PHashSet Origin)
+    (tag : String) (rflOnly : Bool) : SimpM (Option Result) := do
+  if (← getConfig).index then
+    rewriteUsingIndex?
+  else
+    rewriteNoIndex?
+where
+  rewriteUsingIndex? : SimpM (Option Result) := do
+    let candidates ← withSimpIndexConfig &lt;| s.getMatchWithExtra e
+    -- ^^^ 用 DiscrTree 索引查找候选引理（带额外参数信息）
+    if candidates.isEmpty then
+      trace[Debug.Meta.Tactic.simp] "no theorems found for {tag}-rewriting {e}"
+      return none
+    else
+      let candidates := candidates.insertionSort fun e₁ e₂ =&gt; e₁.1.priority &gt; e₂.1.priority
+      -- ^^^ 按优先级降序排列
+      let useBackward := backward.defeqAttrib.useBackward.get (← getOptions)
+      for (thm, numExtraArgs) in candidates do
+        checkSystem "simp"
+        if inErasedSet thm then continue
+        -- ^^^ 跳过被 `-` 移除的引理
+        if rflOnly then
+          unless thm.rfl || (useBackward && thm.backwardRfl) do
+            -- ... 诊断代码 ...
+            continue
+        if let some result ← tryTheoremWithExtraArgs? e thm numExtraArgs then
+          -- ^^^ 尝试匹配并应用
+          trace[Debug.Meta.Tactic.simp] "rewrite result {e} =&gt; {result.expr}"
+          if rflOnly && !thm.rfl && thm.backwardRfl then
+            trace[Meta.Tactic.simp.backwardDefEq]
+              "used `[backward_defeq]` theorem {← ppOrigin thm.origin} to rewrite{indentExpr e}"
+          return some result
+      return none
+</pre><p>
+                <strong>性能特征</strong>：LHS 越具体（通配符越少），索引越精确。LHS 是纯 metavariable 的引理会匹配所有子项，退化为线性扫描——这也是 Mathlib linter 会警告 LHS 太泛的 <code>@[simp]</code> 引理的原因。</p>
+              <section>
+                <h3 id="config-index">
+                  8.4.1. config.index 与退化模式<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=config-index" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>rewrite?</code> 同时实现了两种查找模式。当 <code>config.index = false</code> 时，退化为 Lean 3 风格的线性扫描：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L246-L272；节选，书稿注释]
+  rewriteNoIndex? : SimpM (Option Result) := do
+    let (candidates, numArgs) ← withSimpIndexConfig &lt;| s.getMatchLiberal e
+    -- ^^^ getMatchLiberal：只看根 symbol，忽略 DiscrTree 的精细结构
+    if candidates.isEmpty then
+      trace[Debug.Meta.Tactic.simp] "no theorems found for {tag}-rewriting {e}"
+      return none
+    else
+      let candidates := candidates.insertionSort fun e₁ e₂ =&gt; e₁.priority &gt; e₂.priority
+      let useBackward := backward.defeqAttrib.useBackward.get (← getOptions)
+      for thm in candidates do
+        checkSystem "simp"
+        unless inErasedSet thm || (rflOnly && !(thm.rfl || (useBackward && thm.backwardRfl))) do
+          let result? ← withNewMCtxDepth do
+            let val  ← thm.getValue
+            let type ← inferType val
+            let (xs, bis, type) ← forallMetaTelescopeReducing type
+            let type ← whnf (← instantiateMVars type)
+            let lhs := type.appFn!.appArg!
+            let lhsNumArgs := lhs.getAppNumArgs
+            tryTheoremCore lhs xs bis val type e thm (numArgs - lhsNumArgs)
+          if let some result := result? then
+            if rflOnly && !thm.rfl && thm.backwardRfl then
+              trace[Meta.Tactic.simp.backwardDefEq]
+                "used `[backward_defeq]` theorem {← ppOrigin thm.origin} to rewrite{indentExpr e}"
+            diagnoseWhenNoIndex thm
+            -- ^^^ 当 index=false 成功但 index=true 会失败时，记录诊断信息
+            return some result
+    return none
+</pre><p>
+                  这个退化模式主要用于诊断：如果一条引理在 <code>index=true</code> 下不被找到但在 <code>index=false</code> 下被找到，说明引理的 DiscrTree key 有问题。<code>diagnoseWhenNoIndex</code> 负责记录这类引理。v4.32.2 的两条路径都还会在 <code>rflOnly</code>（即 dsimp 重写）下按 <code>backward.defeqAttrib.useBackward</code> 兼容选项接纳 <code>backwardRfl</code>，并发出 <code>simp.backwardDefEq</code> trace。</p>
+                </section>
+              <section>
+                <h3 id="rewrite-pre-post">
+                  8.4.2. rewritePre 与 rewritePost<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=rewrite-pre-post" title="Permalink">🔗</a></span></h3>
+                <p>
+                  重写分为 pre（子项递归前）和 post（子项递归后）两个阶段。每个阶段遍历所有 <code>SimpTheorems</code> 层：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L389-L399；节选，书稿注释]
+def rewritePre (rflOnly := false) : Simproc := fun e =&gt; do
+  for thms in (← getContext).simpTheorems do
+    -- ^^^ 遍历所有 SimpTheorems 层（全局 + 用户传入 + 局部假设）
+    if let some r ← rewrite? e thms.pre thms.erased (tag := "pre") (rflOnly := rflOnly) then
+      return .visit r
+      -- ^^^ 找到匹配，返回 .visit（表示需要继续递归）
+  return .continue
+
+def rewritePost (rflOnly := false) : Simproc := fun e =&gt; do
+  for thms in (← getContext).simpTheorems do
+    if let some r ← rewrite? e thms.post thms.erased (tag := "post") (rflOnly := rflOnly) then
+      return .visit r
+  return .continue
+</pre><p>
+                  每层 <code>SimpTheorems</code> 维护两棵独立的 DiscrTree：<code>pre</code>（标记为 <code>↓</code> 的引理）和 <code>post</code>（默认，绝大多数引理）。<code>pre</code> 引理在子项递归之前应用，可以拦截表达式避免不必要的递归展开。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="rewrite-loop">
+                8.5. 重写循环：Main.lean 逐函数拆解<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=rewrite-loop" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="simp-impl">
+                  8.5.1. simpImpl：顶层入口<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-impl" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Main.lean:L714-L720；节选，书稿注释]
+@[export lean_simp]
+def simpImpl (e : Expr) : SimpM Result := withIncRecDepth do
+  if (← isProof e) then
+    return { expr := e }
+    -- ^^^ 不化简 proof 项！这是一个关键优化。
+  trace[Meta.Tactic.simp.heads] "{repr e.toHeadIndex}"
+  simpLoop e
+</pre></section>
+              <section>
+                <h3 id="simp-loop">
+                  8.5.2. simpLoop：主循环<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-loop" title="Permalink">🔗</a></span></h3>
+                <p>
+                  这是 simp 的核心循环——pre → reduce → 结构递归 → post → 可能重入：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Main.lean:L677-L712；节选，书稿注释]
+partial def simpLoop (e : Expr) : SimpM Result := withIncRecDepth do
+  let cfg ← getConfig
+  if cfg.memoize then
+    let cache := (← get).cache
+    if let some result := cache.find? e then
+      return result
+      -- ^^^ 命中缓存，直接返回
+  if (← get).numSteps &gt; cfg.maxSteps then
+    throwError "`simp` failed: maximum number of steps exceeded"
+    -- ^^^ 步数限制防止无限循环
+  else
+    checkSystem "simp"
+    modify fun s =&gt; { s with numSteps := s.numSteps + 1 }
+    -- ^^^ 步数 +1
+    match (← pre e) with
+    | .done r  =&gt; cacheResult e cfg r
+    -- ^^^ pre 已完全处理，不再递归
+    | .visit r =&gt; cacheResult e cfg (← r.mkEqTrans (← simpLoop r.expr))
+    -- ^^^ pre 返回修改后的表达式，重入 simpLoop
+    | .continue none =&gt; visitPreContinue cfg { expr := e }
+    -- ^^^ pre 不做处理，继续标准流程
+    | .continue (some r) =&gt; visitPreContinue cfg r
+where
+  visitPreContinue (cfg : Config) (r : Result) : SimpM Result := do
+    let eNew ← reduceStep r.expr
+    -- ^^^ 先做 beta/iota/zeta/unfold 等基础规约
+    if eNew != r.expr then
+      trace[Debug.Meta.Tactic.simp] "reduceStep (pre) {e} =&gt; {eNew}"
+      let r := { r with expr := eNew }
+      cacheResult e cfg (← r.mkEqTrans (← simpLoop r.expr))
+      -- ^^^ 规约改变了表达式，重入循环
+    else
+      let r ← r.mkEqTrans (← simpStep r.expr)
+      -- ^^^ 按表达式结构递归化简子项
+      visitPost cfg r
+  visitPost (cfg : Config) (r : Result) : SimpM Result := do
+    match (← post r.expr) with
+    | .done r' =&gt; cacheResult e cfg (← r.mkEqTrans r')
+    | .continue none =&gt; visitPostContinue cfg r
+    | .visit r' | .continue (some r') =&gt; visitPostContinue cfg (← r.mkEqTrans r')
+  visitPostContinue (cfg : Config) (r : Result) : SimpM Result := do
+    let mut r := r
+    unless cfg.singlePass || e == r.expr do
+      r ← r.mkEqTrans (← simpLoop r.expr)
+      -- ^^^ 表达式变了且非 singlePass，重入循环！这是"不动点迭代"的关键。
+    cacheResult e cfg r
+</pre></section>
+              <section>
+                <h3 id="simp-step-dispatch">
+                  8.5.3. simpStep：按表达式结构分发<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-step-dispatch" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Main.lean:L657-L670；节选，书稿注释]
+def simpStep (e : Expr) : SimpM Result := do
+  match e with
+  | .mdata m e   =&gt; let r ← simp e; return { r with expr := mkMData m r.expr }
+  | .proj ..     =&gt; simpProj e
+  | .app ..      =&gt; simpApp e        -- ← 函数应用，最常见
+  | .lam ..      =&gt; simpLambda e     -- λ 抽象
+  | .forallE ..  =&gt; simpForall e     -- ∀ / →
+  | .letE ..     =&gt; simpLet e        -- let 绑定
+  | .const ..    =&gt; simpConst e      -- 常量
+  | .bvar ..     =&gt; unreachable!
+  | .sort ..     =&gt; return { expr := e }
+  | .lit ..      =&gt; return { expr := e }
+  | .mvar ..     =&gt; return { expr := (← instantiateMVars e) }
+  | .fvar ..     =&gt; return { expr := (← reduceFVar (← getConfig) (← getSimpTheorems) e) }
+</pre></section>
+              <section>
+                <h3 id="simp-app">
+                  8.5.4. simpApp：函数应用的处理<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-app" title="Permalink">🔗</a></span></h3>
+                <p>
+                  函数应用 <code>f a₁ a₂ ... aₙ</code> 是最常见的表达式形式。<code>simpApp</code> 先排除字面量，然后委托给 <code>congr</code>：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Main.lean:L650-L655；节选，书稿注释]
+def simpApp (e : Expr) : SimpM Result := do
+  if isOfNatNatLit e || isOfScientificLit e || isCharLit e then
+    -- ^^^ 字面量（如 OfNat.ofNat 42）不递归进入
+    return { expr := e }
+  else
+    congr e
+</pre><p>
+                  <code>congr</code> 先查用户标注的 <code>@[congr]</code> lemma，然后退回自动生成的 congruence theorem：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Main.lean:L637-L648；节选，书稿注释]
+def congr (e : Expr) : SimpM Result := do
+  let f := e.getAppFn
+  if f.isConst then
+    let congrThms ← getSimpCongrTheorems
+    let cs := congrThms.get f.constName!
+    -- ^^^ 查找该函数是否有 @[congr] 标注的 congruence lemma
+    for c in cs do
+      match (← trySimpCongrTheorem? c e) with
+      | none   =&gt; pure ()
+      | some r =&gt; return r
+    congrDefault e
+    -- ^^^ 没有 @[congr]，退回自动 congruence
+  else
+    congrDefault e
+</pre><p>
+                  <code>congrDefault</code> 尝试自动生成的 congruence theorem，失败则用 <code>simpAppUsingCongr</code>（逐参数 <code>congrArg</code>/<code>congrFun</code>）：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Main.lean:L545-L549]
+def congrDefault (e : Expr) : SimpM Result := do
+  if let some result ← tryAutoCongrTheorem? e then
+    result.mkEqTrans (← visitFn result.expr)
+  else
+    withParent e &lt;| simpAppUsingCongr e
+</pre></section>
+              <section>
+                <h3 id="reduce-step">
+                  8.5.5. reduceStep：基础规约<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=reduce-step" title="Permalink">🔗</a></span></h3>
+                <p>
+                  在 pre 和结构递归之间，<code>reduceStep</code> 做 beta/iota/zeta/proj/unfold：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Main.lean:L213-L244；节选，书稿注释]
+private def reduceStep (e : Expr) : SimpM Expr := do
+  let cfg ← getConfig
+  let f := e.getAppFn
+  if f.isMVar then
+    return (← instantiateMVars e)
+  withSimpMetaConfig do
+  if cfg.beta then
+    if f.isHeadBetaTargetFn false then
+      return f.betaRev e.getAppRevArgs
+      -- ^^^ β 规约：(fun x =&gt; body) arg → body[x := arg]
+  if cfg.proj then
+    match (← reduceProj? e) with
+    | some e =&gt; return e
+    | none =&gt;
+    match (← reduceProjFn? e) with
+    | some e =&gt; return e
+    | none   =&gt; pure ()
+  if cfg.iota then
+    match (← reduceRecMatcher? e) with
+    | some e =&gt; return e
+    -- ^^^ ι 规约：match/recursor 计算
+    | none   =&gt; pure ()
+  if let .letE _ _ v b nondep := e then
+    if cfg.zeta && (!nondep || cfg.zetaHave) then
+      return expandLet b #[v] (zetaHave := cfg.zetaHave)
+      -- ^^^ ζ 规约：展开 let 绑定
+    else if cfg.zetaUnused && !b.hasLooseBVars then
+      return consumeUnusedLet b
+      -- ^^^ 即使不做普通 zeta，也可移除 binder 未被使用的 let
+  match (← unfold? e) with
+  | some e' =&gt;
+    trace[Meta.Tactic.simp.rewrite] "unfold {.ofConst e.getAppFn}, {e} ==&gt; {e'}"
+    recordSimpTheorem (.decl e.getAppFn.constName!)
+    return e'
+    -- ^^^ 展开 simp [myFun] 指定的定义
+  | none =&gt; foldRawNatLit e
+</pre></section>
+              <section>
+                <h3 id="simp-forall">
+                  8.5.6. simpForall 与 contextual simp<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-forall" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>simpForall</code> 处理 <code>∀</code> 和 <code>→</code>。当 <code>contextual = true</code> 且箭头两侧都是命题时，化简右侧会<strong>把左侧加入局部假设</strong>：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Main.lean:L333-L363；节选，书稿注释]
+def simpArrow (e : Expr) : SimpM Result := do
+  trace[Debug.Meta.Tactic.simp] "arrow {e}"
+  let p := e.bindingDomain!
+  let q := e.bindingBody!
+  let rp ← simp p
+  if (← pure (← getConfig).contextual &lt;&&&gt; isProp p &lt;&&&gt; isProp q) then
+    -- ^^^ contextual 模式：化简 q 时把 rp.expr 加入假设
+    trace[Debug.Meta.Tactic.simp] "ctx arrow {rp.expr} -&gt; {q}"
+    withLocalDeclD e.bindingName! rp.expr fun h =&gt; withNewLemmas #[h] do
+      -- ^^^ h : rp.expr 被加入局部 simp 引理集
+      let rq ← simp q
+      match rq.proof? with
+      | none    =&gt; mkImpCongr e rp rq
+      | some hq =&gt;
+        let hq ← mkLambdaFVars #[h] hq
+        if rq.expr.containsFVar h.fvarId! then
+          return { expr := (← mkForallFVars #[h] rq.expr),
+                   proof? := (← withDefault &lt;| mkImpDepCongrCtx (← rp.getProof) hq) }
+        else
+          return { expr := e.updateForallE! rp.expr rq.expr,
+                   proof? := (← withDefault &lt;| mkImpCongrCtx (← rp.getProof) hq) }
+  else
+    mkImpCongr e rp (← simp q)
+</pre><p>
+                  <code>withNewLemmas</code> 是 contextual simp 的核心辅助——它把新引入的局部变量（如果是 proof）加入 simp 引理集：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Main.lean:L268-L287；节选，书稿注释]
+def withNewLemmas {α} (xs : Array Expr) (f : SimpM α) : SimpM α := do
+  if (← getConfig).contextual then
+    withFreshCache do
+      let mut s ← getSimpTheorems
+      let mut updated := false
+      let ctx ← getContext
+      for x in xs do
+        if (← isProof x) then
+          s ← s.addTheorem (.fvar x.fvarId!) x (config := ctx.indexConfig)
+          -- ^^^ 把局部 proof 加入引理集
+          updated := true
+      if updated then
+        withSimpTheorems s f
+      else
+        f
+  else if (← getMethods).wellBehavedDischarge then
+    f
+  else
+    withFreshCache do f
+</pre></section>
+              <section>
+                <h3 id="proof-composition">
+                  8.5.7. Proof 组合：为什么 simp 不是纯 AST 变换<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=proof-composition" title="Permalink">🔗</a></span></h3>
+                <p>
+                  初学者容易把 simp 想象成"模式匹配 → 替换子树"的 AST 变换。实际上，每一步重写都必须产出一个类型正确的等式证明。<code>Result</code> 的 <code>proof?</code> 字段揭示了这一点。</p>
+                <p>
+                  <strong>proof 组合的核心原语</strong>——在 Types.lean 中定义：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L598-L614；节选，书稿注释]
+-- 函数参数化简：f = g → f a = g a
+def mkCongrFun (r : Result) (a : Expr) : MetaM Result :=
+  match r.proof? with
+  | none   =&gt; return { expr := mkApp r.expr a, proof? := none }
+  | some h =&gt; return { expr := mkApp r.expr a, proof? := (← Meta.mkCongrFun h a) }
+
+-- 参数化简：a = b → f a = f b
+def mkCongrArg (f : Expr) (r : Result) : MetaM Result :=
+  match r.proof? with
+  | none   =&gt; return { expr := mkApp f r.expr, proof? := none }
+  | some h =&gt; return { expr := mkApp f r.expr, proof? := (← Meta.mkCongrArg f h) }
+
+-- 双侧化简：f = g → a = b → f a = g b
+def mkCongr (r₁ r₂ : Result) : MetaM Result :=
+  let e := mkApp r₁.expr r₂.expr
+  match r₁.proof?, r₂.proof? with
+  | none,     none   =&gt; return { expr := e, proof? := none }
+  | some h,  none    =&gt; return { expr := e, proof? := (← Meta.mkCongrFun h r₂.expr) }
+  | none,    some h  =&gt; return { expr := e, proof? := (← Meta.mkCongrArg r₁.expr h) }
+  | some h₁, some h₂ =&gt; return { expr := e, proof? := (← Meta.mkCongr h₁ h₂) }
+</pre><p>
+                  注意 <code>proof? = none</code> 的优化：当改写前后 definitionally equal 时不构造证明项，大幅减少 proof term 大小。</p>
+                <p>
+                  <strong>λ 抽象的 proof 组合</strong>——需要 <code>funExt</code>：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L942-L950；节选，书稿注释]
+def Result.addLambdas (r : Result) (xs : Array Expr) : MetaM Result := do
+  if xs.isEmpty then return r
+  let eNew ← mkLambdaFVars xs r.expr
+  match r.proof? with
+  | none   =&gt; return { expr := eNew }
+  | some h =&gt;
+    let p ← xs.foldrM (init := h) fun x h =&gt; do
+      mkFunExt (← mkLambdaFVars #[x] h)
+      -- ^^^ 每个 λ 变量都需要一层 funExt 包装
+    return { expr := eNew, proof? := p }
+</pre><p>
+                  <strong>Proof 复杂度急剧上升的三个来源</strong>：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <strong>Dependent arguments</strong>：当函数的后续参数类型依赖于前面的参数时，改写前面的参数导致后续参数类型变化，需要 <code>cast</code>/<code>Eq.mpr</code>。</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>Congruence</strong>：在 <code>f a₁ ... aₙ</code> 中化简某个 <code>aᵢ</code> 时，需要 congruence lemma 把局部等式提升为全局等式。</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>Cast 传播</strong>：依赖类型上下文中（如 <code>Vector α n</code> 中化简 <code>n</code>），类型本身在变化，simp 必须插入 <code>cast</code> 维持类型正确性。</p>
+                    </li>
+                  </ol>
+                <p>
+                  这也是为什么 simp 源码中大量代码在处理 proof 构造和组合——真正的工程难点不只是"匹配到哪条引理"，而是"怎样把局部改写拼成全局合法证明"。</p>
+                </section>
+              <section>
+                <h3 id="congr-args">
+                  8.5.8. congrArgs：逐参数化简的 proof 构造<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=congr-args" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>congrArgs</code> 展示了 simp 如何逐参数化简函数应用并正确组合 proof：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L649-L679；节选，书稿注释]
+def congrArgs (r : Result) (args : Array Expr) : SimpM Result := do
+  if args.isEmpty then
+    return r
+  else
+    let cfg ← getConfig
+    let infos := (← getFunInfoNArgs r.expr args.size).paramInfo
+    let mut r := r
+    let mut i := 0
+    for arg in args do
+      if h : i &lt; infos.size then
+        let info := infos[i]
+        if info.isInstance && (!cfg.instances || cfg.ground) then
+          r ← mkCongrFun r arg
+          -- ^^^ instances=false 或 ground 模式下跳过实例参数
+        else if !info.hasFwdDeps then
+          r ← mkCongr r (← simp arg)
+          -- ^^^ 无前向依赖：正常 simp + mkCongr
+        else if (← whnfD (← inferType r.expr)).isArrow then
+          r ← mkCongr r (← simp arg)
+        else
+          r ← mkCongrFun r (← dsimp arg)
+          -- ^^^ 有前向依赖：只做 dsimp（保持 definitional equality）
+      else if (← whnfD (← inferType r.expr)).isArrow then
+        r ← mkCongr r (← simp arg)
+      else
+        r ← mkCongrFun r (← dsimp arg)
+      i := i + 1
+    return r
+</pre><p>
+                  关键决策：<strong>有前向依赖的参数只做 <strong><code>dsimp</code></strong></strong>。因为如果用 <code>simp</code> 改变了参数值（产生非 <code>rfl</code> 的 proof），后续参数的类型会变化，需要 cast——而 <code>dsimp</code> 保证 definitional equality，类型不变。此外，v4.32.2 用 <code>ParamInfo.isInstance</code> 识别实例参数；<code>instances := false</code> 或 <code>ground := true</code> 时不递归化简它们。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="single-step-rewrite">
+                8.6. 单步重写：Rewrite.lean<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=single-step-rewrite" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="try-theorem">
+                  8.6.1. tryTheorem?：匹配 → 实例化 → discharge → 构造 proof<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=try-theorem" title="Permalink">🔗</a></span></h3>
+                <p>
+                  这是 simp 的最内层核心。给定一个表达式 <code>e</code> 和一条引理 <code>thm</code>，尝试用 <code>isDefEq</code> 匹配 LHS，然后 synthesize 隐式参数和 discharge 前提：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L187-L202；节选，书稿注释]
+def tryTheorem? (e : Expr) (thm : SimpTheorem) : SimpM (Option Result) := do
+  withNewMCtxDepth do
+    -- ^^^ 创建新的 metavariable 上下文，确保不污染外层
+    let val  ← thm.getValue
+    let type ← inferType val
+    let (xs, bis, type) ← forallMetaTelescopeReducing type
+    -- ^^^ 把引理的全称量化变量替换为新鲜 metavariable
+    let type ← whnf (← instantiateMVars type)
+    let lhs := type.appFn!.appArg!
+    -- ^^^ 提取等式的 LHS
+    match (← tryTheoremCore lhs xs bis val type e thm 0) with
+    | some result =&gt; return some result
+    | none =&gt;
+      let lhsNumArgs := lhs.getAppNumArgs
+      let eNumArgs   := e.getAppNumArgs
+      if eNumArgs &gt; lhsNumArgs then
+        tryTheoremCore lhs xs bis val type e thm (eNumArgs - lhsNumArgs)
+        -- ^^^ 处理 e 比 LHS 多出的参数（部分应用匹配）
+      else
+        return none
+</pre><p>
+                  <code>tryTheoremCore</code> 做实际的匹配工作：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L115-L176；节选，书稿注释]
+private def tryTheoremCore (lhs : Expr) (xs : Array Expr) (bis : Array BinderInfo)
+    (val : Expr) (type : Expr) (e : Expr) (thm : SimpTheorem)
+    (numExtraArgs : Nat) : SimpM (Option Result) := do
+  recordTriedSimpTheorem thm.origin
+  let rec go (e : Expr) : SimpM (Option Result) := do
+    trace[Debug.Meta.Tactic.simp] "trying {← ppSimpTheorem thm} to rewrite{indentExpr e}"
+    if (← withSimpMetaConfig &lt;| isDefEq lhs e) then
+      -- ^^^ 核心：用 isDefEq 匹配 lhs 和 e
+      unless (← synthesizeArgs thm.origin bis xs) do
+        return none
+        -- ^^^ 合成实例参数 + discharge 前提
+      let proof? ← if (← useImplicitDefEqProof thm) then
+        pure none
+        -- ^^^ rfl 引理不需要显式 proof
+      else
+        let proof ← instantiateMVars (mkAppN val xs)
+        if (← hasAssignableMVar proof) then
+          trace[Meta.Tactic.simp.rewrite] "{← ppSimpTheorem thm}, has unassigned metavariables"
+          return none
+        pure &lt;| some proof
+      let rhs := (← instantiateMVars type).appArg!
+      -- ^^^ 实例化后的 RHS
+      if (← instantiateMVars e) == rhs then
+        -- ^^^ 重写后表达式没变，跳过
+        return none
+      if thm.perm then
+        if !(← acLt rhs e .reduceSimpleOnly) then
+          trace[Meta.Tactic.simp.rewrite] "{← ppSimpTheorem thm}, perm rejected"
+          return none
+          -- ^^^ 排列引理（如 add_comm）：只在 rhs &lt; e 时应用，防止循环
+      trace[Meta.Tactic.simp.rewrite] "{← ppSimpTheorem thm}:{indentExpr e}\n==&gt;{indentExpr rhs}"
+      let rhs ← if type.hasBinderNameHint then rhs.resolveBinderNameHint else pure rhs
+      -- ^^^ 保留/恢复 RHS 的 binder name hint
+      recordSimpTheorem thm.origin
+      return some { expr := rhs, proof? }
+    else
+      unless lhs.isMVar do
+        trace[Meta.Tactic.simp.unify] "{← ppSimpTheorem thm}, failed to unify"
+      return none
+  -- ... 处理 extraArgs ...
+</pre></section>
+              <section>
+                <h3 id="synthesize-args">
+                  8.6.2. synthesizeArgs：合成参数与 discharge 前提<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=synthesize-args" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L58-L107；节选，书稿注释]
+def synthesizeArgs (thmId : Origin) (bis : Array BinderInfo) (xs : Array Expr) :
+    SimpM Bool := do
+  let skipAssignedInstances := tactic.skipAssignedInstances.get (← getOptions)
+  for x in xs, bi in bis do
+    let type ← inferType x
+    if !skipAssignedInstances && bi.isInstImplicit then
+      unless (← synthesizeInstance x type) do
+        return false
+        -- ^^^ 实例隐式参数：尝试类型类合成
+    if (← instantiateMVars x).isMVar then
+      -- ^^^ 参数仍未赋值
+      if (← isClass? type).isSome then
+        if (← synthesizeInstance x type) then
+          continue
+          -- ^^^ 先尝试类型类合成
+      if (← isProp type) then
+        unless (← discharge?' thmId x type) do
+          return false
+          -- ^^^ 命题参数：调用 discharger 证明
+  return true
+where
+  synthesizeInstance (x type : Expr) : SimpM Bool := do
+    match (← trySynthInstance type) with
+    | LOption.some val =&gt;
+      if (← withReducibleAndInstances &lt;| isDefEq x val) then
+        return true
+      else
+        trace[Meta.Tactic.simp.discharge]
+          "{← ppOrigin thmId}, failed to assign instance{indentExpr type}\nsynthesized value{indentExpr val}\nis not definitionally equal to{indentExpr x}"
+        return false
+    | _ =&gt;
+      trace[Meta.Tactic.simp.discharge]
+        "{← ppOrigin thmId}, failed to synthesize instance{indentExpr type}"
+      return false
+</pre><p>
+                  这里不能把 <code>synthesizeInstance</code> 省略成普通 <code>trySynthInstance</code>：v4.32.2 会用 <code>withReducibleAndInstances &lt;| isDefEq x val</code> 检查合成值能否真正赋给参数，并为“不 defeq”和“无法合成”分别记录 trace。</p>
+                </section>
+              <section>
+                <h3 id="default-pre-post">
+                  8.6.3. 默认 pre/post 钩子<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=default-pre-post" title="Permalink">🔗</a></span></h3>
+                <p>
+                  默认的 pre/post 钩子组合了多个 simproc。以 <code>postDefault</code> 为例：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L542-L547；节选，书稿注释]
+def postDefault (s : SimprocsArray) : Simproc :=
+  rewritePost &gt;&gt;
+  -- ^^^ 用 post DiscrTree 查找并尝试引理
+  userPostSimprocs s &gt;&gt;
+  -- ^^^ 用户注册的 simproc
+  simpGround &gt;&gt;
+  -- ^^^ ground term evaluation
+  simpArith &gt;&gt;
+  -- ^^^ 线性算术化简
+  simpUsingDecide
+  -- ^^^ 用 decide 证明
+</pre><p>
+                  <code>&gt;&gt;</code> 是 <code>Simproc</code> 的组合子（<code>andThen</code>）：如果前一个返回 <code>continue</code>，则调用下一个。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="congruence-lemma">
+                8.7. Congruence Lemma<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=congruence-lemma" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="why-congr">
+                  8.7.1. 为什么需要 congruence lemma<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=why-congr" title="Permalink">🔗</a></span></h3>
+                <p>
+                  标准递归化简逐参数处理，但有些函数的参数之间有<strong>依赖关系</strong>。经典例子——<code>if</code>：化简 then 分支时应假设条件为真。congruence lemma 告诉 simp 在化简各参数时应该假设什么。</p>
+                </section>
+              <section>
+                <h3 id="simp-congr-theorem">
+                  8.7.2. SimpCongrTheorem 的定义<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-congr-theorem" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/SimpCongrTheorems.lean:L23-L28；节选，书稿注释]
+structure SimpCongrTheorem where
+  theoremName   : Name
+  funName       : Name
+  hypothesesPos : Array Nat
+  -- ^^^ 哪些参数位置是"假设"（需要在特定条件下化简）
+  priority      : Nat
+  deriving Inhabited, Repr
+</pre></section>
+              <section>
+                <h3 id="congr-registration">
+                  8.7.3. @[congr] 注册<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=congr-registration" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/SimpCongrTheorems.lean:L142-L150]
+builtin_initialize
+  registerBuiltinAttribute {
+    name  := `congr
+    descr := "congruence theorem"
+    add   := fun declName stx attrKind =&gt; do
+      let prio ← getAttrParamOptPrio stx[1]
+      discard &lt;| addSimpCongrTheorem declName attrKind prio |&gt;.run {} {}
+  }
+</pre></section>
+              <section>
+                <h3 id="try-congr-theorem">
+                  8.7.4. trySimpCongrTheorem?：应用 congruence lemma<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=try-congr-theorem" title="Permalink">🔗</a></span></h3>
+                <p>
+                  这是一个复杂但关键的函数。它用 <code>isDefEq</code> 匹配 LHS，然后对每个 hypothesis 位置调用 <code>processCongrHypothesis</code>（实质上是递归 <code>simp</code> 子项）：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Main.lean:L586-L635；节选，书稿注释]
+def trySimpCongrTheorem? (c : SimpCongrTheorem) (e : Expr) :
+    SimpM (Option Result) := withNewMCtxDepth do withParent e do
+  recordCongrTheorem c.theoremName
+  let thm ← mkConstWithFreshMVarLevels c.theoremName
+  let thmType ← inferType thm
+  let thmHasBinderNameHint := thmType.hasBinderNameHint
+  let (xs, bis, type) ← forallMetaTelescopeReducing thmType
+  -- ^^^ 实例化 congr lemma 的全称量化变量
+  if c.hypothesesPos.any (· ≥ xs.size) then
+    return none
+  let lhs := type.appFn!.appArg!
+  let rhs := type.appArg!
+  -- ...处理 extra args...
+  if (← withSimpMetaConfig &lt;| isDefEq lhs e) then
+    -- ^^^ 匹配 congr lemma 的 LHS 和当前表达式
+    let mut modified := false
+    for i in c.hypothesesPos do
+      let h := xs[i]!
+      let hType ← instantiateMVars (← inferType h)
+      let hType ← if thmHasBinderNameHint then hType.resolveBinderNameHint else pure hType
+      try
+        if (← processCongrHypothesis h hType) then
+          modified := true
+          -- ^^^ 递归化简该 hypothesis 对应的子项
+      catch _ =&gt;
+        return none
+    unless modified do
+      return none
+      -- ^^^ 没有子项被修改，不应用
+    unless (← synthesizeArgs (.decl c.theoremName) bis xs) do
+      return none
+    let eNew ← instantiateMVars rhs
+    let mut proof ← instantiateMVars (mkAppN thm xs)
+    -- ... 处理 iff → propext ...
+    if (← hasAssignableMVar proof &lt;||&gt; hasAssignableMVar eNew) then
+      return none
+    congrArgs { expr := eNew, proof? := proof } extraArgs
+  else
+    return none
+</pre><p>
+                  <code>processCongrHypothesis</code> 对每个 hypothesis 做递归 simp：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Main.lean:L552-L583；节选，书稿注释]
+def processCongrHypothesis (h : Expr) (hType : Expr) : SimpM Bool := do
+  forallTelescopeReducing hType fun xs hType =&gt; withNewLemmas xs do
+    -- ^^^ 展开 hypothesis 的全称量化（可能带来新的局部假设）
+    let lhs ← instantiateMVars hType.appFn!.appArg!
+    let r ← simp lhs
+    -- ^^^ 递归 simp 化简 lhs
+    let rhs := hType.appArg!
+    rhs.withApp fun m zs =&gt; do
+      let val ← mkLambdaFVars zs r.expr
+      unless (← withSimpMetaConfig &lt;| isDefEq m val) do
+        throwCongrHypothesisFailed
+      let mut proof ← r.getProof
+      -- ... 处理 iff ...
+      unless (← isDefEq h (← mkLambdaFVars xs proof)) do
+        throwCongrHypothesisFailed
+      return r.proof?.isSome || (xs.size &gt; 0 && lhs != r.expr)
+</pre></section>
+              <section>
+                <h3 id="auto-vs-hand-congr">
+                  8.7.5. 自动生成 vs @[congr] 手写<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=auto-vs-hand-congr" title="Permalink">🔗</a></span></h3>
+                <p>
+                  Lean 为大多数函数自动生成 congruence theorem（通过 <code>mkCongrSimp?</code>）。自动生成的逻辑会分析每个参数的依赖关系，将参数分为 <code>fixed</code>、<code>eq</code>、<code>cast</code>、<code>subsingletonInst</code> 几类。只有当自动生成不足（如 <code>if</code> 分支需要条件假设）时，才需要手写 <code>@[congr]</code> lemma。</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="discharger">
+                8.8. Discharger<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=discharger" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="discharge-impl">
+                  8.8.1. discharge?' 的真实实现<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=discharge-impl" title="Permalink">🔗</a></span></h3>
+                <p>
+                  当引理有前提时，<code>synthesizeArgs</code> 会调用 <code>discharge?'</code> 来证明。以下是完整实现：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L32-L56；节选，书稿注释]
+def discharge?' (thmId : Origin) (x : Expr) (type : Expr) : SimpM Bool := do
+  let r : DischargeResult ← withTraceNode `Meta.Tactic.simp.discharge (fun
+      | .ok .proved       =&gt; return m!"{← ppOrigin thmId} discharge {checkEmoji}{indentExpr type}"
+      | .ok .notProved    =&gt; return m!"{← ppOrigin thmId} discharge {crossEmoji}{indentExpr type}"
+      | .ok .maxDepth     =&gt; return m!"{← ppOrigin thmId} discharge {crossEmoji} max depth{indentExpr type}"
+      | .ok .failedAssign =&gt; return m!"{← ppOrigin thmId} discharge {crossEmoji} failed to assign proof{indentExpr type}"
+      | .error err        =&gt; return m!"{← ppOrigin thmId} discharge {crossEmoji}{indentExpr type}{indentD err.toMessageData}") do
+    let ctx ← getContext
+    if ctx.dischargeDepth &gt;= ctx.maxDischargeDepth then
+      return .maxDepth
+      -- ^^^ 超过最大递归深度（默认 2），放弃
+    else withIncDischargeDepth do
+      let usedTheorems := (← get).usedTheorems
+      -- ^^^ 保存当前已使用引理集，失败时回滚
+      match (← withPreservedCache &lt;| (← getMethods).discharge? type) with
+      | some proof =&gt;
+        unless (← isDefEq x proof) do
+          modify fun s =&gt; { s with usedTheorems }
+          return .failedAssign
+        return .proved
+      | none =&gt;
+        modify fun s =&gt; { s with usedTheorems }
+        -- ^^^ discharge 失败，回滚 usedTheorems
+        return .notProved
+  return r = .proved
+</pre><p>
+                  关键点：discharge 失败时<strong>回滚</strong> <code>usedTheorems</code>，确保未成功的 discharge 不会污染 trace。</p>
+                </section>
+              <section>
+                <h3 id="default-discharger">
+                  8.8.2. 默认 discharger<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=default-discharger" title="Permalink">🔗</a></span></h3>
+                <p>
+                  默认 discharger 定义在 Rewrite.lean 末尾：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L637-L648；节选，书稿注释]
+def dischargeDefault? (e : Expr) : SimpM (Option Expr) := do
+  let e := e.cleanupAnnotations
+  if isEqnThmHypothesis e then
+    -- ^^^ 特殊处理 match 方程的 hypothesis（形如 ∀ ..., a = b → ... → False）
+    if let some r ← dischargeUsingAssumption? e then return some r
+    if let some r ← dischargeEqnThmHypothesis? e then return some r
+  let r ← simp e
+  -- ^^^ 递归调用 simp 尝试把前提化简为 True
+  if let some p ← dischargeRfl r.expr then
+    return some (mkApp4 (mkConst ``Eq.mpr [Level.zero]) e r.expr (← r.getProof) p)
+  else if r.expr.isTrue then
+    return some (← mkOfEqTrue (← r.getProof))
+    -- ^^^ 化简为 True，构造 proof
+  else
+    return none
+</pre></section>
+              <section>
+                <h3 id="custom-discharger">
+                  8.8.3. 自定义 discharger 的实现<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=custom-discharger" title="Permalink">🔗</a></span></h3>
+                <p>
+                  用户写 <code>simp (discharger := omega)</code> 时，<code>tacticToDischarge</code> 把 tactic 包装成 <code>discharge?</code>：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Simp.lean:L139-L164；节选，书稿注释]
+def tacticToDischarge (tacticCode : Syntax) :
+    TacticM (IO.Ref Term.State × Simp.Discharge) := do
+  let tacticCode ← `(tactic| try ($tacticCode:tacticSeq))
+  let ref ← IO.mkRef (← getThe Term.State)
+  let ctx ← readThe Term.Context
+  let disch : Simp.Discharge := fun e =&gt; do
+    let mvar ← mkFreshExprSyntheticOpaqueMVar e `simp.discharger
+    -- ^^^ 创建一个类型为 e 的 goal
+    let s ← ref.get
+    let runTac? : TermElabM (Option Expr) :=
+      try
+        Term.withoutModifyingElabMetaStateWithInfo do
+          Term.withSynthesize (postpone := .no) do
+            Term.runTactic (report := false) mvar.mvarId! tacticCode .term
+            -- ^^^ 运行用户指定的 tactic（如 omega）
+          let result ← instantiateMVars mvar
+          if result.hasExprMVar then
+            return none
+          else
+            return some result
+      catch _ =&gt;
+        return none
+    let (result?, s) ← liftM (m := MetaM) &lt;| Term.TermElabM.run runTac? ctx s
+    ref.set s
+    return result?
+  return (ref, disch)
+</pre></section>
+              </section>
+            <section>
+              <h2 id="simp-all">
+                8.9. simp_all 的特殊逻辑<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-all" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="simp-all-entry">
+                  8.9.1. 入口<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-all-entry" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Lean 4 v4.32.2, Lean/Elab/Tactic/Simp.lean:L802-L818；节选，书稿注释]
+@[builtin_tactic Lean.Parser.Tactic.simpAll] def evalSimpAll : Tactic := fun stx =&gt;
+  withMainContext do withSimpDiagnostics do
+  withInstancesTypeCheckNote (← getMainTarget) do
+  let r@{ ctx, simprocs, dischargeWrapper := _, simpArgs } ←
+    mkSimpContext stx (eraseLocal := true) (kind := .simpAll) (ignoreStarArg := true)
+    -- ^^^ eraseLocal := true 允许从引理集中移除局部假设
+    -- ^^^ ignoreStarArg := true 因为 simp_all 隐式使用所有假设
+  if ctx.config.suggestions then
+    throwError "+suggestions requires using simp_all? instead of simp_all"
+  let (result?, stats) ←
+    withLoopChecking r do
+      simpAll (← getMainGoal) ctx (simprocs := simprocs)
+      -- ^^^ 调用 simpAll 而不是 simpLocation
+  match result? with
+  | none =&gt; replaceMainGoal []
+  | some mvarId =&gt; replaceMainGoal [mvarId]
+  if tactic.simp.trace.get (← getOptions) then
+    traceSimpCall stx stats.usedTheorems
+  else if Linter.getLinterValue linter.unusedSimpArgs (← Linter.getLinterOptions) then
+    withRef stx do
+      warnUnusedSimpArgs simpArgs stats.usedTheorems
+  return stats.diag
+</pre><p>
+                  <code>simp_all</code> 与 <code>simp</code> 的核心区别：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <strong>化简所有假设和目标</strong>，不仅仅是目标。</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>假设之间可以互相化简</strong>——化简假设 <code>hᵢ</code> 时，把其他假设加入引理集。</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>多轮迭代直到不动点</strong>：每轮化简后更新引理集，使后续假设能看到前面的结果。</p>
+                    </li>
+                  <li>
+                    <p>
+                      假设化简为 <code>True</code> 则丢弃，化简为 <code>False</code> 则 <code>contradiction</code> 结束。</p>
+                    </li>
+                  </ol>
+                </section>
+              <section>
+                <h3 id="simp-all-vs-star">
+                  8.9.2. simp_all vs simp at *<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simp-all-vs-star" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>simp at *</code> 对每个假设独立运行 simp，引理集在整个过程中不变。<code>simp_all</code> 每化简一个假设后更新引理集，能力更强但也更重。</p>
+                <pre>-- [可运行]
+-- simp_all 能解决，simp at * 不一定能
+example (h1 : a = 0) (h2 : a + b = 5) : b = 5 := by
+  simp_all
+  -- 第一轮：用 h1 化简 h2 → 0 + b = 5 → b = 5
+  -- 然后目标被新的 h2 直接解决
+</pre></section>
+              </section>
+            <section>
+              <h2 id="dsimp-impl">
+                8.10. dsimp 的实现<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=dsimp-impl" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code>dsimp</code> 复用 simp 框架但替换 <code>Methods</code>，只做 definitional equality 变换。</p>
+              <section>
+                <h3 id="dsimp-impl-detail">
+                  8.10.1. dsimpImpl<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=dsimp-impl-detail" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Main.lean:L515-L529；节选，书稿注释]
+@[export lean_dsimp]
+private partial def dsimpImpl (e : Expr) : SimpM Expr := do
+  let cfg ← getConfig
+  unless cfg.dsimp do
+    return e
+  let m ← getMethods
+  let pre := m.dpre &gt;&gt; doNotVisitOfNat &gt;&gt; doNotVisitOfScientific
+      &gt;&gt; doNotVisitCharLit &gt;&gt; doNotVisitProofs
+  -- ^^^ 组合多个 DSimproc：跳过字面量和 proof 项
+  let post := m.dpost &gt;&gt; dsimpReduce
+  -- ^^^ dpost 钩子 + 基础规约
+  withInDSimpWithCache fun cache =&gt; do
+    transformWithCache e cache
+      (usedLetOnly := cfg.zeta || cfg.zetaUnused)
+      (skipInstances := !cfg.instances)
+      (pre := pre)
+      (post := post)
+</pre></section>
+              <section>
+                <h3 id="dsimp-vs-simp">
+                  8.10.2. dsimp 与 simp 的核心区别<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=dsimp-vs-simp" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      <strong>等式类型</strong>：simp 使用 propositional equality，dsimp 使用 definitional equality</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>引理要求</strong>：simp 可用任意 <code>@[simp]</code> 引理，dsimp 通常只用 <code>rfl</code>/<code>@[defeq]</code> 引理；兼容选项 <code>backward.defeqAttrib.useBackward</code> 开启时还可使用 <code>backwardRfl</code></p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>产出</strong>：simp 产出 <code>Result</code>（含 <code>proof?</code>），dsimp 产出 <code>Expr</code>（新表达式，无需 proof）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>discharge</strong>：simp 支持，dsimp 不支持（<code>fun _ =&gt; return none</code>）</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>用途</strong>：simp 尽可能化简，dsimp 只做 beta/iota/zeta + rfl 引理</p>
+                    </li>
+                  </ul>
+                <p>
+                  <code>dsimp</code> 的结果与原表达式 definitionally equal，因此旧目标和新目标在类型检查器看来是同一个命题——不需要任何 proof 项中转。这使得 <code>dsimp</code> 在依赖类型上下文中更安全，也更快。<code>dsimpImpl</code> 还把 <code>skipInstances := !cfg.instances</code> 传给 <code>transformWithCache</code>，使实例项遍历与 <code>instances</code> 配置保持一致。</p>
+                </section>
+              <section>
+                <h3 id="dsimp-simproc">
+                  8.10.3. dsimp 的 DSimproc<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=dsimp-simproc" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>DSimproc</code> 类似 <code>Simproc</code> 但返回 <code>DStep</code>（即 <code>TransformStep</code>），不需要 proof：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L350]
+abbrev DSimproc := Expr → SimpM DStep
+</pre><p>
+                  dsimp 的 drewritePre/drewritePost 只用 <code>rflOnly := true</code> 的引理：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L401-L411；节选，书稿注释]
+def drewritePre : DSimproc := fun e =&gt; do
+  for thms in (← getContext).simpTheorems do
+    if let some r ← rewrite? e thms.pre thms.erased (tag := "dpre") (rflOnly := true) then
+      return .visit r.expr
+      -- ^^^ 只返回表达式，不返回 proof
+  return .continue
+
+def drewritePost : DSimproc := fun e =&gt; do
+  for thms in (← getContext).simpTheorems do
+    if let some r ← rewrite? e thms.post thms.erased (tag := "dpost") (rflOnly := true) then
+      return .visit r.expr
+  return .continue
+</pre></section>
+              <section>
+                <h3 id="when-dsimp">
+                  8.10.4. 何时用 dsimp<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=when-dsimp" title="Permalink">🔗</a></span></h3>
+                <ul>
+                  <li>
+                    <p>
+                      化简后类型不变（beta/iota）：<code>dsimp</code> 更快，无证明开销。</p>
+                    </li>
+                  <li>
+                    <p>
+                      在 <code>conv</code> 中做局部化简：<code>dsimp</code> 不改变外层类型。</p>
+                    </li>
+                  <li>
+                    <p>
+                      依赖类型上下文中化简：<code>dsimp</code> 更安全，不引入 <code>Eq.mpr</code>。</p>
+                    </li>
+                  <li>
+                    <p>
+                      需要应用非 <code>rfl</code> 的等式引理：只能用 <code>simp</code>。</p>
+                    </li>
+                  </ul>
+                </section>
+              </section>
+            <section>
+              <h2 id="trace-debugging">
+                8.11. 调试：trace 输出详解<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=trace-debugging" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="ch06-trace-options">
+                  8.11.1. trace 开关一览<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch06-trace-options" title="Permalink">🔗</a></span></h3>
+                <pre>-- [可运行]
+set_option trace.Meta.Tactic.simp.rewrite true    -- 每条重写
+set_option trace.Meta.Tactic.simp.discharge true   -- discharge 过程
+set_option trace.Meta.Tactic.simp true             -- 所有内部步骤
+set_option trace.Meta.Tactic.simp.congr true       -- congruence lemma 使用
+</pre></section>
+              <section>
+                <h3 id="trace-patterns">
+                  8.11.2. 常见 trace 模式与诊断<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=trace-patterns" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <strong>模式 1：没有任何 rewrite trace</strong></p>
+                <p>
+                  诊断：没有引理的 LHS 匹配。原因：自定义函数未展开 / 引理不在 simp 集中 / DiscrTree key 不匹配。</p>
+                <p>
+                  修复：<code>simp [myFun]</code> 展开定义，或检查引理是否在集合中。</p>
+                <p>
+                  <strong>模式 2：引理匹配了但 discharge 失败</strong></p>
+                <pre>[Meta.Tactic.simp.discharge] Nat.sub_add_cancel discharge ✗ 1 ≤ n
+</pre><p>
+                  诊断：条件引理的 LHS 匹配成功，但前提无法被默认 discharger 证明。</p>
+                <p>
+                  修复：<code>have h : 1 ≤ n := ...</code> 或 <code>simp (discharger := omega)</code>。</p>
+                <p>
+                  <strong>模式 3：反复出现同一对重写</strong></p>
+                <p>
+                  诊断：simp 循环——<code>a + b → b + a → a + b → ...</code>。</p>
+                <p>
+                  修复：从 simp 集中移除导致循环的引理，改用 <code>rw</code> 手动定向重写。</p>
+                </section>
+              <section>
+                <h3 id="combined-debug-strategy">
+                  8.11.3. 组合调试策略<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=combined-debug-strategy" title="Permalink">🔗</a></span></h3>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <strong>先用 <strong><code>simp?</code></strong></strong>——看实际用了哪些引理；</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>开 <strong><code>trace.Meta.Tactic.simp.rewrite</code></strong></strong>——看重写序列；</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>怀疑 discharge 问题，加开 <strong><code>trace.Meta.Tactic.simp.discharge</code></strong></strong>；</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>trace 完全为空，检查引理是否在 simp 集中</strong>。</p>
+                    </li>
+                  </ol>
+                </section>
+              </section>
+            <section>
+              <h2 id="extension-points">
+                8.12. 扩展点与自定义<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=extension-points" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="simproc-mechanism">
+                  8.12.1. Simproc 机制<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simproc-mechanism" title="Permalink">🔗</a></span></h3>
+                <p>
+                  <code>Simproc</code>（simplification procedure）是 simp 的主要扩展点。它是一个函数 <code>Expr → SimpM Step</code>，可以注册为 pre 或 post 钩子。</p>
+                <p>
+                  例如 <code>simpUsingDecide</code>——用 <code>decide</code> 证明布尔命题：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L286-L301；节选，书稿注释]
+@[inline] def simpUsingDecide : Simproc := fun e =&gt; do
+  unless (← getConfig).decide do
+    return .continue
+  if e.hasFVar || e.hasMVar || e.isTrue || e.isFalse then
+    return .continue
+    -- ^^^ 只处理不含自由变量的 ground 命题
+  try
+    let d ← mkDecide e
+    let r ← withDefault &lt;| whnf d
+    if r.isConstOf ``true then
+      return .done { expr := mkConst ``True,
+        proof? := mkAppN (mkConst ``eq_true_of_decide) #[e, d.appArg!, (← mkEqRefl (mkConst ``true))] }
+    else if r.isConstOf ``false then
+      return .done { expr := mkConst ``False,
+        proof? := mkAppN (mkConst ``eq_false_of_decide) #[e, d.appArg!, (← mkEqRefl (mkConst ``false))] }
+    else
+      return .continue
+  catch _ =&gt;
+    return .continue
+</pre></section>
+              <section>
+                <h3 id="simproc-composition">
+                  8.12.2. Simproc 的组合<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=simproc-composition" title="Permalink">🔗</a></span></h3>
+                <p>
+                  多个 Simproc 用 <code>&gt;&gt;</code> (<code>andThen</code>) 组合成管道：</p>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Types.lean:L373-L379；节选，书稿注释]
+@[always_inline]
+def andThen (f g : Simproc) : Simproc := fun e =&gt; do
+  match (← f e) with
+  | .done r            =&gt; return .done r
+  -- ^^^ f 返回 done，直接采纳
+  | .continue none     =&gt; g e
+  -- ^^^ f 放弃，交给 g
+  | .continue (some r) =&gt; mkEqTransResultStep r (← g r.expr)
+  -- ^^^ f 做了部分修改，把 proof 传递给 g
+  | .visit r           =&gt; return .visit r
+  -- ^^^ f 返回 visit，跳过 g
+</pre></section>
+              <section>
+                <h3 id="mk-default-methods">
+                  8.12.3. mkDefaultMethods：默认方法的组装<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=mk-default-methods" title="Permalink">🔗</a></span></h3>
+                <pre>-- [Lean 4 v4.32.2, Lean/Meta/Tactic/Simp/Rewrite.lean:L652-L662；节选，书稿注释]
+def mkMethods (s : SimprocsArray) (discharge? : Discharge)
+    (wellBehavedDischarge : Bool) : Methods := {
+  pre        := preDefault s
+  -- ^^^ rewritePre &gt;&gt; simpMatch &gt;&gt; userPreSimprocs &gt;&gt; simpUsingDecide
+  post       := postDefault s
+  -- ^^^ rewritePost &gt;&gt; userPostSimprocs &gt;&gt; simpGround &gt;&gt; simpArith &gt;&gt; simpUsingDecide
+  dpre       := dpreDefault s
+  dpost      := dpostDefault s
+  discharge?
+  wellBehavedDischarge
+}
+
+def mkDefaultMethodsCore (simprocs : SimprocsArray) : Methods :=
+  mkMethods simprocs dischargeDefault? (wellBehavedDischarge := true)
+</pre></section>
+              <section>
+                <h3 id="custom-simp-checklist">
+                  8.12.4. 编写自定义 simp-like tactic 的最小检查清单<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=custom-simp-checklist" title="Permalink">🔗</a></span></h3>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <strong>定义你的 <strong><code>Simp.Methods</code></strong></strong>——至少实现 <code>post</code>（核心重写逻辑）。如果只是添加领域特定规则，用 <code>pre</code> 钩子拦截特定表达式即可。</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>确保 proof 项正确组合</strong>——每一步重写必须产出 <code>proof? : Option Expr</code>。</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>处理步数限制和缓存</strong>——复用 <code>Simp.State</code> 的 <code>numSteps</code> 和 <code>cache</code>。</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>考虑 congruence</strong>——决定是否复用 simp 的 congruence lemma 查找。</p>
+                    </li>
+                  <li>
+                    <p>
+                      <strong>提供 trace 输出</strong>——在关键决策点输出 trace。</p>
+                    </li>
+                  </ol>
+                </section>
+              </section>
+            <section>
+              <h2 id="architecture-overview">
+                8.13. 架构全景图<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=architecture-overview" title="Permalink">🔗</a></span></h2>
+              <pre>用户层
+┌─────────────────────────────────────────────────┐
+│  simp [foo, bar]  /  simp only [...]            │
+│  simp_all  /  dsimp                             │
+└─────────┬───────────────────────────────────────┘
+          │
+Tactic 层 (TacticM)                [Elab/Tactic/Simp.lean]
+┌─────────┴───────────────────────────────────────┐
+│  evalSimp / evalSimpAll / evalDSimp              │
+│  · 解析参数 (config, only, lemmas, discharger)  │
+│  · 构建 Simp.Context                            │
+│  · 调用 simpLocation / simpAll                  │
+└─────────┬───────────────────────────────────────┘
+          │
+Meta 层 (MetaM / SimpM)           [Meta/Tactic/Simp/Main.lean]
+┌─────────┴───────────────────────────────────────┐
+│  simpImpl → simpLoop  ←── 核心递归               │
+│  ├── pre 钩子 (rewritePre &gt;&gt; simpMatch &gt;&gt; ...)  │
+│  ├── reduceStep (beta/iota/zeta/unfold)         │
+│  ├── simpStep (按结构分发)                       │
+│  │   ├── simpApp → congr                        │
+│  │   │   ├── trySimpCongrTheorem? (@[congr])    │
+│  │   │   └── tryAutoCongrTheorem? (自动)         │
+│  │   ├── simpForall / simpArrow (contextual)    │
+│  │   └── simpLambda / simpLet / simpProj        │
+│  ├── post 钩子 (rewritePost &gt;&gt; simprocs &gt;&gt; ...)  │
+│  │   └── rewrite?                               │
+│  │       ├── DiscrTree.getMatchWithExtra (索引)  │
+│  │       ├── tryTheorem? → isDefEq (匹配)        │
+│  │       └── discharge?' (条件证明)              │
+│  └── 缓存 + 步数检查 + 不动点重入               │
+└─────────────────────────────────────────────────┘
+
+数据层                             [Meta/Tactic/Simp/Types.lean]
+┌─────────────────────────────────────────────────┐
+│  SimpTheoremsArray → DiscrTree (LHS → 候选引理)  │
+│  SimpCongrTheorems (函数 → congruence lemma)     │
+│  Simp.Config / Context / State / Result / Step   │
+│  Methods { pre, post, dpre, dpost, discharge? }  │
+└─────────────────────────────────────────────────┘
+</pre></section>
+            <section>
+              <h2 id="source-reading-guide">
+                8.14. 源码阅读路线图<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=source-reading-guide" title="Permalink">🔗</a></span></h2>
+              <p>
+                如果你打算从源码层面深入理解 simp，建议按以下 6 步顺序阅读：</p>
+              <ol start="1">
+                <li>
+                  <p>
+                    <strong><strong><code>Types.lean</code></strong></strong>——先读数据类型。理解 <code>Result</code>、<code>Step</code>、<code>Methods</code>、<code>Config</code>、<code>SimpM</code> 的结构，这是所有后续代码的"词汇表"。</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong><strong><code>Main.lean</code></strong></strong>——核心递归。重点读 <code>simpImpl</code>、<code>simpLoop</code>、<code>simpStep</code>、<code>simpApp</code>，理解 pre → reduce → 结构递归 → post 的流程。</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong><strong><code>Rewrite.lean</code></strong></strong>——引理匹配。重点读 <code>rewrite?</code> 和 <code>tryTheoremCore</code>，理解 DiscrTree 候选筛选 → <code>isDefEq</code> 匹配 → discharge 的三阶段流程。</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong><strong><code>SimpTheorems.lean</code></strong></strong>——引理管理。理解 <code>SimpTheorem</code>、<code>Origin</code>、<code>@[simp]</code> 注册流程。</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong><strong><code>SimpCongrTheorems.lean</code></strong></strong>——congruence lemma。理解 <code>@[congr]</code> 属性的注册和 <code>mkSimpCongrTheorem</code> 的验证逻辑。</p>
+                  </li>
+                <li>
+                  <p>
+                    <strong><strong><code>Elab/Tactic/Simp.lean</code></strong></strong>——tactic 入口。最后读用户界面层。此时你已理解引擎内部，tactic 层代码会非常清晰。</p>
+                  </li>
+                </ol>
+              <blockquote><p>
+                  <strong>提示</strong>：每个文件中搜索 <code>trace</code> 关键字，可以快速定位到关键的控制流分支——trace 输出点通常就是逻辑分支点。</p>
+                </blockquote></section>
+            <section>
+              <h2 id="ch06-exercises">
+                8.15. 练习<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch06-exercises" title="Permalink">🔗</a></span></h2>
+              <section>
+                <h3 id="exercise-6-1">
+                  8.15.1. 练习 1（热身）：基本 simp<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-6-1" title="Permalink">🔗</a></span></h3>
+                <pre>-- [可运行]
+example : [1, 2, 3].length = 3 := by
+  sorry
+
+example (n : Nat) : n + 0 + 0 + 0 = n := by
+  sorry
+</pre></section>
+              <section>
+                <h3 id="exercise-6-2">
+                  8.15.2. 练习 2（simp only）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-6-2" title="Permalink">🔗</a></span></h3>
+                <pre>-- [可运行]
+-- 先用 simp? 找出需要的引理，再改写为 simp only 版本。
+example (a b : Nat) : a + 0 + (b + 0) = a + b := by
+  sorry
+</pre></section>
+              <section>
+                <h3 id="exercise-6-3">
+                  8.15.3. 练习 3（debug）：为什么 simp 失败了？<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-6-3" title="Permalink">🔗</a></span></h3>
+                <pre>-- [可运行]
+def double (n : Nat) := 2 * n
+
+example : double 3 = 6 := by
+  simp  -- simp made no progress!
+  sorry
+</pre><p>
+                  提示：simp 不认识 <code>double</code>。你需要告诉它展开。</p>
+                </section>
+              <section>
+                <h3 id="exercise-6-4">
+                  8.15.4. 练习 4（综合）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-6-4" title="Permalink">🔗</a></span></h3>
+                <pre>-- [可运行]
+example (n : Nat) (h : n &gt; 0) :
+    [n].length + (n - 1 + 1) = n + 1 := by
+  sorry
+  -- 提示：先用 simp 化简 [n].length，再用 omega 处理算术
+</pre></section>
+              <section>
+                <h3 id="exercise-6-5">
+                  8.15.5. 练习 5（源码阅读）<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=exercise-6-5" title="Permalink">🔗</a></span></h3>
+                <p>
+                  阅读 <code>simpLoop</code> 的源码（Main.lean:L677-L712），回答以下问题：</p>
+                <ol start="1">
+                  <li>
+                    <p>
+                      <code>pre</code> 返回 <code>.done</code> 和 <code>.visit</code> 的区别是什么？</p>
+                    </li>
+                  <li>
+                    <p>
+                      什么条件下 <code>simpLoop</code> 会重入自身？</p>
+                    </li>
+                  <li>
+                    <p>
+                      <code>singlePass</code> 配置如何改变循环行为？</p>
+                    </li>
+                  </ol>
+                </section>
+              </section>
+            <section>
+              <h2 id="ch06-next-chapter">
+                8.16. 下一章预告<span class="permalink-widget inline"><a href="find/?domain=Verso.Genre.Manual.section&amp;name=ch06-next-chapter" title="Permalink">🔗</a></span></h2>
+              <p>
+                <code>simp</code> 擅长"逐步重写化简"，但有些等式它处理不了——比如多项式恒等式 <code>(a + b)² = a² + 2ab + b²</code>。下一章进入 <code>ring</code>：基于<strong>范式化（normalization）</strong> 的判定过程，专门解决可交换环上的等式问题。
+</p>
+              </section>
+            </section>
+          <nav class="prev-next-buttons">
+            <a class="local-button active" href="Ch05TypeclassSynthesis/#ch05-typeclass-synthesis" rel="prev" title="7. Type Class Synthesis"><span class="arrow">←</span><span class="where">7. Type Class Synthesis</span></a><a class="local-button active" href="Ch07Ring/#ch07-ring" rel="next" title="9. ring 和 ring_nf：代数范式化"><span class="where">9. ring 和 ring_nf：代数范式化</span><span class="arrow">→</span></a></nav>
+          </div>
+        </main></div>
+    </body>
+  </html>

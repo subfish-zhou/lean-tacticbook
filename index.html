@@ -8,18 +8,48 @@
     window.location.replace(`${proto}//${hostName}${path}/${srch}${hsh}`);
   }
 })()</script>
+    <script>
+      // Enable TypeScript checking.
+// @ts-check
+
+// Applies a saved table-of-contents width before the first paint.
+//
+// This is a tiny inline counterpart to toc-resize.js: it runs in the page head so that
+// returning desktop readers do not see the default width flash to their saved width.
+// It only records the width in the --verso-toc-user-width custom property; the
+// stylesheet clamps it and ignores it on mobile, and toc-resize.js then takes over the
+// interactive resizing. Keep the storage key in sync with toc-resize.js.
+
+(function () {
+    try {
+        const saved = localStorage.getItem("verso-toc-width");
+        // Parse to a number (as toc-resize.js does) and write that back, so a stored
+        // value with stray whitespace becomes a valid length rather than `" 420 px"`.
+        const width = saved === null ? NaN : Number(saved);
+        if (Number.isFinite(width)) {
+            document.documentElement.style.setProperty("--verso-toc-user-width", `${width}px`);
+        }
+    } catch (_) {
+        // Leave the default width in place when local storage is unavailable.
+    }
+})();
+</script>
     <base href="./"><meta charset="utf-8">
     <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
     <title>Lean 4 自动化内幕</title><link rel="stylesheet" href="book.css">
     <link rel="stylesheet" href="verso-vars.css">
     <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js" integrity="sha384-zbcZAIxlvJtNE3Dp5nxLXdXtXyxwOdnILY1TDPVmKFhl4r4nSUG1r8bcFXGVa4Te" crossorigin="anonymous"></script>
-    <script src="-verso-search/elasticlunr.min.js"></script>
-    <script src="-verso-search/fuzzysort.min.js"></script>
-    <script src="-verso-search/searchIndex.js"></script>
+    <script defer="defer" src="-verso-search/elasticlunr.min.js"></script>
+    <script defer="defer" src="-verso-search/fuzzysort.min.js"></script>
+    <script defer="defer" src="-verso-search/searchIndex.js"></script>
+    <script defer="defer" src="-verso-search/search-config.js"></script>
     <script type="module" src="-verso-search/search-init.js"></script>
     <link rel="stylesheet" href="-verso-search/search-box.css">
+    <link rel="stylesheet" href="-verso-search/search-page.css">
     <link rel="stylesheet" href="-verso-search/search-highlight.css">
     <link rel="stylesheet" href="-verso-search/domain-display.css">
+    <script src="-verso-search/search-highlight.js" defer="defer"></script>
+    <script src="toc-resize.js" defer="defer"></script>
     <script src="-verso-data/katex/katex.js"></script>
     <script src="-verso-data/katex/math.js"></script>
     <script src="-verso-data/popper.min.js"></script>
@@ -27,6 +57,68 @@
     <link rel="stylesheet" href="-verso-data/tippy-border.css">
     <link rel="stylesheet" href="-verso-data/katex/katex.css">
     <style>
+pre.hl.lean.block.bug {
+  white-space: pre;
+  padding: 0.6em 1em;
+  overflow-x: auto;
+  margin: 1em 0;
+  background-color: transparent;
+  font-family: var(--verso-code-font-family, monospace);
+  font-size: 0.95em;
+}
+pre.hl.lean.block.bug code { font-family: inherit; font-size: inherit; }
+pre.hl.lean.block.bug .keyword { color: #a626a4; font-weight: bold; }
+pre.hl.lean.block.bug .literal { color: #005cc5; }
+pre.hl.lean.block.bug .comment { color: #6a737d; font-style: italic; }
+</style><style>
+pre.hl.bash.block {
+  white-space: pre;
+  padding: 0.75em 1em;
+  border-left: 3px solid #2196f3;
+  background-color: #f4faff;
+  overflow-x: auto;
+  border-radius: 4px;
+  margin: 1em 0;
+}
+pre.hl.bash.block code {
+  font-family: var(--verso-code-font-family, monospace);
+  font-size: 0.95em;
+  color: #2b2b2b;
+}
+pre.hl.bash.block .cmd {
+  color: var(--verso-code-keyword-color, #005cc5);
+  font-weight: var(--verso-code-keyword-weight, bold);
+}
+pre.hl.bash.block .opt {
+  color: var(--verso-code-const-color, #6f42c1);
+}
+pre.hl.bash.block .string {
+  color: var(--verso-code-literal-color, #032f62);
+}
+pre.hl.bash.block .comment {
+  color: #6a737d;
+  font-style: italic;
+}
+pre.hl.bash.block .envvar {
+  color: var(--verso-code-var-color, #e36209);
+  font-weight: 600;
+}
+
+/* Give the Lean highlighter the same block-box treatment as bashFence.
+   verso emits `<code class="hl lean block">` inline; force it to display
+   as a block, padded and framed like the shell blocks. */
+code.hl.lean.block {
+  display: block;
+  padding: 0.75em 1em;
+  border-left: 3px solid #4caf50;
+  background-color: #f8fdf8;
+  overflow-x: auto;
+  border-radius: 4px;
+  margin: 1em 0;
+  font-family: var(--verso-code-font-family, monospace);
+  font-size: 0.95em;
+}
+</style><style>
 
 .hl.lean {
   white-space: pre;
@@ -59,6 +151,21 @@
 }
 
 .hl.lean .literal, .hl.lean .unknown {
+  color: var(--verso-code-color,);
+  font-weight: normal;
+  font-style: normal;
+  font-family: var(--verso-code-font-family,);
+}
+
+/* These lexically-classified token kinds default to the `.unknown` appearance. The rule follows
+   `.const` so it wins for the `anon-ctor` tokens, which also carry the `const` class. */
+.hl.lean .anon-ctor,
+.hl.lean .number,
+.hl.lean .char,
+.hl.lean .comment,
+.hl.lean .punctuation,
+.hl.lean .delim,
+.hl.lean .wildcard {
   color: var(--verso-code-color,);
   font-weight: normal;
   font-style: normal;
@@ -147,7 +254,7 @@
 }
 
 @media (hover: hover) {
-  .hl.lean .token.binding-hl, .hl.lean .literal.string:hover, .hl.lean .token.typed:hover {
+  .hl.lean .token.binding-hl, .hl.lean .literal:hover, .hl.lean .token.typed:hover {
     background-color: #eee;
     border-radius: 2px;
     transition: none;
@@ -327,7 +434,7 @@
   text-size-adjust: 100%;
 }
 
-.hl.lean .tactic:has(.tactic-toggle:checked) {
+.hl.lean .tactic:has(> .tactic-toggle:checked) {
   display: inline-grid;
   grid-template-columns: 1fr;
 }
@@ -346,7 +453,10 @@
 }
 
 @media (hover: hover) {
-  .hl.lean .tactic:has(.tactic-toggle:not(:checked)) > label:hover {
+  /* Highlight a region on hover only when its own toggle is unchecked, and only the innermost
+     hovered region: `label:hover` bubbles to ancestor labels, so suppress the highlight on a region
+     whose label contains a more deeply nested hovered tactic label. */
+  .hl.lean .tactic:has(> .tactic-toggle:not(:checked)) > label:hover:not(:has(.tactic > label:hover)) {
     background-color: #eeeeee;
   }
 }
@@ -688,15 +798,15 @@ Some CSS frameworks customize details/summary in ways not compatible with Verso'
 }
 
 </style><script>
-      
-window.onload = () => {
+
+window.onload = async () => {
 
     // Don't show hovers inside of closed tactic states
     function blockedByTactic(elem) {
       let parent = elem.parentNode;
       while (parent && "classList" in parent) {
         if (parent.classList.contains("tactic")) {
-          const toggle = parent.querySelector("input.tactic-toggle");
+          const toggle = parent.querySelector(":scope > input.tactic-toggle");
           if (toggle) {
             return !toggle.checked;
           }
@@ -763,169 +873,166 @@ window.onload = () => {
         }
     }
     // Add hovers
-    let docsJson = "-verso-docs.json";
-    fetch(docsJson).then((resp) => resp.json()).then((versoDocData) => {
+    const versoDocData = await (fetch("-verso-docs.json").then((resp) => resp.json()));
 
-      function hideParentTooltips(element) {
-        let parent = element.parentElement;
-        while (parent) {
-          const tippyInstance = parent._tippy;
-          if (tippyInstance) {
-            tippyInstance.hide();
-          }
-          parent = parent.parentElement;
+    function hideParentTooltips(element) {
+      let parent = element.parentElement;
+      while (parent) {
+        const tippyInstance = parent._tippy;
+        if (tippyInstance) {
+          tippyInstance.hide();
         }
+        parent = parent.parentElement;
       }
+    }
 
 
 
-      const defaultTippyProps = {
-        /* DEBUG -- remove the space: * /
-        onHide(any) { return false; },
-        trigger: "click",
-        // */
-        /* theme: "lean", */
-        maxWidth: "none",
-        appendTo: () => document.body,
-        interactive: true,
-        delay: [100, null],
-        /* ignoreAttributes: true, */
-        followCursor: 'initial',
-        onShow(inst) {
-          if (inst.reference.className == 'tactic') {
-            const toggle = inst.reference.querySelector("input.tactic-toggle");
-            if (toggle && toggle.checked) {
-              return false;
-            }
-            hideParentTooltips(inst.reference);
-            if (blockedByTippy(inst.reference)) { return false; }
-
-          } else if (inst.reference.querySelector(".hover-info") || "versoHover" in inst.reference.dataset) {
-            if (blockedByTactic(inst.reference)) { return false };
-            if (blockedByTippy(inst.reference)) { return false; }
-          } else { // Nothing to show here!
+    const defaultTippyProps = {
+      /* DEBUG -- remove the space: * /
+      onHide(any) { return false; },
+      trigger: "click",
+      // */
+      /* theme: "lean", */
+      maxWidth: "none",
+      appendTo: () => document.body,
+      interactive: true,
+      delay: [100, null],
+      /* ignoreAttributes: true, */
+      followCursor: 'initial',
+      onShow(inst) {
+        if (inst.reference.className == 'tactic') {
+          const toggle = inst.reference.querySelector(":scope > input.tactic-toggle");
+          if (toggle && toggle.checked) {
             return false;
           }
-        },
-        onShown(inst) { visibleTippyCount++; },
-        onHidden(inst) { visibleTippyCount = Math.max(0, visibleTippyCount - 1); },
-        content (tgt) {
-          const content = document.createElement("span");
-          if (tgt.className == 'tactic') {
-            const state = tgt.querySelector(".tactic-state").cloneNode(true);
-            state.style.display = "block";
-            content.appendChild(state);
-            content.style.display = "block";
-            content.className = "hl lean popup";
-          } else {
-            content.className = "hl lean";
-            content.style.display = "block";
-            content.style.maxHeight = "300px";
-            content.style.overflowY = "auto";
-            content.style.overflowX = "hidden";
-            const hoverId = tgt.dataset.versoHover;
-            const hoverInfo = tgt.querySelector(".hover-info");
-            if (hoverId) { // Docstrings from the table
-              // TODO stop doing an implicit conversion from string to number here
-              let data = versoDocData[hoverId];
-              if (data) {
-                const info = document.createElement("span");
-                info.className = "hover-info";
-                info.style.display = "block";
-                info.innerHTML = data;
-                content.appendChild(info);
-                /* Render docstrings - TODO server-side */
-                if ('undefined' !== typeof marked) {
-                    for (const d of content.querySelectorAll("code.docstring, pre.docstring")) {
-                        const str = d.innerText;
-                        const html = marked.parse(str);
-                        const rendered = document.createElement("div");
-                        rendered.classList.add("docstring");
-                        rendered.innerHTML = html;
-                        d.parentNode.replaceChild(rendered, d);
-                    }
-                }
-              } else {
-                content.innerHTML = "Failed to load doc ID: " + hoverId;
-              }
-            } else if (hoverInfo) { // The inline info, still used for compiler messages
-              content.appendChild(hoverInfo.cloneNode(true));
-            }
-            const extraLinks = tgt.parentElement.dataset['versoLinks'];
-            if (extraLinks) {
-              try {
-                const extras = JSON.parse(extraLinks);
-                const links = document.createElement('ul');
-                links.className = 'extra-doc-links';
-                extras.forEach((l) => {
-                  const li = document.createElement('li');
-                  li.innerHTML = "<a href=\"" + l['href'] + "\" title=\"" + l.long + "\">" + l.short + "</a>";
-                  links.appendChild(li);
-                });
-                content.appendChild(links);
-              } catch (error) {
-                console.error(error);
-              }
-            }
-          }
-          return content;
+          hideParentTooltips(inst.reference);
+          if (blockedByTippy(inst.reference)) { return false; }
+
+        } else if (inst.reference.querySelector(".hover-info") || "versoHover" in inst.reference.dataset) {
+          if (blockedByTactic(inst.reference)) { return false };
+          if (blockedByTippy(inst.reference)) { return false; }
+        } else { // Nothing to show here!
+          return false;
         }
-      };
-
-
-      document.querySelectorAll('.hl.lean .const.token, .hl.lean .keyword.token, .hl.lean .literal.token, .hl.lean .option.token, .hl.lean .var.token, .hl.lean .typed.token, .hl.lean .level-var, .hl.lean .level-const, .hl.lean .level-op, .hl.lean .sort').forEach(element => {
-        element.setAttribute('data-tippy-theme', 'lean');
-      });
-      document.querySelectorAll('.hl.lean .has-info.warning').forEach(element => {
-        element.setAttribute('data-tippy-theme', 'warning message');
-      });
-      document.querySelectorAll('.hl.lean .has-info.information').forEach(element => {
-        element.setAttribute('data-tippy-theme', 'info message');
-      });
-      document.querySelectorAll('.hl.lean .has-info.error').forEach(element => {
-        element.setAttribute('data-tippy-theme', 'error message');
-      });
-      document.querySelectorAll('.hl.lean .tactic').forEach(element => {
-        element.setAttribute('data-tippy-theme', 'tactic');
-      });
-      // Skip tokens inside closed tactics — they interfere with tactic tippys
-      const closedTactics = new Set();
-      document.querySelectorAll('.hl.lean .tactic').forEach(tactic => {
-        const toggle = tactic.querySelector('input.tactic-toggle');
-        if (toggle && !toggle.checked) closedTactics.add(tactic);
-      });
-      function isInsideClosedTactic(el) {
-        const tactic = el.closest('.tactic');
-        return tactic && tactic !== el && closedTactics.has(tactic);
-      }
-
-      const tokenSelector = '.hl.lean .const.token, .hl.lean .keyword.token, .hl.lean .literal.token, .hl.lean .option.token, .hl.lean .var.token, .hl.lean .typed.token, .hl.lean .has-info, .hl.lean .tactic, .hl.lean .level-var, .hl.lean .level-const, .hl.lean .level-op, .hl.lean .sort';
-      tippy(Array.from(document.querySelectorAll(tokenSelector)).filter(el => !isInsideClosedTactic(el)), defaultTippyProps);
-
-      // Create/destroy token tippys when tactic checkbox toggles
-      const tacticTippySelector = '.const.token, .keyword.token, .literal.token, .option.token, .var.token, .typed.token, .has-info, .level-var, .level-const, .level-op, .sort';
-      document.querySelectorAll('.hl.lean .tactic').forEach(tactic => {
-        const toggle = tactic.querySelector('input.tactic-toggle');
-        if (toggle) toggle.addEventListener('change', () => {
-          if (toggle.checked) {
-            closedTactics.delete(tactic);
-            tactic.querySelectorAll('.token').forEach(tok => {
-              if (!tok._tippy && tok.matches(tacticTippySelector)) {
-                tippy(tok, defaultTippyProps);
+      },
+      onShown(inst) { visibleTippyCount++; },
+      onHidden(inst) { visibleTippyCount = Math.max(0, visibleTippyCount - 1); },
+      content (tgt) {
+        const content = document.createElement("span");
+        if (tgt.className == 'tactic') {
+          const state = tgt.querySelector(":scope > .tactic-state").cloneNode(true);
+          state.style.display = "block";
+          content.appendChild(state);
+          content.style.display = "block";
+          content.className = "hl lean popup";
+        } else {
+          content.className = "hl lean";
+          content.style.display = "block";
+          content.style.maxHeight = "300px";
+          content.style.overflowY = "auto";
+          content.style.overflowX = "hidden";
+          const hoverId = tgt.dataset.versoHover;
+          const hoverInfo = tgt.querySelector(".hover-info");
+          if (hoverId) { // Docstrings from the table
+            // TODO stop doing an implicit conversion from string to number here
+            let data = versoDocData[hoverId];
+            if (data) {
+              const info = document.createElement("span");
+              info.className = "hover-info";
+              info.style.display = "block";
+              info.innerHTML = data;
+              content.appendChild(info);
+              /* Render docstrings - TODO server-side */
+              if ('undefined' !== typeof marked) {
+                  for (const d of content.querySelectorAll("code.docstring, pre.docstring")) {
+                      const str = d.innerText;
+                      const html = marked.parse(str);
+                      const rendered = document.createElement("div");
+                      rendered.classList.add("docstring");
+                      rendered.innerHTML = html;
+                      d.parentNode.replaceChild(rendered, d);
+                  }
               }
-            });
-          } else {
-            closedTactics.add(tactic);
-            tactic.querySelectorAll('.token').forEach(tok => {
-              if (tok._tippy) tok._tippy.destroy();
-            });
+            } else {
+              content.innerHTML = "Failed to load doc ID: " + hoverId;
+            }
+          } else if (hoverInfo) { // The inline info, still used for compiler messages
+            content.appendChild(hoverInfo.cloneNode(true));
           }
-        });
+          const extraLinks = tgt.parentElement.dataset['versoLinks'];
+          if (extraLinks) {
+            try {
+              const extras = JSON.parse(extraLinks);
+              const links = document.createElement('ul');
+              links.className = 'extra-doc-links';
+              extras.forEach((l) => {
+                const li = document.createElement('li');
+                li.innerHTML = "<a href=\"" + l['href'] + "\" title=\"" + l.long + "\">" + l.short + "</a>";
+                links.appendChild(li);
+              });
+              content.appendChild(links);
+            } catch (error) {
+              console.error(error);
+            }
+          }
+        }
+        return content;
+      }
+    };
+
+
+    document.querySelectorAll('.hl.lean .const.token, .hl.lean .keyword.token, .hl.lean .literal.token, .hl.lean .option.token, .hl.lean .var.token, .hl.lean .typed.token, .hl.lean .level-var, .hl.lean .level-const, .hl.lean .level-op, .hl.lean .sort').forEach(element => {
+      element.setAttribute('data-tippy-theme', 'lean');
+    });
+    document.querySelectorAll('.hl.lean .has-info.warning').forEach(element => {
+      element.setAttribute('data-tippy-theme', 'warning message');
+    });
+    document.querySelectorAll('.hl.lean .has-info.information').forEach(element => {
+      element.setAttribute('data-tippy-theme', 'info message');
+    });
+    document.querySelectorAll('.hl.lean .has-info.error').forEach(element => {
+      element.setAttribute('data-tippy-theme', 'error message');
+    });
+    document.querySelectorAll('.hl.lean .tactic').forEach(element => {
+      element.setAttribute('data-tippy-theme', 'tactic');
+    });
+    // Skip tokens inside closed tactics — they interfere with tactic tippys
+    const closedTactics = new Set();
+    document.querySelectorAll('.hl.lean .tactic').forEach(tactic => {
+      const toggle = tactic.querySelector(':scope > input.tactic-toggle');
+      if (toggle && !toggle.checked) closedTactics.add(tactic);
+    });
+    function isInsideClosedTactic(el) {
+      const tactic = el.closest('.tactic');
+      return tactic && tactic !== el && closedTactics.has(tactic);
+    }
+
+    const tokenSelector = '.hl.lean .const.token, .hl.lean .keyword.token, .hl.lean .literal.token, .hl.lean .option.token, .hl.lean .var.token, .hl.lean .typed.token, .hl.lean .has-info, .hl.lean .tactic, .hl.lean .level-var, .hl.lean .level-const, .hl.lean .level-op, .hl.lean .sort';
+    tippy(Array.from(document.querySelectorAll(tokenSelector)).filter(el => !isInsideClosedTactic(el)), defaultTippyProps);
+
+    // Create/destroy token tippys when tactic checkbox toggles
+    const tacticTippySelector = '.const.token, .keyword.token, .literal.token, .option.token, .var.token, .typed.token, .has-info, .level-var, .level-const, .level-op, .sort';
+    document.querySelectorAll('.hl.lean .tactic').forEach(tactic => {
+      const toggle = tactic.querySelector(':scope > input.tactic-toggle');
+      if (toggle) toggle.addEventListener('change', () => {
+        if (toggle.checked) {
+          closedTactics.delete(tactic);
+          tactic.querySelectorAll('.token').forEach(tok => {
+            if (!tok._tippy && tok.matches(tacticTippySelector)) {
+              tippy(tok, defaultTippyProps);
+            }
+          });
+        } else {
+          closedTactics.add(tactic);
+          tactic.querySelectorAll('.token').forEach(tok => {
+            if (tok._tippy) tok._tippy.destroy();
+          });
+        }
       });
   });
 }
 </script>
-    <script src="-verso-search/search-highlight.js" defer="defer"></script>
     </head>
   <body>
     <header>
@@ -945,22 +1052,16 @@ window.onload = () => {
             <div class="split-toc book">
               <div class="title">
                 <label for="--verso-manual-toc-----bookRoot" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-----bookRoot" checked="checked"></label><span class="">Table of Contents</span></div>
-              <table><tr class="numbered"><td class="num">1.</td><td><a href="Ch00Setup/#ch00-setup">第零章 环境与运行约定</a></td></tr><tr class="numbered"><td class="num">2.</td><td><a href="Ch01MetaprogrammingModel/#ch01-metaprogramming-model">第一章 Lean 4 元编程模型</a></td></tr><tr class="numbered"><td class="num">3.</td><td><a href="Ch02Expr/#ch02-expr">第二章 Expr：Lean 4 的内部表示</a></td></tr><tr class="numbered"><td class="num">4.</td><td><a href="Ch03FirstTactic/#ch03-first-tactic">第三章 编写你的第一个 Tactic</a></td></tr></table></div>
+              <table><tr class="numbered"><td class="num">1.</td><td><a href="Ch00Setup/#ch00-setup">环境与运行约定</a></td></tr><tr class="numbered"><td class="num">2.</td><td><a href="Ch01TacticMentalModel/#ch01-tactic-mental-model">tactic 心智模型</a></td></tr><tr class="numbered"><td class="num">3.</td><td><a href="Ch01MetaprogrammingModel/#ch01-metaprogramming-model">Lean 中的 tactic 基础设施</a></td></tr><tr class="numbered"><td class="num">4.</td><td><a href="Ch02Expr/#ch02-expr">Expr：Lean 4 的内部表示</a></td></tr><tr class="numbered"><td class="num">5.</td><td><a href="Ch03FirstTactic/#ch03-first-tactic">编写你的第一个 Tactic</a></td></tr><tr class="numbered"><td class="num">6.</td><td><a href="Ch04GoalManagement/#ch04-goal-management">目标管理</a></td></tr><tr class="numbered"><td class="num">7.</td><td><a href="Ch05TypeclassSynthesis/#ch05-typeclass-synthesis">Type Class Synthesis</a></td></tr><tr class="numbered"><td class="num">8.</td><td><a href="Ch06Simp/#ch06-simp">simp——化简的瑞士军刀</a></td></tr><tr class="numbered"><td class="num">9.</td><td><a href="Ch07Ring/#ch07-ring">ring 和 <code>ring_nf</code>：代数范式化</a></td></tr><tr class="numbered"><td class="num">10.</td><td><a href="Ch08Omega/#ch08-omega">omega：Presburger 算术决策过程</a></td></tr><tr class="numbered"><td class="num">11.</td><td><a href="Ch09Linarith/#ch09-linarith">linarith、nlinarith 与 polyrith</a></td></tr><tr class="numbered"><td class="num">12.</td><td><a href="Ch10NormNum/#ch10-norm-num"><code>norm_num</code>：数值计算框架</a></td></tr><tr class="numbered"><td class="num">13.</td><td><a href="Ch11Aesop/#ch11-aesop">aesop：可配置的启发式搜索</a></td></tr><tr class="numbered"><td class="num">14.</td><td><a href="Ch12Grind/#ch12-grind">grind：E-matching 与 Congruence Closure</a></td></tr><tr class="numbered"><td class="num">15.</td><td><a href="Ch13Decide/#ch13-decide">decide 与 <code>native_decide</code>：有限计算判定</a></td></tr><tr class="numbered"><td class="num">16.</td><td><a href="Ch14Positivity/#ch14-positivity">positivity：符号非负性推理</a></td></tr><tr class="numbered"><td class="num">17.</td><td><a href="Ch15FunProp/#ch15-fun-prop"><code>fun_prop</code>：函数性质的自动证明</a></td></tr><tr class="numbered"><td class="num">18.</td><td><a href="Ch16Gcongr/#ch16-gcongr">gcongr：广义合同性</a></td></tr><tr class="numbered"><td class="num">19.</td><td><a href="Ch17FieldSimp/#ch17-field-simp"><code>field_simp</code>：分式化简</a></td></tr><tr class="numbered"><td class="num">20.</td><td><a href="Ch18LogicTransforms/#ch18-logic-transforms">否定下推、逆否与反证</a></td></tr><tr class="numbered"><td class="num">21.</td><td><a href="Ch19DesignYourOwn/#ch19-design-your-own">设计你自己的领域自动化</a></td></tr><tr class="numbered"><td class="num">22.</td><td><a href="Ch20Reflection/#ch20-reflection">反射证明模式</a></td></tr><tr class="numbered"><td class="num">23.</td><td><a href="Ch21Performance/#ch21-performance">性能工程</a></td></tr><tr class="numbered"><td class="num">24.</td><td><a href="Ch22ExternalTools/#ch22-external-tools">对接外部工具</a></td></tr><tr class="numbered"><td class="num">25.</td><td><a href="Ch23Methodology/#ch23-methodology">从证明模式到自动化：方法论</a></td></tr><tr class="numbered"><td class="num">26.</td><td><a href="Ch24TowardsAnalysis/#ch24-towards-analysis">迈向分析自动化</a></td></tr><tr class="numbered"><td class="num">27.</td><td><a href="AppendixApiReference/#appendix-api-reference">附录 A：Metaprogramming API 速查表</a></td></tr></table></div>
             </div>
           </div>
-        <div class="last">
-          <ul id="meta-links">
-            <li>
-              <a href="https://github.com/subfish-zhou/lean-tacticbook">Source Code</a></li>
-            <li>
-              <a href="https://github.com/subfish-zhou/lean-tacticbook/issues">Report Issues</a></li>
-            </ul>
-          </div>
+        <div class="last"></div>
         </nav>
+      <div class="toc-resize-handle"></div>
       <main><div class="content-wrapper">
           <nav class="prev-next-buttons">
             <div></div>
-            <a class="local-button active" href="Ch00Setup/#ch00-setup" rel="next" title="1. 第零章 环境与运行约定"><span class="where">1. 第零章 环境与运行约定</span><span class="arrow">→</span></a></nav>
+            <a class="local-button active" href="Ch00Setup/#ch00-setup" rel="next" title="1. 环境与运行约定"><span class="where">1. 环境与运行约定</span><span class="arrow">→</span></a></nav>
           <section>
             <div class="titlepage">
               <h1>
@@ -972,28 +1073,73 @@ window.onload = () => {
               <p>
                 本书假设你已有基本的 Lean 4 使用经验，了解 <code>theorem</code>、<code>by</code>、<code>simp</code> 等基础语法。</p>
               <p>
-                <em>本书校验版本</em>：Lean 4 <code>v4.30.0-rc1</code>，Mathlib 同期主线（2026 年 4 月）。</p>
+                <em>本书校验版本</em>：Lean 4 <code>v4.32.2</code>，Mathlib 同期主线（2026 年 8 月）。</p>
               </div>
             <section>
               <h2>
                 Contents</h2>
               <ol class="section-toc">
                 <li>
-                  <a href="Ch00Setup/#ch00-setup"><span class="number">1.</span> 第零章 环境与运行约定</a></li>
+                  <a href="Ch00Setup/#ch00-setup"><span class="number">1.</span> 环境与运行约定</a></li>
                 <li>
-                  <a href="Ch01MetaprogrammingModel/#ch01-metaprogramming-model"><span class="number">2.</span> 第一章 Lean 4 元编程模型</a></li>
+                  <a href="Ch01TacticMentalModel/#ch01-tactic-mental-model"><span class="number">2.</span> tactic 心智模型</a></li>
                 <li>
-                  <a href="Ch02Expr/#ch02-expr"><span class="number">3.</span> 第二章 Expr：Lean 4 的内部表示</a></li>
+                  <a href="Ch01MetaprogrammingModel/#ch01-metaprogramming-model"><span class="number">3.</span> Lean 中的 tactic 基础设施</a></li>
                 <li>
-                  <a href="Ch03FirstTactic/#ch03-first-tactic"><span class="number">4.</span> 第三章 编写你的第一个 Tactic</a></li>
+                  <a href="Ch02Expr/#ch02-expr"><span class="number">4.</span> Expr：Lean 4 的内部表示</a></li>
+                <li>
+                  <a href="Ch03FirstTactic/#ch03-first-tactic"><span class="number">5.</span> 编写你的第一个 Tactic</a></li>
+                <li>
+                  <a href="Ch04GoalManagement/#ch04-goal-management"><span class="number">6.</span> 目标管理</a></li>
+                <li>
+                  <a href="Ch05TypeclassSynthesis/#ch05-typeclass-synthesis"><span class="number">7.</span> Type Class Synthesis</a></li>
+                <li>
+                  <a href="Ch06Simp/#ch06-simp"><span class="number">8.</span> simp——化简的瑞士军刀</a></li>
+                <li>
+                  <a href="Ch07Ring/#ch07-ring"><span class="number">9.</span> ring 和 <code>ring_nf</code>：代数范式化</a></li>
+                <li>
+                  <a href="Ch08Omega/#ch08-omega"><span class="number">10.</span> omega：Presburger 算术决策过程</a></li>
+                <li>
+                  <a href="Ch09Linarith/#ch09-linarith"><span class="number">11.</span> linarith、nlinarith 与 polyrith</a></li>
+                <li>
+                  <a href="Ch10NormNum/#ch10-norm-num"><span class="number">12.</span> <code>norm_num</code>：数值计算框架</a></li>
+                <li>
+                  <a href="Ch11Aesop/#ch11-aesop"><span class="number">13.</span> aesop：可配置的启发式搜索</a></li>
+                <li>
+                  <a href="Ch12Grind/#ch12-grind"><span class="number">14.</span> grind：E-matching 与 Congruence Closure</a></li>
+                <li>
+                  <a href="Ch13Decide/#ch13-decide"><span class="number">15.</span> decide 与 <code>native_decide</code>：有限计算判定</a></li>
+                <li>
+                  <a href="Ch14Positivity/#ch14-positivity"><span class="number">16.</span> positivity：符号非负性推理</a></li>
+                <li>
+                  <a href="Ch15FunProp/#ch15-fun-prop"><span class="number">17.</span> <code>fun_prop</code>：函数性质的自动证明</a></li>
+                <li>
+                  <a href="Ch16Gcongr/#ch16-gcongr"><span class="number">18.</span> gcongr：广义合同性</a></li>
+                <li>
+                  <a href="Ch17FieldSimp/#ch17-field-simp"><span class="number">19.</span> <code>field_simp</code>：分式化简</a></li>
+                <li>
+                  <a href="Ch18LogicTransforms/#ch18-logic-transforms"><span class="number">20.</span> 否定下推、逆否与反证</a></li>
+                <li>
+                  <a href="Ch19DesignYourOwn/#ch19-design-your-own"><span class="number">21.</span> 设计你自己的领域自动化</a></li>
+                <li>
+                  <a href="Ch20Reflection/#ch20-reflection"><span class="number">22.</span> 反射证明模式</a></li>
+                <li>
+                  <a href="Ch21Performance/#ch21-performance"><span class="number">23.</span> 性能工程</a></li>
+                <li>
+                  <a href="Ch22ExternalTools/#ch22-external-tools"><span class="number">24.</span> 对接外部工具</a></li>
+                <li>
+                  <a href="Ch23Methodology/#ch23-methodology"><span class="number">25.</span> 从证明模式到自动化：方法论</a></li>
+                <li>
+                  <a href="Ch24TowardsAnalysis/#ch24-towards-analysis"><span class="number">26.</span> 迈向分析自动化</a></li>
+                <li>
+                  <a href="AppendixApiReference/#appendix-api-reference"><span class="number">27.</span> 附录 A：Metaprogramming API 速查表</a></li>
                 </ol>
               </section>
             </section>
           <nav class="prev-next-buttons">
             <div></div>
-            <a class="local-button active" href="Ch00Setup/#ch00-setup" rel="next" title="1. 第零章 环境与运行约定"><span class="where">1. 第零章 环境与运行约定</span><span class="arrow">→</span></a></nav>
+            <a class="local-button active" href="Ch00Setup/#ch00-setup" rel="next" title="1. 环境与运行约定"><span class="where">1. 环境与运行约定</span><span class="arrow">→</span></a></nav>
           </div>
         </main></div>
     </body>
   </html>
-
