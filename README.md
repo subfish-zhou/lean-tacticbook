@@ -19,8 +19,19 @@ _(更多章节持续更新中)_
 
 ```bash
 lake build           # 编译
-lake exe lean-auto-book  # 生成 HTML 到 _out/
+lake exe lean-auto-book --output _out --with-html-multi --without-html-single
 ```
+
+`main` 只保存 Lean 源码、构建配置和发布脚本；生成的站点文件保存在
+`gh-pages` 分支。发布前先为该分支创建一个独立 worktree，然后运行：
+
+```bash
+git worktree add ../lean-tacticbook-pages gh-pages
+./scripts/deploy-gh-pages.sh ../lean-tacticbook-pages
+```
+
+脚本会重新构建并后处理站点，将 `_out/html-multi/` 同步到 `gh-pages`
+worktree。检查改动后，在该 worktree 中提交并推送。
 
 ## Authors
 - Ziyu Zhou (子鱼) — primary author

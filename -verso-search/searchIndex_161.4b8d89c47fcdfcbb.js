@@ -1,1 +1,0 @@
-window.docContents[161].resolve({"/Ch22ExternalTools/#external-failure-modes":{"contents":"\n\n\n\n\n\n\n\n\n\n\n\n","context":"Lean 4 自动化内幕\u0009对接外部工具","header":"24.9. 22.9 失败模式","id":"/Ch22ExternalTools/#external-failure-modes"}});

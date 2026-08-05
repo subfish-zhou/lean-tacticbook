@@ -1,1 +1,0 @@
-window.docContents[234].resolve({"/Ch12Grind/#using-grind":{"contents":"\n\n\n\n\n\n","context":"Lean 4 自动化内幕\u0009grind：E-matching 与 Congruence Closure","header":"14.4. 12.4 使用 grind","id":"/Ch12Grind/#using-grind"}});
