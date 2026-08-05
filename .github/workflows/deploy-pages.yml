@@ -19,13 +19,20 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
-      - name: Build Lean project
+      - name: Set up Lean
         uses: leanprover/lean-action@v1
         with:
           auto-config: false
-          build: true
+          build: false
           test: false
           lint: false
+
+      - name: Restore Mathlib cache
+        working-directory: examples
+        run: lake exe cache get
+
+      - name: Build Lean project
+        run: lake build
 
       - name: Build site
         run: ./scripts/build-site.sh
