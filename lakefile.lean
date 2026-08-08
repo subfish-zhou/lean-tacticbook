@@ -2,7 +2,7 @@ import Lake
 
 open System Lake DSL
 
-package «lean-auto-book» where
+package «lean-tactic-book» where
   version := v!"0.1.0"
   leanOptions := #[
     ⟨`autoImplicit, false⟩
@@ -45,9 +45,9 @@ target syncBuildExamples : Unit := do
   .pure <$> (← buildExamples.fetch).await
 
 @[default_target]
-lean_lib LeanAutoBook where
+lean_lib LeanTacticBook where
   srcDir := "."
   needs := #[syncBuildExamples]
 
-lean_exe «lean-auto-book» where
+lean_exe «lean-tactic-book» where
   root := `Main

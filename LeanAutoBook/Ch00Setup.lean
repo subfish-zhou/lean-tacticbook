@@ -1,5 +1,5 @@
 import VersoManual
-import LeanAutoBook.Helpers
+import LeanTacticBook.Helpers
 
 open Verso.Genre Manual
 open Verso Code External
@@ -45,62 +45,6 @@ tag := "prerequisites"
 *不*要求预先掌握 typeclass、monad，也不要求读过函数式编程材料。第一章从 tactic 读取和修改的状态讲起，再逐步引入 monad，而不是从抽象定义开始。
 
 如果你还没有写过 Lean 代码，建议先读完 *Mathematics in Lean* 的前几章。本书的排错过程要求你根据目标状态判断 tactic 执行前后的变化，因此至少应熟悉 `example`、`theorem`、`by` 以及 Infoview 中的目标显示。
-
-
-# 安装 Lean 4
-%%%
-tag := "install-lean4"
-%%%
-
-本书使用 `elan` 安装和管理 Lean。`elan` 负责下载并切换工具链；项目根目录下的 `lean-toolchain` 决定该项目使用的 Lean 版本。
-
-\[可运行\]
-```bashFence
-curl https://elan.lean-lang.org/install.sh -sSf | sh
-export PATH="$HOME/.elan/bin:$PATH"
-elan --version
-```
-
-编辑器推荐使用 VS Code 和 Lean 4 扩展。打开项目时应打开整个项目文件夹，不要只打开单个 `.lean` 文件。Lean 扩展需要从项目根目录读取 `lean-toolchain` 和 `lakefile.toml`（或 `lakefile.lean`）；缺少这些项目上下文时，扩展无法正确加载项目。
-
-## 常见安装问题
-%%%
-tag := "install-troubleshooting"
-%%%
-
-*问题 1：装完找不到 `lean` 或 `elan`*
-
-`elan` 默认把可执行文件放在 `~/.elan/bin`。把这个目录加入 `PATH`，并将同一条命令写入 shell 配置（`~/.bashrc` 或 `~/.zshrc`），使新终端也能找到它。
-
-\[可运行\]
-```bashFence
-export PATH="$HOME/.elan/bin:$PATH"
-```
-
-*问题 2：`lean --version` 报 `no default toolchain configured`*
-
-这表示 elan 已安装，但当前目录没有 `lean-toolchain`，本机也未配置默认工具链。不要为本书示例临时执行 `elan default`，因为所选版本可能与本书不一致。请进入配套仓库的 `examples/` 目录后再运行命令；elan 会读取其中的 `lean-toolchain` 并下载指定版本：
-
-\[可运行\]
-```bashFence
-lake env lean --version
-```
-
-*问题 3：VS Code 扩展没加载项目*
-
-按顺序自检：
-
-1. 打开的是项目*目录*，不是单个 `.lean` 文件；
-2. 项目根目录有 `lean-toolchain`；
-3. 项目根目录有 Lake 配置（`lakefile.toml` 或 `lakefile.lean`）；
-4. 右下角状态栏没长期停在 `Loading...`；
-5. 终端里 `lake env lean --version` 跑得通。
-
-应按上述顺序检查。前两项先确定 VS Code 是否获得了正确的项目根目录和工具链文件。
-
-*问题 4：VS Code 里能 `import Mathlib`，终端里不行*
-
-多半是你在终端里没进项目根目录，或者直接跑了裸 `lean File.lean` 而不是 `lake env lean File.lean`。裸 `lean` 不走 Lake 配置，找不到依赖模块。
 
 
 # 使用本书的配套项目

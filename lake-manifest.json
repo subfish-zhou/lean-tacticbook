@@ -51,6 +51,6 @@
    "inputRev": "main",
    "inherited": true,
    "configFile": "lakefile.lean"}],
- "name": "«lean-auto-book»",
+ "name": "«lean-tactic-book»",
  "lakeDir": ".lake",
  "fixedToolchain": false}
