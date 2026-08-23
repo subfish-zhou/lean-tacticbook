@@ -1,0 +1,11 @@
+{
+  "remote.autoForwardPorts": true,
+  "remote.autoForwardPortsSource": "process",
+  "remote.portsAttributes": {
+    "8000": {
+      "label": "Lean Tactic Book Preview",
+      "onAutoForward": "openPreview",
+      "protocol": "http"
+    }
+  }
+}

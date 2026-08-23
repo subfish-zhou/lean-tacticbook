@@ -1,5 +1,11 @@
 import SubVerso.Examples
-import Mathlib.Tactic
+
+-- ANCHOR: runnable_code_block
+import Mathlib
+
+example (x : ℝ) : x + 0 = x := by
+  simp
+-- ANCHOR_END: runnable_code_block
 
 open Lean Elab Tactic Meta
 

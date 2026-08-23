@@ -30,3 +30,5 @@ __pycache__/
 
 # examples 自带 lake build 产物（symlink 到旧仓库共享 mathlib cache）
 examples/.lake
+LeanTacticBook/old
+examples/Examples/old

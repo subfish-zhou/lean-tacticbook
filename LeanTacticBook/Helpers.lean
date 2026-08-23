@@ -7,6 +7,378 @@ open Verso Code External
 open SubVerso.Highlighting
 open Lean
 
+/-! ## Labelled code boxes -/
+
+private def codeBoxInfo? (label : String) : Option (String × String) :=
+  match label with
+  | "可运行" => some ("runnable", label)
+  | "示意" => some ("hint", label)
+  | "源码节选" => some ("excerpt", label)
+  | "伪代码" => some ("pseudo", label)
+  | "练习·故意错误" => some ("bug", "练习 · 故意错误")
+  | "练习模板" => some ("template", label)
+  | _ => none
+
+private def codeBoxCss : String := r#"
+:root {
+  --verso-code-keyword-color: #a626a4;
+  --verso-code-const-color: #005cc5;
+  --verso-code-literal-color: #005cc5;
+  --verso-code-var-color: #24292e;
+  --verso-code-sort-color: #22863a;
+  --verso-code-typed-color: #24292e;
+}
+
+.hl.lean .token.keyword, .hl.lean .keyword,
+pre.hl.lean .token.keyword, pre.hl.lean .keyword {
+  color: #a626a4 !important;
+  font-weight: bold;
+}
+.hl.lean .token.const, .hl.lean .const,
+pre.hl.lean .token.const, pre.hl.lean .const,
+.hl.lean .token.literal, .hl.lean .literal,
+pre.hl.lean .token.literal, pre.hl.lean .literal {
+  color: #005cc5 !important;
+}
+.hl.lean .token.sort, .hl.lean .sort,
+pre.hl.lean .token.sort, pre.hl.lean .sort {
+  color: #22863a !important;
+  font-weight: bold;
+}
+.hl.lean .token.var, .hl.lean .var {
+  color: #24292e !important;
+  font-style: italic;
+}
+.hl.lean .token.comment, .hl.lean .comment,
+pre.hl.lean .token.comment, pre.hl.lean .comment {
+  color: #6a737d !important;
+  font-style: italic;
+}
+
+.hl.bash .cmd, pre.hl.bash .cmd {
+  color: #6f42c1 !important;
+  font-weight: bold;
+}
+.hl.bash .opt, pre.hl.bash .opt { color: #e36209 !important; }
+.hl.bash .string, pre.hl.bash .string { color: #22863a !important; }
+.hl.bash .comment, pre.hl.bash .comment {
+  color: #6a737d !important;
+  font-style: italic;
+}
+
+.codebox {
+  margin: 1em 0;
+  border-left: 3px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.codebox-header {
+  display: inline-block;
+  padding: 1px 10px;
+  margin: 0;
+  font-size: 0.72em;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  border-radius: 0 0 6px 0;
+  line-height: 1.6;
+  vertical-align: top;
+}
+.codebox pre,
+.codebox > code.hl.lean.block {
+  margin: 0 !important;
+  border-left: none !important;
+  border-radius: 0 !important;
+}
+.codebox > code.hl.lean.block {
+  display: block;
+  padding: 0.6em 1em;
+  background-color: transparent;
+}
+.codebox > pre {
+  padding: 0.6em 1em;
+  background-color: transparent;
+}
+
+.codebox-runnable,
+.codebox-hint,
+.codebox-excerpt,
+.codebox-bug {
+  background-color: #f8fdf8;
+  border-left-color: #4caf50;
+}
+.codebox-runnable > .codebox-header,
+.codebox-hint > .codebox-header,
+.codebox-excerpt > .codebox-header,
+.codebox-bug > .codebox-header {
+  color: #fff;
+  background-color: #4caf50;
+}
+.codebox-bug > .codebox-header { background-color: #d9534f; }
+
+.codebox-pseudo {
+  background-color: #fffbea;
+  border-left-color: #d4a017;
+}
+.codebox-pseudo > .codebox-header {
+  color: #fff;
+  background-color: #d4a017;
+}
+
+.codebox-template {
+  background-color: #fff7ec;
+  border-left-color: #e6913a;
+}
+.codebox-template > .codebox-header {
+  color: #fff;
+  background-color: #e6913a;
+}
+
+.codebox-runnable:has(pre.hl.bash.block) {
+  background-color: #f4faff;
+  border-left-color: #2196f3;
+}
+.codebox-runnable:has(pre.hl.bash.block) > .codebox-header {
+  background-color: #2196f3;
+}
+"#
+
+block_extension Block.codeBox (kind : String) (label : String) where
+  data := ToJson.toJson (kind, label)
+  traverse _ _ _ := pure none
+  toTeX := some fun _goI goB _id _data contents => contents.mapM goB
+  extraCss := [codeBoxCss]
+  toHtml :=
+    open Verso.Output.Html in
+    some <| fun _goI goB _id data contents => do
+      let .ok (kind, label) := FromJson.fromJson? (α := String × String) data
+        | reportError "Invalid code box data"
+          return .empty
+      pure {{
+        <div class={{"codebox codebox-" ++ kind}}>
+          <div class="codebox-header">{{label}}</div>
+          {{← contents.mapM goB}}
+        </div>
+      }}
+
+structure CodeBoxConfig where
+  label : StrLit
+
+instance : FromArgs CodeBoxConfig DocElabM where
+  fromArgs := CodeBoxConfig.mk <$> .positional `label .strLit
+
+@[directive]
+def codeBox : DirectiveExpanderOf CodeBoxConfig
+  | {label}, contents => do
+    let label := label.getString
+    let some (kind, displayLabel) := codeBoxInfo? label
+      | throwError "Unknown code box label {repr label}"
+    let blocks ← contents.mapM elabBlock
+    ``(Block.other (Block.codeBox $(quote kind) $(quote displayLabel)) #[ $[ $blocks ],* ])
+
+/-! ## Collapsible API boxes -/
+
+private def apiBoxCss : String := r#"
+.api-box {
+  margin: 1em 0;
+  border: 1px solid #8aa6b8;
+  border-radius: 4px;
+  background: #f7fbfd;
+  overflow: hidden;
+}
+.api-box > summary {
+  padding: 0.55em 0.8em;
+  cursor: pointer;
+  font-weight: 600;
+  background: #eaf2f6;
+}
+.api-box > summary:hover { background: #e1edf2; }
+.api-box-content {
+  padding: 0.2em 0.8em 0.8em;
+  overflow-x: auto;
+}
+.api-box-content > :first-child { margin-top: 0.6em; }
+.api-box-content > :last-child { margin-bottom: 0; }
+.api-catalog-table code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+"#
+
+block_extension Block.apiBox (title : String) (opened : Bool) where
+  data := ToJson.toJson (title, opened)
+  traverse _ _ _ := pure none
+  toTeX := some fun _goI goB _id _data contents => contents.mapM goB
+  extraCss := [apiBoxCss]
+  toHtml :=
+    open Verso.Output.Html in
+    some <| fun _goI goB _id data contents => do
+      let .ok (title, opened) := FromJson.fromJson? (α := String × Bool) data
+        | reportError "Invalid API box data"
+          return .empty
+      let attrs := if opened then #[("open", "")] else #[]
+      pure {{
+        <details class="api-box" {{attrs}}>
+          <summary>{{title}}</summary>
+          <div class="api-box-content">{{← contents.mapM goB}}</div>
+        </details>
+      }}
+
+structure ApiBoxConfig where
+  title : StrLit
+  opened : Bool := false
+
+def ApiBoxConfig.parse : ArgParse DocElabM ApiBoxConfig :=
+  ApiBoxConfig.mk <$> .positional `title .strLit <*> .namedD' `open false
+
+instance : FromArgs ApiBoxConfig DocElabM where
+  fromArgs := ApiBoxConfig.parse
+
+@[directive]
+def apiBox : DirectiveExpanderOf ApiBoxConfig
+  | {title, opened}, contents => do
+    let blocks ← contents.mapM elabBlock
+    ``(Block.other (Block.apiBox $(quote title.getString) $(quote opened)) #[ $[ $blocks ],* ])
+
+/-! ## Generated API catalogues -/
+
+private def apiDeclKind : ConstantInfo → String
+  | .axiomInfo _ => "axiom"
+  | .defnInfo _ => "def"
+  | .thmInfo _ => "theorem"
+  | .opaqueInfo _ => "opaque"
+  | .quotInfo _ => "quot"
+  | .inductInfo _ => "inductive"
+  | .ctorInfo _ => "constructor"
+  | .recInfo _ => "recursor"
+
+private def apiSourceModule (env : Environment) (name : Name) : Name :=
+  match env.getModuleIdxFor? name with
+  | some index => env.allImportedModuleNames[index]!
+  | none => env.mainModule
+
+private def isPublicApiDecl (name : Name) : Bool :=
+  !isPrivateName name && !name.isInternalOrNum
+
+public def apiCatalogDeclarations (env : Environment) (sourceName : Name) :
+    Array (Name × ConstantInfo × Name) :=
+  env.constants.toList.toArray.qsort (fun (name₁, _) (name₂, _) =>
+    name₁.quickCmp name₂ == .lt) |>.filterMap fun (name, info) =>
+      let origin := apiSourceModule env name
+      if sourceName.isPrefixOf origin && isPublicApiDecl name then
+        some (name, info, origin)
+      else
+        none
+
+private def summarizeApiDoc (doc? : Option String) : String :=
+  let summary := doc?.map (·.splitOn "\n\n" |>.headD "") |>.getD "无源码说明"
+  let summary := summary.replace "\n" " " |>.replace "\r" " " |>.trimAscii.toString
+  if summary.length ≤ 240 then summary
+  else String.ofList (summary.toList.take 237) ++ "..."
+
+private def apiMarkers (info : ConstantInfo) (effects : String) : String :=
+  let safety := if info.isUnsafe then "unsafe" else "safe"
+  let partialMark := if info.isPartial then " · partial" else ""
+  s!"{safety}{partialMark} · {effects} · 随 Lean 版本演进"
+
+private def decodeApiCatalogRows (payload : String) :
+    Except String (Array (Array (String × Bool))) := do
+  let json ← Json.parse payload
+  FromJson.fromJson? json
+
+block_extension Block.apiCatalogData (title : String) (payload : String) where
+  data := ToJson.toJson (title, payload)
+  traverse _ _ _ := pure none
+  extraCss := [apiBoxCss]
+  toHtml :=
+    open Verso.Output.Html in
+    some <| fun _goI _goB _id data _contents => do
+      let .ok (title, payload) := FromJson.fromJson? (α := String × String) data
+        | reportError "Invalid API catalogue data"
+          return .empty
+      let .ok rows := decodeApiCatalogRows payload
+        | reportError "Invalid API catalogue row data"
+          return .empty
+      let headers := #[
+        "API 名称", "种类", "完整签名", "层 / 上下文", "来源模块",
+        "用途 / 官方说明", "稳定性与副作用"
+      ]
+      let headerCells := Output.Html.seq <| headers.map fun header =>
+        let header := Output.Html.ofString header
+        {{<th>{{header}}</th>}}
+      let bodyRows ← rows.mapM fun row => do
+        let cells := Output.Html.seq <| row.map fun (value, code) =>
+          let value := Output.Html.ofString value
+          let cell : Output.Html := if code then {{<code>{{value}}</code>}} else value
+          {{<td>{{cell}}</td>}}
+        pure {{<tr>{{cells}}</tr>}}
+      let bodyRows := Output.Html.seq bodyRows
+      pure {{
+        <details class="api-box">
+          <summary>{{title}}</summary>
+          <div class="api-box-content">
+            <table class="tabular api-catalog-table">
+              <thead><tr>{{headerCells}}</tr></thead>
+              <tbody>{{bodyRows}}</tbody>
+            </table>
+          </div>
+        </details>
+      }}
+  toTeX :=
+    open Verso.Output.TeX in
+    some <| fun _goI _goB _id data _contents => do
+      let .ok (title, payload) := FromJson.fromJson? (α := String × String) data
+        | reportError "Invalid API catalogue data"
+          return .empty
+      let .ok rows := decodeApiCatalogRows payload
+        | reportError "Invalid API catalogue row data"
+          return .empty
+      let renderedRows := rows.map fun row =>
+        let line := String.intercalate " | " <| row.toList.map (·.1)
+        Output.TeX.seq #[.text line, .paragraphBreak]
+      pure <| .seq <| #[.command "textbf" #[] #[.text title], .raw "\n"] ++ renderedRows
+
+structure ApiCatalogConfig where
+  title : StrLit
+  source : StrLit
+  layer : StrLit
+  effects : StrLit
+
+instance : FromArgs ApiCatalogConfig DocElabM where
+  fromArgs := ApiCatalogConfig.mk
+    <$> .positional `title .strLit
+    <*> .positional `source .strLit
+    <*> .positional `layer .strLit
+    <*> .positional `effects .strLit
+
+@[directive]
+def apiCatalog : DirectiveExpanderOf ApiCatalogConfig
+  | {title, source, layer, effects}, _ => do
+    let env ← getEnv
+    let sourceName := source.getString.toName
+    let declarations := apiCatalogDeclarations env sourceName
+    let mut rows := #[]
+    let options : Options := {}
+    let options := options.setBool `pp.universes true
+      |>.setBool `pp.explicit true
+      |>.setBool `pp.fullNames true
+    for (name, info, origin) in declarations do
+      let signature ← liftM <| PrettyPrinter.ppExprLegacy env {} {} options info.type
+      let doc? ← liftM <| Lean.findDocString? env name
+      rows := rows.push #[
+        (name.toString, true),
+        (apiDeclKind info, false),
+        (signature.pretty 100, true),
+        (layer.getString, false),
+        (origin.toString, true),
+        (summarizeApiDoc doc?, false),
+        (apiMarkers info effects.getString, false)
+      ]
+    if rows.isEmpty then
+      throwError "No public declarations found for module prefix {source.getString}"
+    let boxTitle := s!"{title.getString}（{rows.size} 项）"
+    let payload := (ToJson.toJson rows).compress
+    ``(Verso.Doc.Block.other (Block.apiCatalogData $(quote boxTitle) $(quote payload)) #[])
+
 /-- Inline keyword role: renders tactic/keyword names with keyword highlighting. -/
 @[role_expander kw]
 def kw : RoleExpander
@@ -488,162 +860,6 @@ def leanCmdBlock : CodeBlockExpander
         return #[← ``(sorry)]
       | e => throw e
 
-/-! ## Multi-command Lean block (`leanBlock`)
-
-The SubVerso helper's `command` endpoint only accepts a single top-level
-command per request and rejects `import` (which is header syntax, not a
-command). But most real teaching fences contain `import Lean` / `open ...`
-plus several `def`/`example`/`elab` declarations back-to-back.
-
-`leanBlock` splits the fence into command chunks by scanning for lines whose
-first non-whitespace token is a command keyword (`import`, `open`, `namespace`,
-`end`, `section`, `variable`, `def`, `theorem`, `lemma`, `example`, `abbrev`,
-`structure`, `class`, `inductive`, `instance`, `elab`, `elab_rules`, `syntax`,
-`macro`, `macro_rules`, `notation`, `#check`, `#eval`, `#print`, `#reduce`,
-`@[`, `deriving`, `attribute`).
-
-  * `import` / `open` chunks are rendered as **plain keyword-highlighted text**
-    (helper environment already has Mathlib + Lean.Elab loaded, so re-importing
-    would fail; but readers still see the declaration visually).
-  * Every other chunk is sent to `helper.command` individually and gets full
-    semantic highlighting.
-  * All chunks are concatenated via `Highlighted.seq`, preserving order and
-    original whitespace between chunks.
--/
-
-/-- Command-start keywords: a line whose first non-space token is one of these
-    starts a new command chunk. -/
-private def leanBlockCmdKeywords : Array String := #[
-  "import", "open", "namespace", "end", "section", "variable",
-  "universe", "universes",
-  "def", "theorem", "lemma", "example", "abbrev", "structure", "class",
-  "inductive", "instance", "elab", "elab_rules", "syntax", "macro",
-  "macro_rules", "notation", "infix", "infixl", "infixr", "prefix", "postfix",
-  "deriving", "attribute", "export", "@[",
-  "#check", "#eval", "#print", "#reduce", "#synth"
-]
-
-private def firstToken (line : String) : String :=
-  let trimmed := line.trimAsciiStart.toString
-  let toks := trimmed.splitOn " "
-  toks.headD ""
-
-private def isCmdStart (line : String) : Bool :=
-  let t := firstToken line
-  -- Attribute application `@[simp] theorem …` starts with `@[`.
-  if t.startsWith "@[" then true
-  else leanBlockCmdKeywords.contains t
-
-private def isImportOrOpenLine (line : String) : Bool :=
-  let t := firstToken line
-  t == "import" || t == "open"
-
-/-- Split fence body into an array of command-shaped chunks by driving Lean's
-    own `Parser.parseCommand` loop until EOI. Each chunk is a substring of
-    the original body extracted from the command syntax's position range.
-
-    `import ...` / `open ...` lines up top are peeled off before running the
-    loop so they can be rendered as keyword-highlighted text without going
-    through the helper (which parses in `command` category, rejecting import). -/
-private def splitLeanChunks (body : String) : DocElabM (Array String) := do
-  let lines := body.splitOn "\n"
-  let mut headerChunks : Array String := #[]
-  let mut idx := 0
-  while idx < lines.length do
-    let l := lines[idx]!
-    let t := firstToken l
-    if t == "import" || t == "open" || l.trimAscii.isEmpty then
-      headerChunks := headerChunks.push l
-      idx := idx + 1
-    else
-      break
-  let rest := "\n".intercalate (lines.drop idx)
-  if rest.trimAscii.isEmpty then
-    return headerChunks
-
-  let env ← getEnv
-  let ictx := Parser.mkInputContext rest "<fence>"
-  let mut pstate : Parser.ModuleParserState := {}
-  let mut cmdChunks : Array String := #[]
-  let mut safety : Nat := 0
-  repeat
-    safety := safety + 1
-    if safety > 1024 then break
-    let pmctx := { env := env, options := ({} : Options), currNamespace := .anonymous, openDecls := [] }
-    let (cmd, ps', _msgs) :=
-      Parser.parseCommand ictx pmctx pstate {}
-    pstate := ps'
-    -- Extract the substring corresponding to this command via its Syntax range.
-    let sp? := cmd.getPos? (canonicalOnly := false)
-    let ep? := cmd.getTailPos? (canonicalOnly := false)
-    match sp?, ep? with
-    | some sp, some ep =>
-      let chunk := (rest.toRawSubstring.extract sp ep).toString
-      unless chunk.trimAscii.isEmpty do
-        cmdChunks := cmdChunks.push chunk
-    | _, _ => pure ()
-    if Parser.isTerminalCommand cmd then break
-  return headerChunks ++ cmdChunks
-
-/-- Render an `import`/`open` chunk as keyword-token highlighted text so the
-    reader still sees a colored block, even though we cannot round-trip it
-    through the helper. -/
-private def highlightImportChunk (chunk : String) : Highlighted := Id.run do
-  -- Simple approach: mark the first word as .keyword, rest as plain text.
-  let trimmed := chunk.trimAsciiStart.toString
-  let toks := trimmed.splitOn " "
-  match toks with
-  | [] => .text chunk
-  | kw :: rest =>
-    let leadingWS := (chunk.take (chunk.length - trimmed.length)).toString
-    let restStr := " ".intercalate rest
-    .seq #[
-      .text leadingWS,
-      .token ⟨.keyword none none none, kw⟩,
-      .text (" " ++ restStr)
-    ]
-
-/-- Placeholder constant so `@[code_block_expander leanFence]` resolves. -/
-def leanFence : Unit := ()
-
-/-- The `leanFence` code block: split multi-command Lean fence and highlight
-    each command chunk via the helper. Non-command lines and `import`/`open`
-    declarations are preserved as keyword-highlighted text. -/
-@[code_block_expander leanFence]
-def leanFenceBlock : CodeBlockExpander
-  | args, code => do
-    let _type? ← ArgParse.done.run args
-    let codeStr := code.getString
-    try
-      let chunks ← splitLeanChunks codeStr
-      -- Elaborate every non-import/open chunk; for imports we produce a
-      -- keyword-highlighted placeholder rather than sending to the helper
-      -- (which would reject the import as parse error).
-      let mut hls : Array Highlighted := #[]
-      let mut first : Bool := true
-      for chunk in chunks do
-        unless first do
-          hls := hls.push (.text "\n")
-        first := false
-        if chunk.trimAscii.isEmpty then
-          hls := hls.push (.text chunk)
-        else if isImportOrOpenLine chunk then
-          hls := hls.push (highlightImportChunk chunk)
-        else
-          let chunkHl ← highlightCommand chunk
-          saveBackref chunkHl
-          for (msg, _) in _root_.allInfo chunkHl do
-            let k := match msg.severity with | .info => "info" | .error => "error" | .warning => "warning"
-            Verso.Log.logSilentInfo m!"{k}: {msg.toString}"
-          hls := hls.push chunkHl
-      let hl : Highlighted := .seq hls
-      return #[← ``(Block.other (Block.lean $(quote hl) {}) #[Block.code $(quote codeStr)])]
-    catch
-      | .error refStx e =>
-        logErrorAt refStx e
-        return #[← ``(sorry)]
-      | e => throw e
-
 /-! ## Shared HTML tokeniser helpers (used by `leanBug`, `bashFence`) -/
 
 /-- Escape `<`, `>`, `&`, quotes for safe HTML text. -/
@@ -664,12 +880,10 @@ private def spanClose : String := "</span>"
 
 /-! ## Deliberate-error Lean block (`leanBug`)
 
-`leanFence` sends fence contents through the SubVerso helper subprocess,
-which throws on any elaboration error and aborts the whole build. That's the
-right behaviour for a `[可运行]` fence, but a `[练习·故意错误]` snippet is
-_expected_ to fail elaboration — we want it rendered with a light Lean
-syntax highlight (keywords in colour, strings in colour, comments dimmed)
-and no error to abort the build.
+Runnable examples use Verso's external `anchor` blocks, which are elaborated
+in the examples project and abort the build on errors. A `[练习·故意错误]`
+snippet is _expected_ to fail elaboration, so it is rendered with light Lean
+syntax highlighting without entering that validation path.
 
 `leanBug` uses a small hand-written keyword-list tokeniser (same shape as
 `bashFence`). It intentionally does not talk to the helper.
@@ -784,9 +998,7 @@ def leanBugBlock : CodeBlockExpander
     let body := code.getString
     return #[← ``(Block.other (Block.leanBugCode $(quote body)) #[Block.code $(quote body)])]
 
--- Hint variant: keyword-only Lean highlighter, rendered without any
--- elaboration. Outputs pre.hl.lean.block.hint so the wrapping codebox
--- can style it green (see wrap-code-boxes.py).
+-- Hint variant: keyword-only Lean highlighter, rendered without elaboration.
 /-! ## Bash / shell code block (`bashFence`)
 
 A dependency-free shell highlighter. Tokenises each line into:
@@ -1026,13 +1238,25 @@ Write tables in verso using fenced code blocks:
 | cell4   | cell5   | cell6   |
 ```
 ````
+
+Use `\|` for a literal pipe inside a cell. A cell enclosed in single backticks
+is rendered as code.
 -/
+
+private def splitTableCells (line : String) : Array String :=
+  let rec go (chars : List Char) (cell : String) (cells : Array String) : Array String :=
+    match chars with
+    | '\\' :: '|' :: rest => go rest (cell.push '|') cells
+    | '|' :: rest => go rest "" (cells.push cell)
+    | char :: rest => go rest (cell.push char) cells
+    | [] => cells.push cell
+  go line.toList "" #[]
 
 private def parseTableRow (line : String) : Array String :=
   let line := line.trimAscii.toString
   let line := if line.startsWith "|" then (line.drop 1).trimAscii.toString else line
   let line := if line.endsWith "|" then (line.dropEnd 1).toString.trimAscii.toString else line
-  (line.splitOn "|").toArray.map fun s => s.trimAscii.toString
+  (splitTableCells line).map fun s => s.trimAscii.toString
 
 private def isSeparatorRow (line : String) : Bool :=
   line.trimAscii.toString.toList.all fun c => c == '|' || c == '-' || c == ':' || c == ' '
@@ -1088,9 +1312,14 @@ block_extension Block.mdTable (header : Array String) (rows : Array (Array Strin
       | .error _e =>
         return .empty
       | .ok (hdr, bodyRows) =>
-        let thCells : Array Html := hdr.map (fun cell => {{<th>{{Html.text true cell}}</th>}})
+        let cellHtml (cell : String) : Html :=
+          if cell.startsWith "`" && cell.endsWith "`" then
+            {{<code>{{Html.text true (cell.drop 1 |>.dropEnd 1 |>.toString)}}</code>}}
+          else
+            Html.text true cell
+        let thCells : Array Html := hdr.map (fun cell => {{<th>{{cellHtml cell}}</th>}})
         let tbodyRows : Array Html := bodyRows.map (fun row =>
-          let cells : Array Html := row.map (fun cell => {{<td>{{Html.text true cell}}</td>}})
+          let cells : Array Html := row.map (fun cell => {{<td>{{cellHtml cell}}</td>}})
           {{<tr>{{cells}}</tr>}})
         pure {{
           <table class="md-table">
@@ -1114,4 +1343,3 @@ def tableBlock : CodeBlockExpander
       let dataLines := if rest.length > 0 && isSeparatorRow rest[0]! then rest.drop 1 else rest
       let rows := (dataLines.map parseTableRow).toArray
       return #[← ``(Block.other (Block.mdTable $(quote header) $(quote rows)) #[])]
-
