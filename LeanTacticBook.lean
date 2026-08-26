@@ -4,6 +4,15 @@ import LeanTacticBook.Helpers
 import LeanTacticBook.Ch01Introduction
 import LeanTacticBook.Ch02Syntax
 import LeanTacticBook.Ch03Macros
+import LeanTacticBook.Ch04CoreM
+import LeanTacticBook.Ch05MetaM
+import LeanTacticBook.Ch06TermElabM
+import LeanTacticBook.Ch07TacticM
+import LeanTacticBook.Ch08Exact
+import LeanTacticBook.Ch09Ring
+import LeanTacticBook.Ch10Linarith
+import LeanTacticBook.Ch11Grind
+import LeanTacticBook.Ch12BVDecide
 import LeanTacticBook.AppendixApiReference
 
 open Verso.Genre Manual
@@ -50,8 +59,8 @@ _版本基准_：Lean 工具链 `leanprover/lean4:v4.32.2`；Mathlib revision `9
 
 *版本基准*：Lean 工具链 `leanprover/lean4:v4.32.2`；Mathlib revision `905b95818eb3`。元编程 API 可能在小版本间发生不兼容变化。
 
-:::codeBox "可运行"
-```bashFence
+:::codeBox "code"
+```
 cat examples/lean-toolchain  -- 显示 leanprover/lean4:v4.32.2
 rg -n '905b95818eb3' examples/lake-manifest.json
 cd examples
@@ -59,12 +68,30 @@ lake env lean --version
 ```
 :::
 
-_感谢 [Lean-zh 中文社区](https://www.leanprover.cn/) 的朋友们的支持，感谢 [猫猫](https://github.com/Fulcrum-Nebula) 愿意把本书作为上海交通大学AI4Math暑校讲义使用，让我有动力完成此书。尽管本书是我一个字一个字手打的，但是还是要感谢GPT5.6sol，尤其是基于此的我的Hermes实例Iroha、Kaguya和Yachiyo，她们帮我检索整理素材，以及处理Verso相关的很多工程问题，并写了好几个版本之后促使我放弃偷懒的幻想而坚持古法手作。_
+_感谢 [Lean-zh 中文社区](https://www.leanprover.cn/) 的朋友们的支持，感谢 [猫猫](https://github.com/Fulcrum-Nebula) 愿意把本书作为上海交通大学AI4Math暑校讲义使用，让我有动力完成此书。尽管本书大部分是我一个字一个字手打的，但是还是要感谢GPT5.6sol，尤其是基于此的我的Hermes实例Iroha、Kaguya和Yachiyo，她们帮我检索整理素材，以及处理Verso相关的很多工程问题，并写了好几个版本之后促使我放弃偷懒的幻想而坚持古法手作。_
 
 {include 0 LeanTacticBook.Ch01Introduction}
 
 {include 0 LeanTacticBook.Ch02Syntax}
 
 {include 0 LeanTacticBook.Ch03Macros}
+
+{include 0 LeanTacticBook.Ch04CoreM}
+
+{include 0 LeanTacticBook.Ch05MetaM}
+
+{include 0 LeanTacticBook.Ch06TermElabM}
+
+{include 0 LeanTacticBook.Ch07TacticM}
+
+{include 0 LeanTacticBook.Ch08Exact}
+
+{include 0 LeanTacticBook.Ch09Ring}
+
+{include 0 LeanTacticBook.Ch10Linarith}
+
+{include 0 LeanTacticBook.Ch11Grind}
+
+{include 0 LeanTacticBook.Ch12BVDecide}
 
 {include 0 LeanTacticBook.AppendixApiReference}

@@ -28,13 +28,15 @@ syntax "MyTerm" : term
 
 我们声明了一个新的项 `MyTerm`。要注意的是，这个项当前没有任何的语义，它是一个完全的文字空壳，到了宏和译补的章节我们才能够给它赋予语义。这使得{kw}`#check_failure`会报告：
 
+:::codeBox "error code"
 ```
 -- `termMyTerm` 的译补函数还未实现
 elaboration function for `termMyTerm` has not been implemented
   MyTerm
 ```
+:::
 
-`term`是这个句法的类型。你所熟知的 Lean 的类型论当中的项都可以作为句法项。我们还可以定义其它类型的句法，例如证明术`tactic`和命令`command`，只需要把 {anchorTerm syntax_declaration}`term` 改成相应的类型即可。Lean 还支持其它的一些类型，之后遇到的时候我们再讲。我们甚至可以用{kw}`declare_syntax_cat`来声明一个新的句法类型。
+`term`是这个句法的类别（category）。你所熟知的 Lean 的类型论当中的项都可以作为句法项。我们还可以定义其它类别的句法，例如证明术`tactic`和命令`command`，只需要把 {anchorTerm syntax_declaration}`term` 改成相应的类别即可。Lean 还支持其它的一些类别，之后遇到的时候我们再讲。我们甚至可以用{kw}`declare_syntax_cat`来声明一个新的句法类别。
 
 句法也可以带参数，比如说常用的`exact`证明术被定义为：
 
@@ -67,7 +69,7 @@ tag := "syntax-notation"
 notation:10 l:10 " XOR " r:11 => (!l && r) || (l && !r)
 ```
 
-* {kw}`=>` 左边就是句法，右边就是语义。{anchorTerm syntax_xor}`l` 和 {anchorTerm syntax_xor}`r` 是运算符的两个参数，它们自动属于 `term` 类型。
+* {kw}`=>` 左边就是句法，右边就是语义。{anchorTerm syntax_xor}`l` 和 {anchorTerm syntax_xor}`r` 是运算符的两个参数，它们自动属于 `term` 类别。
 * 既然我们定义的是中缀运算符就要涉及优先级。{anchorTerm syntax_xor}`notation:10` 中的 {anchorTerm syntax_xor}`10` 是整个表达式的优先级；{anchorTerm syntax_xor}`l:10` 和 {anchorTerm syntax_xor}`r:11` 中的数字是左右参数的优先级。此处它是左结合的。这里机制比较复杂，等会儿我们单开一节来讲。
 
 上一节末尾定义的模长运算符在Mathlib里面实际上就是这样定义的：
@@ -184,15 +186,17 @@ syntax (name := MyLift)
 
 用起来可能会像这样：
 
+:::codeBox "pseudocode"
 ```
 my_lift n + 3 to ℕ using hn with k hk
 ```
+:::
 
 详细解释一下：
 1. `( ... )?`表示括号内的内容是可有可无的，可以出现零次或一次。此处`" using " term`和`" with " ident ...`以及里面的第二和第三个参数都是可有可无的。
 2. `with`中参数的类型`ident`也是句法类型，称为标识符。它的范围要比`term`小，只接受名字，例如`x`，`h₁`，`Nat.add`，而`1`、`x + 1`等等就不行。
-3. `ppSpace`是雅印器的控制符，表示在雅印时输出一个空格，或者在行太长时进行软换行。详表见[雅印器控制符](## 雅印器控制符)。
-4. `colGt`是解析器的控制符，在解析时要求后续的标识符缩进比前一个标识符更深。在这里，意思是如果你在填写第二个或第三个标识符时换行的话，必须比前一个标识符有更多的缩进，否则无法被解析成参数。详表见[解析器位置控制符](## 解析器位置控制符)。
+3. `ppSpace`是雅印器的控制符，表示在雅印时输出一个空格，或者在行太长时进行软换行。详表见[雅印器控制符](#syntax-pretty-printer-controllers)。
+4. `colGt`是解析器的控制符，在解析时要求后续的标识符缩进比前一个标识符更深。在这里，意思是如果你在填写第二个或第三个标识符时换行的话，必须比前一个标识符有更多的缩进，否则无法被解析成参数。详表见[解析器位置控制符](#syntax-parser-position-controllers)。
 
 ## 在几种写法中选择
 %%%
@@ -212,7 +216,6 @@ syntax binderIdent := ident <|> hole
 ```
 
 具体来说，`ident`匹配一个名字，而`hole`实际上是句法中下划线`_`的类型。因此函数参数既可以命名为`x`，也可以写成`_`表示不为它命名。Lean在许多绑定位置都会用到`binderIdent`，我们以后会经常见到它。
-
 
 ## 重复
 %%%
@@ -252,50 +255,90 @@ syntax "my_rw2" " [" rwTerm,* "]" : tactic
 
 `rwTerm`由一个可选的反向箭头和一个必需的`term`组成。这里必须写成`(larrow)?`；若写成`larrow?`，问号会被当作标识符的一部分，Lean便会尝试寻找名为`larrow?`的解析器。
 
-# `Syntax`类型
+# `Syntax`类型和解析器
 %%%
-tag := "syntax-type"
+tag := "syntax-type-parser"
 %%%
 
-以上的介绍像是在陈列句法声明工具箱，接下来我们要操作句法本身。如果你只想学如何声明句法，那么你完全可以跳到下一节。更多的理论总是有用的！作为一种动机演示，也同样作为学习本节的奖励，最终成果将会是一个“判断给定字符串是否符合某个句法解析器”的函数。
+以上的介绍像是在陈列句法声明工具箱，接下来我们要操作句法本身。如果你只想学如何声明句法，那么你完全可以跳到下一节。更多的理论总是有用的！作为一种动机演示，也同样作为学习本节的奖励，最终成果将会是一个“判断给定字符串是否符合某个句法解析器”的函数。假如你懂一些Lean的函数式编程，会更好理解本节。
 
-前面声明句法时，Lean都会在背后自动运行解析器。开始研究解析器之后，我们首先需要一种办法来查看解析结果：给定一段源码，它会产生哪些句法节点？为此可以自己定义一个调试命令：
+很自然地，`Syntax`也是一个归纳类型：
 
-```anchor parser_inspect_kind
-partial def syntaxKinds : Syntax → Array SyntaxNodeKind
-  | .node _ kind args => args.foldl (fun kinds arg => kinds ++ syntaxKinds arg) #[kind]
-  | _ => #[]
-
-elab "#inspect_syntax " t:tactic : command => do
-  for kind in syntaxKinds t.raw do
-    if kind != nullKind then
-      logInfo m!"{kind}"
-
-#inspect_syntax myexact True.intro
-#inspect_syntax simp only [↓ ← h]
+```anchor syntax_type_definition
+inductive Syntax where
+  | missing : Syntax
+  | node   (info : SourceInfo) (kind : SyntaxNodeKind) (args : Array Syntax) : Syntax
+  | atom   (info : SourceInfo) (val : String) : Syntax
+  | ident  (info : SourceInfo) (rawVal : Substring.Raw) (val : Name)
+      (preresolved : List Syntax.Preresolved) : Syntax
 ```
 
-`elab "#inspect_syntax " t:tactic : command`同时声明了命令句法和译补逻辑。参数`t`的类型已经规定为`tactic`，所以调用时直接写待检查的证明术即可，不再需要手工传入类别、字符串或预期名称。Lean会先按`tactic`类别解析这段输入，再把得到的语法树交给命令实现。
+详细解释：
 
-`syntaxKinds`按先根后子的顺序递归收集所有具名节点。可选项、重复项等组合结构还会生成一些`nullKind`节点，命令将它们过滤掉。第一次调用只输出：
+- {anchorTerm syntax_type_definition}`SourceInfo`主要是给解析器提供源信息。一个重要的应用是它可以用来实现鼠标悬停时的信息演示。它比较复杂，我们先跳过。
+- {anchorTerm syntax_type_definition}`missing`就是一个在解析错误时的占位符，一般不必关心。
+- {anchorTerm syntax_type_definition}`node`就是句法树节点。{anchorTerm syntax_type_definition}`kind : SyntaxNodeKind`其实就是名字，实际上`abbrev SyntaxNodeKind := Lean.Name`。{anchorTerm syntax_type_definition}`args`就是子句法树节点，因为可能有很多子节点，所以是个数组。
+- {anchorTerm syntax_type_definition}`atom`表示字符串句法原子。
+- {anchorTerm syntax_type_definition}`Substring.Raw`是“带起始位置的字符串切片”数据结构，经常在解析器里使用。`Raw`表示这个切片没被证明不越界。
+- {anchorTerm syntax_type_definition}`ident`专门表示标识符。注意这个构造子和前面`ident`句法类别虽有联系但并不相同。`rawVal`保存你输入的原始文本，`val`保存、规范化并进行卫生宏处理后的名字；`preresolved`则保存预解析出的候选命名空间、全局声明或节变量，供卫生宏处理名字绑定。
 
+例如，直接手工搭出一棵表示`myexact h`的句法树：
+
+```anchor syntax_manual_construction
+def myexactSyntax : Syntax :=
+  Syntax.node SourceInfo.none `myexact #[
+    Syntax.atom SourceInfo.none "myexact",
+    Syntax.ident SourceInfo.none "h".toRawSubstring `h []
+  ]
+
+#eval myexactSyntax.getKind == `myexact -- true
 ```
-tacticbook_syntax.myexact
+
+先解释一下反引号`` ` ``记号，它标识一个`Name`。还可以使用双反引号``` `` ```记号标识已定义的名字，它会解析当前环境中的声明来检查是否存在这个名字。
+
+根节点的{anchorTerm syntax_type_definition}`kind`是`` `myexact``，其子节点按源码顺序包含字符串`"myexact"`和标识符`h`。{anchorTerm syntax_manual_construction}`"h".toRawSubstring`提供标识符的原始文字，紧随其后的名称字面量则是解析后的`Name`；这里没有命名空间之类的东西，所以最后一个参数是空列表。因为这棵树不是从源码解析而来，三个节点都使用`SourceInfo.none`。
+
+实际编写元程序时通常不必直接调用这些构造子，可以使用`mkIdent`、`mkApp`等等[构造语法的辅助函数](https://www.leanprover.cn/reference-manual/latest/Notations-and-Macros/Defining-New-Syntax/#syntax-construction-helpers)，本书中用不到，读者可以自行查阅手册。
+
+解析器实际上就是在把Lean文件中的字符串转换成`Syntax`对象。实际上，我们用`syntax`关键字声明句法时声明的其实是解析规则，解析器拿这些规则去构造句法对象。而声明句法时声明的`term`、`tactic`、`command`等等_句法类别_（syntax category）实际上是“解析规则注册表”，它们本身是`Parser.Category`类型的项，我们声明这个类别的句法就是向这个表里注册规则。当然在我们之前Lean自己已经给这些类别注册了很多基础句法规则，例如使得字符串或者数字都可以属于`term`。`ident`有所不同，`Lean.Parser.ident`是一个固定的解析器，一次读取一个非保留标识符，并直接产生`Syntax.ident`，它不是一张可由`syntax ... : ident`扩展的`ParserCategory`表。
+
+理解了这些，下面我们稍微借一点Lean的内部API和译补器的能力，来实现一个小工具：判断给定字符串是否符合某个句法解析器。我们希望实现命令`#matches_syntax`，给它一个句法类别、一条句法规则和一个字符串，它只回答`true`或`false`，表示整个字符串是否在该类别中符合这条规则。例如，前文声明的`myexact`属于`tactic`类别，要求关键字后必须有一个`term`，我们希望得到类似下面的命令：
+
+:::codeBox "code"
+```
+#matches_syntax tactic myexact "myexact True.intro" -- true
+#matches_syntax tactic myexact "myexact"            -- false
+```
+:::
+
+完整实现如下：
+
+```anchor parser_matches_syntax
+def matchesSyntax (env : Environment) (categoryName : Name)
+    (kind : SyntaxNodeKind) (input : String) : Bool :=
+  match Parser.runParserCategory env categoryName input with
+  | .ok stx => stx.getKind == kind
+  | .error _ => false
+
+elab "#matches_syntax " category:ident kind:ident input:str : command => do
+  let env ← getEnv
+  let category := category.getId
+  let kind ← resolveGlobalConstNoOverload kind
+  let input := input.getString
+  logInfo m!"{matchesSyntax env category kind input}"
+
+#matches_syntax tactic myexact "myexact True.intro" -- true
+#matches_syntax tactic myexact "myexact"            -- false
+#matches_syntax tactic myexact "exact True.intro"   -- false
 ```
 
-这正是前面`(name := myexact)`指定的名称。第二次调用则输出：
+先看函数定义。环境`env`储存了类别解析规则表和记号（token）表，记号指的是，假如说你定义了一个`syntax "something" : term`，那么`"something"`就被注册为一个记号。`Parser.runParserCategory env categoryName input`在当前环境`env`下运行指定类别`categoryName`的解析器来解析`input`。这个函数有两种可能的返回值：解析成功时返回`.ok stx`，其中`stx`是个句法对象；类别不存在或输入不符合该类别时结果都是`.error`，函数返回`false`。解析成功之后还得检查这是不是我们要的那个句法，所以再判断一个`stx.getKind == kind`，以防它能解析但使用的是别的规则。
 
-```
-Lean.Parser.Tactic.simp
-Lean.Parser.Tactic.optConfig
-Lean.Parser.Tactic.simpLemma
-Lean.Parser.Tactic.simpPre
-```
+> 你能定义的`term`、`tactic`、`command`等句法类别的解析器生成的都是句法树，顶部都是`Syntax.node`，所以都会有真的`kind`，这就是为什么我们可以用规则名去匹配解析结果的根节点。其它三个构造子句法对象其实也能`.getKind`但使用的是约定的行为，`Syntax.missing`返回`` `missing``，`Syntax.atom`返回反引号+字符串，`Syntax.ident`返回`` `ident``。
 
-这说明`syntaxAbbrev`不只方便复用解析器；成功匹配后，它也会在较大的语法树中留下以声明名为种类的节点。因此递归检查可以看出`simp only [↓ ← h]`依次使用了整个证明术、配置、引理和前序遍历标记这四层句法。若只关心最外层规则，直接查看`t.raw.getKind`即可；若要连原子、标识符和源码位置一起查看，则可以输出`repr t.raw`。
+再看命令的声明。这里需要注意，`matchesSyntax`接收的是Lean对象：`Environment`、两个`Name`和一个`String`；但命令译补器中的`category:ident`、`kind:ident`和`input:str`是解析命令时捕获的句法对象，其类型分别是`Ident`、`Ident`和`StrLit`，因此调用函数前需要把它们转换成普通对象：`category.getId`取出标识符表示的`Name`；`resolveGlobalConstNoOverload kind`在当前环境和命名空间中解析规则名，得到它实际指向的`Name`；`input.getString`则取出字符串字面量的内容，并去掉源码中的引号和转义。四条`let`还展示了两种不同的绑定方法。`:=`是纯值绑定；`←`则是绑定单子计算的结果。细节我们以后讲译补器时再说。
 
-最后，解析成功只说明这段文字符合某条句法规则，不说明它具有语义。上面的`myexact True.intro`能够成功解析，但由于我们还没有为`myexact`实现宏展开或译补函数，把它真正写进证明时仍然会报错。解析、宏展开和译补是三个不同阶段。
-
+最后，`m!"..."`是Lean的消息插值语法，作用类似产生`String`的`s!"..."`，但结果类型是`MessageData`，正好可以传给`logInfo`。花括号中的表达式会通过`ToMessageData`转换后嵌入消息；这里嵌入的是`matchesSyntax env category kind input`计算出的布尔值，因此最终显示`true`或`false`。
 
 
 # 常用功能列表
@@ -303,16 +346,16 @@ Lean.Parser.Tactic.simpPre
 tag := "syntax-features"
 %%%
 
-本节详细列出上面所涉及的常用功能的列表备查。
+下面各表按来源和用途分别列出`syntax`声明中常用的预定义解析器、固定原子与句法类别、解析器组合子、空白与布局控制以及雅印控制。它们不是所有可用功能的封闭清单：Lean允许库注册新的解析器别名，也允许句法声明引用自定义的`Parser`，因此任何固定表格都不可能穷举所有扩展。错误恢复、禁用词法单元上下文、插值字符串等进阶功能见官方手册的[语法规则](https://www.leanprover.cn/reference-manual/latest/Notations-and-Macros/Defining-New-Syntax/#syntax-rules)与[缩进](https://www.leanprover.cn/reference-manual/latest/Notations-and-Macros/Defining-New-Syntax/#syntax-indentation)两节及底层`Parser` API。
 
-下面各表按来源和用途分别列出`syntax`声明中常用的预定义词法解析器、固定原子与句法类别、解析器组合子、空白与布局控制以及雅印控制。它们不是所有可用功能的封闭清单：Lean允许库注册新的解析器别名，也允许句法声明引用自定义的`Parser`，因此任何固定表格都不可能穷举所有扩展。错误恢复、禁用词法单元上下文、插值字符串等进阶功能见官方手册的[语法规则](https://www.leanprover.cn/reference-manual/latest/Notations-and-Macros/Defining-New-Syntax/#syntax-rules)与[缩进](https://www.leanprover.cn/reference-manual/latest/Notations-and-Macros/Defining-New-Syntax/#syntax-indentation)两节及底层`Parser` API。
+这些写法在源码中分为几层。`Lean/Parser/Syntax.lean`定义了`syntax`命令右侧所用的句法描述语言；`Lean/Elab/Syntax.lean`把描述译补成`ParserDescr`；`Lean/Parser/Extension.lean`中的`compileParserDescr`再把它编译成真正的`Parser`。实际执行词法读取、选择、重复和位置检查的基础实现主要位于`Lean/Parser/Basic.lean`，较高级的缩进与雅印控制则位于`Lean/Parser/Extra.lean`。
 
-## 预定义词法解析器
+## 预定义解析器
 %%%
 tag := "syntax-lexical-parsers"
 %%%
 
-这些名字不是用`declare_syntax_cat`声明的句法类别，而是Lean预先注册的叶子`Parser`别名；它们直接匹配一个词法项并产生相应的句法节点。
+Lean预先注册的小型`Parser`。它们直接匹配一种基础句法并产生相应的句法节点。
 
 ```table
 | 写法 | 匹配内容 | 产生的节点 |
@@ -320,16 +363,22 @@ tag := "syntax-lexical-parsers"
 | `ident` | 标识符，可包含命名空间。 | 标识符节点；保留关键字须写成`«...»`。 |
 | `rawIdent` | 不检查保留关键字的原始标识符。 | 与`ident`相同的标识符节点。 |
 | `num` | 十进制、十六进制、八进制或二进制数字字面量。 | `numLitKind`节点。 |
+| `hexnum` | 不带`0x`前缀的十六进制数字；必须紧跟在另一个解析器之后使用。 | `hexnumKind`节点。 |
 | `scientific` | 科学计数法字面量，例如`1.3e-24`。 | `scientificLitKind`节点。 |
 | `str` | 字符串字面量。 | `strLitKind`节点。 |
+| `interpolatedStr(p)` | 插值字符串；花括号内用解析器`p`匹配，例如`interpolatedStr(term)`。 | `interpolatedStrKind`节点，依次保存文字片段和插值结果。 |
 | `char` | 字符字面量。 | `charLitKind`节点。 |
 | `name` | 名称字面量。 | `nameLitKind`节点。 |
+| `hole` | 普通占位符`_`。 | `Lean.Parser.Term.hole`节点；译补时产生由上下文推断的元变量。 |
+| `syntheticHole` | 合成占位符`?_`或`?name`。 | `Lean.Parser.Term.syntheticHole`节点；产生不会由统一化自动解决的合成元变量。 |
 ```
 
 ## 固定原子与句法类别
 %%%
 tag := "syntax-specifiers"
 %%%
+
+`syntax`声明所使用的几种基础说明符。它们的表面语法定义在`Lean/Parser/Syntax.lean`。
 
 ```table
 | 写法 | 作用 | 备注或等价写法 |
@@ -340,22 +389,21 @@ tag := "syntax-specifiers"
 | `cat`、`cat:prec` | 匹配句法类别`cat`；可附加最低优先级。 | 例如`term`、`term:max`、`tactic`。 |
 ```
 
-
 ## 解析器组合子
 %%%
 tag := "syntax-parser-combinators"
 %%%
 
-从已有解析器`p`、`q`构造新的解析器，或改变它们的组合、重复、前瞻与失败行为。
+从已有解析器`p`、`q`构造新的解析器，或改变它们的组合、重复、前瞻与失败行为。这些写法也有“语法糖”和“真实组合子”两层。`p?`、`p*`、`p+`、`p <|> q`以及四种逗号后缀在`Init/Notation.lean`中声明并分别展开为`optional`、`many`、`many1`、`orelse`、`sepBy`或`sepBy1`。
 
 ```table
 | 写法 | 作用 | 备注或等价写法 |
 |------|------|----------------|
 | `p q` | 先后匹配`p`与`q`。 | 用空白并列多个说明符。 |
 | `(p)` | 把复合说明符`p`组合成一个整体。 | 常用于给一组说明符添加`?`、`*`等修饰符。 |
-| `p <\|> q` | 匹配`p`或`q`。 | 也可写作`orelse(p, q)`；分支消费记号后便不会回溯。 |
-| `lookahead(p)` | 仅检查`p`能够匹配。 | 正向前瞻；成功后恢复位置，不消费输入或捕获句法。 |
-| `!p`、`notFollowedBy(p)` | 当`p`不能匹配时成功，能匹配时失败。 | 负向前瞻；不消费输入，也不捕获句法。 |
+| `p <\|> q` | 匹配`p`或`q`。 | 也可写作`orelse(p, q)` |
+| `lookahead(p)` | 仅检查`p`能够匹配。 | 正向前瞻；成功后恢复位置 |
+| `!p`、`notFollowedBy(p)` | 当`p`不能匹配时成功，能匹配时失败。 | 负向前瞻 |
 | `atomic(p)` | 匹配`p`，但在失败时恢复到运行`p`之前的位置。 | 常写成`atomic(p) <\|> q`以允许失败后尝试`q`。 |
 | `patternIgnore(p)` | 正常匹配`p`，但在句法模式中忽略所得子树。 | 适合只负责定界、不需要被宏捕获的部分。 |
 | `p?` | 匹配零个或一个`p`。 | 等价于`optional(p)`。 |
@@ -400,7 +448,7 @@ tag := "syntax-parser-position-controllers"
 tag := "syntax-pretty-printer-controllers"
 %%%
 
-都以`pp*`(Pretty Printer的首字母)开头。没有解析作用，只向雅印器传递布局意图。
+都以`pp*`(Pretty Printer的首字母)开头。没有解析作用，只向雅印器传递布局意图。定义于`Lean/Parser/Extra.lean`。
 
 ```table
 | 控制符 | 雅印作用 | 解析阶段 |
@@ -425,7 +473,7 @@ tag := "syntax-pretty-printer-controllers"
 tag := "syntax-examples"
 %%%
 
-下面的声明都来自 Lean 4.32.2 的`src/lean/Init/Tactics.lean`。本节完整展示这些证明术的句法声明以及`rw`、`rwa`的宏定义；证明术如何执行属于译补阶段，不在这里展开。为了能读懂主声明，我们先看它们共同复用的配置和位置子句法。
+本节将演示`rewrite`、`simp`、`induction`证明术的句法声明。它们也会成为之后章节中我们考察的例子。
 
 ## 共用的配置与位置句法
 %%%
@@ -445,22 +493,24 @@ syntax locationHyp := (ppSpace colGt (term:max <|> locationType))+
 syntax location := withPosition(ppGroup(" at" (locationWildcard <|> locationHyp)))
 ```
 
-配置可以写成`+opt`、`-opt`或者`(opt := value)`。这里有几种尚未详细见过的控制符：
+这一大串看上去很复杂很长，实际上只有{anchorTerm syntax_source_shared (module := Examples.SyntaxSources)}`optConfig`和{anchorTerm syntax_source_shared (module := Examples.SyntaxSources)}`location`在后面实际会用到，其它都是局部声明。这里面每一个符号都在上面的章节介绍过，我直接把前半段五个声明直译为自然语言：
 
-1. `noWs`不消费字符，只检查下一个词法单元必须紧贴前一个词法单元。因此`+zeta`可以匹配`" +" noWs ident`，而`+ zeta`不行。
-2. `&"discharger"`和普通的`"discharger"`匹配相同文字，但不会把它注册为保留关键字。这样`discharger`在其它位置仍然可以作为普通标识符。
-3. `notFollowedBy(p)`在`p`不能匹配时成功，而且不消费输入。这里用它排除`(discharger := ...)`和`(disch := ...)`，把这两种写法留给`simp`自己的`discharger`子句。
-4. Lean的`p <|> q`不会在`p`消费了一部分输入后自动回溯。`atomic(p)`会在`p`失败时把位置恢复到运行`p`之前，因此`atomic(p) <|> q`能够安全地尝试第二个分支。上面的`atomic`正是为了在读到左括号后仍能把不属于配置项的输入完整退回。
-5. `withoutPosition(p)`暂时清除外围保存的缩进基准，再运行`p`。配置值中的`term`因此不会误受外层证明术缩进的限制。
+- {anchorTerm syntax_source_shared (module := Examples.SyntaxSources)}`posConfigItem` = "+" 无空格
+ `ident`
+- {anchorTerm syntax_source_shared (module := Examples.SyntaxSources)}`negConfigItem` = "-" 无空格
+ `ident`
+- {anchorTerm syntax_source_shared (module := Examples.SyntaxSources)}`valConfigItem` = "(" 不是 `discharger` 或 `disch`（不注册记号）`ident` " := " `term`（空格缩进无所谓） ")"，" := "之前匹配不上就失败了。`atomic`不把后面全包住是为了更聪明的错误处理逻辑，成功出现" := "就说明它应该是个配置项而不是别的，后面再写错就报告缺少 term 或 ")" 而不是直接失败。
+- {anchorTerm syntax_source_shared (module := Examples.SyntaxSources)}`configItem` = {anchorTerm syntax_source_shared (module := Examples.SyntaxSources)}`posConfigItem` 或 {anchorTerm syntax_source_shared (module := Examples.SyntaxSources)}`negConfigItem` 或 {anchorTerm syntax_source_shared (module := Examples.SyntaxSources)}`valConfigItem`
+- {anchorTerm syntax_source_shared (module := Examples.SyntaxSources)}`optConfig` = 任意个，每次出现缩进更深的 {anchorTerm syntax_source_shared (module := Examples.SyntaxSources)}`configItem`
 
-`optConfig`把配置项重复零次或多次；`colGt`要求换行后的配置项位于外层基准列的右侧。位置子句则可以是`at *`、`at h₁ h₂`或者`at h₁ ⊢`。`patternIgnore(p)`照常解析`p`，但把所得子树标记为在句法模式中忽略；因此`⊢`和ASCII写法`|-`只负责表示“目标”，不会成为译补器关心的参数。`withPosition(p)`为内部的`colGt`保存新的位置基准，`ppGroup`和`ppSpace`只控制雅印布局，不改变接受哪些源码。
+后四个留作练习！
 
-## `rewrite`、`rw`与`rwa`
+## `rewrite`
 %%%
 tag := "syntax-rw"
 %%%
 
-先看实际执行重写的`rewrite`：
+这真的很简单：
 
 ```anchor syntax_source_rewrite (module := Examples.SyntaxSources)
 syntax rwRule    := unicode("← ", "<- ")? term
@@ -469,38 +519,12 @@ syntax rwRuleSeq := " [" withoutPosition(rwRule,*,?) "]"
 syntax (name := rewriteSeq) "rewrite" optConfig rwRuleSeq (location)? : tactic
 ```
 
-`unicode("← ", "<- ")`用同一个解析器接受Unicode和ASCII箭头；末尾的`?`让箭头可选。`rwRule,*,?`表示零个或多个逗号分隔的规则，并允许最后留下一个逗号，所以`[]`、`[h]`、`[← h, g]`和`[h,]`都符合`rwRuleSeq`。方括号内部使用`withoutPosition`，表示显式定界符已经足以确定范围，不再继承外面的缩进约束。
-
-最后一行从左到右依次读取`rewrite`、零个或多个配置项、必需的规则列表和可选的位置说明。`(name := rewriteSeq)`把根节点种类固定为`Lean.Parser.Tactic.rewriteSeq`，真正的证明术译补器正是按这个名字注册的。
-
-常用的`rw`并不是另一个独立译补器，而是宏：
-
-```anchor syntax_source_rw (module := Examples.SyntaxSources)
-macro (name := rwSeq) "rw " c:optConfig s:rwRuleSeq l:(location)? : tactic =>
-  match s with
-  | `(rwRuleSeq| [$rs,*]%$rbrak) =>
-    `(tactic| (rewrite $c [$rs,*] $(l)?; with_annotate_state $rbrak (try (with_reducible rfl))))
-  | _ => Macro.throwUnsupported
-
-macro "rwa " rws:rwRuleSeq loc:(location)? : tactic =>
-  `(tactic| (rw $rws:rwRuleSeq $[$loc:location]?; assumption))
-```
-
-`macro`在`=>`左边仍使用本章一直在读的句法描述语言：`c:optConfig`、`s:rwRuleSeq`和`l:(location)?`分别捕获配置、规则列表和可选位置。`=>`右边开始操作已经解析好的`Syntax`，这里先只解释读源码所必需的记号：
-
-* `` `(rwRuleSeq| ...) ``是`rwRuleSeq`类别的句法模式；`$rs,*`捕获逗号分隔的所有规则，`%$rbrak`额外捕获右方括号这个原子。
-* `` `(tactic| ...) ``构造一棵`tactic`句法树。`$c`和`$rbrak`插入单个句法对象，`[$rs,*]`重新插入分隔列表，`$(l)?`插入可选对象。
-* `$[$loc:location]?`是另一种可选反引用写法，并显式标出其类别为`location`。
-* 如果输入没有形成预期的`rwRuleSeq`结构，`Macro.throwUnsupported`让该宏规则拒绝处理它。
-
-展开结果也很直观：`rw`先运行`rewrite`，再尝试用可约化透明度下的`rfl`关闭目标；`with_annotate_state`把这次尝试前后的状态挂在右方括号位置，供编辑器显示。`rwa`则在`rw`之后继续运行`assumption`。关于句法模式、引用和反引用的系统规则将在下一章讲宏时展开。
-
-## `simp`的源码
+## `simp`
 %%%
 tag := "syntax-simp"
 %%%
 
-`simp`不是宏，它有自己的证明术译补器。下面是主声明以及它直接依赖的全部子句法：
+我觉得这好像也不需要我解释什么：
 
 ```anchor syntax_source_simp (module := Examples.SyntaxSources)
 syntax discharger := atomic(" (" patternIgnore(&"discharger" <|> &"disch")) " := " withoutPosition(tacticSeq) ")"
@@ -515,18 +539,12 @@ syntax (name := simp) "simp" optConfig (discharger)? (&" only")?
   (" [" withoutPosition((simpStar <|> simpErase <|> simpLemma),*,?) "]")? (location)? : tactic
 ```
 
-`discharger`匹配`(discharger := tac)`或`(disch := tac)`。前面的通用`valConfigItem`特意用`notFollowedBy`避开这两个名字，所以输入会留到这里处理。`patternIgnore`让关键字只充当定界标记，`tacticSeq`则允许等号右侧放一串证明术，而不只是一个`tactic`。
-
-一条`simpLemma`由三层组成：可选的`↓`或`↑`指定在进入子项之前还是之后使用规则，可选的`←`或`<-`反向使用等式，最后的`term`给出定理。`ppGroup`希望雅印器尽量把这三部分排在一起。`simpErase`中的`term:max`要求减号后先匹配一个最高优先级的项；复杂表达式需要括号明确边界，避免它吞掉后面的`simp`参数。`simpStar`就是`*`，表示使用所有局部假设。
-
-主声明依次组合：配置、可选discharger、可选`only`、可选参数列表和可选位置。`&" only"`使用非保留关键字形式，所以声明`simp`不会顺带禁止用户在其它上下文中使用名字`only`。参数列表内部的每个元素都会保留`simpStar`、`simpErase`或`simpLemma`节点种类；译补器正是检查这些种类来区分三种语义，而不是重新分析原始文本。
-
 ## 布局敏感的`induction`
 %%%
 tag := "syntax-induction"
 %%%
 
-`rw`和`simp`主要依靠标点划分结构。`induction`更独特：它的`with`分支还依赖换行和缩进。先看一个真实用法：
+`rw`和`simp`主要依靠标点划分结构。`induction`更独特：它的`with`分支还依赖换行和缩进。先看一个真实用例：
 
 ```anchor syntax_induction_use
 example (n : Nat) : n + 0 = n := by
@@ -550,100 +568,4 @@ syntax (name := induction) "induction " elimTarget,+ (" using " term)?
   (" generalizing" (ppSpace colGt term:max)+)? (inductionAlts)? : tactic
 ```
 
-从最内层开始读：
-
-1. `inductionAltLHS`匹配`| zero`或`| succ n ih`这样的分支左侧。构造器名前可选的`@`要求显式列出隐式参数；构造器也可以写成`_`。后续参数是零个或多个`ident <|> hole`，`colGt`要求换行后的参数缩进到分支起点右侧。
-2. `ppLine`建议在分支前换行，`ppDedent`抵消外围默认缩进；二者只影响雅印。`withPosition`则真正影响解析，它把当前分支起点保存为内部列检查的基准。
-3. 一个`inductionAlt`可以有一个或多个左侧，因此可以让多个构造器分支共享同一个`=>`右侧。右侧还可以省略，或者写普通占位符`_`、合成占位符`?_`/`?name`以及完整的`tacticSeq`。`syntheticHole`正是匹配后两种问号写法的项句法。
-4. `inductionAlts`先读`with`，随后可以有一个对所有分支运行的共同`tactic`，再读取若干分支。`colGe`要求每个分支不能退到保存基准的左侧，这样解析器遇到外层同级代码时就会停止收集分支。
-5. `elimTarget`既可以是普通项`e`，也可以是`h : e`。`atomic(binderIdent " : ")`保证只有在名字和冒号都匹配成功时才采用带名形式；否则回退后让后面的`term`从原位置解析。
-6. 主声明中的`elimTarget,+`要求至少一个逗号分隔的归纳目标。之后还可以用`using term`指定归纳原理，用`generalizing term...`列出至少一个需要先泛化的项，最后接可选的`with`分支。
-
-这个例子补上了前面列表和运算符例子没有展示的一层：Lean的句法不只描述词法单元的先后关系，还可以利用保存的位置和列约束描述布局敏感的块结构。
-
-
-
-# 解析器
-%%%
-tag := "syntax-parser"
-%%%
-
-
-是的，*leading/trailing parser 是 Lean parser 的标准实现机制*。Lean 源码明确说明：
-
-> All builtin parser categories are Pratt's parsers.
-
-也就是说，`term`、`tactic` 等可扩展语法类别使用的是 *Pratt parser*。
-
-*Lean 如何解析表达式*
-
-可以粗略理解为：
-
-```
-parseTerm(最低优先级):
-  lhs := 调用 leading parser 解析起始项
-
-  while 后面存在满足优先级要求的 trailing parser:
-    lhs := 调用 trailing parser，并传入已有 lhs
-
-  return lhs
-```
-
-两类 parser 分工如下：
-
-- *leading parser*：不需要已有左项，例如标识符、字面量、括号、前缀运算符。
-- *trailing parser*：接在已有左项后，例如中缀运算符、后缀运算符、函数应用和字段投影。
-
-例如：
-
-```
-10 SUBR₂ 3
-```
-
-执行形状大致是：
-
-```
-leading parser 解析 10
-trailing parser 接收 lhs = 10
-trailing parser 读取 SUBR₂ 3
-```
-
-声明：
-
-```
-macro:10 l:term:10 " SUBR₂ " r:term:10 : term => ...
-```
-
-在文法上是直接左递归：
-
-```
-term ::= term " SUBR₂ " term
-```
-
-Lean 将开头的第一个 `term` 提取为已有 `lhs`，剩余部分编译为 trailing parser，从而避免无限递归。
-
-注意，*trailing parser 不意味着左结合*。结合方向仍由左右参数的 binding power 决定。
-
-*它是最流行的实现吗？*
-
-Pratt parser 是解析*表达式和运算符优先级*最流行的方法之一，但不是通用语言 parser 中唯一或绝对最流行的方法。
-
-`leading parser` 和 `trailing parser` 还是 Lean 的命名。其他 Pratt parser 实现更常称为：
-
-- `nud` / null denotation：对应 leading parser
-- `led` / left denotation：对应 trailing parser
-- prefix parselet / infix parselet
-
-常见解析技术还有：
-
-| 方法 | 常见用途 |
-|---|---|
-| 递归下降、LL | 手写语言 parser，结构直观 |
-| LR、LALR、SLR | Yacc/Bison 等生成式 parser |
-| Pratt / TDOP | 表达式、前中后缀算符和优先级 |
-| Precedence climbing | 较简单的运算符优先级解析 |
-| PEG / Packrat | 按顺序选择、支持回溯的文法 |
-| Parser combinator | 函数式组合小 parser |
-| Earley / GLR | 一般上下文无关文法和歧义文法 |
-
-Lean 的选择特别适合它的需求：用户可以随时通过 `syntax`、`macro`、`notation` 添加新语法和新运算符。传统固定 LR 表不容易这样动态扩展，而 Pratt parser 只需向 leading/trailing 表注册新的 parselet。
+通过这个例子来体会布局敏感句法声明的精妙环节。`inductionAlts`末尾的`withPosition((colGe inductionAlt)*)`。约束分支区域：`withPosition`在开始读取分支时保存当前位置，通常就是第一个`|`所在的列；每次重复前的`colGe`要求下一个分支不能位于该基准列左侧。因此各分支共享同一个最小缩进边界，但不必严格对齐，更深缩进的分支同样可以解析。`inductionAltLHS`内部另有一层`withPosition`：它以当前分支的`|`为基准，而`(colGt (ident <|> hole))*`要求构造子之后的每个参数位于`|`的右侧。

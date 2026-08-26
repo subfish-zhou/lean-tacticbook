@@ -115,21 +115,83 @@ notation l " SUB₁ " r => l - r
 notation:1022 l:0 " SUB₂ " r:0 => l - r
 -- ANCHOR_END: syntax_default_precedence
 
+namespace SyntaxCopy
+
+inductive Syntax.Preresolved where
+  | namespace (ns : Name)
+  | decl (n : Name) (fields : List String)
+
+-- ANCHOR: syntax_type_definition
+inductive Syntax where
+  | missing : Syntax
+  | node   (info : SourceInfo) (kind : SyntaxNodeKind) (args : Array Syntax) : Syntax
+  | atom   (info : SourceInfo) (val : String) : Syntax
+  | ident  (info : SourceInfo) (rawVal : Substring.Raw) (val : Name)
+      (preresolved : List Syntax.Preresolved) : Syntax
+-- ANCHOR_END: syntax_type_definition
+
+end SyntaxCopy
+
+-- ANCHOR: syntax_manual_construction
+def myexactSyntax : Syntax :=
+  Syntax.node SourceInfo.none `myexact #[
+    Syntax.atom SourceInfo.none "myexact",
+    Syntax.ident SourceInfo.none "h".toRawSubstring `h []
+  ]
+
+#eval myexactSyntax.getKind == `myexact -- true
+-- ANCHOR_END: syntax_manual_construction
+
+-- ANCHOR: syntax_helper_construction
+def applicationSyntax : Syntax :=
+  Syntax.mkApp (mkIdent `f) #[mkIdent `x, Syntax.mkNumLit "42"]
+
+#eval applicationSyntax.getKind == `Lean.Parser.Term.app -- true
+-- ANCHOR_END: syntax_helper_construction
+
 set_option linter.unusedTactic false
 set_option linter.unreachableTactic false
 
--- ANCHOR: parser_inspect_kind
-partial def syntaxKinds : Syntax → Array SyntaxNodeKind
-  | .node _ kind args => args.foldl (fun kinds arg => kinds ++ syntaxKinds arg) #[kind]
-  | _ => #[]
+-- ANCHOR: parser_matches_syntax
+def matchesSyntax (env : Environment) (categoryName : Name)
+    (kind : SyntaxNodeKind) (input : String) : Bool :=
+  match Parser.runParserCategory env categoryName input with
+  | .ok stx => stx.getKind == kind
+  | .error _ => false
 
-elab "#inspect_syntax " t:tactic : command => do
-  for kind in syntaxKinds t.raw do
-    if kind != nullKind then
-      logInfo m!"{kind}"
+elab "#matches_syntax " category:ident kind:ident input:str : command => do
+  let env ← getEnv
+  let category := category.getId
+  let kind ← resolveGlobalConstNoOverload kind
+  let input := input.getString
+  logInfo m!"{matchesSyntax env category kind input}"
 
-#inspect_syntax myexact True.intro
-#inspect_syntax simp only [↓ ← h]
--- ANCHOR_END: parser_inspect_kind
+#matches_syntax tactic myexact "myexact True.intro" -- true
+#matches_syntax tactic myexact "myexact"            -- false
+#matches_syntax tactic myexact "exact True.intro"   -- false
+-- ANCHOR_END: parser_matches_syntax
+
+-- ANCHOR: syntax_atomic_optional
+declare_syntax_cat ruleTest
+
+syntax (name := atomicRule)
+  "test_atomic " atomic("a " "b ") ("c" <|> ("a " "c")) : ruleTest
+syntax (name := optionalRule)
+  "test_optional " ("a " "b ")? ("c" <|> ("a " "c")) : ruleTest
+syntax (name := atomicOptionalRule)
+  "test_atomic_optional " atomic("a " "b ")? ("c" <|> ("a " "c")) : ruleTest
+
+#matches_syntax ruleTest atomicRule "test_atomic c"                         -- false
+#matches_syntax ruleTest optionalRule "test_optional c"                     -- true
+#matches_syntax ruleTest atomicOptionalRule "test_atomic_optional c"        -- true
+
+#matches_syntax ruleTest atomicRule "test_atomic a c"                       -- false
+#matches_syntax ruleTest optionalRule "test_optional a c"                   -- false
+#matches_syntax ruleTest atomicOptionalRule "test_atomic_optional a c"      -- true
+
+#matches_syntax ruleTest atomicRule "test_atomic a b c"                     -- true
+#matches_syntax ruleTest optionalRule "test_optional a b c"                 -- true
+#matches_syntax ruleTest atomicOptionalRule "test_atomic_optional a b c"    -- true
+-- ANCHOR_END: syntax_atomic_optional
 
 end tacticbook_syntax

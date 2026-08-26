@@ -4,6 +4,9 @@ import LeanTacticBook.Helpers
 open Verso.Genre Manual
 open Verso Code External
 
+set_option verso.exampleProject "examples"
+set_option verso.exampleModule "Examples.AppendixApiReference"
+
 set_option maxRecDepth 100000
 
 #doc (Manual) "附录 A：Metaprogramming API 目录" =>
@@ -31,21 +34,25 @@ tag := "appendix-api-monad-stack"
 
 四个主要 monad 逐层增加上下文和状态：
 
+:::codeBox "pseudocode"
 ```
 CoreM
   └─ MetaM
        └─ TermElabM
             └─ TacticM
 ```
+:::
 
 其权威定义可概括为：
 
+:::codeBox "code"
 ```
 CoreM     := ReaderT Core.Context (StateRefT Core.State (EIO Exception))
 MetaM     := ReaderT Meta.Context (StateRefT Meta.State CoreM)
 TermElabM := ReaderT Term.Context (StateRefT Term.State MetaM)
 TacticM   := ReaderT Tactic.Context (StateRefT Tactic.State TermElabM)
 ```
+:::
 
 上层通常可以通过 monad lifting 使用下层能力；反方向则需要显式构造并运行所缺的上下文与状态。
 
@@ -56,6 +63,7 @@ tag := "appendix-api-monad-lifting"
 
 `TacticM` 可直接使用 `TermElabM`、`MetaM` 和 `CoreM` 的能力；`TermElabM` 可直接使用 `MetaM` 和 `CoreM` 的能力。把会产生新目标的 `MVarId → MetaM (List MVarId)` 提升到 tactic 层时使用 `liftMetaTactic`。只想探测而不保留元变量赋值时用 `withoutModifyingState`；需要在多个完整策略间回退时使用 `saveState` / `restoreState`。
 
+:::codeBox "code"
 ```
 let matched ← withoutModifyingState do
   isDefEq candidateType target
@@ -67,17 +75,14 @@ catch _ =>
   restoreState saved
   secondStrategy
 ```
+:::
 
 ## 读取并检查当前目标
 %%%
 tag := "appendix-api-minimal-tactic"
 %%%
 
-```
-import Lean
-
-open Lean Elab Tactic Meta
-
+```anchor appendix_inspect_goal
 elab "inspect_goal" : tactic => do
   let goal ← getMainGoal
   let target ← goal.getType
@@ -90,9 +95,7 @@ elab "inspect_goal" : tactic => do
 tag := "appendix-api-minimal-meta"
 %%%
 
-```
-open Lean Meta
-
+```anchor appendix_inspect_expr
 def inspectExpr (expr : Expr) : MetaM Unit := do
   let type ← inferType expr
   let type ← instantiateMVars type
@@ -104,9 +107,7 @@ def inspectExpr (expr : Expr) : MetaM Unit := do
 tag := "appendix-api-minimal-goals"
 %%%
 
-```
-open Lean Elab Tactic Meta
-
+```anchor appendix_close_or_keep
 elab "close_or_keep" : tactic => do
   let goal ← getMainGoal
   if ← goal.isAssigned then
@@ -191,6 +192,7 @@ tag := "appendix-api-expr-syntax-quotation"
 
 `match_expr` / `let_expr` 用声明名匹配核心表达式；term、tactic 和 command quotation 构造有类别的 `Syntax`；`$x`、`$xs,*` 等 antiquotation 将已有语法插入模板。这些是 elaborator 语法，不是环境常量，因此不会出现在生成表中。
 
+:::codeBox "code"
 ```
 match_expr target with
 | Eq α lhs rhs => ...
@@ -200,6 +202,7 @@ match_expr target with
 let tacticSyntax ← `(tactic| simp [$(mkIdent lemmaName)])
 let termSyntax ← `(Eq.refl $term)
 ```
+:::
 
 # A.3 环境、局部状态与诊断
 %%%
@@ -322,7 +325,7 @@ tag := "appendix-api-tactic-declarations"
 - `@[tactic name]`、`@[term_elab name]`、`@[command_elab name]` 是较底层的 elaborator 注册入口。
 - 简单组合优先用 macro；需要检查目标、类型或环境时使用 tactic elaborator。
 
-```
+```anchor appendix_tactic_declarations
 syntax "my_assumption" : tactic
 
 macro "my_rfl" : tactic => `(tactic| rfl)

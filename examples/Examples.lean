@@ -1,3 +1,14 @@
 import Examples.Ch01Introduction
 import Examples.Ch02Syntax
 import Examples.Ch03Macros
+import Examples.Ch04CoreM
+import Examples.Ch05MetaM
+import Examples.Ch06TermElabM
+import Examples.Ch07TacticM
+import Examples.Ch08Imported
+import Examples.Ch08Exact
+import Examples.Ch09Ring
+import Examples.Ch10Linarith
+import Examples.Ch11Grind
+import Examples.Ch12BVDecide
+import Examples.AppendixApiReference

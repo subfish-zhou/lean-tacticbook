@@ -18,40 +18,38 @@ tag := "introduction"
 tag := "lean-compile-process"
 %%%
 
-Lean 编译过程可以总结为下图：
+Lean 从源码到声明，主要经过以下几层：
 
-![Lean 编译过程](LeanTacticBook/img/lean-compile.png)
+:::codeBox "pseudocode"
+```
+source text
+→ parser：按语法类别构造 Syntax
+→ macro expansion：Syntax → Syntax
+→ elaboration：结合预期类型、环境与上下文构造 Expr / declarations
+→ kernel：检查声明类型与证明项
+→ code generation / evaluation：只在需要运行可执行定义时发生
+```
+:::
 
-首先从字符串形式的 Lean 代码开始。然后它变成 Syntax 对象，然后是 Expr 对象。最后执行它。
+解析器不是用一个“美化的正则表达式”包办全部语法。不同 parser category 各自有规则；解析结果携带 syntax kind，供宏和译补器继续分派。
 
-因此，编译器看到一串 Lean 代码，例如 "let a := 2"，然后展开以下过程：
+宏反复把一棵 Syntax 改写成另一棵 Syntax，直到进入不再由该宏展开的形状。宏只处理语法结构，不负责判断生成项是否具有目标类型。
 
-应用相关语法规则 ("let a := 2" ➤ Syntax)
-在解析步骤中，Lean 尝试将一串 Lean 代码与声明的语法规则之一进行匹配，以便将该字符串转换为 Syntax 对象。语法规则基本上是美化的正则表达式 -- 当您编写与某个语法规则的正则表达式匹配的 Lean 字符串时，该规则将用于处理后续步骤。
+译补也不是凭一个 `name` 找到唯一函数。命令、项和 tactic 有各自的分派入口，同一 syntax kind 还可能注册多个译补器并依次尝试；宏回退、预期类型、局部上下文与环境都会影响结果。译补成功后得到 Expr 或声明，再交给内核检查。
 
-循环应用所有宏 (Syntax ➤ Syntax)
-在繁饰步骤中，每个宏只是将现有的 Syntax 对象转换为某个新的 Syntax 对象。然后，新的 Syntax 以类似的方式处理（重复步骤 1 和 2），直到没有更多宏可应用。
-
-应用单个 elab (Syntax ➤ Expr)
-最后，是时候为你的语法注入意义了 -- Lean 通过 name 参数找到与相应语法规则匹配的 elab（语法规则、宏 和 elabs 都有此参数，并且它们必须匹配）。新发现的 elab 返回特定的 Expr 对象。
-
-这样就完成了繁饰步骤。​​
-
-然后，表达式（Expr）在求值步骤中转换为可执行代码 -- 我们不必以任何方式指定，Lean 编译器将为我们处理此操作。
-
+最后要分清“检查”与“执行”。定理的证明项通常由内核做类型检查，并不会因为出现在源码里就转换成机器码执行。只有需要运行定义、生成可执行程序或使用原生求值时，才进入代码生成与运行时；Ch12 会看到这一区分怎样直接改变信任边界。
 
 # 全书结构
 %%%
 tag := "book-overview"
 %%%
 
-:::codeBox "示意"
-```leanBug
-Part I   Ch1–Ch6    tactic 心智模型、tactic 基础设施、Expr、tactic 编写、目标管理、typeclass
-Part II  Ch7–Ch14   simp、ring、omega、linarith、norm_num、aesop、grind、decide
-Part III Ch15–Ch20  positivity、fun_prop、gcongr、field_simp、逻辑变换、自定义自动化
-Part IV  Ch21–Ch25  反射、性能、外部工具、方法论、分析自动化展望
+:::codeBox "pseudocode"
+```
+Part I   Ch01–Ch03  心智模型、语法与宏
+Part II  Ch04–Ch07  CoreM、MetaM、项译补与 TacticM
+Part III Ch08–Ch12  exact?、ring、linarith、grind、bv_decide
 ```
 :::
 
-Part I 和 Part II 提供后续章节共用的基础，建议按顺序阅读。Part III 可按任务选择；Part IV 偏重架构和方法论，初读时不必完成所有实现。
+Ch01–Ch07 建立后续章节共用的对象、状态和前端知识，适合按顺序阅读。Ch08–Ch12 每章选择一种生产自动化证明术，沿“问题怎样表示、搜索或计算产生什么、证明如何构造、内核最终检查什么”追到底。

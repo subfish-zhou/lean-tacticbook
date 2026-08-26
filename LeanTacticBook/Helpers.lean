@@ -9,14 +9,11 @@ open Lean
 
 /-! ## Labelled code boxes -/
 
-private def codeBoxInfo? (label : String) : Option (String × String) :=
+private def codeBoxKind? (label : String) : Option String :=
   match label with
-  | "可运行" => some ("runnable", label)
-  | "示意" => some ("hint", label)
-  | "源码节选" => some ("excerpt", label)
-  | "伪代码" => some ("pseudo", label)
-  | "练习·故意错误" => some ("bug", "练习 · 故意错误")
-  | "练习模板" => some ("template", label)
+  | "code" => some "code"
+  | "pseudocode" => some "pseudocode"
+  | "error code" => some "error-code"
   | _ => none
 
 private def codeBoxCss : String := r#"
@@ -72,17 +69,6 @@ pre.hl.lean .token.comment, pre.hl.lean .comment {
   border-radius: 4px;
   overflow: hidden;
 }
-.codebox-header {
-  display: inline-block;
-  padding: 1px 10px;
-  margin: 0;
-  font-size: 0.72em;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  border-radius: 0 0 6px 0;
-  line-height: 1.6;
-  vertical-align: top;
-}
 .codebox pre,
 .codebox > code.hl.lean.block {
   margin: 0 !important;
@@ -96,66 +82,38 @@ pre.hl.lean .token.comment, pre.hl.lean .comment {
 }
 .codebox > pre {
   padding: 0.6em 1em;
-  background-color: transparent;
+  background-color: transparent !important;
 }
 
-.codebox-runnable,
-.codebox-hint,
-.codebox-excerpt,
-.codebox-bug {
+.codebox-code {
   background-color: #f8fdf8;
   border-left-color: #4caf50;
 }
-.codebox-runnable > .codebox-header,
-.codebox-hint > .codebox-header,
-.codebox-excerpt > .codebox-header,
-.codebox-bug > .codebox-header {
-  color: #fff;
-  background-color: #4caf50;
-}
-.codebox-bug > .codebox-header { background-color: #d9534f; }
 
-.codebox-pseudo {
+.codebox-pseudocode {
   background-color: #fffbea;
   border-left-color: #d4a017;
 }
-.codebox-pseudo > .codebox-header {
-  color: #fff;
-  background-color: #d4a017;
-}
 
-.codebox-template {
-  background-color: #fff7ec;
-  border-left-color: #e6913a;
-}
-.codebox-template > .codebox-header {
-  color: #fff;
-  background-color: #e6913a;
-}
-
-.codebox-runnable:has(pre.hl.bash.block) {
-  background-color: #f4faff;
-  border-left-color: #2196f3;
-}
-.codebox-runnable:has(pre.hl.bash.block) > .codebox-header {
-  background-color: #2196f3;
+.codebox-error-code {
+  background-color: #fff1f0;
+  border-left-color: #d9534f;
 }
 "#
 
-block_extension Block.codeBox (kind : String) (label : String) where
-  data := ToJson.toJson (kind, label)
+block_extension Block.codeBox (kind : String) where
+  data := ToJson.toJson kind
   traverse _ _ _ := pure none
   toTeX := some fun _goI goB _id _data contents => contents.mapM goB
   extraCss := [codeBoxCss]
   toHtml :=
     open Verso.Output.Html in
     some <| fun _goI goB _id data contents => do
-      let .ok (kind, label) := FromJson.fromJson? (α := String × String) data
+      let .ok kind := FromJson.fromJson? (α := String) data
         | reportError "Invalid code box data"
           return .empty
       pure {{
         <div class={{"codebox codebox-" ++ kind}}>
-          <div class="codebox-header">{{label}}</div>
           {{← contents.mapM goB}}
         </div>
       }}
@@ -170,10 +128,10 @@ instance : FromArgs CodeBoxConfig DocElabM where
 def codeBox : DirectiveExpanderOf CodeBoxConfig
   | {label}, contents => do
     let label := label.getString
-    let some (kind, displayLabel) := codeBoxInfo? label
-      | throwError "Unknown code box label {repr label}"
+    let some kind := codeBoxKind? label
+      | throwError "Unknown code box label {repr label}; expected \"code\", \"pseudocode\", or \"error code\""
     let blocks ← contents.mapM elabBlock
-    ``(Block.other (Block.codeBox $(quote kind) $(quote displayLabel)) #[ $[ $blocks ],* ])
+    ``(Block.other (Block.codeBox $(quote kind)) #[ $[ $blocks ],* ])
 
 /-! ## Collapsible API boxes -/
 
@@ -859,6 +817,61 @@ def leanCmdBlock : CodeBlockExpander
         logErrorAt refStx e
         return #[← ``(sorry)]
       | e => throw e
+
+private def leanMessageHoverPriorityJs : String := r#"
+(() => {
+  function installMessageHovers() {
+    let found = false;
+    let pending = false;
+    document.querySelectorAll('.hl.lean .has-info').forEach(messageOwner => {
+      const token = messageOwner.querySelector(':scope > .token');
+      if (!token) return;
+      found = true;
+      if (!messageOwner._tippy) {
+        pending = true;
+        return;
+      }
+      if (token._tippy) token._tippy.destroy();
+      if (token.dataset.versoMessageOwnerInstalled === 'true') return;
+      token.dataset.versoMessageOwnerInstalled = 'true';
+      token.addEventListener('mouseenter', () => messageOwner._tippy?.show());
+    });
+    return found && !pending;
+  }
+
+  window.addEventListener('load', () => {
+    let attempts = 0;
+    const timer = window.setInterval(() => {
+      attempts += 1;
+      if (installMessageHovers() || attempts >= 200) {
+        window.clearInterval(timer);
+      }
+    }, 50);
+  });
+})();
+"#
+
+-- This extension contributes the hover-priority script while rendering its one
+-- ordinary Lean block child without an extra HTML wrapper.
+block_extension Block.leanMessageHoverPriority (_dummy : Unit) where
+  traverse _ _ _ := pure none
+  toTeX := some fun _goI goB _id _data contents => contents.mapM goB
+  extraJs := [leanMessageHoverPriorityJs]
+  toHtml :=
+    some <| fun _goI goB _id _data contents => contents.mapM goB
+
+/-- Keep normal external `anchor` blocks, but attach the hover-priority asset
+that prevents command documentation from covering compiler-message hovers. -/
+instance (priority := 1100) : Verso.Code.External.ExternalCode Genre.Manual where
+  leanInline hl cfg :=
+    .other (Inline.lean hl cfg) #[]
+  leanBlock hl cfg :=
+    let code : Doc.Block Genre.Manual := .other (Block.lean hl cfg) #[]
+    .other (Block.leanMessageHoverPriority ()) #[code]
+  leanOutputInline message plain expandTraces :=
+    .other (Inline.leanOutput message plain expandTraces) #[]
+  leanOutputBlock message summarize expandTraces :=
+    .other (Block.leanOutput message summarize expandTraces) #[]
 
 /-! ## Shared HTML tokeniser helpers (used by `leanBug`, `bashFence`) -/
 
