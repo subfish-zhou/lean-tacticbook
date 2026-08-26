@@ -347,7 +347,7 @@ abbrev MacroM :=
 ```
 :::
 
-`ReaderT Macro.Context` 给计算增加一份只读现场；`EStateM Macro.Exception Macro.State` 带着可变化的宏状态运行，也允许以 `Macro.Exception` 失败。这里的 state 保存宏作用域、trace 等展开期信息；exception 则区分“这条规则不处理”与真正的错误。
+`ReaderT Macro.Context` 给计算增加一份只读现场；`EStateM Macro.Exception Macro.State` 带着可变化的宏状态运行，也允许以 `Macro.Exception` 失败。当前卫生作用域放在 Context；State 保存 fresh scope 计数器、trace 和已展开宏声明等可变信息；Exception 则区分“这条规则不处理”与真正的错误。
 
 这里真正的 Monad transformer 是外层 `ReaderT`；内层 `EStateM` 本身把状态与异常合成一个基础计算。Transformer 不是给一个值反复套盒子，而是在已有 Monad 外再加一层现场或状态，同时保留 `pure`、`bind` 和 `do` 的连接方式。以后几章会看到 `ReaderT` 与 `StateRefT` 继续向外叠加：
 
@@ -364,7 +364,7 @@ TacticM   := ReaderT Tactic.Context
 ```
 :::
 
-现在不需要记住这些 Context 和 State 的字段。先记住读法：每向外加一层 transformer，就增加当前阶段专用的一份现场或状态；底层已有的能力仍然可以继续使用。只想写宏的读者读到这里已经够了，后面四章会逐层拆开。
+现在不需要记住这些 Context 和 State 的字段。先记住读法：每向外加一层 transformer，就增加当前阶段专用的一份现场或状态；底层已有的能力仍然可以继续使用。只想写宏的读者读到这里已经够了，Ch05 至 Ch08 会逐层拆开。
 
 `MacroM` 的边界还有一点容易说错。它没有通用的 `getEnv`，也没有 IO；宏不能取得整个 `Environment` 随意查询。但宏展开框架通过不透明的 `Macro.Methods` 开放了几项窄接口，所以 `hasDecl` 和 `resolveGlobalName` 仍然可用。框架只肯替宏回答几类事先规定好的问题。
 
@@ -382,6 +382,7 @@ TacticM   := ReaderT Tactic.Context
 | `Macro.hasDecl n` | `MacroM Bool` | 询问一个全名是否对应声明
 | `Macro.resolveGlobalName n` | `MacroM (List (Name × List String))` | 解析全局名字及投影后缀
 | `Macro.expandMacro? stx` | `MacroM (Option Syntax)` | 尝试把最外层宏再展开一步
+| `Macro.trace cls msg` | `MacroM Unit` | 把自定义消息写入指定 trace class
 | `Macro.throwUnsupported` | `MacroM α` | 把输入交给别的宏候选
 | `Macro.throwErrorAt ref msg` | `MacroM α` | 在指定 Syntax 位置报告错误
 ```
@@ -570,7 +571,7 @@ macro_rules | `(tactic| trivial) => `(tactic| apply And.intro <;> trivial)
 ```
 :::
 
-同优先级下，后注册的候选先试，所以运行时从递归合取分支向上回退，最后才到 `assumption`；源码书写顺序不是尝试顺序。你已经亲手写过这些规则需要的回退、递归和 `<;>`，所以不必再把六个分支逐项讲一遍。
+这些规则都注册在同一个 Syntax kind 下；注册表让后注册的候选先试，所以运行时从递归合取分支向上回退，最后才到 `assumption`。这里没有另一个“宏候选优先级”字段；`macro (priority := ...)` 调整的是新建 syntax parser 的优先级，不是这条候选链。你已经亲手写过这些规则需要的回退、递归和 `<;>`，所以不必再把六个分支逐项讲一遍。
 
 ```anchor macro_trivial_use
 example (P : Prop) (h : P) : P := by
@@ -611,11 +612,14 @@ tag := "macro-debugging"
 
 这四层的修法不同。Parser 错误先缩小输入并确认类别和优先级；pattern 错误检查 quotation 类别、重复项和可选项；生成代码的错误去看展开结果；执行失败则回到目标状态和真正运行的 tactic。
 
-`trace.Elab.step` 可以显示译补过程中经过的展开步骤：
+`trace.Elab.step` 可以显示译补过程中经过的展开步骤；宏内部也能用 `Macro.trace` 把自己的消息写进同一个 trace class：
 
 ```anchor macro_trace_use
 syntax:max "twiceTrace(" term ")" : term
-macro_rules | `(twiceTrace($t)) => `($t + $t)
+macro_rules
+  | `(twiceTrace($t)) => do
+      Macro.trace `Elab.step "expanding twiceTrace"
+      `($t + $t)
 
 set_option trace.Elab.step true in
 #check twiceTrace(2)

@@ -161,16 +161,16 @@ macro_rules
       `(tactic|
         first
         | rw [show $poly = (($roots).map (fun r => $x - r)).prod by
-            simp only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil, mul_one]
+            simp only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil, mul_one] <;>
             ring] <;>
           simp only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil, mul_one,
-            mul_eq_zero, sub_eq_zero]
+            mul_eq_zero, sub_eq_zero, or_assoc]
         | have hpoly : $poly = 0 := by assumption
           rw [show $poly = (($roots).map (fun r => $x - r)).prod by
-            simp only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil, mul_one]
+            simp only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil, mul_one] <;>
             ring] at hpoly
           simpa only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil, mul_one,
-            mul_eq_zero, sub_eq_zero] using hpoly)
+            mul_eq_zero, sub_eq_zero, or_assoc] using hpoly)
 
 syntax "poly_roots₂ " term " with " term:max+ " in " term : tactic
 
@@ -300,7 +300,10 @@ example : Measurable (fun x : Real => x) := by
 
 -- ANCHOR: macro_trace_use
 syntax:max "twiceTrace(" term ")" : term
-macro_rules | `(twiceTrace($t)) => `($t + $t)
+macro_rules
+  | `(twiceTrace($t)) => do
+      Macro.trace `Elab.step "expanding twiceTrace"
+      `($t + $t)
 
 set_option trace.Elab.step true in
 #check twiceTrace(2)

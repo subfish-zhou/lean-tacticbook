@@ -111,6 +111,21 @@ example (x : ℚ) :
   poly_roots
 -- ANCHOR_END: macro_poly_roots_quartic
 
+-- ANCHOR: elaboration_poly_roots_contract_regression
+example (x : ℚ) : x - 2 = 0 ↔ x = 2 := by
+  poly_roots
+
+example (x : ℚ) : (x - 2) * (x - 3) = 0 ↔ x = 2 ∨ x = 3 := by
+  poly_roots
+
+example (x : ℚ) :
+    x^3 - 6*x^2 + 11*x - 6 = 0 ↔ (x = 1 ∨ x = 2) ∨ x = 3 := by
+  poly_roots
+
+example (x : ℚ) (h : x - 2 = 0) : x = 2 := by
+  poly_roots
+-- ANCHOR_END: elaboration_poly_roots_contract_regression
+
 -- ANCHOR: elaboration_show_target
 syntax "my_show_target" : tactic
 
