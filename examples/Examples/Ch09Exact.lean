@@ -1,6 +1,6 @@
 import SubVerso.Examples
 import Mathlib.Tactic
-import Examples.Ch08Imported
+import Examples.Ch09Imported
 
 open Lean Meta Elab Tactic
 open Lean.Meta.LibrarySearch

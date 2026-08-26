@@ -5,23 +5,25 @@ open Verso.Genre Manual
 open Verso Code External
 
 set_option verso.exampleProject "examples"
-set_option verso.exampleModule "Examples.Ch04CoreM"
+set_option verso.exampleModule "Examples.Ch05CoreM"
 
 #doc (Manual) "CoreM" =>
 %%%
-file := "Ch04CoreM"
-tag := "ch04-corem"
+file := "Ch05CoreM"
+tag := "ch05-corem"
 %%%
 
 > *本章目标*：从一个具体问题出发：自定义命令怎样读取当前文件中已经存在的声明，并把答案写进 Lean 的消息窗口？解决这个问题时，我们逐步遇到只读信息、可变状态和失败处理，最后才给承载它们的计算层取名 `CoreM`。
 >
 > *版本基准*：Lean `leanprover/lean4:v4.32.2`，Mathlib revision `905b95818eb3`。源码路径和 API 签名均按这一版本说明。
 
-# 概述：从宏展开走向“有现场的程序”
+# 概述：把上一章借来的现场逐层拆开
 
-Ch03 里的宏接收 Syntax，再交回一棵新的 Syntax。它擅长回答“这段写法应当展开成什么写法”，判断依据主要来自眼前的句法形状。进入本章后，问题变了。一个名字究竟指向哪个声明，要看当前 namespace、`open` 声明和前文已经加载的环境；一条诊断该标在哪里，也要知道源码位置；命令执行后产生的消息还要留给编辑器和构建日志读取。这些信息都不在命令的几个字符里。
+Ch04 已经让 `my_show_target`、`my_assumption` 和 `my_apply` 跑了起来，但当时只给每个接口一份局部契约：`withMainContext` 为什么能装入局部现场，异常怎样中止计算，消息写到哪里，状态失败后怎样恢复，都还没有拆开。现在从最底层开始还债。
 
-接下来的四章研究 Lean 扩展运行时的四层现场。它们不是四套互不相干的 API，而是一层层增加能力：
+先看一个不依赖证明目标的问题。一个名字究竟指向哪个声明，要看当前 namespace、`open` 声明和前文已经加载的环境；一条诊断该标在哪里，也要知道源码位置；命令执行后产生的消息还要留给编辑器和构建日志读取。这些信息都不在命令的几个字符里。承载这份全局编译现场的计算层就是 `CoreM`。
+
+从本章到 Ch08，我们把 Lean 扩展运行时的四层现场依次打开。它们不是四套互不相干的 API，而是一层层增加能力：
 
 | 计算层 | 主要面对什么 | 在下层之上增加什么 |
 |---|---|---|
@@ -59,7 +61,7 @@ Lean 已有一条适合观察的命令。它查询某个声明最终依赖哪些
 
 `Classical.choice` 依赖自身这条公理；`Nat.add_comm` 的依赖闭包没有抵达任何 axiom。后者仍会引用定义和定理，因而“没有公理依赖”绝非“没有依赖”。这里取传递闭包：若 `a` 引用 `b`，`b` 最终引用公理 `c`，`a` 的结果中便应出现 `c`。
 
-公理锥审计的是最终声明，不会单独告诉你 tactic 的搜索算法是否可信。若搜索结果被重建成普通 proof Expr，搜索器算错通常只会导致失败或生成被内核拒绝的项；若系统通过新增 axiom 接入外部或原生计算，公理锥才会把那条桥显露出来。Ch08–Ch12 会反复同时检查“证明怎样构造”和“最终依赖哪些公理”。
+公理锥审计的是最终声明，不会单独告诉你 tactic 的搜索算法是否可信。若搜索结果被重建成普通 proof Expr，搜索器算错通常只会导致失败或生成被内核拒绝的项；若系统通过新增 axiom 接入外部或原生计算，公理锥才会把那条桥显露出来。Ch09–Ch13 会反复同时检查“证明怎样构造”和“最终依赖哪些公理”。
 
 输入只有一个标识符，内置命令却完成了三件输入文本本身无法完成的事：
 
@@ -816,7 +818,7 @@ Command.liftCoreM : CoreM α → CommandElabM α
 tag := "command-full-walkthrough"
 %%%
 
-下面是完整的教学实现。所有 anchor 均取自同一个 `Examples.Ch04CoreM` 模块，后文片段可复用已经声明的命令和辅助函数：
+下面是完整的教学实现。所有 anchor 均取自同一个 `Examples.Ch05CoreM` 模块，后文片段可复用已经声明的命令和辅助函数：
 
 ```anchor corem_print_axioms
 syntax (name := bookPrintAxioms) "#book_print" "axioms" ident : command
@@ -904,7 +906,7 @@ MessageData.ofConstName
 
 本书采用生产源码中的 `ofConstName`，保留可点击输出；渲染阶段使用 MetaM，单独记在层次账目中。
 
-`Meta.Context`、`MetavarContext` 与 `ppExpr` 留到 Ch05。本节只需记住：renderer 为了准确显示常量名，会暂时进入信息更丰富的 Meta 环境。
+`Meta.Context`、`MetavarContext` 与 `ppExpr` 留到 Ch06。本节只需记住：renderer 为了准确显示常量名，会暂时进入信息更丰富的 Meta 环境。
 
 # 在前端（frontend）外运行 CoreM
 %%%
@@ -1144,7 +1146,7 @@ tag := "corem-failure-rollback"
 tag := "corem-exercises"
 %%%
 
-## 练习 4.0：先判断类型
+## 练习 5.0：先判断类型
 %%%
 tag := "corem-exercise-types"
 %%%
@@ -1160,7 +1162,7 @@ let names ← realizeGlobalConstWithInfos id
 
 基础答案：第一行得到 `CoreM (List Name)`，也就是一段尚未运行的计算；第二行在当前 `do` 中运行计算，得到普通值 `List Name`。
 
-## 练习 4.1：声明种类
+## 练习 5.1：声明种类
 %%%
 tag := "corem-exercise-kind"
 %%%
@@ -1191,7 +1193,7 @@ elab "#decl_kind " id:ident : command => withRef id do
 #decl_kind Nat.add_comm
 ```
 
-## 练习 4.2：直接依赖与传递依赖
+## 练习 5.2：直接依赖与传递依赖
 %%%
 tag := "corem-exercise-direct-transitive"
 %%%
@@ -1203,14 +1205,14 @@ tag := "corem-exercise-direct-transitive"
 
 解释两个集合各自回答什么问题。正文“三节点图”中的 `directConstants` 就是基础答案；验收时，`dependencyA` 的直接结果应含 `dependencyB`，而传递公理结果应为 `[dependencyC]`。
 
-## 练习 4.3：普通名字与富文本名字
+## 练习 5.3：普通名字与富文本名字
 %%%
 tag := "corem-exercise-rich-name"
 %%%
 
 把 `#book_print axioms` 中的 `MessageData.ofConstName` 暂时换成 `MessageData.ofName`。比较纯文字、hover 和跳转，再分别注明构造阶段与渲染阶段所在的执行层。请在编辑器中验收；命令行只能显示纯文本。
 
-## 练习 4.4：预测恢复结果
+## 练习 5.4：预测恢复结果
 %%%
 tag := "corem-exercise-restore"
 %%%
@@ -1224,7 +1226,7 @@ tag := "corem-exercise-restore"
 
 先根据 `SavedState.restore` 源码写出预测，再运行验证。验收表至少包含 `messages`、`nextMacroScope`、`env` 三行；预期是消息与环境恢复，而 `nextMacroScope` 不恢复。不要用“回滚应该全撤销”代替逐字段判断。
 
-## 练习 4.5：声明来源模块
+## 练习 5.5：声明来源模块
 %%%
 tag := "corem-exercise-module"
 %%%

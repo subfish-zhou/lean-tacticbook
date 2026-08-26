@@ -5,12 +5,12 @@ open Verso.Genre Manual
 open Verso Code External
 
 set_option verso.exampleProject "examples"
-set_option verso.exampleModule "Examples.Ch10Linarith"
+set_option verso.exampleModule "Examples.Ch11Linarith"
 
 #doc (Manual) "linarith：寻找线性矛盾证书，并重建证明" =>
 %%%
-file := "Ch10Linarith"
-tag := "ch10-linarith"
+file := "Ch11Linarith"
+tag := "ch11-linarith"
 %%%
 
 > *本章目标*：从“把两条不等式相加得到矛盾”开始。先由人写出乘数，再让程序搜索这些乘数；最后检查搜索结果怎样被重新组成普通 Lean 证明。`nlinarith` 只作为末尾扩展。
@@ -21,7 +21,7 @@ tag := "ch10-linarith"
 
 # 从反对称性开始
 %%%
-tag := "ch10-s01"
+tag := "ch11-s01"
 %%%
 
 ```anchor linarith_basic
@@ -33,7 +33,7 @@ theorem antisymmByLinarith (x y : ℚ) (hxy : x ≤ y) (hyx : y ≤ x) : x = y :
 
 # `linear_combination`：由人写出系数
 %%%
-tag := "ch10-s02-linear-combination"
+tag := "ch11-s02-linear-combination"
 %%%
 
 linear combination（线性组合）是把若干等式或不等式分别乘上常数，再把结果相加。`linear_combination` 让用户亲自指定这些乘数，证明术负责重建代数证明。下面两式各乘 `1` 后相加，`y` 消去，得到目标 `2*x = 6`。
@@ -48,7 +48,7 @@ theorem explicitLinearCombination (x y : ℚ)
 
 # 把“选哪些倍数”写成证书
 %%%
-tag := "ch10-s02"
+tag := "ch11-s02"
 %%%
 
 程序搜索时，不需要返回一整段 Lean 代码。它只返回“第几条事实乘多少”的表。这张可由另一段程序检查的小答案叫 certificate（证书）。在本章中，乘数都是非负自然数；乘负数会翻转不等号方向，因此不允许直接放进证书。
@@ -78,7 +78,7 @@ theorem weightedContradiction (x : ℚ) (h₁ : x ≤ 3) (h₂ : 5 ≤ x) : Fals
 
 # 完整管线
 %%%
-tag := "ch10-s03"
+tag := "ch11-s03"
 %%%
 
 :::codeBox "pseudocode"
@@ -99,7 +99,7 @@ tag := "ch10-s03"
 
 # 前处理决定问题的真实形状
 %%%
-tag := "ch10-s04"
+tag := "ch11-s04"
 %%%
 
 默认 preprocessors 拆 conjunction，过滤非比较式，将 `NNReal` 移到 `Real`，将 Nat 提升到 Int，补 Nat 非负事实，强化整数严格不等式，改写为与零比较，消去数值分母，并按载体类型分组。拆 conjunction 会从一个输入产生同一分支内的多个 facts，不会生成多个目标分支。真正会分支的是 `splitNe` 等可选预处理器；默认配置不启用它们。接口因此也不只是简单的 `Expr → Expr`。
@@ -115,7 +115,7 @@ example (x y : ℤ) (h : x < y) : x + 1 ≤ y := by
 
 # Parser 的多项式不是 Ring 的规范形
 %%%
-tag := "ch10-s05"
+tag := "ch11-s05"
 %%%
 
 Parsing 把线性式表示成 monomial 到 coefficient 的有限映射：
@@ -127,7 +127,7 @@ Parsing 把线性式表示成 monomial 到 coefficient 的有限映射：
 ```
 :::
 
-Parser 会递归规范化一般多项式乘法，并把每个不同 monomial 当成 oracle 眼中的独立线性变量。于是 `linarith` 能利用两处相同的 `x*y` 做线性抵消，却不知道这个 monomial 与 `x`、`y` 之间的乘法关系；后者需要 `nlinarith` 额外生成有限推论。Linarith 使用自己的 polynomial-map 表示，并不直接复用 Ch09 `Ring.Common` 的 `ExSum`。两章的直接连接在 verification：默认 discharger 用 `ring1` 证明加权和归零。
+Parser 会递归规范化一般多项式乘法，并把每个不同 monomial 当成 oracle 眼中的独立线性变量。于是 `linarith` 能利用两处相同的 `x*y` 做线性抵消，却不知道这个 monomial 与 `x`、`y` 之间的乘法关系；后者需要 `nlinarith` 额外生成有限推论。Linarith 使用自己的 polynomial-map 表示，并不直接复用 Ch10 `Ring.Common` 的 `ExSum`。两章的直接连接在 verification：默认 discharger 用 `ring1` 证明加权和归零。
 
 下面的目标只要求把同一个 monomial `x*y` 当成原子抵消；它不需要推导任何乘法性质：
 
@@ -138,7 +138,7 @@ theorem monomialCancellation (x y : ℚ) (h₁ : x*y ≤ 0) (h₂ : 1 ≤ x*y) :
 
 # Oracle 只负责寻找乘数
 %%%
-tag := "ch10-s06"
+tag := "ch11-s06"
 %%%
 
 :::codeBox "pseudocode"
@@ -148,7 +148,7 @@ output : Option (Array Nat)
 ```
 :::
 
-Mathlib 把“只读线性比较式、尝试找出乘数”的可替换搜索程序叫作 oracle。这里的词没有神谕或公理含义。锁定实现中的 simplex 和 Fourier–Motzkin 都是 Lean 进程内的程序，不是像 Ch12 CaDiCaL 那样的外部进程；“不受信任”只表示其答案必须经 proof reconstruction 检查。
+Mathlib 把“只读线性比较式、尝试找出乘数”的可替换搜索程序叫作 oracle。这里的词没有神谕或公理含义。锁定实现中的 simplex 和 Fourier–Motzkin 都是 Lean 进程内的程序，不是像 Ch13 CaDiCaL 那样的外部进程；“不受信任”只表示其答案必须经 proof reconstruction 检查。
 
 一种搜索法是 Fourier–Motzkin elimination（傅里叶－莫茨金消元）：把某变量系数一正一负的两式组合，逐步消去变量，并同时记录每条新式来自哪些旧式。它直观，但中间式可能迅速增多。锁定版本默认使用 sparse simplex（稀疏单纯形法）；tableau、basic variable 和 pivot 等数据结构属于算法实现，第一次阅读只需知道它仍然只返回一组候选乘数。
 
@@ -172,7 +172,7 @@ Oracle 可以超时、因资源限制漏掉解，或返回坏 coefficients。只
 
 # 搜索结果必须重新组成 Lean 证明
 %%%
-tag := "ch10-s07"
+tag := "ch11-s07"
 %%%
 
 verification（验证）阶段按证书中的 coefficient（系数）对原比较式证明取非负整数倍，再逐项相加。它同时记录当前关系是 `<` 还是 `≤`，检查至少一个严格项真的以正系数参与，并调用 `ring1` 检查整个代数和确实为零；最后从“零严格小于零”推出 `False`。
@@ -181,7 +181,7 @@ Linarith 源码明确没有用 reflection 检查 certificate；它按数据重�
 
 # Trace 逐层显示数据
 %%%
-tag := "ch10-s08"
+tag := "ch11-s08"
 %%%
 
 ```anchor linarith_trace
@@ -202,7 +202,7 @@ theorem tracedLinear (x y : ℚ) (h₁ : 2*x + y ≤ 3) (h₂ : 4 ≤ x + y) : x
 
 # 用户接口与调试
 %%%
-tag := "ch10-s09"
+tag := "ch11-s09"
 %%%
 
 `linarith [extra]` 添加显式 proofs；`linarith only [h₁,h₂]` 排除其它局部比较式。`linarith?` 尝试减少未使用输入并生成可重放调用。建议给出一组足够假设，不承诺数学意义上的唯一最小 certificate。
@@ -226,7 +226,7 @@ tag := "ch10-s09"
 
 # `nlinarith` 是有限的非线性前处理
 %%%
-tag := "ch10-s10"
+tag := "ch11-s10"
 %%%
 
 ```anchor linarith_nonlinear_boundary
@@ -241,7 +241,7 @@ example (x : ℚ) (h : x^2 ≤ 0) : x = 0 := by
 
 # 公理锥与信任账本
 %%%
-tag := "ch10-s11"
+tag := "ch11-s11"
 %%%
 
 ```anchor linarith_axiom_probe
@@ -270,7 +270,7 @@ tag := "ch10-s11"
 
 # 源码纵切
 %%%
-tag := "ch10-s12"
+tag := "ch11-s12"
 %%%
 
 :::codeBox "pseudocode"
@@ -294,40 +294,40 @@ Verification.lean
 
 # 练习
 %%%
-tag := "ch10-s13"
+tag := "ch11-s13"
 %%%
 
 ## 基础：手写 coefficients
 %%%
-tag := "ch10-s14"
+tag := "ch11-s14"
 %%%
 
 为 `x ≤ 3`、`5 ≤ x` 写出与零比较形式和 coefficients，并说明矛盾来自常数项。
 
 ## 进阶：坏 oracle
 %%%
-tag := "ch10-s15"
+tag := "ch11-s15"
 %%%
 
 固定返回三类坏证书：空表、使变量项未抵消的错误 coefficient、所有严格项 coefficient 为零。要求 verification 全部拒绝。
 
 ## 进阶：来源向量
 %%%
-tag := "ch10-s16"
+tag := "ch11-s16"
 %%%
 
 手算一轮 Fourier–Motzkin；每条新比较式同时记录原事实来源向量，禁止只记公式。
 
 ## 挑战：小型 verifier
 %%%
-tag := "ch10-s17"
+tag := "ch11-s17"
 %%%
 
 只支持 `ℚ` 上 `a*x+b ≤ 0` 与 `< 0`，输入 Nat coefficients，构造加权 comparison proof，并调用 `ring1` 证明归零。测试一个正确与三个损坏 certificates。
 
 # 本章边界
 %%%
-tag := "ch10-s18"
+tag := "ch11-s18"
 %%%
 
 `linarith` 把全部事实压成一个线性系统，oracle 返回一张短 certificate。下一章 `grind` 维护共享 E-graph，让等式合并、定理实例、逻辑传播、算术求解器与 case split 轮流写回新事实，直到闭合或达到资源界限。

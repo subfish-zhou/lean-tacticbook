@@ -5,12 +5,12 @@ open Verso.Genre Manual
 open Verso Code External
 
 set_option verso.exampleProject "examples"
-set_option verso.exampleModule "Examples.Ch12BVDecide"
+set_option verso.exampleModule "Examples.Ch13BVDecide"
 
 #doc (Manual) "BVDecide：位向量怎样变成可检查证明" =>
 %%%
-file := "Ch12BVDecide"
-tag := "ch12-bv-decide"
+file := "Ch13BVDecide"
+tag := "ch13-bv-decide"
 %%%
 
 > *本章目标*：从固定宽度位向量只有有限种输入开始。我们先把位运算拆成布尔门，再把“存在反例吗”交给 SAT 求解器；求解器若声称没有反例，必须带回一份 Lean 能检查的记录。最后单独核对原生计算怎样把检查结果送入逻辑。
@@ -23,18 +23,18 @@ tag := "ch12-bv-decide"
 
 # 第一步：把 Lean 目标收进一门有限语言
 %%%
-tag := "ch12-s03"
+tag := "ch13-s03"
 %%%
 
 先把目标改写成反证问题。证明 `x * y = y * x`，等价于证明“不存在 `x * y ≠ y * x` 的输入”。前端先做普通化简，再把支持的位向量表达式翻译成一门只描述固定宽度运算和布尔连接词的内部语言。
 
-这种“从一般 Lean Expr 翻进专用内部语言”的步骤与 Ch09 相同，叫 reification（重化，也常称反射输入构造）。生产前处理还包含结构体、枚举、整数到位向量的转换、合取扁平化等规则；第一遍只追位向量乘法。
+这种“从一般 Lean Expr 翻进专用内部语言”的步骤与 Ch10 相同，叫 reification（重化，也常称反射输入构造）。生产前处理还包含结构体、枚举、整数到位向量的转换、合取扁平化等规则；第一遍只追位向量乘法。
 
 若遇到不支持的子表达式，系统可能把它整体当作 opaque atom（内部不分析的原子）。这种抽象会忘掉原子的某些语义关系，因此后面找到的反例可能只是抽象问题的反例。它可用于诊断，不能自动成为原命题为假的证明。
 
 # 内部语言还必须有语义
 %%%
-tag := "ch12-s04"
+tag := "ch13-s04"
 %%%
 
 内部语言分三层：`BVExpr` 表示固定宽度位向量运算，`BVPred` 表示相等和大小比较，`BVLogicalExpr` 用“且、或、非”等布尔连接词组合命题。
@@ -50,7 +50,7 @@ tag := "ch12-s04"
 
 # 第二步：把每个宽运算拆成布尔门
 %%%
-tag := "ch12-s05"
+tag := "ch13-s05"
 %%%
 
 一个 `w` 位变量可以拆成 `w` 个布尔变量。把位向量运算逐位编译成 AND、OR、XOR、NOT 等布尔门，叫 bit-blasting（位爆破）。名字听起来猛烈，实质就是把“宽数据”摊成“每一位怎么计算”。
@@ -78,7 +78,7 @@ theorem bvSmallAdderPreprocessed (x y : BitVec 4) : x + y = y + x := by
 
 # 重复子电路必须共享
 %%%
-tag := "ch12-s06"
+tag := "ch13-s06"
 %%%
 
 直接把所有布尔门展开成树，会复制大量相同子电路。AIG 是 and-inverter graph（与门反相图）：它只用“与”和“取反”表示电路，并用 directed acyclic graph（有向无环图，DAG）让多个父节点共享同一子电路。hash-consing 在构造时查找已有的相同节点，避免重复创建。每个输出只需指向某个节点或它的反相。
@@ -87,7 +87,7 @@ AIG 的节点编号、共享策略和简化都属于计算层。下一步还要�
 
 # 第三个问题：电路是否存在使目标失败的输入
 %%%
-tag := "ch12-s02-vocab"
+tag := "ch13-s02-vocab"
 %%%
 
 SAT 问题只问一件事：一组布尔约束是否存在满足它的真假 assignment（赋值）。若存在，称为 SAT（可满足）；若不存在，称为 UNSAT（不可满足）。在本章，SAT 赋值对应一个可能的反例输入；UNSAT 表示没有反例。
@@ -113,7 +113,7 @@ clause 2: ¬p ∨ q
 
 # 把共享电路翻成求解器输入
 %%%
-tag := "ch12-s07"
+tag := "ch13-s07"
 %%%
 
 AIG 适合共享电路，SAT 求解器则接收 CNF。Tseitin conversion（蔡廷转换）为每个内部电路节点引入一个辅助变量，再用少量局部子句约束该变量与子节点的关系。这样避免把共享电路展开成巨大公式。
@@ -133,7 +133,7 @@ DIMACS relabeling 又把内部 literals 映到 solver 使用的整数编号。�
 
 # 外部 SAT 求解器只负责搜索
 %%%
-tag := "ch12-s08"
+tag := "ch13-s08"
 %%%
 
 本书锁定环境调用外部程序 CaDiCaL 搜索 CNF。它可能返回：
@@ -146,7 +146,7 @@ CaDiCaL 的 UNSAT 字符串不能直接关闭 Lean goal。只有 LRAT 被解析�
 
 # UNSAT 答案必须附带可检查记录
 %%%
-tag := "ch12-s09"
+tag := "ch13-s09"
 %%%
 
 求解器若声称 UNSAT，不能只返回一个字符串。它还输出一串可重放动作，说明怎样从原子句逐步推出空子句。这份记录叫 certificate（证书）；本章使用的格式叫 LRAT。动作带有 clause id（子句编号），可以添加新子句、给出检查 hints（提示）或删除不再需要的旧子句。
@@ -159,7 +159,7 @@ Deletion 不会破坏 checker 的 soundness，但删掉后续 hints 仍需引用
 
 # Lean 先解析记录，再逐步检查
 %%%
-tag := "ch12-s10"
+tag := "ch13-s10"
 %%%
 
 外部 `.lrat` 文件先由 parser（解析器）读成紧凑动作数组 `Array IntAction`。`compactLratChecker` 逐条消费数组，需要时才把当前 `IntAction` 展开成便于检查的 `DefaultClauseAction`；它不会预先再造一份完整证书。
@@ -174,7 +174,7 @@ error: SAT solver produced invalid LRAT: offset 0: digit expected
 -/
 #guard_msgs in
 example (x y : BitVec 4) : x * y = y * x := by
-  bv_check (binaryProofs := false) "Fixtures/ch12-malformed.lrat"
+  bv_check (binaryProofs := false) "Fixtures/ch13-malformed.lrat"
 
 /--
 error: Tactic `bv_decide` failed: The LRAT certificate could not be verified; evaluating the following term returned `false`:
@@ -182,14 +182,14 @@ error: Tactic `bv_decide` failed: The LRAT certificate could not be verified; ev
 -/
 #guard_msgs in
 example (x y : BitVec 4) : x * y = y * x := by
-  bv_check (binaryProofs := false) "Fixtures/ch12-invalid-proof.lrat"
+  bv_check (binaryProofs := false) "Fixtures/ch13-invalid-proof.lrat"
 ```
 
 第一例在 parser 处报 `digit expected`；第二例到 checker 才得到 `verifyBVExpr ... returned false`。这一区分说明只测 parser 不能证明 checker 会拒绝语法合法的伪 RUP/RAT。
 
 # `verifyBVExpr` 汇合两条链
 %%%
-tag := "ch12-s11"
+tag := "ch13-s11"
 %%%
 
 `verifyBVExpr expr cert` 重新 bit-blast reflected expression、构造 AIG/CNF，并运行 LRAT checker。其正确性 theorem 把：
@@ -204,7 +204,7 @@ tag := "ch12-s11"
 
 # 计算链与定理链必须分开
 %%%
-tag := "ch12-s02"
+tag := "ch13-s02"
 %%%
 
 计算链：
@@ -241,7 +241,7 @@ LRAT.check_sound
 
 # `nativeEqTrue` 怎样把计算结果送入逻辑
 %%%
-tag := "ch12-s12"
+tag := "ch13-s12"
 %%%
 
 问题是怎样得到 premise：
@@ -269,7 +269,7 @@ native compiler/runtime computes true
 
 # 同一个 tactic 名可能走不同证明路径
 %%%
-tag := "ch12-s01"
+tag := "ch13-s01"
 %%%
 
 一个容易被预处理直接关闭的目标：
@@ -319,33 +319,33 @@ bvFullPipeline._native.bv_decide.ax_1_5
 
 # 三张信任图
 %%%
-tag := "ch12-s13"
+tag := "ch13-s13"
 %%%
 
 ## 外部搜索边界
 %%%
-tag := "ch12-s13-external"
+tag := "ch13-s13-external"
 %%%
 
 CaDiCaL、LRAT trimming、临时文件与 parser 可以造成拒绝、超时和性能损失；错误 UNSAT 必须被 checker 拒绝，不能直接变成 theorem。
 
 ## 形式化逻辑边界
 %%%
-tag := "ch12-s13-formal"
+tag := "ch13-s13-formal"
 %%%
 
 Bit-blaster、AIG/CNF、LRAT checker 与 reflection 的 correctness theorems 由 kernel 检查。若这些 theorem 本身有逻辑错误或内核有 bug，健全性受影响。
 
 ## 原生求值边界
 %%%
-tag := "ch12-s13-native"
+tag := "ch13-s13-native"
 %%%
 
 Checker-equals-true 通过 native execution 和 generated axiom 进入。该桥是 `bv_decide` 完整 SAT 路线特有的可见公理来源。
 
 # `bv_decide?` 与 `bv_check`
 %%%
-tag := "ch12-s14"
+tag := "ch13-s14"
 %%%
 
 `bv_decide?` 保存 LRAT artifact，并建议：
@@ -361,7 +361,7 @@ bv_check "path/to/proof.lrat"
 ```anchor bv_offline_replay
 set_option sat.solver "/definitely/not/a/solver" in
 theorem bvOfflineReplay (x y : BitVec 4) : x * y = y * x := by
-  bv_check (binaryProofs := false) "Fixtures/ch12-mul4.lrat"
+  bv_check (binaryProofs := false) "Fixtures/ch13-mul4.lrat"
 
 #print axioms bvOfflineReplay
 ```
@@ -372,7 +372,7 @@ theorem bvOfflineReplay (x y : BitVec 4) : x * y = y * x := by
 
 # SAT 与 counterexample 路线
 %%%
-tag := "ch12-s15"
+tag := "ch13-s15"
 %%%
 
 若 CaDiCaL 找到 assignment，前端把 bits 映回 reflected atoms，生成 counterexample 诊断。即使表达式完全受支持，这条 SAT assignment 在 `bv_decide` 中仍是诊断数据，不是 Lean 中“原命题为假”的证明对象；它只是更可靠地指出一个可复查输入。若 opaque unsupported atoms 参与，assignment 甚至可能不能对应原表达式的真实取值。
@@ -387,7 +387,7 @@ tag := "ch12-s15"
 
 # 失败实验
 %%%
-tag := "ch12-s16"
+tag := "ch13-s16"
 %%%
 
 ```table
@@ -415,7 +415,7 @@ tag := "ch12-s16"
 
 # 生产源码纵切
 %%%
-tag := "ch12-s17"
+tag := "ch13-s17"
 %%%
 
 :::codeBox "pseudocode"
@@ -446,47 +446,47 @@ BVTrace.lean / BVCheck.lean
 
 # 练习
 %%%
-tag := "ch12-s18"
+tag := "ch13-s18"
 %%%
 
 ## 基础：给管线边分类
 %%%
-tag := "ch12-s19"
+tag := "ch13-s19"
 %%%
 
 把完整管线每条箭头标成 computation、IO、theorem application 或 proof production。
 
 ## 基础：两位加法器
 %%%
-tag := "ch12-s20"
+tag := "ch13-s20"
 %%%
 
 手算 2-bit adder 的低位与 carry，并把每个 gate 对应到 Boolean equation。
 
 ## 进阶：Tseitin clauses
 %%%
-tag := "ch12-s21"
+tag := "ch13-s21"
 %%%
 
 验证 `z ↔ (x ∧ y)` 的三个 clauses 对全部八种 assignments 的行为。
 
 ## 进阶：手查 RUP
 %%%
-tag := "ch12-s22"
+tag := "ch13-s22"
 %%%
 
 给一个小 CNF 和 hints，手做 unit propagation，推出 empty clause。再故意删除一个 hint，确认检查停止。
 
 ## 挑战：微型 certificate checker
 %%%
-tag := "ch12-s23"
+tag := "ch13-s23"
 %%%
 
 实现只支持 RUP additions 的 checker及 soundness theorem。先用普通 kernel reduction证明 `checker cert = true`；再改用 native axiom bridge，比较两个 theorem 的 axiom cones。
 
 # 全书自动化路线的收束
 %%%
-tag := "ch12-s24"
+tag := "ch13-s24"
 %%%
 
 五章的架构依次为：

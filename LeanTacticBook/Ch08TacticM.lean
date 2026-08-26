@@ -5,12 +5,12 @@ open Verso.Genre Manual
 open Verso Code External
 
 set_option verso.exampleProject "examples"
-set_option verso.exampleModule "Examples.Ch07TacticM"
+set_option verso.exampleModule "Examples.Ch08TacticM"
 
 #doc (Manual) "TacticM：把证明洞排成工作队列" =>
 %%%
-file := "Ch07TacticM"
-tag := "ch07-tacticm"
+file := "Ch08TacticM"
+tag := "ch08-tacticm"
 %%%
 
 > *本章目标*：回答一个界面问题：`constructor` 把一个目标拆成两个以后，下一条证明术为什么先处理左边？我们先观察目标列表，再区分“洞有没有被填”和“哪些洞正排队等待”，最后由此理解 `apply`、`<;>` 与 `first`。
@@ -40,11 +40,11 @@ tag := "ch07-tacticm"
 
 先看一段普通证明：目标是 `P ∧ Q` 时，`constructor` 产生 `P` 和 `Q` 两个新目标。它们都是待填的证明洞，但用户随后总要按某种顺序处理。这个顺序既不是命题本身的一部分，也不参与内核检查；它是证明术界面的工作安排。
 
-Lean 用一个有序列表保存“现在准备继续处理哪些洞”。本章把它叫作 active goal queue（活动目标队列）。列表元素是 `MVarId`，也就是 Ch05 中证明洞的内部编号。
+Lean 用一个有序列表保存“现在准备继续处理哪些洞”。本章把它叫作 active goal queue（活动目标队列）。列表元素是 `MVarId`，也就是 Ch06 中证明洞的内部编号。
 
 # 第一个实验：`constructor` 前后有几个活动目标
 %%%
-tag := "ch07-s06"
+tag := "ch08-s06"
 %%%
 
 观察用证明术 `queue_xray` 只做两件事：读取活动目标列表，并按次序打印每个洞的目标类型。第一遍无需关心循环写法。
@@ -74,14 +74,14 @@ example (P Q : Prop) (hP : P) (hQ : Q) : P ∧ Q := by
 
 # 洞的赋值与洞的排队是两件事
 %%%
-tag := "ch07-s03"
+tag := "ch08-s03"
 %%%
 
-交互界面常把所有信息统称为 proof state（证明状态）。写元程序时必须把其中两层分开。Ch05 的 mctx 回答“每个洞是什么、有没有被填”；本章的 goal queue 回答“接下来按什么顺序处理哪些洞”。
+交互界面常把所有信息统称为 proof state（证明状态）。写元程序时必须把其中两层分开。Ch06 的 mctx 回答“每个洞是什么、有没有被填”；本章的 goal queue 回答“接下来按什么顺序处理哪些洞”。
 
 ## Meta.State.mctx
 %%%
-tag := "ch07-s04"
+tag := "ch08-s04"
 %%%
 
 保存：
@@ -93,7 +93,7 @@ tag := "ch07-s04"
 
 ## Tactic.State.goals
 %%%
-tag := "ch07-s05"
+tag := "ch08-s05"
 %%%
 
 保存：
@@ -106,7 +106,7 @@ tag := "ch07-s05"
 
 # `TacticM` 只为这层调度增加很薄的现场
 %%%
-tag := "ch07-s02"
+tag := "ch08-s02"
 %%%
 
 锁定版本中的定义为：
@@ -133,7 +133,7 @@ abbrev Tactic := Syntax → TacticM Unit
 
 # `getGoals`、`setGoals` 与 pruning
 %%%
-tag := "ch07-s07"
+tag := "ch08-s07"
 %%%
 
 这里用到四个基础接口：
@@ -177,7 +177,7 @@ Lean 自带的证明术通常同时维护 mctx 和目标队列，免得后续代
 
 # 把两层变化合起来：缩小版 `apply`
 %%%
-tag := "ch07-s01"
+tag := "ch08-s01"
 %%%
 
 现在才实现 `book_apply`。它必须同时完成两件事：在 mctx 中用一个 theorem application 填旧洞，并把 theorem 尚缺的参数洞放进活动目标队列。
@@ -219,7 +219,7 @@ example (P Q : Prop) (hP : P) : P ∨ Q := by
 
 # `elabTermForApply` 为何不同
 %%%
-tag := "ch07-s08"
+tag := "ch08-s08"
 %%%
 
 普通 term 译补会积极插入隐式参数。`apply` 希望 Meta apply 自己创建这些参数洞，再根据目标结论统一。当输入只是标识符 `f` 时，`elabTermForApply` 尽量返回接近 `@f` 的 Expr，而不提前插入所有隐式参数。
@@ -241,7 +241,7 @@ tag := "ch07-s08"
 
 # Postponed term 的强制处理
 %%%
-tag := "ch07-s09"
+tag := "ch08-s09"
 %%%
 
 某些 notation 需要预期类型，例如用户写下 `.inl`。apply 风格的译补没有直接提供预期类型，可能暂时返回 metavariable。Lean 自带的 `evalApplyLikeTactic` 会检查：
@@ -258,7 +258,7 @@ tag := "ch07-s09"
 
 # `MVarId.apply` 修改了什么
 %%%
-tag := "ch07-s10"
+tag := "ch08-s10"
 %%%
 
 设目标为 `P ∧ Q`，theorem Expr 为 `And.intro`。它的类型可读成：
@@ -292,7 +292,7 @@ mctx 的变化是：
 
 # `replaceMainGoal` 的队列政策
 %%%
-tag := "ch07-s11"
+tag := "ch08-s11"
 %%%
 
 Lean 自带的 `apply` 最后执行：
@@ -323,7 +323,7 @@ Meta apply 只产生新洞；Tactic 前端决定如何把它们装入队列。�
 
 # `<;>` 为什么会在每个新目标上各运行一次
 %%%
-tag := "ch07-s12"
+tag := "ch08-s12"
 %%%
 
 `<;>` 是 tactic combinator（证明术组合符）：它把左、右两段证明术组合成一种调度方式。下面在右侧调用 `queue_xray`：
@@ -364,7 +364,7 @@ focus
 
 # 同一种 tactic Syntax 可能有多个处理者
 %%%
-tag := "ch07-s13"
+tag := "ch08-s13"
 %%%
 
 parser 为 tactic Syntax 标出 kind，多个 tactic elaborator 可以注册到同一个 kind。`evalTactic` 是选择处理者并运行它的 dispatcher（分派器）。它会：
@@ -406,7 +406,7 @@ unsupported 表示“这个实现不处理该语法”，dispatcher 恢复状态
 
 # Tactic.Context.elaborator
 %%%
-tag := "ch07-s14"
+tag := "ch08-s14"
 %%%
 
 `evalTactic` 进入某个实现时，把该 tactic elaborator 的声明名写入 `Tactic.Context.elaborator`。info tree 因而可以记下修改目标的是哪个 elaborator，错误消息、trace 和编辑器也能借这个名称定位执行者。
@@ -415,7 +415,7 @@ tag := "ch07-s14"
 
 # 出错后是失败，还是用占位项继续
 %%%
-tag := "ch07-s15"
+tag := "ch08-s15"
 %%%
 
 交互编辑时，Lean 有时会在错误后放入占位证明，继续处理后面的代码，以便一次显示更多诊断。这项选择叫 recovery policy（恢复策略），由 `Tactic.Context.recover` 控制。它服务于错误恢复，不表示证明已经成功。
@@ -433,7 +433,7 @@ tag := "ch07-s15"
 
 # `first` 为什么必须撤销失败候选留下的两层变化
 %%%
-tag := "ch07-s16"
+tag := "ch08-s16"
 %%%
 
 `first | t₁ | t₂` 的意思是依次尝试候选，采用第一个成功者。若 `t₁` 先填了洞、改了队列，随后才失败，`t₂` 就必须从尝试前的现场开始。下面故意让第一分支污染两层状态：它先给主目标赋 synthetic sorry，再清空活动队列，最后抛异常。
@@ -482,7 +482,7 @@ structure Tactic.SavedState where
 
 # 两种 `try/catch` 的回滚差异
 %%%
-tag := "ch07-s17"
+tag := "ch08-s17"
 %%%
 
 在 Lean 4.32.2 的 TacticM 中，普通 `try ... catch ...` 使用可回溯的 `MonadExcept` 实例。分支抛出异常时，它会恢复 `Tactic.SavedState`；Term/Meta 状态和活动目标队列都在恢复范围内。
@@ -499,7 +499,7 @@ Tactic 命名空间里还有一个同名易混的 `Tactic.tryCatch`。这个函�
 
 # Goal tags
 %%%
-tag := "ch07-s18"
+tag := "ch08-s18"
 %%%
 
 新目标可以带 tag，帮助用户识别分支。`constructor` 创建的合取目标通常标作 `left` 和 `right`：
@@ -520,7 +520,7 @@ tag 不参与 kernel 判断，却影响 case syntax、错误显示和交互脚�
 
 # Tactic info 与增量编辑
 %%%
-tag := "ch07-s19"
+tag := "ch08-s19"
 %%%
 
 `mkTacticInfo` 记录：
@@ -534,7 +534,7 @@ tag := "ch07-s19"
 
 # 生产 `apply` 对照
 %%%
-tag := "ch07-s20"
+tag := "ch08-s20"
 %%%
 
 Lean 自带的实现可以写成下面这段骨架：
@@ -559,7 +559,7 @@ def evalApplyLikeTactic
 
 # 源码地图
 %%%
-tag := "ch07-s21"
+tag := "ch08-s21"
 %%%
 
 建议先按下面的顺序阅读源码：
@@ -589,7 +589,7 @@ Lean/Elab/Term/TermElabM.lean
 
 # API 回查表
 %%%
-tag := "ch07-s22"
+tag := "ch08-s22"
 %%%
 
 | 任务 | 入口 |
@@ -611,12 +611,12 @@ tag := "ch07-s22"
 
 # 练习
 %%%
-tag := "ch07-s23"
+tag := "ch08-s23"
 %%%
 
 ## 基础一：两个状态
 %%%
-tag := "ch07-s24"
+tag := "ch08-s24"
 %%%
 
 `MVarId.apply` 成功返回 `[g₁, g₂]` 后，若调用者没有 `replaceMainGoal`，发生了什么？
@@ -625,7 +625,7 @@ tag := "ch07-s24"
 
 ## 基础二：为何 `getGoals` 可能含 solved goal
 %%%
-tag := "ch07-s25"
+tag := "ch08-s25"
 %%%
 
 为什么 `getGoals` 可能返回已经赋值的目标？
@@ -634,7 +634,7 @@ tag := "ch07-s25"
 
 ## 基础三：`<;>` 右侧看见几个目标
 %%%
-tag := "ch07-s26"
+tag := "ch08-s26"
 %%%
 
 `constructor <;> queue_xray` 中，每次 `queue_xray` 会看见几个目标？
@@ -643,7 +643,7 @@ tag := "ch07-s26"
 
 ## 进阶一：逆序 apply
 %%%
-tag := "ch07-s27"
+tag := "ch08-s27"
 %%%
 
 实现 `book_apply_reverse`，把 `MVarId.apply` 返回的新目标按逆序放入队列。
@@ -652,7 +652,7 @@ tag := "ch07-s27"
 
 ## 进阶二：保留其他目标
 %%%
-tag := "ch07-s28"
+tag := "ch08-s28"
 %%%
 
 在已有三个活动目标的状态下，只对队首运行 Meta 变换，证明 `replaceMainGoal` 保留尾部目标次序。
@@ -661,7 +661,7 @@ tag := "ch07-s28"
 
 ## 进阶三：错误的回滚器
 %%%
-tag := "ch07-s29"
+tag := "ch08-s29"
 %%%
 
 写一个只保存/恢复 `Tactic.State.goals` 的候选 combinator，再运行 `assign_then_fail`。捕获异常时显式调用非回溯的 `Tactic.tryCatch`；若写普通 `try/catch`，TacticM 的 backtracking 实例已经替你恢复完整 saved state，实验便失去对照。
@@ -670,14 +670,14 @@ tag := "ch07-s29"
 
 ## 进阶四：dispatcher fallback
 %%%
-tag := "ch07-s30"
+tag := "ch08-s30"
 %%%
 
 为同一 syntax kind 注册三个 elaborator：第一个 unsupported，第二个先改状态再失败，第三个成功。检查第三个开始时两层状态都已恢复。
 
 ## 挑战：实现 `book_all_goals`
 %%%
-tag := "ch07-s31"
+tag := "ch08-s31"
 %%%
 
 `<;>` 的右半段依赖 `all_goals`。下面的教学实现保存原队列，逐个建立 singleton queue，运行参数 tactic，再按原顺序拼接 residual goals。循环使用非回溯的 `Tactic.tryCatch`；分支失败时，代码显式恢复 `Tactic.SavedState`，然后重新抛出异常。
@@ -710,7 +710,7 @@ example (P Q : Prop) (hP : P) (hQ : Q) : P ∧ Q := by
 
 # 四层工作现场总图
 %%%
-tag := "ch07-s32"
+tag := "ch08-s32"
 %%%
 
 四层现场可以合在一张图里：
@@ -735,7 +735,7 @@ TacticM
 
 # 本章边界
 %%%
-tag := "ch07-s33"
+tag := "ch08-s33"
 %%%
 
 现在可以分别定位 proof Expr、metavariable assignment、synthetic recovery 和 active goal queue。下一组章节进入成熟自动化：先从 `exact?` 看全库候选索引与搜索，再依次研究规范化、证书、饱和推理和外部求解器的信任链。

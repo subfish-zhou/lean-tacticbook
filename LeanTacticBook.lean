@@ -4,15 +4,16 @@ import LeanTacticBook.Helpers
 import LeanTacticBook.Ch01Introduction
 import LeanTacticBook.Ch02Syntax
 import LeanTacticBook.Ch03Macros
-import LeanTacticBook.Ch04CoreM
-import LeanTacticBook.Ch05MetaM
-import LeanTacticBook.Ch06TermElabM
-import LeanTacticBook.Ch07TacticM
-import LeanTacticBook.Ch08Exact
-import LeanTacticBook.Ch09Ring
-import LeanTacticBook.Ch10Linarith
-import LeanTacticBook.Ch11Grind
-import LeanTacticBook.Ch12BVDecide
+import LeanTacticBook.Ch04Elaboration
+import LeanTacticBook.Ch05CoreM
+import LeanTacticBook.Ch06MetaM
+import LeanTacticBook.Ch07TermElabM
+import LeanTacticBook.Ch08TacticM
+import LeanTacticBook.Ch09Exact
+import LeanTacticBook.Ch10Ring
+import LeanTacticBook.Ch11Linarith
+import LeanTacticBook.Ch12Grind
+import LeanTacticBook.Ch13BVDecide
 import LeanTacticBook.AppendixApiReference
 
 open Verso.Genre Manual
@@ -76,22 +77,24 @@ _感谢 [Lean-zh 中文社区](https://www.leanprover.cn/) 的朋友们的支持
 
 {include 0 LeanTacticBook.Ch03Macros}
 
-{include 0 LeanTacticBook.Ch04CoreM}
+{include 0 LeanTacticBook.Ch04Elaboration}
 
-{include 0 LeanTacticBook.Ch05MetaM}
+{include 0 LeanTacticBook.Ch05CoreM}
 
-{include 0 LeanTacticBook.Ch06TermElabM}
+{include 0 LeanTacticBook.Ch06MetaM}
 
-{include 0 LeanTacticBook.Ch07TacticM}
+{include 0 LeanTacticBook.Ch07TermElabM}
 
-{include 0 LeanTacticBook.Ch08Exact}
+{include 0 LeanTacticBook.Ch08TacticM}
 
-{include 0 LeanTacticBook.Ch09Ring}
+{include 0 LeanTacticBook.Ch09Exact}
 
-{include 0 LeanTacticBook.Ch10Linarith}
+{include 0 LeanTacticBook.Ch10Ring}
 
-{include 0 LeanTacticBook.Ch11Grind}
+{include 0 LeanTacticBook.Ch11Linarith}
 
-{include 0 LeanTacticBook.Ch12BVDecide}
+{include 0 LeanTacticBook.Ch12Grind}
+
+{include 0 LeanTacticBook.Ch13BVDecide}
 
 {include 0 LeanTacticBook.AppendixApiReference}

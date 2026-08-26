@@ -5,12 +5,12 @@ open Verso.Genre Manual
 open Verso Code External
 
 set_option verso.exampleProject "examples"
-set_option verso.exampleModule "Examples.Ch05MetaM"
+set_option verso.exampleModule "Examples.Ch06MetaM"
 
 #doc (Manual) "MetaM：在局部上下文中改写表达式" =>
 %%%
-file := "Ch05MetaM"
-tag := "ch05-metam"
+file := "Ch06MetaM"
+tag := "ch06-metam"
 %%%
 
 > *本章目标*：解释 `rw [h]` 为什么不是文字替换。我们先把目标看成一个待填的证明洞，再逐步引入局部变量、表达式树和洞的赋值，最后亲眼看到改写器构造“旧目标等于新目标”的证明。
@@ -32,7 +32,7 @@ MetaM 在 CoreM 之上增加了一间“证明工作室”。这间工作室里�
 
 因此，Meta 程序通常不是把一串文字改成另一串文字。它读取局部上下文和 Expr，创建或检查证明洞，调用类型推断与定义等价判断，最后构造能交给内核检查的 Expr。界面上看见“目标变了”，只说明显示内容发生了变化；要让旧目标真正成立，还必须提供一份连接旧目标和新目标的证明。
 
-本章会用改写作为贯穿案例，但不会一上来要求读者理解实现。先观察改写器应当交出什么，再补齐 `Expr`、局部变量和 metavariable 的词汇；随后学习如何进入某个洞的局部上下文、怎样给洞赋值；这些准备完成后，才把 `MVarId.rewrite` 与 `replaceTargetEq` 接成完整的数据流。Ch07 才负责多个活动目标的排列，本章只关心每个洞本身的语义和赋值。
+本章会用改写作为贯穿案例，但不会一上来要求读者理解实现。先观察改写器应当交出什么，再补齐 `Expr`、局部变量和 metavariable 的词汇；随后学习如何进入某个洞的局部上下文、怎样给洞赋值；这些准备完成后，才把 `MVarId.rewrite` 与 `replaceTargetEq` 接成完整的数据流。Ch08 才负责多个活动目标的排列，本章只关心每个洞本身的语义和赋值。
 
 
 给定 `h : x = y` 和目标 `x + 1 = y + 1`，把字符 `x` 换成 `y` 看似足够。这个办法很快会出错：同名变量可能来自不同的局部作用域，替换也可能穿过依赖类型和 binder。Lean 不能凭打印出来的文字判断变量身份。
@@ -41,7 +41,7 @@ MetaM 在 CoreM 之上增加了一间“证明工作室”。这间工作室里�
 
 # 先观察改写器交出的三样东西
 %%%
-tag := "ch05-s01"
+tag := "ch06-s01"
 %%%
 
 本章实现一条观察用证明术 `rw_xray`。第一遍不读实现，只看它打印什么：改写前的目标、改写后的目标，以及连接两者的等式证明。它省略位置选择和局部假设改写等完整前端功能。
@@ -82,7 +82,7 @@ elab "rw_xray " t:term : tactic => do
 ```
 :::
 
-中间的“计算”是本章主角。它需要知道局部变量的类型，也需要创建和赋值证明洞。Lean 把承载这些操作的计算层叫作 `MetaM`。最后的“提交”还涉及活动目标的排列，属于 Ch07 才讲的 `TacticM`；本章只把它当作两行外壳。
+中间的“计算”是本章主角。它需要知道局部变量的类型，也需要创建和赋值证明洞。Lean 把承载这些操作的计算层叫作 `MetaM`。最后的“提交”还涉及活动目标的排列，属于 Ch08 才讲的 `TacticM`；本章只把它当作两行外壳。
 
 `rw_xray` 没有复刻 Lean 自带的完整前端。
 
@@ -94,7 +94,7 @@ elab "rw_xray " t:term : tactic => do
 
 # 为什么全局环境还不够
 %%%
-tag := "ch05-s02"
+tag := "ch06-s02"
 %%%
 
 CoreM 能查询全局声明，但目标中的 `x` 和假设 `h` 不是全局声明。它们只在当前证明的局部作用域内有效；证明洞的类型和赋值也会随着算法推进而改变。MetaM 因此在 CoreM 上再加两份现场。
@@ -128,7 +128,7 @@ Meta.State.mctx      元变量声明和赋值
 
 # `Expr`：带变量身份的表达式树
 %%%
-tag := "ch05-s03"
+tag := "ch06-s03"
 %%%
 
 Syntax 保存用户写下的结构。经过译补后，Lean 得到 `Expr`：一棵已经解析了常量、局部变量和绑定关系的表达式树。`Expr` 不是目标的打印字符串。改写器在树上识别同一个局部变量，因此不会把另一个作用域中碰巧也叫 `x` 的变量换掉。
@@ -137,7 +137,7 @@ Syntax 保存用户写下的结构。经过译补后，Lean 得到 `Expr`：一�
 
 ## 多参数应用为什么形成一条 spine
 %%%
-tag := "ch05-s04"
+tag := "ch06-s04"
 %%%
 
 Lean 的底层应用节点一次只接一个参数，所以 `f x y` 实际是 `(f x) y`。从最外层应用一路向左走到 `f`，再把沿途参数收集起来，这条链叫 application spine（应用脊柱）。目标 `x + y = y + x` 展开后可读成 `@Eq Nat (Nat.add x y) (Nat.add y x)`：
@@ -160,7 +160,7 @@ example (x y : Nat) : x + y = y + x := by
 
 ## 三种变量各自指向哪里
 %%%
-tag := "ch05-s05"
+tag := "ch06-s05"
 %%%
 
 | 构造 | 含义 | 引用位置 |
@@ -173,7 +173,7 @@ free variable（自由变量）指向局部上下文中的声明；bound variabl
 
 ## binder 内部怎样指向被绑定变量
 %%%
-tag := "ch05-s06"
+tag := "ch06-s06"
 %%%
 
 目标 `∀ n : Nat, n = n` 的最外层是 `.forallE`：
@@ -198,7 +198,7 @@ example : ∀ n : Nat, n = n := by
 
 # 类型推断依赖局部上下文
 %%%
-tag := "ch05-s07"
+tag := "ch06-s07"
 %%%
 
 `inferType` 的接口很短：
@@ -215,7 +215,7 @@ inferType : Expr → MetaM Expr
 
 # 定义等价是带状态的判断
 %%%
-tag := "ch05-s08"
+tag := "ch06-s08"
 %%%
 
 两个 Expr 可以句法不同而定义等价，例如 `(fun x => x) 3` 与 `3`。`isDefEq` 在归约、透明度和统一约束下判断定义等价：
@@ -251,7 +251,7 @@ Lean 4.32.2 的 `isDefEq` 自带 defeq checkpoint。比较返回 `false` 或抛�
 
 # 保存和恢复元变量上下文
 %%%
-tag := "ch05-s09"
+tag := "ch06-s09"
 %%%
 
 下面用一个只保存 mctx 的最小实验观察回滚：
@@ -278,7 +278,7 @@ Meta action 抛出异常时，不能假定此前的所有写入都会自动撤�
 
 # `MVarId.rewrite` 的契约
 %%%
-tag := "ch05-s10"
+tag := "ch06-s10"
 %%%
 
 源码入口是 `Lean/Meta/Tactic/Rewrite.lean`。核心类型如下：
@@ -310,7 +310,7 @@ MVarId.rewrite
 
 # 打开 theorem 参数
 %%%
-tag := "ch05-s11"
+tag := "ch06-s11"
 %%%
 
 改写 theorem 可能是 `∀ n, f n = n + 1`。源码依次执行：
@@ -338,7 +338,7 @@ example (f : Nat → Nat) (x : Nat)
 
 # 等式、Iff 与方向
 %%%
-tag := "ch05-s12"
+tag := "ch06-s12"
 %%%
 
 打开参数后，`matchEq?` 检查结论是否形如 `lhs = rhs`。命题改写还接受 `lhs ↔ rhs`；处理 Iff 时，改写器先通过 `propext` 得到命题等式，再按 Eq 的方式继续改写。
@@ -347,7 +347,7 @@ tag := "ch05-s12"
 
 # `kabstract` 与 motive
 %%%
-tag := "ch05-s13"
+tag := "ch06-s13"
 %%%
 
 设目标为 `x + 1 = y + 1`，改写定理的左端是 `x`。`kabstract` 把匹配 occurrence 抽象成 bound variable，得到可读成 `_a + 1 = y + 1` 的 body。随后构造：
@@ -374,7 +374,7 @@ Lean 还会检查 motive 是否类型正确。若目标类型依赖被替换值�
 
 # 等式证明怎样产生
 %%%
-tag := "ch05-s14"
+tag := "ch06-s14"
 %%%
 
 若 `heq : lhs = rhs`，motive 的类型为 `α → β`，则：
@@ -391,7 +391,7 @@ congrArg motive heq : motive lhs = motive rhs
 
 # 提交目标变化
 %%%
-tag := "ch05-s15"
+tag := "ch06-s15"
 %%%
 
 `RewriteResult` 返回后，外壳调用：
@@ -417,11 +417,11 @@ Tactic.State.goals
 ```
 :::
 
-Ch07 将完整展开第二层。
+Ch08 将完整展开第二层。
 
 # 失败发生在哪一步
 %%%
-tag := "ch05-s16"
+tag := "ch06-s16"
 %%%
 
 下面固定一条失败路径：
@@ -447,10 +447,10 @@ example (x y : Nat) (_h : x = y) : 0 = 0 := by
 
 # `apply` 的 Meta 尾段
 %%%
-tag := "ch05-s17"
+tag := "ch06-s17"
 %%%
 
-Ch07 将讲到的 Lean 自带 `apply` 也建立在一段很小的 Meta 核心之上：
+Ch08 将讲到的 Lean 自带 `apply` 也建立在一段很小的 Meta 核心之上：
 
 ```anchor metam_apply_core
 elab "apply_core " t:term : tactic => withMainContext do
@@ -471,7 +471,7 @@ example (P Q : Prop) (hP : P) (hQ : Q) : P ∧ Q := by
 
 # `substCore` 提示的依赖边界
 %%%
-tag := "ch05-s18"
+tag := "ch06-s18"
 %%%
 
 变量消去还要处理局部声明之间的依赖：其他声明的类型可能引用被消去变量。源码中的 `substCore` 中的 `depElim` 检查 reverted 目标是否依赖等式证明 `h`，据此选择 `mkEqRec` 或 `mkEqNDRec`；它检查的并非“目标是否依赖被消去变量 `x`”。局部上下文是一串按依赖排序的声明，不是无序字典。
@@ -480,7 +480,7 @@ tag := "ch05-s18"
 
 # 源码地图
 %%%
-tag := "ch05-s19"
+tag := "ch06-s19"
 %%%
 
 建议按下面的顺序阅读源码：
@@ -505,7 +505,7 @@ Lean/Meta/Tactic/Rewrite.lean
 
 # API 回查表
 %%%
-tag := "ch05-s20"
+tag := "ch06-s20"
 %%%
 
 | 任务 | 入口 |
@@ -527,12 +527,12 @@ tag := "ch05-s20"
 
 # 练习
 %%%
-tag := "ch05-s21"
+tag := "ch06-s21"
 %%%
 
 ## 基础一：读 application spine
 %%%
-tag := "ch05-s22"
+tag := "ch06-s22"
 %%%
 
 预测 `inspect_main_target` 对 `f x y = z` 打印的应用头和参数数目。
@@ -541,7 +541,7 @@ tag := "ch05-s22"
 
 ## 基础二：定义等价修改了什么
 %%%
-tag := "ch05-s23"
+tag := "ch06-s23"
 %%%
 
 解释 `observe_defeq_assignment` 中 `hole` 为何在比较后变成 `3`。
@@ -550,7 +550,7 @@ tag := "ch05-s23"
 
 ## 基础三：`rewrite` 返回后旧目标是否已经赋值
 %%%
-tag := "ch05-s24"
+tag := "ch06-s24"
 %%%
 
 `MVarId.rewrite` 返回 `RewriteResult` 时，旧目标是否已经获得赋值？
@@ -559,7 +559,7 @@ tag := "ch05-s24"
 
 ## 进阶一：打印 motive
 %%%
-tag := "ch05-s25"
+tag := "ch06-s25"
 %%%
 
 复制 `rw_xray`，根据 lhs 与 target 调用 `kabstract`，打印抽象结果和 `mkLambda` 得到的 motive。
@@ -568,7 +568,7 @@ tag := "ch05-s25"
 
 ## 进阶二：制造 side goal
 %%%
-tag := "ch05-s26"
+tag := "ch06-s26"
 %%%
 
 构造带额外前提的改写 theorem，使某个参数无法从 lhs 推断。观察 `RewriteResult.mvarIds`。
@@ -577,7 +577,7 @@ tag := "ch05-s26"
 
 ## 进阶三：候选回滚
 %%%
-tag := "ch05-s27"
+tag := "ch06-s27"
 %%%
 
 第一候选先用 `isDefEq` 给 fresh metavariable 赋值，再故意失败；恢复 mctx 后运行第二候选。
@@ -586,7 +586,7 @@ tag := "ch05-s27"
 
 ## 挑战：局部假设改写
 %%%
-tag := "ch05-s28"
+tag := "ch06-s28"
 %%%
 
 这个可运行外壳先把 hypothesis 名解析成 `FVarId`，再调用源码中的 `rewriteLocalDecl`。后者负责译补 theorem、替换局部声明、维护依赖它的上下文，并更新活动目标队列。最后，代码从新的局部上下文中找到同名声明，打印它的新类型。
@@ -610,8 +610,7 @@ example (x y : Nat) (hxy : x = y) (h : x + 1 = 2) : y + 1 = 2 := by
 
 # 本章边界
 %%%
-tag := "ch05-s29"
+tag := "ch06-s29"
 %%%
 
 `rw_xray` 已经展示了 Expr、local context、定义等价、metavariable assignment、motive、proof Expr 和目标运输之间的关系。外壳中的 `elabTerm` 仍替我们处理 Syntax 和类型。下一章进入 TermElabM，说明预期类型、延期任务、synthetic metavariables 与译补恢复怎样协同工作。
-

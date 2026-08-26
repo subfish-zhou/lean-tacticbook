@@ -5,12 +5,12 @@ open Verso.Genre Manual
 open Verso Code External
 
 set_option verso.exampleProject "examples"
-set_option verso.exampleModule "Examples.Ch11Grind"
+set_option verso.exampleModule "Examples.Ch12Grind"
 
 #doc (Manual) "grind：共享推理状态上的饱和搜索" =>
 %%%
-file := "Ch11Grind"
-tag := "ch11-grind"
+file := "Ch12Grind"
+tag := "ch12-grind"
 %%%
 
 > *本章目标*：从一份“发现新事实就写回去”的工作板开始。先用三个小证明观察不同推理步骤怎样互相接力，再逐步命名等价类、规则匹配、饱和与分支；最后才对应到 Grind 的生产数据结构。
@@ -23,7 +23,7 @@ Grind 的基本想法是维护一份共享工作板。每种推理机制从板�
 
 # 三个例子先看“谁把什么交给谁”
 %%%
-tag := "ch11-s01"
+tag := "ch12-s01"
 %%%
 
 第一例只有一个等式 `a = b`。把相等的参数放进同一个函数，结果仍相等；这里连续把规则用在 `f a` 和 `f (f a)` 上：
@@ -54,7 +54,7 @@ theorem grindCooperation (x y : Int) (h₁ : x ≤ y) (h₂ : y ≤ x)
 
 # 写上工作板之前，先统一表达式外形
 %%%
-tag := "ch11-s03"
+tag := "ch12-s03"
 %%%
 
 同一个表达式若以许多表面写法进入工作板，后面的匹配会反复做无用功。Grind 因此先做 preprocessing（预处理）：用自己的一组化简规则统一常见外形，折叠投影，并让相同子表达式尽量共享。生产实现还处理 reducible 展开、universe level 规范化、nested proof 与 subsingleton 标记；这些名称第一遍可以略过。
@@ -63,7 +63,7 @@ tag := "ch11-s03"
 
 # 把已知相等的表达式放进同一类
 %%%
-tag := "ch11-s04"
+tag := "ch12-s04"
 %%%
 
 已知 `a = b` 后，可以把 `a`、`b` 放进同一个 equivalence class（等价类），表示系统已经有证明说明它们相等。表达式及其应用关系组成的结构叫 E-graph（等式图）。概念图里，一个 e-node（等式图节点）可看成“头函数 + 各参数所在的等价类”。
@@ -84,7 +84,7 @@ class(a) = class(b)
 
 # 合并两个类时必须保存理由
 %%%
-tag := "ch11-s05"
+tag := "ch12-s05"
 %%%
 
 快速维护等价类通常使用 union-find（并查集）。它能回答两个节点是否已有相同 representative（代表元），却不会自动给出它们为何相等的 Lean 证明。Grind 因此在每次 merge（合并）时增量保存证明数据：`NewFact` 直接携带 proof Expr；E-class 路径保存等式证明或延迟 congruence placeholder；theorem instantiation 与 theory solver 也直接生成 proof；split 另有分支结构和来源信息。
@@ -93,7 +93,7 @@ tag := "ch11-s05"
 
 # 局部全称规则怎样找到可用实例
 %%%
-tag := "ch11-s06"
+tag := "ch12-s06"
 %%%
 
 第二个例子中的规则 `∀ x, f x = x` 要在已知项 `a`、`f a` 上分别取实例。把规则左边可变化的位置写成 `?x`，就得到 pattern（模式）`f ?x`。从工作板中寻找让模式成立的项，并允许已知相等项互相替代，这个过程叫 E-matching（等价类匹配）。
@@ -114,7 +114,7 @@ matching may instantiate ?x with class(a)=class(b)
 
 # Trace 看到的是断言流
 %%%
-tag := "ch11-s07"
+tag := "ch12-s07"
 %%%
 
 ```anchor grind_trace_assert
@@ -138,7 +138,7 @@ theorem grindTrace (α : Type) (f : α → α) (a : α)
 
 # 两类其它工作者：局部传播规则与专用求解器
 %%%
-tag := "ch11-s08"
+tag := "ch12-s08"
 %%%
 
 propagator（传播器）监听某类新事实或等价类合并，一旦触发条件满足，就执行一个较小的局部规则，例如拆逻辑连接词、使用构造子的单射性或传播不等关系。theory solver（理论求解器）则负责一整类专门问题，例如整数算术、线性算术、交换环或序关系。两者都把所得证明和新事实写回共享工作板。
@@ -147,7 +147,7 @@ propagator（传播器）监听某类新事实或等价类合并，一旦触发�
 
 # 无法直接推出时，分别尝试有限种情况
 %%%
-tag := "ch11-s09"
+tag := "ch12-s09"
 %%%
 
 ```anchor grind_split
@@ -170,7 +170,7 @@ combine branch proofs
 
 # 当没有新事实时停止：饱和主循环
 %%%
-tag := "ch11-s02"
+tag := "ch12-s02"
 %%%
 
 反复读取已有事实并写回新事实，直到再也产生不了新事实，这种过程叫 saturation（饱和）。Grind 的主循环可按已经学过的概念读成：
@@ -191,7 +191,7 @@ tag := "ch11-s02"
 
 # 与 Library Search 的关系
 %%%
-tag := "ch11-s10"
+tag := "ch12-s10"
 %%%
 
 ```table
@@ -224,7 +224,7 @@ tag := "ch11-s10"
 
 # `grind?` 输出脚本
 %%%
-tag := "ch11-s11"
+tag := "ch12-s11"
 %%%
 
 ```anchor grind_question
@@ -238,7 +238,7 @@ Trace 模式还可能在未解分支使用 `sorry` 展示脚本骨架。建议�
 
 # Proof reconstruction
 %%%
-tag := "ch11-s12"
+tag := "ch12-s12"
 %%%
 
 成功路径可以来自假设、定理实例、E-class merge、solver proof 和 case split。Grind 的 proof 数据是分散而增量的：事实携带 proof Expr，E-class 边保存等式 proof 或延迟 congruence 标记，solver 与实例化直接生成证明，split 保存分支组合所需结构。大 proof 可以抽成辅助声明以控制项大小，但辅助声明仍由 kernel 检查。
@@ -258,7 +258,7 @@ E-graph、matcher、scheduler 和 heuristics 都可以不受信；它们不能�
 
 # 有界性与失败含义
 %%%
-tag := "ch11-s13"
+tag := "ch12-s13"
 %%%
 
 Grind 配置限制 splits、E-match rounds、generation、instances 和其它 counters。达到上限时的结论是“本次有界运行没有构造出 proof”，不是目标为假。
@@ -315,7 +315,7 @@ Grind 配置限制 splits、E-match rounds、generation、instances 和其它 co
 
 # 信任账本与公理锥
 %%%
-tag := "ch11-s14"
+tag := "ch12-s14"
 %%%
 
 ```anchor grind_axiom_probe
@@ -345,7 +345,7 @@ tag := "ch11-s14"
 
 # 源码纵切
 %%%
-tag := "ch11-s15"
+tag := "ch12-s15"
 %%%
 
 :::codeBox "pseudocode"
@@ -366,40 +366,40 @@ Init/Grind/Config.lean                  当前默认 bounds
 
 # 练习
 %%%
-tag := "ch11-s16"
+tag := "ch12-s16"
 %%%
 
 ## 基础：画 E-classes
 %%%
-tag := "ch11-s17"
+tag := "ch12-s17"
 %%%
 
 给定 `a=b`、terms `f a`、`f b`，画 merge 前后 classes 与 application signatures，并标出 congruence proof 的来源。
 
 ## 进阶：E-match modulo equality
 %%%
-tag := "ch11-s18"
+tag := "ch12-s18"
 %%%
 
 为 pattern `f ?x = ?x` 和 equality `a=b` 枚举可能实例，说明 instance cache 应按什么数据去重。
 
 ## 进阶：分支隔离
 %%%
-tag := "ch11-s19"
+tag := "ch12-s19"
 %%%
 
 实现两个分支各自 merge 同一对 classes 的 toy E-graph；故意共用 mutable state，构造兄弟分支污染，再改成 saved-state isolation。
 
 ## 挑战：最小饱和器
 %%%
-tag := "ch11-s20"
+tag := "ch12-s20"
 %%%
 
 只支持常量、unary applications、equalities 和一条 forall rewrite。要求保存 merge reason，最终输出等式 proof，而不是 Bool。
 
 # 本章边界
 %%%
-tag := "ch11-s21"
+tag := "ch12-s21"
 %%%
 
 Grind 的所有计算仍在 Lean 进程内部，成功后重建 proof。下一章 `bv_decide` 把搜索推进到外部 CaDiCaL，并用 LRAT certificate 把结果带回；但 Lean 4.32.2 的最终 checker-equals-true premise又经过 `nativeEqTrue` axiom bridge，实际信任边界比“外部 solver 不可信、内核检查一切”更复杂。

@@ -270,23 +270,13 @@ example (x : ℚ) : x^2 - 5*x + 6 = 0 ↔ x = 2 ∨ x = 3 := by
 
 这里的限制不是“宏永远不能从命题中提取变量和数字”。如果把整段命题显式作为宏参数传入，或者定义一个包住整个声明的 command 宏，那么宏可以匹配其表面语法，从 `x = 2 ∨ x = 3` 中拆出标识符 `x` 和数字语法 `2`、`3`。但这只是句法提取：宏不知道 `x` 的类型，不知道两个写法是否定义等价，也不能透过定义、记法和强制转换识别同一个数学表达式。对于普通 tactic 调用，命题已经作为待证目标存在于证明状态中，而不在宏的输入语法里；要读取它必须进入 `TacticM`。
 
-`MacroM` 并非完全没有上下文，只是只开放了很窄的查询接口。常用的信息提取 API 如下：
 
-```table
-| API | 返回值 | 能知道什么 |
-|-----|--------|------------|
-| `Syntax.getKind stx` | `SyntaxNodeKind` | 输入节点由哪条句法规则产生 |
-| `Syntax.getArgs stx` | `Array Syntax` | 输入节点的直接子节点 |
-| `Syntax.getId stx` | `Name` | 标识符节点携带的名字；对非标识符会 panic |
-| `Syntax.getPos? stx` | `Option String.Pos.Raw` | 输入的源码起始位置（若有） |
-| `Macro.getCurrNamespace` | `MacroM Name` | 文件当前位置的命名空间 |
-| `Macro.hasDecl n` | `MacroM Bool` | 全局环境是否含有名为 `n` 的声明 |
-| `Macro.resolveNamespace n` | `MacroM (List Name)` | `n` 在当前 namespace/open 状态下可能指向的命名空间 |
-| `Macro.resolveGlobalName n` | `MacroM (List (Name × List String))` | `n` 可能指向的全局声明及其可能的投影后缀 |
-| `Macro.expandMacro? stx` | `MacroM (Option Syntax)` | `stx` 的最外层是否还能展开一步，以及该步结果 |
-```
+# `MacroM` 还能看到什么
+%%%
+tag := "macro-context"
+%%%
 
-前四项 `Syntax` 查询只检查调用者传入的句法树；后五项查询由 `MacroM` 的受限 methods 提供。它没有通用的 `getEnv`，更没有 `getMainTarget`、`getLCtx`、`inferType` 或 `isDefEq`。下面这个 command 宏展示了查询边界：它能按当前位置解析一个全局名称并确认声明存在，最后生成普通的 `#check` 命令。
+普通 tactic 宏看不到目标，并不等于 `MacroM` 里面什么都没有。Command 宏运行在文件中某个确定的位置，它至少得知道当前位置属于哪个命名空间；输入里若有一个名字，宏展开器也可以借用几项受限的解析功能。下面这个命令把名字解析成全名，再生成普通的 `#check`：
 
 ```anchor macro_environment_query
 namespace MacroEnvironmentDemo
@@ -313,48 +303,99 @@ macro_rules
 end MacroEnvironmentDemo
 ```
 
-这里 `resolveGlobalName` 只做名称解析，`hasDecl` 只回答是否存在；它们不会返回声明的类型或值。若把 `#resolve_decl answer` 改成不存在的名字，宏可以利用当前命名空间生成定位准确的错误，但它仍无法询问任何证明目标。下一章的 `elab_rules` 正是跨过这条边界。
+这里先停一下：
 
+:::codeBox "code"
+```
+let ns ← Macro.getCurrNamespace
+```
+:::
 
-## `rw` 与 `rwa`
+`Macro.getCurrNamespace` 的返回类型不是 `Name`，而是 `MacroM Name`。`Name` 表示已经拿到手的名字；`MacroM Name` 则是一段尚待运行的宏展开计算。一般的 `MacroM` 计算可以读取现场、留下新的宏状态或失败；眼前这一项只读取当前 namespace，成功后返回一个 `Name`。`←` 运行右边的计算，再把得到的普通值交给后面的代码。
+
+## 插曲：这个 `M` 不是名字末尾的装饰
 %%%
-tag := "macro-rw"
+tag := "macro-monad-interlude"
 %%%
 
-`unicode("← ", "<- ")`用同一个解析器接受Unicode和ASCII箭头；末尾的`?`让箭头可选。`rwRule,*,?`表示零个或多个逗号分隔的规则，并允许最后留下一个逗号，所以`[]`、`[h]`、`[← h, g]`和`[h,]`都符合`rwRuleSeq`。方括号内部使用`withoutPosition`，表示显式定界符已经足以确定范围，不再继承外面的缩进约束。
+如果你没学过函数式编程，先不要把 Monad 想成某种高深的数据结构。眼前这几行代码已经足够逼出它最小的形状。
 
-最后一行从左到右依次读取`rewrite`、零个或多个配置项、必需的规则列表和可选的位置说明。`(name := rewriteSeq)`把根节点种类固定为`Lean.Parser.Tactic.rewriteSeq`，真正的证明术译补器正是按这个名字注册的。
+普通函数拿到参数便能算出结果，例如 `Nat.succ 3` 的结果是 `4`。`Macro.getCurrNamespace` 却不能凭空算出命名空间；同一段宏放在两个 namespace 里，结果会变。`Macro.throwErrorAt` 更不会返回正常结果，它会让当前展开当场失败。这里需要描述的不是一个孤零零的值，而是“一段要在特定现场运行、运行中还可能失败的计算”。类型 `MacroM α` 中的 `M` 说明这段计算运行在怎样的世界里，`α` 才是成功后真正得到的值。
 
-常用的`rw`并不是另一个独立译补器，而是宏：
+把这样的计算接起来只需要两个动作。`pure` 把普通值放回当前计算世界，却不额外读取或修改现场；`bind` 先运行一段 `M α`，再把得到的 `α` 交给下一段 `α → M β`。`do` 记法把一串 `bind` 按执行顺序排开，所以：
 
-```anchor syntax_source_rw (module := Examples.SyntaxSources)
-macro (name := rwSeq) "rw " c:optConfig s:rwRuleSeq l:(location)? : tactic =>
-  match s with
-  | `(rwRuleSeq| [$rs,*]%$rbrak) =>
-    `(tactic| (rewrite $c [$rs,*] $(l)?; with_annotate_state $rbrak (try (with_reducible rfl))))
-  | _ => Macro.throwUnsupported
+:::codeBox "code"
+```
+do
+  let ns ← Macro.getCurrNamespace
+  let candidates ← Macro.resolveGlobalName name.getId
+  pure (ns, candidates)
+```
+:::
 
-macro "rwa " rws:rwRuleSeq loc:(location)? : tactic =>
-  `(tactic| (rw $rws:rwRuleSeq $[$loc:location]?; assumption))
+读起来就是“先取 namespace，再查询候选，最后返回二者”。第二步可以依赖第一步，任何一步抛错都会阻止后续代码继续。对于眼前的宏，这已经是 Monad 最重要的用法。只想继续写宏，可以直接跳到下一节。
+
+### 深水区，可跳：`MacroM` 怎样叠出来
+
+Lean 4.32.2 对 `MacroM` 的真实定义是：
+
+:::codeBox "code"
+```
+abbrev MacroM :=
+  ReaderT Macro.Context
+    (EStateM Macro.Exception Macro.State)
+```
+:::
+
+`ReaderT Macro.Context` 给计算增加一份只读现场；`EStateM Macro.Exception Macro.State` 带着可变化的宏状态运行，也允许以 `Macro.Exception` 失败。这里的 state 保存宏作用域、trace 等展开期信息；exception 则区分“这条规则不处理”与真正的错误。
+
+这里真正的 Monad transformer 是外层 `ReaderT`；内层 `EStateM` 本身把状态与异常合成一个基础计算。Transformer 不是给一个值反复套盒子，而是在已有 Monad 外再加一层现场或状态，同时保留 `pure`、`bind` 和 `do` 的连接方式。以后几章会看到 `ReaderT` 与 `StateRefT` 继续向外叠加：
+
+:::codeBox "code"
+```
+CoreM     := ReaderT Core.Context
+               (StateRefT Core.State (EIO Exception))
+MetaM     := ReaderT Meta.Context
+               (StateRefT Meta.State CoreM)
+TermElabM := ReaderT Term.Context
+               (StateRefT Term.State MetaM)
+TacticM   := ReaderT Tactic.Context
+               (StateRefT Tactic.State TermElabM)
+```
+:::
+
+现在不需要记住这些 Context 和 State 的字段。先记住读法：每向外加一层 transformer，就增加当前阶段专用的一份现场或状态；底层已有的能力仍然可以继续使用。只想写宏的读者读到这里已经够了，后面四章会逐层拆开。
+
+`MacroM` 的边界还有一点容易说错。它没有通用的 `getEnv`，也没有 IO；宏不能取得整个 `Environment` 随意查询。但宏展开框架通过不透明的 `Macro.Methods` 开放了几项窄接口，所以 `hasDecl` 和 `resolveGlobalName` 仍然可用。框架只肯替宏回答几类事先规定好的问题。
+
+## 用过以后再查 API
+
+刚才的例子已经给这些 API 建立了共同语法，现在可以把常用入口放在一起备查：
+
+```table
+|| API || 返回值 || 当前能做的事
+| `Syntax.getKind stx` | `SyntaxNodeKind` | 查看节点由哪种句法产生
+| `Syntax.getArgs stx` | `Array Syntax` | 取得直接子节点
+| `Syntax.getId stx` | `Name` | 取得标识符携带的名字
+| `Syntax.getPos? stx` | `Option String.Pos.Raw` | 取得源码起始位置
+| `Macro.getCurrNamespace` | `MacroM Name` | 读取当前 namespace
+| `Macro.hasDecl n` | `MacroM Bool` | 询问一个全名是否对应声明
+| `Macro.resolveGlobalName n` | `MacroM (List (Name × List String))` | 解析全局名字及投影后缀
+| `Macro.expandMacro? stx` | `MacroM (Option Syntax)` | 尝试把最外层宏再展开一步
+| `Macro.throwUnsupported` | `MacroM α` | 把输入交给别的宏候选
+| `Macro.throwErrorAt ref msg` | `MacroM α` | 在指定 Syntax 位置报告错误
 ```
 
-`macro`在`=>`左边仍使用本章一直在读的句法描述语言：`c:optConfig`、`s:rwRuleSeq`和`l:(location)?`分别捕获配置、规则列表和可选位置。`=>`右边开始操作已经解析好的`Syntax`，这里先只解释读源码所必需的记号：
+前四项直接检查 Syntax；后面的操作要运行在 `MacroM` 中。`Syntax.getId` 本身不会替你验证节点类别，非标识符会得到 `Name.anonymous`；若匿名名不合法，应先检查 `stx.isIdent`。这些 API 仍然不能取得当前证明目标、局部上下文或一个表达式的类型。`#resolve_decl` 能确认名字存在，却不能取出声明类型；真正的 `#check` 是宏生成的下一条命令，类型查询发生在命令译补阶段。
 
-* `` `(rwRuleSeq| ...) ``是`rwRuleSeq`类别的句法模式；`$rs,*`捕获逗号分隔的所有规则，`%$rbrak`额外捕获右方括号这个原子。
-* `` `(tactic| ...) ``构造一棵`tactic`句法树。`$c`和`$rbrak`插入单个句法对象，`[$rs,*]`重新插入分隔列表，`$(l)?`插入可选对象。
-* `$[$loc:location]?`是另一种可选反引用写法，并显式标出其类别为`location`。
-* 如果输入没有形成预期的`rwRuleSeq`结构，`Macro.throwUnsupported`让该宏规则拒绝处理它。
-
-展开结果也很直观：`rw`先运行`rewrite`，再尝试用可约化透明度下的`rfl`关闭目标；`with_annotate_state`把这次尝试前后的状态挂在右方括号位置，供编辑器显示。`rwa`则在`rw`之后继续运行`assumption`。关于句法模式、引用和反引用的系统规则将在下一章讲宏时展开。
-
-
-
-# 多条规则如何工作
+# 两条规则都能匹配时
 %%%
 tag := "macro-rules-order"
 %%%
 
-同一个 syntax kind 可以有多条宏规则。某条规则若 pattern 不匹配，或显式调用 `Macro.throwUnsupported`，框架会继续尝试别的 expander。
+`poly_roots_both` 已经让我们碰到一种重叠：`$roots:term*` 也能把整个列表当成一个 term 接住，所以更具体的 `[$roots,*]` 必须写在前面。同一个 `macro_rules` 块按书写顺序检查分支；两个完全相同的模式还会被 redundant linter 拒绝，不能在同一块里靠第一条 `throwUnsupported` 假装回退。
+
+分开注册的规则又是另一层顺序：
 
 ```anchor macro_first_rule
 open Lean Macro
@@ -370,154 +411,43 @@ macro_rules
 example : firstRule = 42 := rfl
 ```
 
-`throwUnsupported` 表示“这个 expander 不处理该输入”，不是用户错误。上例先注册成功规则，再注册拒绝规则；v4.32.2 会先尝试后注册的拒绝规则，它返回 unsupported 后再落到较早的成功规则。`Macro.throwError` 则表示已经确认输入属于自己，但内容非法，应当停止并报告。
+后注册的规则先拿到输入，但它调用 `throwUnsupported`，意思是“这个 expander 不处理”，框架于是继续找较早注册的候选。上例是 term 宏；在普通 term 或 command 的展开循环里，`Macro.throwError` 表示当前规则已经认领输入，错误会直接交给用户，不会因为生成结果后来译补失败而回到较早的宏。
 
-同一 `macro_rules` 块内，应把 pattern 写成互不冗余的分支，按书写顺序匹配。两个完全相同的 pattern 会被 linter 判为 redundant，不能靠第一条 `throwUnsupported` 在块内模拟 fallback。跨多个独立注册块时，同优先级 expander 的注册顺序会影响尝试次序，后注册者通常先被尝试。若正确性依赖顺序，最好让不同 pattern 边界清楚，并为当前版本写回归测试。
+Tactic 宏多一层回退。它的分派器把“展开候选并运行生成的 tactic”一起放在可恢复现场中；某个候选抛普通错误或生成的 tactic 执行失败时，状态可以恢复，随后继续试别的 tactic expander：
 
-规则重叠时至少准备三类测试：
+```anchor macro_tactic_fallback
+syntax "fallbackTac" : tactic
 
-1. 每条规则的唯一命中输入；
-2. 重叠输入，明确谁应优先；
-3. 谁都不应处理的输入，确认失败路径。
+macro_rules
+  | `(tactic| fallbackTac) => `(tactic| assumption)
 
-# 真实源码里的四种 tactic 宏
-%%%
-tag := "macro-real-four-roles"
-%%%
+macro_rules
+  | `(tactic| fallbackTac) => `(tactic| exact True.intro)
 
-Lean 与 Mathlib 的 tactic 宏主要承担四种工作：
-
-1. 给已有 term 或 tactic 加短入口；
-2. 拼接分支、重复与收尾控制；
-3. 固定配置、lemma 集和领域 rule set；
-4. 给同一个 syntax kind 留出可扩展的规则插槽。
-
-这是后文反复使用的分类地图，不是接下来四节的机械目录。阅读顺序先从短包装走到控制器，再借 `trivial` 看多规则回退和开放式扩展；卫生性讲完后，领域配置才补上第三类。每次都分清两件事：宏生成哪段 tactic 语法，展开后的 tactic 又由谁读取目标并执行语义。
-
-## 最薄的包装：`exfalso`、`infer_instance`、`linarith!`
-%%%
-tag := "macro-real-thin-wrappers"
-%%%
-
-Lean 本体中的 `exfalso` 与 `infer_instance` 都只包一层：
-
-:::codeBox "code"
-```
-macro "exfalso" : tactic => `(tactic| refine False.elim ?_)
-macro "infer_instance" : tactic => `(tactic| exact inferInstance)
-```
-:::
-
-Mathlib 的 `linarith!` 甚至只调整 token，把紧邻名称的叹号改写成 elaborator 接受的独立参数：
-
-:::codeBox "code"
-```
-macro "linarith!" rest:linarithArgsRest : tactic =>
-  `(tactic| linarith ! $rest:linarithArgsRest)
-```
-:::
-
-```anchor macro_builtin_examples
-example (P : Prop) (h : False) : P := by
-  exfalso
-  exact h
-
-example : Nonempty Nat := by
-  infer_instance
-
-example (x y : Rat) (h : x ≤ y) : x ≤ y + 1 := by
-  linarith!
-```
-
-宏没有寻找矛盾、综合实例或运行线性算术。它只选择现有入口；真正的语义工作留给 `refine`、term 译补和 `linarith` elaborator。Ch10 会再把 `linarith` 内部的证书搜索与证明验证分开。
-
-## 控制器：`try`、`<;>` 与 `ring`
-%%%
-tag := "macro-real-controllers"
-%%%
-
-`try` 展开成 `first` 的两条分支：用户 tactic 失败时，`skip` 兜底。
-
-:::codeBox "code"
-```
-macro "try " t:tacticSeq : tactic =>
-  `(tactic| first | $t | skip)
-```
-:::
-
-`<;>` 先聚焦主目标，再把右侧 tactic 送到左侧产生的每个目标：
-
-:::codeBox "code"
-```
-macro:1 x:tactic tk:" <;> " y:tactic:2 : tactic => `(tactic|
-  focus
-    $x:tactic
-    with_annotate_state $tk skip
-    all_goals $y:tactic)
-```
-:::
-
-Mathlib 的 `ring` 采用同一种策略编排，只是候选更专业：`ring1` 是实际的等式关闭器；若它失败，`ring_nf` 分支仍可能成功规范化并留下 residual goal，同时生成建议。Ch09 会沿这两条路径追到带证明的规范形。
-
-:::codeBox "code"
-```
-macro "ring" : tactic =>
-  `(tactic| first
-    | ring1
-    | try_this ring_nf "The `ring` tactic failed to close the goal. ...")
-```
-:::
-
-`ring1` 与 `ring_nf` 是 elaborator；宏只安排尝试顺序。
-
-```anchor macro_controller_examples
-example (P Q : Prop) (hp : P) (hq : Q) : P ∧ Q := by
-  constructor <;> assumption
-
-example : (1 : Int) + 2 = 3 := by
-  ring
-```
-
-## 多条规则和回退：真实的 `trivial`
-%%%
-tag := "macro-real-trivial"
-%%%
-
-Lean 4.32.2 的 `trivial` 没有 tactic elaborator。`Init/Tactics.lean:1150,1484-1489` 先声明语法，再注册六条宏规则：
-
-:::codeBox "code"
-```
-syntax "trivial" : tactic
-
-macro_rules | `(tactic| trivial) => `(tactic| assumption)
-macro_rules | `(tactic| trivial) => `(tactic| rfl)
-macro_rules | `(tactic| trivial) => `(tactic| contradiction)
-macro_rules | `(tactic| trivial) => `(tactic| decide)
-macro_rules | `(tactic| trivial) => `(tactic| apply True.intro)
-macro_rules | `(tactic| trivial) => `(tactic| apply And.intro <;> trivial)
-```
-:::
-
-这些规则本身不读取目标。tactic 分派先展开一个候选；展开后的 tactic 若在译补或执行中失败，框架再尝试同一 syntax kind 的其他注册候选。最后一条递归调用 `trivial`，因此合取目标可以逐层拆开。
-
-```anchor macro_trivial_use
 example (P : Prop) (h : P) : P := by
-  trivial
-
-example : True ∧ True := by
-  trivial
+  fallbackTac
 ```
 
-这个例子把 `macro_rules`、回退、递归和 `<;>` 接到一起。先学会单规则宏再看它，源码就不再像六个互不相干的魔法咒语。
+后注册的 `exact True.intro` 先运行，却不能证明任意 `P`；分派器恢复现场后，较早注册的 `assumption` 才用 `h` 关闭目标。真实 `trivial` 也依赖这条恢复路径，不过它的候选按注册顺序反向尝试：最后写下的递归合取分支最先拿到目标，`assumption` 反而最后。`throwError` 在 term/command 宏中可以提交错误，却不能被概括成“在所有 tactic 宏中永久截断候选链”。
 
-# 展开不是只走一次
+顺序真正重要时，最可靠的实验很直接：给每条规则各找一个只有它能匹配的输入，再找一个重叠输入，看谁先接住；最后补一个谁都不该处理的输入。Term/command 宏不要把普通错误冒充 unsupported；tactic 候选若故意依赖执行失败回退，还要用回归测试确认状态确实恢复。
+
+# 展开以后还有宏
 %%%
 tag := "macro-recursive-expansion"
 %%%
 
-宏输出仍是一棵 `Syntax`，其中可能包含其他宏，甚至再次包含自己。elaborator 处理当前节点时会继续展开该节点，直到得到当前译补器能够处理的非宏形态。这里不是先对整份文件做一轮独立的全树 fixed-point 预处理。
+前面写 `mytrivial` 时，合取分支展开成：
 
-分层设计因此成立：高层宏生成较低层的便捷语法，低层宏再生成当前 elaborator 能直接处理的非宏语法形态。代价是一个非常朴素的灾难：
+:::codeBox "code"
+```
+apply And.intro <;> mytrivial
+```
+:::
+
+展开结果里仍然有 `mytrivial`，证明却能继续。宏输出不是最后的 Expr，而是另一棵 Syntax；译补器处理相应节点时若仍能找到宏，就会继续展开，直到得到下一阶段能够处理的形态。Lean 不是先把整份文件拿去做一次全树 fixed-point 预处理，展开跟着当前节点向下走。
+
+这个机制允许高层宏调用低层宏，也允许宏递归。它也允许你写出：
 
 :::codeBox "error code"
 ```
@@ -525,18 +455,9 @@ macro "loop" : term => `(loop)
 ```
 :::
 
-输入没变，展开永远有下一轮。真实错误可能表现为递归深度、heartbeat 或宏展开栈异常。遇到它时，不要先提高限制；先比较规则输入和输出，确认每次展开是否朝某个终态前进。
+输入和输出完全相同，每轮以后仍然还有下一轮。Lean 最终会以递归深度一类错误停下，但提高限制没有用；规则没有朝终态前进，再高的限制也只是让它多绕几圈。
 
-递归宏若处理列表，通常要有明确的空列表基例，并让递归参数严格变短。把“看起来少了一点”换成可以在 pattern 上数出来的下降量。
-
-## 递归与开放式规则集：`iterate`、`decreasing_trivial`、discharger
-%%%
-tag := "macro-real-extensible"
-%%%
-
-`iterate n tac` 在宏展开期读取数字。零次变成 `skip`，后继次数变成一次 `tac` 加更小的 `iterate`。不写次数时，它展开成 `try tac; iterate tac`，所以只有当 `tac` 最终失败时才会停止。
-
-`decreasing_trivial` 服务于递归定义的终止性证明；`get_elem_tactic_extensible` 负责数组、列表和区间下标的边界义务；Mathlib 的 `gcongr_discharger` 与 `use_discharger` 负责自动化产生的 side goal。四者都把同一个 syntax kind 留给多个模块扩展，按导入闭包继续增加候选。
+递归宏最好让下降量直接出现在模式里。处理列表时给空列表一个基例，递归分支每次去掉一个元素；处理自然数时让后继变成更小的数。Lean 的 `iterate n tac` 就按这个办法展开，零次变成 `skip`，后继次数变成一次 `tac` 和更小的 `iterate`。不写次数的版本则把停止条件交给 tactic 失败。
 
 ```anchor macro_builtin_recursion
 example (n : Nat) (h : n > 0) : n - 1 < n := by
@@ -546,14 +467,14 @@ example (n : Nat) : n = n := by
   iterate 1 rfl
 ```
 
-开放式规则集不能被描述成“固定展开为某一段脚本”。准确说法是：当前导入闭包向该 syntax kind 注册了哪些候选。
+`decreasing_trivial`、`get_elem_tactic_extensible` 和若干 discharger 会把同一种 Syntax 留给别的模块继续注册规则。它们没有一段脱离导入环境的“唯一展开结果”；当前能尝试哪些候选，取决于导入闭包注册了什么。
 
-# 卫生性：两个都叫 `x`，不一定是一个名字
+# 两个 `x` 为什么没有撞在一起
 %%%
 tag := "macro-hygiene"
 %%%
 
-看这个宏：
+下面这个宏在模板里新写了一个 `x`：
 
 ```anchor macro_hygienic_let
 macro "hygienicLet(" t:term ")" : term =>
@@ -562,8 +483,7 @@ macro "hygienicLet(" t:term ")" : term =>
 example (x : Nat) : hygienicLet(x + 1) = x + 1 := rfl
 ```
 
-展开后肉眼看似得到：
-
+只看展开后的字符，它很像：
 
 :::codeBox "code"
 ```
@@ -571,21 +491,9 @@ let x := x + 1; x
 ```
 :::
 
-若按字符串替换理解，右边 `x + 1` 可能被新 `let x` 捕获，结果就错了。Lean 的卫生宏不会这样做：
+如果宏只是字符串替换，右边 `x + 1` 中原本属于调用者的 `x` 会被新 binder 抓走。Lean 的 quotation 不会抹掉名字来源。模板中新写的 binder 和 body 中的 `x` 获得当前宏作用域，所以它们彼此对应；反引用进来的 `$t` 保留调用点作用域，其中的 `x` 仍然指向外面的参数。
 
-- 模板中新写的 `x` 获得当前宏作用域；
-- antiquote 进来的 `$t` 保留调用点作用域；
-- `let` 的 binder 与 body 中模板写出的 `x` 对应；
-- `$t` 里的调用点 `x` 仍指向外层参数。
-
-卫生性并不是“自动挑一个很丑的新字符串”。它依靠标识符携带的 macro scopes 和名字解析信息区分来源。
-
-## 捕获有时是故意的
-%%%
-tag := "macro-intentional-names"
-%%%
-
-若调用者明确提供 binder 名，可以 antiquote 同一个 ident：
+卫生性阻止意外捕获，不阻止明确的名字关联。调用者若把 binder 名传给宏，模板可以反引用同一个 ident：
 
 ```anchor macro_identity_let
 macro "identityLet(" n:ident ", " t:term ")" : term =>
@@ -594,16 +502,85 @@ macro "identityLet(" n:ident ", " t:term ")" : term =>
 example : identityLet(y, 7) = 7 := rfl
 ```
 
-这里的关联是语法接口的一部分，卫生机制并没有失效。
+同一原则也约束宏生成的顶层名字。需要形成公开接口时，让调用者显式提供 ident，比试图绕过卫生性可靠得多。
 
-生成调用点之后要引用的顶层声明时，也应让调用者提供 `ident`。固定写在 quotation 里的声明名带宏作用域，外面裸写同样字符可能得到 `Unknown identifier`。这是卫生性在保护你，不是 Lean 忘了自己刚定义过什么。
-
-# 固定领域配置：`continuity` 与 local `map_simp`
+# 现在去读真正的宏
 %%%
-tag := "macro-real-domain-config"
+tag := "macro-real-source"
 %%%
 
-Mathlib 的 `continuity`、`measurability`、`finiteness`、`arith_mult`、`aesop_cat` 等宏把领域 rule set 与配置交给通用搜索器。例如 `continuity` 的展开骨架是 configured `aesop`，真实源码用 `mkIdent` 构造卫生的 rule-set 名。
+宏的输入、展开、候选、递归和名字来源都已经有了。现在回到 Lean 与 Mathlib 的源码，只看前文原则组合以后仍然承重的地方。
+
+## `rw` 与 `rwa`
+%%%
+tag := "macro-rw"
+%%%
+
+Ch02 已经拆过 `rwRuleSeq` 的 parser，所以这里不再解释可选箭头和逗号列表。现在只看它们怎样被宏接走：
+
+```anchor syntax_source_rw (module := Examples.SyntaxSources)
+macro (name := rwSeq) "rw " c:optConfig s:rwRuleSeq l:(location)? : tactic =>
+  match s with
+  | `(rwRuleSeq| [$rs,*]%$rbrak) =>
+    `(tactic| (rewrite $c [$rs,*] $(l)?; with_annotate_state $rbrak (try (with_reducible rfl))))
+  | _ => Macro.throwUnsupported
+
+macro "rwa " rws:rwRuleSeq loc:(location)? : tactic =>
+  `(tactic| (rw $rws:rwRuleSeq $[$loc:location]?; assumption))
+```
+
+`$rs,*` 取出已经解析好的重写规则，`%$rbrak` 另外保留右方括号这个原子，`with_annotate_state` 因而能把编辑器状态挂回用户看得见的位置。`rw` 先交给真正读取目标的 `rewrite`，然后尝试 `rfl`；`rwa` 又在 `rw` 后面接上 `assumption`。宏负责排脚本，证明语义仍由后面的 tactic 处理。
+
+## 控制器和真实的 `trivial`
+
+`try` 展开成 `first | t | skip`，`<;>` 把右边 tactic 发给左边产生的每个目标。源码只负责把控制结构排出来：
+
+:::codeBox "code"
+```
+macro "try " t:tacticSeq : tactic => `(tactic| first | $t | skip)
+
+macro:1 x:tactic tk:" <;> " y:tactic:2 : tactic => `(tactic|
+  focus
+    $x:tactic
+    with_annotate_state $tk skip
+    all_goals $y:tactic)
+```
+:::
+
+真正值得确认的是，失败、目标队列和回滚都由展开后的 tactic 处理。
+
+```anchor macro_controller_examples
+example (P Q : Prop) (hp : P) (hq : Q) : P ∧ Q := by
+  constructor <;> assumption
+
+example : (1 : Int) + 2 = 3 := by
+  ring
+```
+
+真实 `trivial` 和前面写过的 `mytrivial` 几乎走同一条路。`Init/Tactics.lean` 按下面的源码顺序注册六条规则：
+
+:::codeBox "code"
+```
+macro_rules | `(tactic| trivial) => `(tactic| assumption)
+macro_rules | `(tactic| trivial) => `(tactic| rfl)
+macro_rules | `(tactic| trivial) => `(tactic| contradiction)
+macro_rules | `(tactic| trivial) => `(tactic| decide)
+macro_rules | `(tactic| trivial) => `(tactic| apply True.intro)
+macro_rules | `(tactic| trivial) => `(tactic| apply And.intro <;> trivial)
+```
+:::
+
+同优先级下，后注册的候选先试，所以运行时从递归合取分支向上回退，最后才到 `assumption`；源码书写顺序不是尝试顺序。你已经亲手写过这些规则需要的回退、递归和 `<;>`，所以不必再把六个分支逐项讲一遍。
+
+```anchor macro_trivial_use
+example (P : Prop) (h : P) : P := by
+  trivial
+
+example : True ∧ True := by
+  trivial
+```
+
+领域宏有时只把固定配置或 rule set 交给通用引擎：
 
 ```anchor macro_external_examples
 example : Continuous (fun x : Real => x) := by
@@ -613,91 +590,28 @@ example : Measurable (fun x : Real => x) := by
   measurability
 ```
 
-Mathlib 还有 22 个 local tactic macro，全部位于椭圆曲线实现文件。它们把固定的 `simp only` lemma 集命名为 `map_simp`、`eval_simp`、`C_simp`、`derivative_simp`、`matrix_simp` 或 `pderiv_simp`。这些短名不会泄漏成公共 API，也没有“导入 Mathlib 后直接调用”的用户例子。
+这些例子看完以后，生产宏的常见工作才值得压成一张表：
 
-# 宏能知道什么
-%%%
-tag := "macro-information-boundary"
-%%%
-
-宏能知道：
-
-- 输入匹配了哪一种语法；
-- 各个参数的 `Syntax`；
-- source info、syntax kind、孩子和 macro scope；
-- 当前宏展开上下文允许访问的信息。
-
-宏不能凭空知道：
-
-- 一个 term 译补后是什么类型；
-- `+` 最终解析到哪个常量；
-- 当前 tactic goal 是等式还是合取；
-- 局部上下文里有哪些假设；
-- 两个表达式是否定义等价；
-- 某个类型类实例能否综合出来。
-
-这些信息要等译补或元编程阶段才存在。
-
-宏适合做：
-
-- 新记法和语法糖；
-- 固定证明模板；
-- 参数化地拼接已有 tactic；
-- 把冗长 command 包成较短接口。
-
-宏不适合做：
-
-- 根据目标类型选择算法；
-- 搜索局部假设；
-- 调用 `isDefEq`；
-- 直接赋值目标元变量；
-- 需要类型驱动反馈的 DSL。
-
-# 第一次撞上宏的边界
-%%%
-tag := "macro-first-boundary"
-%%%
-
-假设要写：
-
-
-:::codeBox "pseudocode"
+```table
+|| 工作 || 例子 || 宏真正做的事
+| 给已有功能一个短入口 | `exfalso`、`infer_instance` | 生成更底层的 term 或 tactic
+| 编排控制流 | `try`、`<;>`、`ring` | 安排候选、重复和收尾
+| 留出开放规则槽 | `trivial`、`decreasing_trivial` | 让同一 Syntax kind 接受多个候选
+| 固定领域配置 | `continuity`、`measurability` | 把 rule set 交给通用处理器
 ```
-smart_step
-```
-:::
 
-要求它在目标是 `True` 时关闭目标，在目标是合取时拆成两项，在局部上下文有匹配假设时使用该假设。
+完整名字清单会随版本和导入闭包变化，适合放进 API 附录，不适合挤进这条学习路线。
 
-调用处永远只有同一个 token `smart_step`。宏看到的输入也永远是同一棵语法树。目标从 `True` 换成 `P ∧ Q`，宏的输入没有任何变化，所以它没有依据产生不同输出。
-
-当然可以把宏固定展开成已有的搜索 tactic，例如 `first | trivial | constructor | assumption`。这仍是合法而有用的宏，但“观察现场并决定”的工作由那些 tactic 完成，宏只是把它们排成模板。
-
-若要亲手写这段决策程序，就必须让程序进入当前证明现场：读目标列表、返回查询结果、处理失败并继续下一步。下一章从这里开始，而不是从 Monad 的定义背起。
-
-# 宏怎么调
+# 宏出错时，先看它死在哪一层
 %%%
 tag := "macro-debugging"
 %%%
 
-## 先分清失败发生在哪一层
-%%%
-tag := "ch02-h15"
-%%%
+一个“宏不能用”至少可能指四件不同的事。输入若连 parser 都没接住，错误发生在 Syntax 产生之前；输入能够解析但没有宏模式匹配，框架会继续找候选，最后报告 unsupported syntax；宏若成功生成新 Syntax，新代码仍可能在译补时类型错误；tactic 即使完成译补，也可能运行后留下目标。
 
-- `unexpected token`：多半是 parser；
-- `unexpected syntax` 或没有宏规则支持：多半是 macro pattern；
-- 展开后出现类型不匹配：宏可能已经成功，错误发生在 elaboration；
-- tactic 运行后仍留目标：展开和译补都可能成功，证明程序没有完成任务。
+这四层的修法不同。Parser 错误先缩小输入并确认类别和优先级；pattern 错误检查 quotation 类别、重复项和可选项；生成代码的错误去看展开结果；执行失败则回到目标状态和真正运行的 tactic。
 
-层次分错，调试会很滑稽。你可以花一小时改宏 pattern，最后发现只是生成的 `Nat` 项被放进了 `String` 位置。
-
-## 看展开步骤
-%%%
-tag := "ch02-h16"
-%%%
-
-v4.32.2 可以打开 elaboration step trace：
+`trace.Elab.step` 可以显示译补过程中经过的展开步骤：
 
 ```anchor macro_trace_use
 syntax:max "twiceTrace(" term ")" : term
@@ -707,95 +621,17 @@ set_option trace.Elab.step true in
 #check twiceTrace(2)
 ```
 
-trace 会显示 `twiceTrace(2)` 变成 `2 + 2`，随后 `+` 继续进入普通译补流程。
+若只想检查最外层的一步，可在 `MacroM` 中调用 `Macro.expandMacro?`。它返回 `none` 表示当前节点没有可用宏，返回 `some stx` 才是一步展开结果。调试复杂模板时，与其先打印整棵树，不如暂时把输出缩成一个肯定能译补的常量，再逐块放回；哪一块放回以后开始失败，缺口就在那一层。
 
-可用 API 还包括：
-
-:::codeBox "code"
-```
-Macro.expandMacro?
-Macro.throwUnsupported
-Macro.throwError
-```
-:::
-
-不要假定 `MacroM` 里可以直接 `logInfo`。该 monad 在当前版本没有通用 `MonadLog` 实例。若要稳定打印输入树，可以像上一章一样临时写 command elaborator，或在拥有消息能力的 elaborator 层记录。
-
-## 最小化展开
-%%%
-tag := "ch02-h17"
-%%%
-
-宏出错时，把输出先缩成一个常量：
-
-
-:::codeBox "code"
-```
-macro_rules | `(mySyntax ...) => `(0)
-```
-:::
-
-若仍失败，问题在 parser 或 pattern；若成功，再逐层放回输出模板。对递归宏，额外记录每轮输入规模，找出没有下降的分支。
+递归宏还要额外记录每轮输入是否真的变小。看到递归深度错误时提高 `maxRecDepth`，通常只是给死循环续命。
 
 # 本章练习
-%%%
-tag := "macro-exercises"
-%%%
 
-1. 写 term 宏 `unless0 n then t`，展开成 `if n = 0 then 0 else t`。测试 `Nat` 和 `Int` 上的类型推断差异，并解释差异不是宏做出的。
-2. 写 command 宏 `defNats a := 1, b := 2`，用重复 antiquotation 生成多个 `def`。要求声明名来自调用者 ident。
-3. 扩展 `poly_roots`，让调用者显式传入多项式表达式，并先用 `ring` 证明它等于候选因式乘积，再从原假设得到乘积为零。
-4. 构造一个会发生字符串捕获的纸面展开，再用 Lean 卫生宏实现并证明调用点变量没有被捕获。
-5. 给同一个 syntax kind 注册两条重叠规则。写测试确认当前版本的实际优先顺序，然后重构 pattern，使正确性不再依赖跨注册块顺序。
-6. 设计一个需求，分别说明用宏实现的版本和必须用 elaborator 的版本。判断标准必须写成“是否需要译补后的类型、目标或局部上下文”，不能写成“复杂就用 elaborator”。
+1. 写一个 term 宏，把 `twice t` 展开成 `t + t`，再说明模板中重复出现 `$t` 会不会让一个 effectful term 在运行期执行两次。
+2. 写一个 command 宏，接受逗号分隔的多个名字，为每个名字生成一个 `#check`。
+3. 给 `poly_roots_both` 增加第三种表面写法，并设计唯一命中、重叠和完全不命中的测试。
+4. 修改 `hygienicLet`，让调用者显式给出 binder 名；再解释为什么这不算卫生性失效。
+5. 写两个独立注册的同 kind 宏规则，让后注册规则先 `throwUnsupported`，再把它改成 `throwError`，比较错误路径。
+6. 判断下面需求该由宏还是证明术译补器完成：调用形式固定为 `by solve_here`，但展开结果要依据当前目标和局部假设而变。说明你的判断依赖哪一项输入信息。
 
-配套文件 `Examples/Ch02Macros.lean` 包含固定宏、参数宏、列表 splice、卫生性、fallback、`poly_roots`，以及 Lean/Mathlib 纯宏探针和 elaborator 边界对照。源码 census 的计数口径固定为 Lean 4.32.2 与 Mathlib commit `905b95818eb32af7874a58b427f50c1711a5e96c`。
-
-# 附录：纯 tactic macro 的分类索引与扫描口径
-%%%
-tag := "macro-real-census-appendix"
-%%%
-
-本节的 *census* 与 *运行探针* 是两份不同证据。逐项文件、行号、展开骨架和排除理由另存于仓库内 `drafts/Ch02PureMacroTacticCensus.md`；正文保留可读的分类索引。
-
-- census 覆盖固定源码树中的全部定义，并记录 public、scoped、local 与混合宏/elaborator 分支；
-- 配套文件提供 63 个纯宏运行探针，并另放裸 `positivity`、`gcongr` 等 elaborator 边界对照，不承诺每个内部名称都有独立 theorem 示例。
-
-## Lean 4.32.2 分类索引
-%%%
-tag := "macro-real-lean-index"
-%%%
-
-`Init/` 与 `Lean/` 的主清单按用户可调用的表面形式计 68 项。Std 另有 Do 证明模式宏和数据结构内部 scoped 宏。
-
-- *基础与控制*：`exfalso`、`next`、`try`、`<;>`、`rfl`、`rfl'`、`sorry`、`admit`、`infer_instance`、`rw`、`rwa`、`refine_lift`、`have`、`suffices`、`let`、`let rec`、`refine_lift'`、`have'`、`let'`、`stop`、`unhygienic`、`exists`、`nofun`、`nomatch`、`haveI`、`letI`、`funext`、`solve`、tactic `if`、`by_cases`、`iterate`、`and_intros`，以及多参数或结构模式的 `mintro`。
-- *化简、重写与规范化包装*：`erw`、`simp!`、`simp_all!`、`dsimp!`、`simp?!`、`simp_all?!`、`dsimp?!`、`simpa!`、`simpa?`、`simpa?!`、`rw_mod_cast`、`exact_mod_cast`、`apply_mod_cast`、`bv_omega`、`assumption_mod_cast`、`norm_cast`、`ac_nf`、`ext1`。
-- *扩展钩子与内部辅助*：`simp_wf`、`clean_wf`、`decreasing_trivial`、`decreasing_trivial_pre_omega`、`decreasing_with`、`decreasing_tactic`、`deriving_ReflEq_tactic`、`deriving_LawfulEq_tactic_step`、`deriving_LawfulEq_tactic`、`get_elem_tactic_extensible`、`get_elem_tactic`、`array_get_dec`、`array_mem_dec`、`sizeOf_list_dec`、`∎`、scoped `order`、scoped `purity_tac`。
-
-Std 的用户相关宏包括 `mleave`、复合 `mintro`、复合 `mrevert`、`mspec_no_simp`、`mspec`、`mvcgen_trivial_extensible` 与 `mvcgen_trivial`。DHashMap/DTreeMap 中的 `wf_trivial`、`empty`、`simp_to_raw`、`simp_to_model` 和 `tree_tac` 是内部 scoped 宏。
-
-## Mathlib v4.32.2 分类索引
-%%%
-tag := "macro-real-mathlib-index"
-%%%
-
-固定 commit `905b95818eb32af7874a58b427f50c1711a5e96c` 共扫描 8264 个 Lean 文件。源码定义计数为 82 个非局部直接 tactic macro、37 个 `syntax + macro_rules` 形式和 22 个 local tactic macro。
-
-- *控制与目标管理*：`assumption'`、`repeat1`、`existsi`、`observe?`、`rsuffices`、`choose!`、`peel ... using`、`bound [...]`、`conv_lhs`、`conv_rhs`、`clean`、`set!`。
-- *重写与转换*：`nth_rewrite`、`nth_rw`、`grw`、`apply_rewrite`、`apply_rw`、`nth_grewrite`、`nth_grw`、`convert!`、`convert_to!`、`ac_change`、`ac_change!`、`qify`、`zify`、`rify`、`bdsimp`。
-- *逻辑包装*：`by_cases!`、`by_contra!`、带变量的 `contrapose`、`contrapose!`、`itauto!`、`tauto_set`。
-- *代数与算术包装*：`ring`、`ring!`、`ring1!`、`ring_nf!`、`ring1_nf!`、`abel`、`abel!`、`abel1!`、`abel_nf!`、`linarith!`、`linarith?!`、`nlinarith!`、`polynomial!`、`polynomial_nf!`、`noncomm_ring`、`group`、`order`、`compute_degree!`、`monicity`、`monicity!`、`fin_omega`、`pnat_to_nat`、`enat_to_nat`。
-- *自动化配置与 discharger*：`continuity`、`continuity?`、`measurability`、`measurability?`、`finiteness`、`finiteness?`、`finiteness_nonterminal`、`arith_mult`、`arith_mult?`、`compactness`、`compactness?`、`closedness`、`closedness?`、`positivity [hs]`、`gcongr_discharger`、`use_discharger`、`cfc_tac`、`cfc_cont_tac`、`cfc_zero_tac`。
-- *专用包装*：`algebraize_only`、`eval_det`、`isBoundedDefault`、`bddDefault`、`compareOfLessAndEq_rfl`、scoped `trunc`、`volume_tac`、`uniqueDiffWithinAt_Ici_Iic_univ`、`frac_tac`、`smul_tac`、`slice_lhs`、`slice_rhs`。
-- *领域模块*：`mem_tac`、`witt_truncateFun_tac`、`map_fun_tac`、`ghost_simp`、scoped `hopf_tensor_induction`、`subst_hom_lift`、`discrete_cases`、`valid`、`rfl_cat`、`aesop_cat`、`aesop_cat?`、`aesop_cat_nonterminal`、三个 scope 中的 `transfer_rw`/`transfer`、`bitwise_assoc_tac`、`unit_interval`、`restrict_tac`、`restrict_tac?`、`aesop_mat`、`aesop_graph`、`aesop_graph?`、`aesop_graph_nonterminal`、scoped `sz_positivity`、`toFinite_tac`、`to_encard_tac`、`apply_gmonoid_gnpowRec_zero_tac`、`apply_gmonoid_gnpowRec_succ_tac`。
-
-22 个 local 宏是椭圆曲线文件中的 `map_simp`、`eval_simp`、`C_simp`、`derivative_simp`、`matrix_simp`、`pderiv_simp` 重复局部版本。完整逐项文件与行号保存在本次源码审计产物中；正文按语义压缩同名 scope 与重载形式，所以这里称“分类索引”，不称“119 项逐行全表”。
-
-## 常见排除项
-%%%
-tag := "macro-real-exclusions"
-%%%
-
-`simp`、`omega`、`exact`、`apply`、`intro`、`cases`、`all_goals` 由 Lean builtin tactic 或 elaborator 执行。Mathlib 的 `linarith`、`nlinarith`、无参数 `positivity`、`gcongr`、`norm_num`、`ring1`、`ring_nf`、`abel1`、`abel_nf`、`compute_degree`、`polynomial`、`polynomial_nf`、`tauto`、`by_contra`、`convert`、`convert_to`、`set`、`observe` 也不是纯宏；相邻的 `!`、`?` 或复合表面形式才可能是宏。
-
-判断方法是追踪 syntax kind 最终注册了 `Macro` expander 还是 `Tactic` elaborator。一个 tactic 可以同时包含两层：`positivity [h]` 是宏，展开后的无参数 `positivity` 是 elaborator。
+宏到这里已经完成自己的工作：它能检查和重建 Syntax，也能借用一小块宏展开现场，却不能从不存在于输入里的证明目标选择行为。下一章不让读者等到四层 Monad 全部讲完；我们先把 `poly_roots` 留下的缺口补上，直接写能够读取目标的证明术译补器。

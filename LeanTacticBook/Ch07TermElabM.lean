@@ -5,12 +5,12 @@ open Verso.Genre Manual
 open Verso Code External
 
 set_option verso.exampleProject "examples"
-set_option verso.exampleModule "Examples.Ch06TermElabM"
+set_option verso.exampleModule "Examples.Ch07TermElabM"
 
 #doc (Manual) "TermElabM：让句法获得类型" =>
 %%%
-file := "Ch06TermElabM"
-tag := "ch06-termelabm"
+file := "Ch07TermElabM"
+tag := "ch07-termelabm"
 %%%
 
 > *本章目标*：解释同一个 `0` 为什么能在不同位置获得不同类型。我们先观察外层类型怎样帮助内层译补，再处理“信息暂时不够”的情况；最后用 `exact?%` 把这些机制接到自动证明搜索。
@@ -19,7 +19,7 @@ tag := "ch06-termelabm"
 
 # 概述：用户写的是 Syntax，MetaM 处理的是 Expr
 
-Ch05 假定 Expr 已经存在，然后研究怎样推断它的类型、检查定义等价、创建证明洞和构造证明。用户输入却不是 Expr。用户写下的是 Syntax，其中的 `0`、`_`、省略的隐式参数和重载名称都可能有多种解释。把 Syntax 变成带有确定变量身份和类型约束的 Expr，这一步叫作项译补。
+Ch06 假定 Expr 已经存在，然后研究怎样推断它的类型、检查定义等价、创建证明洞和构造证明。用户输入却不是 Expr。用户写下的是 Syntax，其中的 `0`、`_`、省略的隐式参数和重载名称都可能有多种解释。把 Syntax 变成带有确定变量身份和类型约束的 Expr，这一步叫作项译补。
 
 可以先把这一层放进整条数据流：
 
@@ -39,13 +39,13 @@ TermElabM 不取代 MetaM。它仍然调用 MetaM 做类型推断、统一和证
 本章会依次建立四个概念。先看预期类型怎样参与双向传播，再区分“类型检查”与“只比较打印结果”；接着解释 postponement 为什么要保存原现场；最后区分普通 metavariable、synthetic metavariable 和恢复用的 synthetic sorry。读完这些准备后，`TermElab := Syntax → Option Expr → TermElabM Expr` 才不再是一串陌生名字，而是前面每项需求的汇总。
 
 
-Ch05 从已经译补好的 `Expr` 开始。本章向前退一步，面对用户刚写下的 `Syntax`。考虑两个声明：`def n : Nat := 0` 与 `def z : Int := 0`。两处源码都是字符 `0`，结果却不是同一个表达式。区别来自等号左边已经规定的类型。
+Ch06 从已经译补好的 `Expr` 开始。本章向前退一步，面对用户刚写下的 `Syntax`。考虑两个声明：`def n : Nat := 0` 与 `def z : Int := 0`。两处源码都是字符 `0`，结果却不是同一个表达式。区别来自等号左边已经规定的类型。
 
 外层希望内层得到的类型，叫作 expected type（预期类型）。term elaboration（项译补）不是脱离上下文地把 Syntax 翻成 Expr；它让外层预期类型和内层表达式相互传递约束。
 
 # 译补为何不能写成 `Syntax → Expr`
 %%%
-tag := "ch06-s03"
+tag := "ch07-s03"
 %%%
 
 同一个数字 `3` 可以成为 `Nat`、`Int`、`Rat` 或 `Real`。相同的 `_` 在不同位置也可能需要不同类型。仅有 Syntax，信息还不够。最小的数据流是：
@@ -61,7 +61,7 @@ Syntax + 可选的预期类型 + 当前局部含义
 
 # `show T from e`：显式类型怎样参与双向传播
 %%%
-tag := "ch06-s10"
+tag := "ch07-s10"
 %%%
 
 最直接的观察工具是 `show T from e`：它明确要求先把 `e` 当作类型 `T` 的项来译补。在 `show Nat from 3` 中，`Nat` 先成为数字 `3` 的预期类型。
@@ -119,7 +119,7 @@ Lean 自带的 `show` 还会保留 `have this : T := e; this` 这层结构：`e`
 
 # `ensureHasType` 与定义等价
 %%%
-tag := "ch06-s11"
+tag := "ch07-s11"
 %%%
 
 `ensureHasType` 的任务是把已经得到的 Expr 交给更外层。它不会只比较两段打印文字，而会推断 Expr 的类型，再检查它与外层预期类型是否定义等价。若存在合法的 coercion（强制转换），它还可以插入转换；否则报告类型不匹配。
@@ -128,7 +128,7 @@ Term 层决定何时调用这些 Meta 操作，并把错误定位到对应的 Sy
 
 # Postponement：信息尚未到齐
 %%%
-tag := "ch06-s12"
+tag := "ch07-s12"
 %%%
 
 有时外层预期类型本身还是一个未赋值的洞。此时任选 `Nat` 或 `Bool` 都是不可靠的猜测。Term elaborator 可以选择 postponement（延期）：先记下“这段 Syntax 等类型更明确后再处理”，继续译补别处。别处增加约束后，系统重试这项工作。
@@ -166,7 +166,7 @@ set_option trace.Elab.postpone true in
 
 # TermElabM 增加的现场
 %%%
-tag := "ch06-s02"
+tag := "ch07-s02"
 %%%
 
 前面的双向传播和延期都需要保存额外现场。Lean 把承载项译补的计算层叫作 `TermElabM`。锁定版本的结构形状如下：
@@ -194,7 +194,7 @@ abbrev TermElab :=
 
 # Synthetic metavariables
 %%%
-tag := "ch06-s13"
+tag := "ch07-s13"
 %%%
 
 考虑表达式 `(default : Nat)`。常量 `default` 需要一份 `[Inhabited Nat]` 实例，用户却没有手写这份参数。译补器先创建一个辅助洞，登记“稍后用类型类搜索填它”，再继续构造外层 Expr。这类由译补器登记、需要专门收尾程序处理的辅助洞，叫 synthetic metavariable（合成元变量）。
@@ -228,11 +228,11 @@ def elabSyntheticDefault : TermElab := fun stx expectedType? => do
 - 报错；
 - recovery 中插入 synthetic sorry。
 
-Ch07 的 Lean 自带 `apply` 会在 Meta apply 前后各处理一次 synthetic metavariables。
+Ch08 的 Lean 自带 `apply` 会在 Meta apply 前后各处理一次 synthetic metavariables。
 
 # 同一 syntax kind 可以有多个 elaborator
 %%%
-tag := "ch06-s14"
+tag := "ch07-s14"
 %%%
 
 parser 会给 Syntax 节点标上 kind（种类），例如“这是 `book_default` 这种句法”。一个 kind 可以注册多个 term elaborator。负责按顺序尝试这些实现的程序叫 dispatcher（分派器）。当前实现发现“这不是我负责的预期类型”时，应抛 `throwUnsupportedSyntax`，让分派器尝试下一项。
@@ -266,7 +266,7 @@ example : Bool := book_default
 
 # Mathlib set-builder 的实际启示
 %%%
-tag := "ch06-s15"
+tag := "ch07-s15"
 %%%
 
 Mathlib 中，Set 和 Finset 的集合构造记号可以使用相近的 Syntax。多个 elaborator 会检查预期类型，据此判断自己是否应当接管。某些实现还要限制 postponement：如果高优先级实现一直延期，排在后面的实现就没有机会处理本来属于自己的输入。
@@ -292,7 +292,7 @@ def noExpectedSet := {x : Nat | x % 2 = 0}
 
 # 综合案例：`exact?%` 把预期类型变成搜索目标
 %%%
-tag := "ch06-s01"
+tag := "ch07-s01"
 %%%
 
 名称末尾的 `%` 用来区分两个前端：`exact?%` 出现在 term 位置，`exact?` 出现在 `by` 后的 tactic 位置。下面先实测拼写，再实现 term 版本。
@@ -351,11 +351,11 @@ term Syntax
 ```
 :::
 
-Ch05 的 `rw_xray` 从现成的目标 Expr 开始。本章再向前追一步：目标 Expr 从哪里来，搜索返回的 Expr 又怎样与外层类型对齐。
+Ch06 的 `rw_xray` 从现成的目标 Expr 开始。本章再向前追一步：目标 Expr 从哪里来，搜索返回的 Expr 又怎样与外层类型对齐。
 
 # `withExpectedType`
 %%%
-tag := "ch06-s04"
+tag := "ch07-s04"
 %%%
 
 `book_exact?%` 先执行：
@@ -382,7 +382,7 @@ example : True := (book_exact?% : True)
 
 # 从预期类型创建证明目标
 %%%
-tag := "ch06-s05"
+tag := "ch07-s05"
 %%%
 
 取得 `expectedType` 后，主例调用：
@@ -404,7 +404,7 @@ let goal ← mkFreshExprMVar expectedType
 
 # 为什么先 `intros`
 %%%
-tag := "ch06-s06"
+tag := "ch07-s06"
 %%%
 
 若目标是：
@@ -429,10 +429,10 @@ let (_, introdGoal) ← goal.mvarId!.intros
 
 # Library Search 在这里是 Meta 后端
 %%%
-tag := "ch06-s07"
+tag := "ch07-s07"
 %%%
 
-Ch08 会完整讲解 Library Search。本章只使用它的契约：
+Ch09 会完整讲解 Library Search。本章只使用它的契约：
 
 :::codeBox "code"
 ```
@@ -458,7 +458,7 @@ instantiateMVars goal
 
 # term suggestion 与 proof Expr
 %%%
-tag := "ch06-s08"
+tag := "ch07-s08"
 %%%
 
 教学版本调用 `addTermSuggestion`，因此构建日志显示 `Try this`。这条建议来自已经构造出的 proof Expr，经 pretty-printer 转成用户可复制的 term。
@@ -470,11 +470,11 @@ tag := "ch06-s08"
 - suggestion 重放：检查显示出的源码能否在保存状态中再次译补；
 - kernel check：最终 declaration 接受 proof Expr。
 
-Ch08 再检查建议重放时保存了哪些状态，以及显示出的源码能否独立通过译补。
+Ch09 再检查建议重放时保存了哪些状态，以及显示出的源码能否独立通过译补。
 
 # 失败与 synthetic sorry
 %%%
-tag := "ch06-s09"
+tag := "ch07-s09"
 %%%
 
 Lean 自带的 `exact?%` 失败时先记录错误，再构造一个占位项：
@@ -502,14 +502,14 @@ mkLabeledSorry expectedType
 
 # Term.Context 与 Term.State
 %%%
-tag := "ch06-s16"
+tag := "ch07-s16"
 %%%
 
 本章不列全字段，只按行为分组。
 
 ## Context 中的政策
 %%%
-tag := "ch06-s17"
+tag := "ch07-s17"
 %%%
 
 - 当前 declaration 与 section 信息；
@@ -520,7 +520,7 @@ tag := "ch06-s17"
 
 ## State 中的进行中工作
 %%%
-tag := "ch06-s18"
+tag := "ch07-s18"
 %%%
 
 - synthetic metavariables；
@@ -533,7 +533,7 @@ tag := "ch06-s18"
 
 # Saved state 与 recovery
 %%%
-tag := "ch06-s19"
+tag := "ch07-s19"
 %%%
 
 候选 term elaborator 可能：
@@ -549,11 +549,11 @@ dispatcher 尝试下一个实现前，必须恢复当前候选改动过的 Term 
 
 默认的 `restore` 会保留当前 trace state；当 `restoreInfo = false` 时，它还会保留 info state。因此，这里的“恢复”并不表示删除所有诊断记录。
 
-Ch05 的 `getMCtx/setMCtx` 实验只处理 mctx，而 Term fallback 需要恢复范围更完整的 saved state。
+Ch06 的 `getMCtx/setMCtx` 实验只处理 mctx，而 Term fallback 需要恢复范围更完整的 saved state。
 
 # 源码调用链
 %%%
-tag := "ch06-s20"
+tag := "ch07-s20"
 %%%
 
 按下面这条调用链阅读源码：
@@ -579,7 +579,7 @@ Lean/Elab/Tactic/LibrarySearch.lean
 
 # API 回查表
 %%%
-tag := "ch06-s21"
+tag := "ch07-s21"
 %%%
 
 | 任务 | 入口 |
@@ -600,12 +600,12 @@ tag := "ch06-s21"
 
 # 练习
 %%%
-tag := "ch06-s22"
+tag := "ch07-s22"
 %%%
 
 ## 基础一：预期类型来自哪里
 %%%
-tag := "ch06-s23"
+tag := "ch07-s23"
 %%%
 
 解释 `example : True := id book_exact?%` 中 `True` 如何抵达内层 elaborator。
@@ -614,7 +614,7 @@ tag := "ch06-s23"
 
 ## 基础二：为何先 `intros`
 %%%
-tag := "ch06-s24"
+tag := "ch07-s24"
 %%%
 
 给定目标 `P → Q → P ∧ Q`，若跳过 `intros` 就直接让 Library Search 处理最外层 proof hole，它看不到哪些局部证据？
@@ -623,7 +623,7 @@ tag := "ch06-s24"
 
 ## 基础三：unsupported 与 error
 %%%
-tag := "ch06-s25"
+tag := "ch07-s25"
 %%%
 
 同一 syntax kind 注册多个 elaborator 时，何时应抛 `throwUnsupportedSyntax`，何时应抛普通 user error？
@@ -632,7 +632,7 @@ tag := "ch06-s25"
 
 ## 进阶一：增加第三个 `book_default`
 %%%
-tag := "ch06-s26"
+tag := "ch07-s26"
 %%%
 
 为 String 预期类型返回空串。要求 Nat、Bool、String 三例都由对应 elaborator 接管。
@@ -641,7 +641,7 @@ tag := "ch06-s26"
 
 ## 进阶二：观察 synthetic mvar
 %%%
-tag := "ch06-s27"
+tag := "ch07-s27"
 %%%
 
 设计一个需要类型类实例的 term elaborator，在 synthesis 前后打印 pending tasks。
@@ -650,7 +650,7 @@ tag := "ch06-s27"
 
 ## 进阶三：受控延期
 %%%
-tag := "ch06-s28"
+tag := "ch07-s28"
 %%%
 
 写一个 elaborator：预期类型为未赋值 metavariable 时延期；确定为 Nat 时返回 `0`；确定为 Bool 时返回 `false`。
@@ -659,15 +659,14 @@ tag := "ch06-s28"
 
 ## 挑战：set-builder fallback 审计
 %%%
-tag := "ch06-s29"
+tag := "ch07-s29"
 %%%
 
 在锁定版本的 Mathlib 中选择一条 Set/Finset 共用同形 Syntax 的分派过程。逐个记录 elaborator 在什么条件下接管、postpone、抛 unsupported 或报告 user error。正文只画调用图，完整 probe 放入 examples。
 
 # 本章边界
 %%%
-tag := "ch06-s30"
+tag := "ch07-s30"
 %%%
 
 到这里，Syntax 已经能在预期类型、synthetic metavariable、postponement 与 recovery 的配合下变成 Expr。Term elaborator 每次仍只返回一个 Expr；多个证明洞接下来按什么顺序工作，要看 TacticM 的活动目标队列。下一章用 Lean 自带的 `apply` 说明活动目标队列如何调度这些证明洞。
-

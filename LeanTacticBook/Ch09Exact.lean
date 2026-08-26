@@ -5,12 +5,12 @@ open Verso.Genre Manual
 open Verso Code External
 
 set_option verso.exampleProject "examples"
-set_option verso.exampleModule "Examples.Ch08Exact"
+set_option verso.exampleModule "Examples.Ch09Exact"
 
 #doc (Manual) "exact?：从结论索引到可重放建议" =>
 %%%
-file := "Ch08Exact"
-tag := "ch08-exact"
+file := "Ch09Exact"
+tag := "ch09-exact"
 %%%
 
 > *本章目标*：从“我知道这个目标应该有现成证明，但忘了定理名”开始。先在一张很小的候选表中逐项尝试，分清候选可用、完整证明和可复制建议；候选多到不能线性扫描时，再引入结论索引。
@@ -23,7 +23,7 @@ tag := "ch08-exact"
 
 # 先看一次搜索成功
 %%%
-tag := "ch08-s01"
+tag := "ch09-s01"
 %%%
 
 下面的目标需要把 `P → Q` 和 `Q → R` 接起来。`exact?` 给出的文字未必和你手写的证明相同，但替换回去后必须得到类型为 `R` 的普通证明项。
@@ -53,7 +53,7 @@ example (P Q R : Prop) (hP : P) (hPQ : P → Q) (hQR : Q → R) : R :=
 
 # 先在显式候选表中学习搜索
 %%%
-tag := "ch08-s18"
+tag := "ch09-s18"
 %%%
 
 先不碰全库索引。下面的 `book_exact` 让用户直接给出一张候选表。对每个候选，它做三件事：尝试把候选用于目标；用现有局部假设填剩余的参数洞；若仍有洞或发生错误，恢复到尝试前再看下一项。
@@ -97,7 +97,7 @@ example (P Q R : Prop) (hP : P) (hR : R) : R := by
 
 # 生产搜索依次回答四个问题
 %%%
-tag := "ch08-s02"
+tag := "ch09-s02"
 %%%
 
 :::codeBox "pseudocode"
@@ -121,7 +121,7 @@ tag := "ch08-s02"
 
 # 搜索前先把箭头变成局部事实
 %%%
-tag := "ch08-s03"
+tag := "ch09-s03"
 %%%
 
 前端先保存初始状态，再对主目标调用 `intros`。例如目标
@@ -134,11 +134,11 @@ P → Q → P ∧ Q
 
 会变成局部上下文中的 `hP : P`、`hQ : Q` 和目标 `P ∧ Q`。搜索器因此既能索引较小的结论，也能让后续的“小型局部求解程序”使用刚引入的局部事实；到实际调用处再给这个程序写出 API 名。最后生成的 proof Expr 再包回 lambda。
 
-这一步已经在 Ch06 的 `exact?%` 里出现过。它不是 tactic 层的 `intro` 调度，而是 `MVarId.intros` 对 Meta goal 的变换。
+这一步已经在 Ch07 的 `exact?%` 里出现过。它不是 tactic 层的 `intro` 调度，而是 `MVarId.intros` 对 Meta goal 的变换。
 
 # apply 之后是 solveByElim
 %%%
-tag := "ch08-s10"
+tag := "ch09-s10"
 %%%
 
 候选声明变成 Expr 后，生产代码调用：
@@ -166,7 +166,7 @@ Library Search 给 `solveByElim` 的默认配置包括：
 
 # `using` 是约束，不是候选表
 %%%
-tag := "ch08-s11"
+tag := "ch09-s11"
 %%%
 
 ```anchor exact_required
@@ -180,7 +180,7 @@ example (P Q R : Prop) (hP : P) (hPQ : P → Q) (hQR : Q → R) : R := by
 
 # 候选之间怎样回滚
 %%%
-tag := "ch08-s12"
+tag := "ch09-s12"
 %%%
 
 `tryOnEach` 在循环前保存 Meta state。每个候选可能：
@@ -212,7 +212,7 @@ for candidate in candidates:
 
 # 直接观察 partial result
 %%%
-tag := "ch08-s13"
+tag := "ch09-s13"
 %%%
 
 下面的探针另建一个类型为 `P ∧ Q` 的临时目标。当前上下文没有 `P` 或 `Q` 的证明，因此搜索只能找到若干可 apply 的候选，不能完整关闭。探针最后恢复创建临时目标之前的状态，再打印结果。
@@ -252,7 +252,7 @@ probe assigned after return: false
 
 # 四种前端不能混写
 %%%
-tag := "ch08-s14"
+tag := "ch09-s14"
 %%%
 
 ```table
@@ -319,7 +319,7 @@ theorem exactAllUsesSorry (P : Prop) (hP : P) : P := by
 
 # collect-all 必须恢复完整解
 %%%
-tag := "ch08-s15"
+tag := "ch09-s15"
 %%%
 
 ```anchor exact_collect_all_probe
@@ -349,7 +349,7 @@ example : True := by
 
 # 候选太多以后，才需要结论索引
 %%%
-tag := "ch08-s04"
+tag := "ch09-s04"
 %%%
 
 小候选表可以逐项尝试，完整库却有大量声明。每次都从头扫描会把大部分时间浪费在结论形状明显不符的项上。生产实现因此预先按“声明最终能得到什么结论”建立索引。查询目标时，索引只召回轮廓相近的声明；真正可用与否仍由后面的 `apply` 决定。
@@ -378,14 +378,14 @@ forallTelescope constInfo.type fun _ type => do
 
 ## 过滤不只发生在这一层
 %%%
-tag := "ch08-s05"
+tag := "ch09-s05"
 %%%
 
 不能把上面两条过滤说成“完整过滤规则”。LazyDiscrTree 建树时还会排除 unsafe、completion 不适用、不可访问内部声明、`sorryAx` 和若干生成名。教学上应把它们分成两层：Library Search 的候选政策，以及通用惰性索引的插入政策。
 
 # 判别树：按外形缩小候选范围
 %%%
-tag := "ch08-s06"
+tag := "ch09-s06"
 %%%
 
 这类索引叫 discrimination tree（判别树）。可以把它想成按表达式外层结构分叉的目录：等式目标先走“`Eq`”分支，箭头目标先走“arrow”分支，数值字面量走“literal”分支。每一步用于选分支的结构摘要叫 key（键）。生产 key 包括：
@@ -408,18 +408,18 @@ projection structure field arity
 
 ## 为什么还要“惰性”
 %%%
-tag := "ch08-s07"
+tag := "ch09-s07"
 %%%
 
 导入模块中可能有数万条声明。若每次载入环境都立即展开整棵索引，许多从未查询的分支也会付出成本。lazy（惰性）表示先把待加入项留在 pending 区，查询真正走到相关 trie（前缀树）节点时再处理。environment extension（环境扩展）则让这份索引数据随 Lean 环境和模块导入一起维护。
 
 第一遍不需要学习环境扩展的序列化接口。此处只记住可观察政策：查询先追加当前模块的 matches，再追加 imported matches，所以当前模块候选整体排在导入候选之前。
 
-这是本书第一次完整使用 environment extension。Ch04 只需要查询 Environment，没有提前讲扩展缓存；这里第一次遇到真实需求，再介绍并不晚。
+这是本书第一次完整使用 environment extension。Ch05 只需要查询 Environment，没有提前讲扩展缓存；这里第一次遇到真实需求，再介绍并不晚。
 
 # 结构更具体，不等于数学上更自然
 %%%
-tag := "ch08-s08"
+tag := "ch09-s08"
 %%%
 
 判别树用非 `star` 匹配数衡量 specificity（结构具体度）：目标中能对上越多明确结构，分数越高。它只衡量外形，不理解哪条证明对人最自然。候选大体按下列顺序进入尝试队列：
@@ -470,7 +470,7 @@ example (a b : Nat) (h : a = b) : b = a := by
 
 # Iff 与对称目标
 %%%
-tag := "ch08-s09"
+tag := "ch09-s09"
 %%%
 
 `Iff` 声明会额外按两个方向入树；等式目标则由 `librarySearchSymm` 尝试 `applySymm`，在原目标和对称目标上分别召回候选，再交错排列。每个对称候选都携带自己的 goal 和 MetavarContext。切换候选时必须同时切换两者，否则会把只存在于对称分支的元变量拿到原分支里使用。
@@ -479,7 +479,7 @@ Iff 方向来自索引 entry 的 modifier；等式对称来自临时改造目标
 
 # 看见候选不等于候选能用
 %%%
-tag := "ch08-s17"
+tag := "ch09-s17"
 %%%
 
 ```anchor exact_candidate_xray
@@ -507,7 +507,7 @@ example (a b : Nat) : a = b → b = a := by
 
 # 建议不是把 Expr 打印出来就完事
 %%%
-tag := "ch08-s16"
+tag := "ch09-s16"
 %%%
 
 普通 tactic 成功后，`addExactSuggestion` 从已赋值目标提取 proof Expr，去掉头部 beta redex，雅印成 `exact ...` 或 `refine ...`。它还拿着搜索前保存的 `Tactic.SavedState`，在原始现场重放候选脚本。
@@ -524,7 +524,7 @@ term 前端的 `addTermSuggestion` 直接雅印已成功的 proof term，不走 
 
 # `LibrarySuggestions` 是另一项服务
 %%%
-tag := "ch08-s16-library-suggestions"
+tag := "ch09-s16-library-suggestions"
 %%%
 
 名字相近不代表同一条管线：
@@ -543,11 +543,11 @@ tag := "ch08-s16-library-suggestions"
 - 打印当前 selector 的结果，不证明目标
 ```
 
-`exact?` 主路径不调用 `LibrarySuggestions.select`。Lean core 也不自行注册 selector；在本书 `import Mathlib` 的锁定环境中，传递导入的默认 selector 才把 Sine Qua Non 结果与当前文件 theorem 交错。Ch11 的 `grind +suggestions` 使用的是这一额外服务，不是 Ch08 的候选树。
+`exact?` 主路径不调用 `LibrarySuggestions.select`。Lean core 也不自行注册 selector；在本书 `import Mathlib` 的锁定环境中，传递导入的默认 selector 才把 Sine Qua Non 结果与当前文件 theorem 交错。Ch12 的 `grind +suggestions` 使用的是这一额外服务，不是 Ch09 的候选树。
 
 # 可信性账本
 %%%
-tag := "ch08-s19"
+tag := "ch09-s19"
 %%%
 
 ```table
@@ -580,7 +580,7 @@ Library Search 没有引入“相信搜索器说目标为真”的公理。索�
 
 # 失败应怎样分类
 %%%
-tag := "ch08-s20"
+tag := "ch09-s20"
 %%%
 
 ```table
@@ -613,7 +613,7 @@ tag := "ch08-s20"
 
 # 生产源码纵切
 %%%
-tag := "ch08-s21"
+tag := "ch09-s21"
 %%%
 
 按数据流阅读，不要按目录字母序：
@@ -642,12 +642,12 @@ Lean/Meta/Tactic/TryThis.lean
 
 # 练习
 %%%
-tag := "ch08-s22"
+tag := "ch09-s22"
 %%%
 
 ## 基础一：标四道门
 %%%
-tag := "ch08-s23"
+tag := "ch09-s23"
 %%%
 
 对一个成功建议逐项标出：何时只是索引召回，何时完成统一，何时 residual goals 归零，何时 suggestion replay。
@@ -656,7 +656,7 @@ tag := "ch08-s23"
 
 ## 基础二：为什么 `constructor` 没有参与
 %%%
-tag := "ch08-s24"
+tag := "ch09-s24"
 %%%
 
 解释目标 `P ∧ Q` 有局部 `hP : P`、`hQ : Q` 时，Library Search 为什么仍可能成功，但成功不能归因于默认 `solveByElim` 的 constructor 规则。
@@ -665,7 +665,7 @@ tag := "ch08-s24"
 
 ## 进阶一：损坏回滚
 %%%
-tag := "ch08-s25"
+tag := "ch09-s25"
 %%%
 
 修改 `book_exact`，只恢复 `Tactic.State.goals`，不恢复 Meta mctx。让第一个候选先给主目标或参数洞赋值后失败，观察第二个候选的异常状态。
@@ -674,28 +674,28 @@ tag := "ch08-s25"
 
 ## 进阶二：保留 partial mctx
 %%%
-tag := "ch08-s26"
+tag := "ch09-s26"
 %%%
 
 把缩小版返回类型改为 `Array (List MVarId × MetavarContext)`。每项失败前复制其 mctx，恢复初始状态后，再逐项 `withMCtx` 打印 residual goal 类型。
 
 ## 进阶三：候选排序实验
 %%%
-tag := "ch08-s27"
+tag := "ch09-s27"
 %%%
 
 在一个辅助 imported module 和当前 module 中各声明一条能关闭同一自定义目标的 theorem，记录建议变化。交换 import 与当前声明的角色，区分当前模块政策和同组稳定次序。
 
 ## 挑战：最小 TryThis
 %%%
-tag := "ch08-s28"
+tag := "ch09-s28"
 %%%
 
 给 `book_exact` 增加建议输出：从已赋值主目标取 proof Expr，生成 `exact` syntax，并在搜索前 saved state 上重放。先只支持单行 source range；再解释多行缩进、名字暴露和 partial subgoal 注释为什么会把实现复杂度推高。
 
 # 本章边界
 %%%
-tag := "ch08-s29"
+tag := "ch09-s29"
 %%%
 
 现在可以把 Library Search 看成“结构索引 + 定义等价统一 + 小型局部搜索 + 可重放输出”。下一章换一种完全不同的自动化：`ring` 不在定理库中猜主引理，而是把两边重化到规范形，并让每一步计算携带等式证明。

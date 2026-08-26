@@ -23,7 +23,7 @@ theorem bvSmallAdderPreprocessed (x y : BitVec 4) : x + y = y + x := by
 -- ANCHOR: bv_offline_replay
 set_option sat.solver "/definitely/not/a/solver" in
 theorem bvOfflineReplay (x y : BitVec 4) : x * y = y * x := by
-  bv_check (binaryProofs := false) "Fixtures/ch12-mul4.lrat"
+  bv_check (binaryProofs := false) "Fixtures/ch13-mul4.lrat"
 
 #print axioms bvOfflineReplay
 -- ANCHOR_END: bv_offline_replay
@@ -34,7 +34,7 @@ error: SAT solver produced invalid LRAT: offset 0: digit expected
 -/
 #guard_msgs in
 example (x y : BitVec 4) : x * y = y * x := by
-  bv_check (binaryProofs := false) "Fixtures/ch12-malformed.lrat"
+  bv_check (binaryProofs := false) "Fixtures/ch13-malformed.lrat"
 
 /--
 error: Tactic `bv_decide` failed: The LRAT certificate could not be verified; evaluating the following term returned `false`:
@@ -42,7 +42,7 @@ error: Tactic `bv_decide` failed: The LRAT certificate could not be verified; ev
 -/
 #guard_msgs in
 example (x y : BitVec 4) : x * y = y * x := by
-  bv_check (binaryProofs := false) "Fixtures/ch12-invalid-proof.lrat"
+  bv_check (binaryProofs := false) "Fixtures/ch13-invalid-proof.lrat"
 -- ANCHOR_END: bv_reject_bad_certificates
 
 -- ANCHOR: bv_axiom_probe

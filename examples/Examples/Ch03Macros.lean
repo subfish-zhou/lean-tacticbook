@@ -186,102 +186,6 @@ example (x : ℚ) (h : x^2 - 5*x + 6 = 0) : x = 2 ∨ x = 3 := by
   poly_roots₂ x^2 - 5*x + 6 with 2 3 in x
 -- ANCHOR_END: macro_poly_roots_2
 
-private def eqSides? (e : Expr) : Option (Expr × Expr) :=
-  let e := e.consumeMData
-  if e.isAppOfArity ``Eq 3 then
-    let args := e.getAppArgs
-    some (args[1]!, args[2]!)
-  else
-    none
-
-private partial def rootEqualities? (e : Expr) : Option (Array (Expr × Expr)) :=
-  let e := e.consumeMData
-  if e.isAppOfArity ``Or 2 then
-    let args := e.getAppArgs
-    return (← rootEqualities? args[0]!) ++ (← rootEqualities? args[1]!)
-  else
-    return #[← eqSides? e]
-
-private def rootsAndVariable? (e : Expr) : Option (Expr × Array Expr) := do
-  let equalities ← rootEqualities? e
-  let (x, firstRoot) ← equalities[0]?
-  let mut roots := #[firstRoot]
-  for (x', root) in equalities[1...*] do
-    if x' != x then failure
-    roots := roots.push root
-  return (x, roots)
-
-private def rootConclusion (target : Expr) : Expr :=
-  let target := target.consumeMData
-  if target.isAppOfArity ``Iff 2 then target.getAppArgs[1]! else target
-
-private def sourcePolynomial? (target : Expr) (x : Expr) (lctx : LocalContext) : Option Expr := do
-  let target := target.consumeMData
-  if target.isAppOfArity ``Iff 2 then
-    return (← eqSides? target.getAppArgs[0]!).1
-  for decl in lctx do
-    if !decl.isImplementationDetail then
-      if let some (poly, _) := eqSides? decl.type then
-        if x.isFVar && poly.containsFVar x.fvarId! then return poly
-  failure
-
-private def mkRootListSyntax (roots : Array Expr) : TacticM (TSyntax `term) := do
-  let some firstRoot := roots[0]?
-    | throwError "poly_roots: expected at least one root"
-  let rootType ← inferType firstRoot
-  Term.exprToSyntax (← mkListLit rootType roots.toList)
-
--- ANCHOR: macro_poly_roots_infer_variable
-syntax "poly_roots₂ " term " with " term:max+ : tactic
-
-elab_rules : tactic
-  | `(tactic| poly_roots₂ $poly:term with $suppliedRoots:term*) => withMainContext do
-      let target ← instantiateMVars (← getMainTarget)
-      let some (x, roots) := rootsAndVariable? (rootConclusion target)
-        | throwError "poly_roots₂: expected a disjunction of equations with one common variable"
-      if roots.size != suppliedRoots.size then
-        throwError "poly_roots₂: the number of supplied roots does not match the target"
-      let x ← Term.exprToSyntax x
-      let roots : TSyntaxArray `term := suppliedRoots
-      let rootList ← `(term| [$roots,*])
-      evalTactic (← `(tactic| poly_roots_core $poly with $rootList in $x))
-
-example (x : ℚ) (h : x^2 - 5*x + 6 = 0) : x = 2 ∨ x = 3 := by
-  poly_roots₂ x^2 - 5*x + 6 with 2 3
--- ANCHOR_END: macro_poly_roots_infer_variable
-
--- ANCHOR: macro_poly_roots_infer_all
-syntax "poly_roots" : tactic
-
-elab_rules : tactic
-  | `(tactic| poly_roots) => withMainContext do
-      let target ← instantiateMVars (← getMainTarget)
-      let some (x, roots) := rootsAndVariable? (rootConclusion target)
-        | throwError "poly_roots: expected a disjunction of equations with one common variable"
-      let some poly := sourcePolynomial? target x (← getLCtx)
-        | throwError "poly_roots: expected a polynomial equation in the target or local context"
-      let poly ← Term.exprToSyntax poly
-      let x ← Term.exprToSyntax x
-      let rootList ← mkRootListSyntax roots
-      evalTactic (← `(tactic| poly_roots_core $poly with $rootList in $x))
-
-example (x : ℚ) (h : x^2 - 5*x + 6 = 0) : x = 2 ∨ x = 3 := by
-  poly_roots
--- ANCHOR_END: macro_poly_roots_infer_all
-
--- ANCHOR: macro_poly_roots_cubic
-example (x : ℚ) :
-    x^3 - 6*x^2 + 11*x - 6 = 0 ↔
-      x = 1 ∨ x = 2 ∨ x = 3 := by
-  poly_roots
--- ANCHOR_END: macro_poly_roots_cubic
-
--- ANCHOR: macro_poly_roots_quartic
-example (x : ℚ) :
-    x^4 - 10*x^3 + 35*x^2 - 50*x + 24 = 0 ↔
-      x = 1 ∨ x = 2 ∨ x = 3 ∨ x = 4 := by
-  poly_roots
--- ANCHOR_END: macro_poly_roots_quartic
 
 /-- error: unsolved goals -/
 #guard_msgs (substring := true) in
@@ -322,6 +226,19 @@ macro_rules
 
 example : firstRule = 42 := rfl
 -- ANCHOR_END: macro_first_rule
+
+-- ANCHOR: macro_tactic_fallback
+syntax "fallbackTac" : tactic
+
+macro_rules
+  | `(tactic| fallbackTac) => `(tactic| assumption)
+
+macro_rules
+  | `(tactic| fallbackTac) => `(tactic| exact True.intro)
+
+example (P : Prop) (h : P) : P := by
+  fallbackTac
+-- ANCHOR_END: macro_tactic_fallback
 
 -- ANCHOR: macro_builtin_examples
 example (P : Prop) (h : False) : P := by
@@ -388,4 +305,6 @@ macro_rules | `(twiceTrace($t)) => `($t + $t)
 set_option trace.Elab.step true in
 #check twiceTrace(2)
 -- ANCHOR_END: macro_trace_use
+
+
 end tacticbook_macros

@@ -5,12 +5,12 @@ open Verso.Genre Manual
 open Verso Code External
 
 set_option verso.exampleProject "examples"
-set_option verso.exampleModule "Examples.Ch09Ring"
+set_option verso.exampleModule "Examples.Ch10Ring"
 
 #doc (Manual) "ring：带证明的多项式规范化" =>
 %%%
-file := "Ch09Ring"
-tag := "ch09-ring"
+file := "Ch10Ring"
+tag := "ch10-ring"
 %%%
 
 > *本章目标*：解释两个长得不同的多项式为什么能被机械地判定为相等。我们先手算一种统一写法，再实现一个只含变量、常数、加法和乘法的小语言；读者理解这个模型后，才把它对应到 Mathlib 的生产表示。
@@ -23,7 +23,7 @@ tag := "ch09-ring"
 
 # 平方展开到底证明了什么
 %%%
-tag := "ch09-s01"
+tag := "ch10-s01"
 %%%
 
 ```anchor ring_identity
@@ -47,7 +47,7 @@ finalProof := leftProof.trans rightProof.symm
 
 # 三个入口各做什么
 %%%
-tag := "ch09-s03"
+tag := "ch10-s03"
 %%%
 
 ```table
@@ -72,7 +72,7 @@ tag := "ch09-s03"
 
 # `ring_nf` 会改写现场
 %%%
-tag := "ch09-s04"
+tag := "ch10-s04"
 %%%
 
 ```anchor ring_nf_hypothesis
@@ -93,7 +93,7 @@ example (x y : ℤ) : x * (y + 1) = x*y + x := by
 
 # 先手算什么叫“同一种写法”
 %%%
-tag := "ch09-s07"
+tag := "ch10-s07"
 %%%
 
 先暂时把 `x`、`y`、`z` 当作不可再拆的符号，并约定顺序 `x < y < z`。这种在多项式算法里作为整体处理的符号稍后叫作 atom（原子）。表达式
@@ -122,7 +122,7 @@ x^2 + x*y + 2*x + 2*y
 
 # 用一个小语言固定算法契约
 %%%
-tag := "ch09-s15"
+tag := "ch10-s15"
 %%%
 
 下面的小语言只有一个变量、整数常数、加法和乘法。`ToyExpr` 是这门小语言的语法树；`eval` 规定每棵树代表哪个整数函数；`toPoly` 把树转换成 Mathlib 已有的整数多项式。定理 `eval_toPoly` 证明转换前后的求值相同。
@@ -161,7 +161,7 @@ theorem ToyExpr.eval_toPoly (e : ToyExpr) (x : ℤ) :
 
 # 把小模型搬到任意 Lean `Expr`
 %%%
-tag := "ch09-s02"
+tag := "ch10-s02"
 %%%
 
 :::codeBox "pseudocode"
@@ -182,7 +182,7 @@ Lean equality goal
 
 # 认不出的子项怎样成为 atom
 %%%
-tag := "ch09-s05"
+tag := "ch10-s05"
 %%%
 
 核心语言包含数值 coefficient（系数）、加法、乘法、自然数幂，以及在相应交换代数结构中可解释的负号和减法。遇到不属于这门语言、却有合适类型的完整子表达式时，算法把它登记成一个 atom。atom 的含义是“内部不再分析，但每次出现都当作同一个变量”。
@@ -199,14 +199,14 @@ theorem ringUnknownAtoms (f : ℤ → ℤ) (x : ℤ) :
 
 ## atom 相同依赖定义等价
 %%%
-tag := "ch09-s06"
+tag := "ch10-s06"
 %%%
 
-Atom map 比较表达式时会受 transparency 影响。普通 `ring` 不会任意展开所有定义；`ring!` 使用更激进的透明度。两项在当前透明度下定义等价，才会共享 atom 编号。这里依赖 Ch05 的 `isDefEq` 边界：成功比较可能给 mctx 赋值，因此候选式 atom 匹配仍要遵守 Meta 状态纪律。
+Atom map 比较表达式时会受 transparency 影响。普通 `ring` 不会任意展开所有定义；`ring!` 使用更激进的透明度。两项在当前透明度下定义等价，才会共享 atom 编号。这里依赖 Ch06 的 `isDefEq` 边界：成功比较可能给 mctx 赋值，因此候选式 atom 匹配仍要遵守 Meta 状态纪律。
 
 # 生产表示：Base、Prod、Sum
 %%%
-tag := "ch09-s08"
+tag := "ch10-s08"
 %%%
 
 Mathlib 的核心表示分三层。锁定版本使用下面的 `ExBase / ExProd / ExSum` 稀疏和式表示，不是另一种常见教材里的 Horner 规范形；不要用对其它 `ring` 实现的印象替换这里的源码结构：
@@ -228,7 +228,7 @@ ExSum
 
 # Proof-carrying Result
 %%%
-tag := "ch09-s09"
+tag := "ch10-s09"
 %%%
 
 把内部契约缩成伪代码：
@@ -249,7 +249,7 @@ pow (r : Result e) (n : Nat) : Result (e ^ n)
 
 # 加法与乘法为什么最费工
 %%%
-tag := "ch09-s10"
+tag := "ch10-s10"
 %%%
 
 加法要归并两个有序 product 列表。头部单项式次序不同时，取较小者；相同时相加 coefficients，为零则删掉。乘法要做分配律，把每对 products 相乘，再将结果插回有序 sum。
@@ -272,7 +272,7 @@ mulSum xs ys:
 
 # Coefficients 与 `norm_num`
 %%%
-tag := "ch09-s11"
+tag := "ch10-s11"
 %%%
 
 常数不只包括自然数字面量。在环和域样结构中，负数、有理数及 casts 都需要规范解释。Ring normalizer 把 coefficient 算术交给 `norm_num` 支持，得到数值结果及其证明。
@@ -286,7 +286,7 @@ tag := "ch09-s11"
 
 # 除法不是一般 ring 运算
 %%%
-tag := "ch09-s12"
+tag := "ch10-s12"
 %%%
 
 ```anchor ring_division_boundary
@@ -301,7 +301,7 @@ example (x : ℚ) (hx : x ≠ 0) : x / x = 1 := by
 
 # Typed quotation 插页
 %%%
-tag := "ch09-s13"
+tag := "ch10-s13"
 %%%
 
 Ring 源码大量使用 Qq。普通 quotation `` `(term| ...) `` 产生 Syntax；Qq 的 typed quotation 直接在 Meta 程序中构造带类型索引的 Expr 表示。
@@ -318,7 +318,7 @@ q($lhs = $rhs)
 
 # 两边如何闭合
 %%%
-tag := "ch09-s14"
+tag := "ch10-s14"
 %%%
 
 `proveEq` 对等式两边分别求 Result。若 normal-form structures 相等，设左证据为 `hL : lhs = nf`，右证据为 `hR : rhs = nf`，最终证明就是：
@@ -333,7 +333,7 @@ hL.trans hR.symm
 
 # 可信性与公理锥
 %%%
-tag := "ch09-s16"
+tag := "ch10-s16"
 %%%
 
 ```anchor ring_axiom_probe
@@ -371,7 +371,7 @@ ringUnknownAtoms depends on axioms: [propext]
 
 # 源码纵切
 %%%
-tag := "ch09-s17"
+tag := "ch10-s17"
 %%%
 
 按下面次序读：
@@ -397,7 +397,7 @@ Mathlib/Tactic/Ring/PNat.lean
 
 # 失败边界
 %%%
-tag := "ch09-s18"
+tag := "ch10-s18"
 %%%
 
 ```table
@@ -425,47 +425,47 @@ tag := "ch09-s18"
 
 # 练习
 %%%
-tag := "ch09-s19"
+tag := "ch10-s19"
 %%%
 
 ## 基础一：手算规范形
 %%%
-tag := "ch09-s20"
+tag := "ch10-s20"
 %%%
 
 固定 `x < y`，手算 `(y+x)*(x+2)` 的有序单项式列表，并指出每次合并用到的环律。
 
 ## 基础二：atoms
 %%%
-tag := "ch09-s21"
+tag := "ch10-s21"
 %%%
 
 证明 `(f x + g y)^2 = (f x)^2 + 2*f x*g y + (g y)^2`，再把第二个 `g y` 改成定义等价但表面不同的表达式，比较 `ring` 与 `ring!`。
 
 ## 进阶一：损坏 normalizer
 %%%
-tag := "ch09-s22"
+tag := "ch10-s22"
 %%%
 
 修改 toy `toPoly`，故意把乘法写成加法。`eval_toPoly` 应停止编译。解释这与“生产 normalizer 算错但内核仍安全”的对应关系。
 
 ## 进阶二：Result 风格
 %%%
-tag := "ch09-s23"
+tag := "ch10-s23"
 %%%
 
 不再用一次性归纳 theorem；为 toy 语言定义 `Result e`，分别实现 const、var、add、mul，每个函数返回 polynomial 与 `eval` 等式证明。
 
 ## 挑战：从 Expr 识别一元语言
 %%%
-tag := "ch09-s24"
+tag := "ch10-s24"
 %%%
 
 写一个 Meta 程序，只识别整数上的一个 atom、加法与乘法；其他子项整体登记为新 atom。要求输出重化结果和 atom 表，不必生成 proof。然后写清楚：没有 proof 的版本为什么只能做诊断，不能给目标赋值。
 
 # 本章边界
 %%%
-tag := "ch09-s25"
+tag := "ch10-s25"
 %%%
 
 `ring` 展示了带证明的确定性计算。下一章 `linarith` 不再由规范形唯一决定答案：它要从多条不等式中搜索一组系数。搜索器可以不可信，但找到的 coefficients 必须被 Lean 端重建成矛盾证明；其中“线性组合等于零”正由本章的 `ring1` 负责。
