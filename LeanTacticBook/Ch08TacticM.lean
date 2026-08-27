@@ -18,6 +18,10 @@ tag := "ch08-tacticm"
 > *版本基准*：Lean `leanprover/lean4:v4.32.2`，Mathlib revision `905b95818eb3`。
 
 # 概述：证明术在管理什么
+%%%
+tag := "ch08-overview"
+file := "ch08-overview"
+%%%
 
 走到本章时，前面三层已经各自解决了一类问题。CoreM 保存文件级现场，MetaM 认识局部表达式和证明洞，TermElabM 把用户写下的项 Syntax 译补成 Expr。`by` 块还需要一层界面逻辑：上一条证明术可能产生零个、一个或多个新洞，下一条证明术应当从哪个洞继续，分支记号又该把哪段脚本交给哪组洞。
 

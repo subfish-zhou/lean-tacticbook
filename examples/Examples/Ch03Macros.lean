@@ -151,42 +151,6 @@ macro_rules
 
 end MacroEnvironmentDemo
 -- ANCHOR_END: macro_environment_query
-
-
--- ANCHOR: macro_poly_roots_2
-syntax "poly_roots_core " term " with " term " in " term : tactic
-
-macro_rules
-  | `(tactic| poly_roots_core $poly:term with $roots:term in $x:term) =>
-      `(tactic|
-        first
-        | rw [show $poly = (($roots).map (fun r => $x - r)).prod by
-            simp only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil, mul_one] <;>
-            ring] <;>
-          simp only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil, mul_one,
-            mul_eq_zero, sub_eq_zero, or_assoc]
-        | have hpoly : $poly = 0 := by assumption
-          rw [show $poly = (($roots).map (fun r => $x - r)).prod by
-            simp only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil, mul_one] <;>
-            ring] at hpoly
-          simpa only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil, mul_one,
-            mul_eq_zero, sub_eq_zero, or_assoc] using hpoly)
-
-syntax "poly_roots₂ " term " with " term:max+ " in " term : tactic
-
-macro_rules
-  | `(tactic| poly_roots₂ $poly:term with $roots:term* in $x:term) =>
-      `(tactic| poly_roots_core $poly with [$roots,*] in $x)
-
-example (x : ℚ) :
-    x^2 - 5*x + 6 = 0 ↔ x = 2 ∨ x = 3 := by
-  poly_roots₂ x^2 - 5*x + 6 with 2 3 in x
-
-example (x : ℚ) (h : x^2 - 5*x + 6 = 0) : x = 2 ∨ x = 3 := by
-  poly_roots₂ x^2 - 5*x + 6 with 2 3 in x
--- ANCHOR_END: macro_poly_roots_2
-
-
 /-- error: unsolved goals -/
 #guard_msgs (substring := true) in
 example (x : ℚ) : x^2 - 5*x + 6 = 0 ↔ x = 2 ∨ x = 4 := by

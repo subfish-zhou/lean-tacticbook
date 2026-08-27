@@ -18,6 +18,10 @@ tag := "ch06-metam"
 > *版本基准*：Lean `leanprover/lean4:v4.32.2`，Mathlib revision `905b95818eb3`。源码签名和调用链按这一版本说明。
 
 # 概述：从文件现场进入证明现场
+%%%
+tag := "ch06-overview"
+file := "ch06-overview"
+%%%
 
 CoreM 知道当前文件已经声明了什么，却还不足以解释一条具体证明里的 `x`、`h` 和待证目标。定理参数只在自己的局部作用域内存在；证明进行到一半时，还会出现暂时没有答案的洞。它们不是 Environment 中的全局常量，也不能靠打印名称来辨认。
 

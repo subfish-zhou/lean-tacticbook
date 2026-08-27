@@ -1,5 +1,6 @@
 .lake/
 _out/
+_out-*/
 *.olean
 *.ilean
 *.c

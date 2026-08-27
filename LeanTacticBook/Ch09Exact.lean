@@ -404,7 +404,7 @@ projection structure field arity
 
 对 `List α`、`x = y`、`P → Q`、投影应用和数值字面量，树可以沿不同路径检索。某些位置暂时不能稳定区分，例如应由统一器决定的隐式参数；这些位置压成 `star`，意思是“这里先接受任意结构”。这样会多召回一些假阳性，却不容易过早漏掉候选。
 
-“discrimination tree 做统一”是本章最需要删掉的误解。树回答的是“哪些声明值得试”；`MVarId.apply` 才回答“这个声明在当前 mctx 中能不能用”。
+把 discrimination tree 当成统一器，会混淆候选检索与候选验证。树回答“哪些声明值得试”；`MVarId.apply` 才回答“这个声明在当前 mctx 中能不能用”。
 
 ## 为什么还要“惰性”
 %%%
@@ -415,7 +415,7 @@ tag := "ch09-s07"
 
 第一遍不需要学习环境扩展的序列化接口。此处只记住可观察政策：查询先追加当前模块的 matches，再追加 imported matches，所以当前模块候选整体排在导入候选之前。
 
-这是本书第一次完整使用 environment extension。Ch05 只需要查询 Environment，没有提前讲扩展缓存；这里第一次遇到真实需求，再介绍并不晚。
+Ch05 已经沿 `collectAxioms` 读过 persistent environment extension：导入声明从模块缓存取公理依赖。这里由同一机制携带惰性判别树索引，新问题是 pending 项何时进入 trie，以及当前模块与导入模块的 matches 按什么顺序返回。
 
 # 结构更具体，不等于数学上更自然
 %%%

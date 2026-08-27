@@ -18,6 +18,10 @@ tag := "ch07-termelabm"
 > *版本基准*：Lean `leanprover/lean4:v4.32.2`，Mathlib revision `905b95818eb3`。
 
 # 概述：用户写的是 Syntax，MetaM 处理的是 Expr
+%%%
+tag := "ch07-overview"
+file := "ch07-overview"
+%%%
 
 Ch06 假定 Expr 已经存在，然后研究怎样推断它的类型、检查定义等价、创建证明洞和构造证明。用户输入却不是 Expr。用户写下的是 Syntax，其中的 `0`、`_`、省略的隐式参数和重载名称都可能有多种解释。把 Syntax 变成带有确定变量身份和类型约束的 Expr，这一步叫作项译补。
 

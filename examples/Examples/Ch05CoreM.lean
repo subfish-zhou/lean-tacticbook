@@ -192,13 +192,16 @@ elab "#direct_deps " id:ident : command => withRef id do
     logInfo m!"direct constants: {directConstants info}"
 
 #direct_deps dependencyA
-#book_print axioms dependencyA
+
 -- ANCHOR_END: corem_direct_dependencies
+-- ANCHOR: corem_axioms_builtin_use
+#print axioms dependencyA
+-- ANCHOR_END: corem_axioms_builtin_use
 
 -- ANCHOR: corem_name_resolution
 namespace ResolutionDemo
 axiom localAxiom : Nat
-#book_print axioms localAxiom
+#print axioms localAxiom
 end ResolutionDemo
 
 namespace OpenDemo
@@ -206,10 +209,11 @@ axiom openedAxiom : Nat
 end OpenDemo
 
 open OpenDemo
-#book_print axioms openedAxiom
+#print axioms openedAxiom
 -- ANCHOR_END: corem_name_resolution
 
--- Exercise 4.3 solution: plain `ofName` output, with no rich constant-name renderer.
+-- Exercise 5.3 solution: plain `ofName` output, with no rich constant-name renderer.
+-- ANCHOR: corem_plain_print_solution
 syntax (name := plainPrintAxioms) "#plain_print" "axioms" ident : command
 
 @[command_elab plainPrintAxioms]
@@ -218,45 +222,75 @@ def elabPlainPrintAxioms : CommandElab
       let names ← liftCoreM <| realizeGlobalConstWithInfos id
       for constName in names do
         let axs ← collectAxioms constName
-        logInfo m!"'{MessageData.ofName constName}': {axs.toList}"
+        let constMsg := MessageData.ofName constName
+        if axs.isEmpty then
+          logInfo m!"'{constMsg}' does not depend on any axioms"
+        else
+          let axiomMsgs := axs.qsort Name.lt
+            |>.map MessageData.ofName
+            |>.toList
+          logInfo m!"'{constMsg}' depends on axioms: {axiomMsgs}"
   | _ => throwUnsupportedSyntax
 
 #plain_print axioms Classical.choice
+-- ANCHOR_END: corem_plain_print_solution
 
--- Exercise 4.4 solution: predict the fields from the operations that actually run.
+-- Exercise 5.4 solution: save, mutate, restore, then inspect each field.
+-- ANCHOR: corem_restore_solution
 private structure CoreStateObservation where
-  envSizeUnchanged : Bool
-  messageCountIncreased : Bool
-  nextMacroScopeIncreased : Bool
+  envRestored : Bool
+  messagesRestored : Bool
+  nextMacroScopeNotRestored : Bool
+  freshNamesDistinct : Bool
 
 private def observeCoreState : CoreM CoreStateObservation := do
   let before ← get
+  let saved ← Core.saveState
   logInfo "state-observation message"
-  let _ ← mkFreshUserName `stateProbe
-  let after ← get
+  let probeName ← mkFreshUserName `stateProbe
+  addDecl <| Declaration.axiomDecl {
+    name := probeName
+    levelParams := []
+    type := mkConst ``Nat
+    isUnsafe := false
+  }
+  let envMutationObserved := (← getEnv).contains probeName
+  saved.restore
+  let afterRestore ← get
+  let second ← mkFreshUserName `stateProbe
   return {
-    envSizeUnchanged := before.env.constants.map₁.size == after.env.constants.map₁.size
-    messageCountIncreased := before.messages.toList.length < after.messages.toList.length
-    nextMacroScopeIncreased := before.nextMacroScope < after.nextMacroScope
+    envRestored := envMutationObserved && !afterRestore.env.contains probeName
+    messagesRestored := before.messages.toList.length == afterRestore.messages.toList.length
+    nextMacroScopeNotRestored := before.nextMacroScope < afterRestore.nextMacroScope
+    freshNamesDistinct := probeName != second
   }
 
 elab "#observe_core_state" : command => do
   let obs ← liftCoreM observeCoreState
-  logInfo m!"env-size unchanged={obs.envSizeUnchanged}; messages increased={obs.messageCountIncreased}; nextMacroScope increased={obs.nextMacroScopeIncreased}"
+  logInfo m!"env restored={obs.envRestored}; messages restored={obs.messagesRestored}; nextMacroScope not restored={obs.nextMacroScopeNotRestored}; fresh names distinct={obs.freshNamesDistinct}"
 
 #observe_core_state
+-- ANCHOR_END: corem_restore_solution
 
--- Exercise 4.5 solution: imported declaration → module index → module name.
-elab "#decl_module " id:ident : command => do
+-- Exercise 5.5 solution: report the source module of every collected axiom.
+-- ANCHOR: corem_module_solution
+axiom currentModuleAxiom : Nat
+noncomputable def currentUsesAxiom : Nat := currentModuleAxiom
+
+elab "#axiom_modules " id:ident : command => do
   let names ← liftCoreM <| realizeGlobalConstWithInfos id
   for name in names do
-    let env ← getEnv
-    match env.getModuleIdxFor? name with
-    | none => logInfo m!"{name}: current module or unknown origin"
-    | some idx =>
-      let moduleName := env.header.moduleNames[idx.toNat]!
-      logInfo m!"{name}: {moduleName}"
+    let axs ← collectAxioms name
+    for axiomName in axs do
+      let env ← getEnv
+      match env.getModuleIdxFor? axiomName with
+      | none => logInfo m!"{axiomName}: {env.header.mainModule}"
+      | some idx =>
+        let moduleName := env.header.moduleNames[idx.toNat]!
+        logInfo m!"{axiomName}: {moduleName}"
 
-#decl_module Nat.add_comm
+#axiom_modules Classical.choice
+#axiom_modules currentUsesAxiom
+-- ANCHOR_END: corem_module_solution
 
 end tacticbook_corem

@@ -35,6 +35,57 @@ private def rootConclusion (target : Expr) : Expr :=
   let target := target.consumeMData
   if target.isAppOfArity ``Iff 2 then target.getAppArgs[1]! else target
 
+-- ANCHOR_END: elaboration_poly_roots_readers
+
+-- ANCHOR: elaboration_poly_roots_target_core
+syntax "poly_roots_target_core " term " with " term " in " term : tactic
+
+macro_rules
+  | `(tactic| poly_roots_target_core $poly:term with $roots:term in $x:term) =>
+      `(tactic|
+        rw [show $poly = (($roots).map (fun r => $x - r)).prod by
+          simp only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil, mul_one] <;>
+          ring] <;>
+        simp only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil, mul_one,
+          mul_eq_zero, sub_eq_zero, or_assoc])
+-- ANCHOR_END: elaboration_poly_roots_target_core
+
+-- ANCHOR: macro_poly_roots_infer_variable
+syntax "poly_roots₂ " term " with " term:max+ : tactic
+
+elab_rules : tactic
+  | `(tactic| poly_roots₂ $poly:term with $suppliedRoots:term*) => withMainContext do
+      let target ← getMainTarget
+      let some (x, roots) := rootsAndVariable? (rootConclusion target)
+        | throwError "poly_roots₂: expected one or more equations with structurally identical left-hand sides"
+      if roots.size != suppliedRoots.size then
+        throwError "poly_roots₂: the number of supplied roots does not match the target"
+      let x ← Term.exprToSyntax x
+      let roots : TSyntaxArray `term := suppliedRoots
+      let rootList ← `(term| [$roots,*])
+      evalTactic (← `(tactic| poly_roots_target_core $poly with $rootList in $x))
+
+example (x : ℚ) : x^2 - 5*x + 6 = 0 ↔ x = 2 ∨ x = 3 := by
+  poly_roots₂ x^2 - 5*x + 6 with 2 3
+-- ANCHOR_END: macro_poly_roots_infer_variable
+
+-- ANCHOR: elaboration_poly_roots_wrong_order
+/-- error: unsolved goals -/
+#guard_msgs (substring := true) in
+example (x : ℚ) : x^2 - 5*x + 6 = 0 ↔ x = 2 ∨ x = 3 := by
+  poly_roots₂ x^2 - 5*x + 6 with 3 2
+-- ANCHOR_END: elaboration_poly_roots_wrong_order
+
+-- ANCHOR: elaboration_poly_roots2_shapes
+example (x : ℚ) : x - 2 = 0 ↔ x = 2 := by
+  poly_roots₂ x - 2 with 2
+
+example (x : ℚ) :
+    x^3 - 6*x^2 + 11*x - 6 = 0 ↔ (x = 1 ∨ x = 2) ∨ x = 3 := by
+  poly_roots₂ x^3 - 6*x^2 + 11*x - 6 with 1 2 3
+-- ANCHOR_END: elaboration_poly_roots2_shapes
+
+-- ANCHOR: elaboration_poly_roots_core
 private def sourcePolynomial? (target : Expr) (x : Expr) (lctx : LocalContext) : Option Expr := do
   let target := target.consumeMData
   if target.isAppOfArity ``Iff 2 then
@@ -44,50 +95,38 @@ private def sourcePolynomial? (target : Expr) (x : Expr) (lctx : LocalContext) :
       if let some (poly, _) := eqSides? decl.type then
         if x.isFVar && poly.containsFVar x.fvarId! then return poly
   failure
--- ANCHOR_END: elaboration_poly_roots_readers
+
+syntax "poly_roots_core " term " with " term " in " term : tactic
+
+macro_rules
+  | `(tactic| poly_roots_core $poly:term with $roots:term in $x:term) =>
+      `(tactic|
+        first
+        | poly_roots_target_core $poly with $roots in $x
+        | have hpoly : $poly = 0 := by assumption
+          rw [show $poly = (($roots).map (fun r => $x - r)).prod by
+            simp only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil, mul_one] <;>
+            ring] at hpoly
+          simpa only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil, mul_one,
+            mul_eq_zero, sub_eq_zero, or_assoc] using hpoly)
 
 private def mkRootListSyntax (roots : Array Expr) : TacticM (TSyntax `term) := do
   let some firstRoot := roots[0]?
     | throwError "poly_roots: expected at least one root"
   let rootType ← inferType firstRoot
   Term.exprToSyntax (← mkListLit rootType roots.toList)
-
--- ANCHOR: macro_poly_roots_infer_variable
-syntax "poly_roots₂ " term " with " term:max+ : tactic
-
-elab_rules : tactic
-  | `(tactic| poly_roots₂ $poly:term with $suppliedRoots:term*) => withMainContext do
-      let target ← instantiateMVars (← getMainTarget)
-      let some (x, roots) := rootsAndVariable? (rootConclusion target)
-        | throwError "poly_roots₂: expected a disjunction of equations with one common variable"
-      if roots.size != suppliedRoots.size then
-        throwError "poly_roots₂: the number of supplied roots does not match the target"
-      let x ← Term.exprToSyntax x
-      let roots : TSyntaxArray `term := suppliedRoots
-      let rootList ← `(term| [$roots,*])
-      evalTactic (← `(tactic| poly_roots_core $poly with $rootList in $x))
-
-example (x : ℚ) (h : x^2 - 5*x + 6 = 0) : x = 2 ∨ x = 3 := by
-  poly_roots₂ x^2 - 5*x + 6 with 2 3
--- ANCHOR_END: macro_poly_roots_infer_variable
-
--- ANCHOR: elaboration_poly_roots_wrong_order
-/-- error: Type mismatch -/
-#guard_msgs (substring := true) in
-example (x : ℚ) (h : x^2 - 5*x + 6 = 0) : x = 2 ∨ x = 3 := by
-  poly_roots₂ x^2 - 5*x + 6 with 3 2
--- ANCHOR_END: elaboration_poly_roots_wrong_order
+-- ANCHOR_END: elaboration_poly_roots_core
 
 -- ANCHOR: macro_poly_roots_infer_all
 syntax "poly_roots" : tactic
 
 elab_rules : tactic
   | `(tactic| poly_roots) => withMainContext do
-      let target ← instantiateMVars (← getMainTarget)
+      let target ← getMainTarget
       let some (x, roots) := rootsAndVariable? (rootConclusion target)
-        | throwError "poly_roots: expected a disjunction of equations with one common variable"
+        | throwError "poly_roots: expected one or more equations with structurally identical left-hand sides"
       let some poly := sourcePolynomial? target x (← getLCtx)
-        | throwError "poly_roots: expected a polynomial equation in the target or local context"
+        | throwError "poly_roots: expected an equation source in the target or local context"
       let poly ← Term.exprToSyntax poly
       let x ← Term.exprToSyntax x
       let rootList ← mkRootListSyntax roots
@@ -112,19 +151,19 @@ example (x : ℚ) :
 -- ANCHOR_END: macro_poly_roots_quartic
 
 -- ANCHOR: elaboration_poly_roots_contract_regression
-example (x : ℚ) : x - 2 = 0 ↔ x = 2 := by
-  poly_roots
-
 example (x : ℚ) : (x - 2) * (x - 3) = 0 ↔ x = 2 ∨ x = 3 := by
-  poly_roots
-
-example (x : ℚ) :
-    x^3 - 6*x^2 + 11*x - 6 = 0 ↔ (x = 1 ∨ x = 2) ∨ x = 3 := by
   poly_roots
 
 example (x : ℚ) (h : x - 2 = 0) : x = 2 := by
   poly_roots
 -- ANCHOR_END: elaboration_poly_roots_contract_regression
+
+example (x : ℚ) : x - 2 = 0 ↔ x = 2 := by
+  poly_roots
+
+example (x : ℚ) :
+    x^3 - 6*x^2 + 11*x - 6 = 0 ↔ (x = 1 ∨ x = 2) ∨ x = 3 := by
+  poly_roots
 
 -- ANCHOR: elaboration_show_target
 syntax "my_show_target" : tactic
@@ -158,8 +197,9 @@ elab_rules : tactic
   | `(tactic| my_assumption) =>
       liftMetaTactic fun goal => goal.withContext do
         goal.checkNotAssigned `my_assumption
-        let some fvarId ← myFindLocalDeclWithType? (← goal.getType)
-          | throwError "my_assumption failed"
+        let target ← goal.getType
+        let some fvarId ← myFindLocalDeclWithType? target
+          | throwError "my_assumption failed, target{indentExpr target}"
         goal.assign (mkFVar fvarId)
         return []
 
@@ -180,6 +220,11 @@ elab_rules : tactic
 
 example (P Q : Prop) (hP : P) (hQ : Q) : P ∧ Q := by
   my_exact And.intro hP hQ
+
+/-- error: Type mismatch -/
+#guard_msgs (substring := true) in
+example (P Q : Prop) (hQ : Q) : P := by
+  my_exact hQ
 -- ANCHOR_END: elaboration_my_exact
 
 -- ANCHOR: elaboration_my_apply
@@ -196,6 +241,22 @@ example (P Q : Prop) (hP : P) (hQ : Q) : P ∧ Q := by
   · exact hP
   · exact hQ
 -- ANCHOR_END: elaboration_my_apply
+
+-- ANCHOR: elaboration_my_apply_without_queue
+syntax "my_apply_without_queue " term : tactic
+
+elab_rules : tactic
+  | `(tactic| my_apply_without_queue $rule:term) => withMainContext do
+      let rule ← Lean.Elab.Tactic.elabTermForApply rule
+      let _newGoals ← (← getMainGoal).apply rule
+
+/-- error: No goals to be solved -/
+#guard_msgs (substring := true) in
+example (P Q : Prop) (hP : P) (hQ : Q) : P ∧ Q := by
+  my_apply_without_queue And.intro
+  · exact hP
+  · exact hQ
+-- ANCHOR_END: elaboration_my_apply_without_queue
 
 -- ANCHOR: elaboration_my_step
 syntax "my_step" : tactic

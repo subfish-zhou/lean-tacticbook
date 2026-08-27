@@ -6,6 +6,7 @@ repo_root=$(git rev-parse --show-toplevel)
 cd "$repo_root"
 
 lake exe lean-tactic-book --output _out --with-html-multi --without-html-single
+python3 scripts/fix-verso-local-fragments.py _out/html-multi
 
 if [[ -d LeanTacticBook/img ]]; then
   mkdir -p _out/html-multi/LeanTacticBook

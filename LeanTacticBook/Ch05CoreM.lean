@@ -13,11 +13,15 @@ file := "Ch05CoreM"
 tag := "ch05-corem"
 %%%
 
-> *本章目标*：从一个具体问题出发：自定义命令怎样读取当前文件中已经存在的声明，并把答案写进 Lean 的消息窗口？解决这个问题时，我们逐步遇到只读信息、可变状态和失败处理，最后才给承载它们的计算层取名 `CoreM`。
+> *本章目标*：从一个具体问题出发：自定义命令怎样读取当前文件中已经存在的声明，并把答案写进 Lean 的消息窗口？`CoreM` 承载这个过程所需的只读信息、可变状态与失败通道，本章逐项观察这些能力怎样参与命令执行。
 >
 > *版本基准*：Lean `leanprover/lean4:v4.32.2`，Mathlib revision `905b95818eb3`。源码路径和 API 签名均按这一版本说明。
 
 # 概述：把上一章借来的现场逐层拆开
+%%%
+tag := "ch05-overview"
+file := "ch05-overview"
+%%%
 
 Ch04 已经让 `my_show_target`、`my_assumption` 和 `my_apply` 跑了起来，但当时只给每个接口一份局部契约：`withMainContext` 为什么能装入局部现场，异常怎样中止计算，消息写到哪里，状态失败后怎样恢复，都还没有拆开。现在从最底层开始还债。
 
@@ -32,18 +36,14 @@ Ch04 已经让 `my_show_target`、`my_assumption` 和 `my_apply` 跑了起来，
 | `TermElabM` | 用户写下的项 Syntax | 预期类型、延期任务、合成元变量和恢复政策 |
 | `TacticM` | `by` 块里的证明术 | 当前活动目标的有序队列 |
 
-本章只处理第一层。可以先把 `CoreM α` 读作一句操作说明：
+本章处理第一层。`CoreM α` 的操作含义是：
 
 > 在 Lean 当前的核心工作现场中运行一项计算；成功后得到普通值 `α`。
 
-这里的 `α` 可以是名称列表、一个声明、一个布尔值，也可以是 `Unit`。`CoreM` 不是某种特殊数据容器，而是“取得这个值时还要读取现场、更新状态，并且可能失败”的计算类型。`let xs ← action` 中的 `←` 会真正运行 action，然后把普通结果交给 `xs`。Context、State 和 Exception 的精确定义稍后再拆开，现在只需先建立这条边界。
-
-本章的路线如下：先看一条已经完成的命令，确认它用了哪些眼前文本之外的信息；再尝试把所有现场写成普通函数参数；参数开始失控以后，引入 `CoreM` action；最后分别观察只读 Context、可变 State、异常传播和运行入口。等这些准备完成，我们才回到命令实现，逐行解释每一步为什么处在相应的计算层。
+这里的 `α` 可以是名称列表、一个声明、一个布尔值，也可以是 `Unit`。`CoreM α` 是一项会读取现场、更新状态或失败，并在成功后交出 `α` 的计算。`let xs ← action` 中的 `←` 运行 action，再把普通结果交给 `xs`。
 
 
 假设文件前面已经声明了一个定理，后面的一条新命令想查询它。命令不能只看自己的那几个字符：它还要知道当前 namespace、已经 `open` 的名字、前文注册的声明，以及错误应当指向源码的哪一处。查询结束后，它还要把结果写进消息窗口。
-
-先不要记任何 `CoreM` 字段。我们只追问一件事：这些信息若不逐个写成函数参数，应该放在哪里？
 
 # 第一个问题：命令如何查询一个声明
 %%%
@@ -71,7 +71,7 @@ Lean 已有一条适合观察的命令。它查询某个声明最终依赖哪些
 
 这三项额外信息合起来，便是本章所谓的“工作现场”。为了逐项解释这些能力，本章稍后会实现教学版 `#book_print axioms`，并让它复现内置命令的查询过程。
 
-先只看轮廓，不要求认识其中每个名字。后文每引入一项能力，都会回到这段轮廓填上一块：
+先把名字解析、环境查询和消息记录排成执行骨架：
 
 :::codeBox "pseudocode"
 ```
@@ -88,7 +88,7 @@ def elabBookPrintAxioms : CommandElab
 ```
 :::
 
-这段轮廓里出现了两个计算层。此刻只需知道它们分工不同：
+这段轮廓把工作分到两个计算层：
 
 :::codeBox "pseudocode"
 ```
@@ -172,7 +172,7 @@ Syntax → Option Expr → CoreM (List Name)
 ```
 :::
 
-暂且略去一个有默认值的参数。`CoreM (List Name)` 的意思是：
+这里省略的是 `(expectedType? := none)`；若调用者提供预期类型，Lean 会把它写进标识符的 info。`CoreM (List Name)` 的意思是：
 
 > 把这段计算放进 Lean 的 Core 工作现场运行；若它成功，取回一个普通的 `List Name`。
 
@@ -235,7 +235,7 @@ tag := "core-context"
   - 把短名字解析成完整声明名
 :::
 
-递归深度、heartbeat、取消 token、quotation 与 trace 等其余字段留在章末 API 参考；第一次读主线不必背字段全集。
+下面的实验只读取表中已经列出的字段；递归深度、heartbeat、取消 token、quotation 与 trace 不参与这些实验。
 
 ## Context 的作用域替换与 State 是两回事
 %%%
@@ -279,7 +279,7 @@ tag := "core-state"
   - 输入名字的 hover 与跳转
 :::
 
-`ngen`、`auxDeclNGen`、`traceState`、`cache` 与 `snapshotTasks` 也属于 Core.State。主案例暂不展开；讲到恢复边界和 API 时，再分别说明。
+`ngen` 为 `FVarId`、`MVarId` 和 `LMVarId` 生成唯一名字；`auxDeclNGen` 单独生成可持久化的辅助声明名；`traceState` 累积 trace 消息；`cache` 保存宇宙多态声明的实例化结果；`snapshotTasks` 保存异步子任务的 snapshot tree，供命令结束时汇总消息。它们也都属于 Core.State。
 
 `Environment` 存在 `Core.State.env` 中。查询虽多，编译过程仍会改动它：添加声明、登记环境扩展、导入模块，都会产生供后续计算使用的新环境。
 
@@ -305,7 +305,7 @@ def checkExponent (n : Nat) (warning := true) : CoreM Bool := do
 ```
 :::
 
-本章的可运行包装连续检查两个超过默认阈值 `256` 的指数：
+参数 `warning` 的默认值是 `true`；下面两次调用都省略它，因此会进入 warning 分支。可运行包装连续检查两个超过默认阈值 `256` 的指数：
 
 ```anchor corem_options_messages
 elab "#check_large_exponents" : command => do
@@ -464,7 +464,7 @@ tag := "corem-pure-bind-do"
 
 我们已经看到普通值、action、`←` 和顺序执行。现在才给它们的两条基本连接规则命名：
 
-锁定版本将这三类现场组合成下面的类型。`ReaderT`、`StateRefT` 和 `EIO` 是三种“给内层计算增加一种能力”的类型变换器；第一遍只需逐行对照已经观察过的行为：
+锁定版本将这三类现场组合成下面的类型。`ReaderT`、`StateRefT` 和 `EIO` 各给内层计算增加一种能力，对应前面已经观察到的只读现场、可变状态与失败通道：
 
 :::codeBox "code"
 ```
@@ -480,7 +480,7 @@ abbrev CoreM :=
 - `EIO Exception` 提供失败通道和 IO 基础；
 - `CoreM α` 中的 `α` 是成功时取回的普通值。
 
-此刻不需要学习通用的 monad transformer 理论。只要能把这四行与本章三个实验一一对应，就足够继续阅读。
+这四行把三个实验中的能力叠在同一计算类型上；`pure` 与 `bind` 再负责连接这些计算。
 
 :::codeBox "code"
 ```
@@ -554,15 +554,7 @@ associativity: [Classical.choice] = [Classical.choice]
 
 这组输出只检验当前版本中的一个具体程序。每个 Monad 实例都应普遍满足三条 law：抽取辅助函数、插入无效果的 `pure`，或重新给一串 `bind` 加括号，都应保持计算含义。
 
-Monad law 常被误读成一条额外的回滚保证：
-
-:::codeBox "pseudocode"
-```
-某一步失败 ⇒ 前面所有状态和 IO 自动撤销
-```
-:::
-
-三条 law 都不涉及回滚。状态能恢复到哪一步，取决于具体的保存机制；已经发生的外部 IO 通常无法撤销。后文用程序验证这条边界。
+三条 law 只约束 `pure` 与 `bind` 的连接方式，不规定失败时怎样回滚。状态能恢复到哪一步取决于具体的保存机制；已经发生的外部 IO 通常无法撤销。
 
 # 公理依赖到底怎样算出来
 %%%
@@ -616,7 +608,10 @@ elab "#direct_deps " id:ident : command => withRef id do
     logInfo m!"direct constants: {directConstants info}"
 
 #direct_deps dependencyA
-#book_print axioms dependencyA
+```
+
+```anchor corem_axioms_builtin_use
+#print axioms dependencyA
 ```
 
 实测输出如下：
@@ -624,7 +619,7 @@ elab "#direct_deps " id:ident : command => withRef id do
 :::codeBox "code"
 ```
 direct constants: [Nat, tacticbook_corem.dependencyB]
-'dependencyA' depends on axioms: [dependencyC]
+'tacticbook_corem.dependencyA' depends on axioms: [dependencyC]
 ```
 :::
 
@@ -722,7 +717,7 @@ collectAxioms
 
 调用链在此分成两路：imported declaration 读取模块导出时保存的数据；当前模块尚未导出的声明则检查 body。
 
-本章要求读懂这一实现。练习集中在调用端，Lean 的模块缓存协议保留为源码阅读材料。
+`Lean/Util/CollectAxioms.lean` 中的 `CollectAxioms.collectAndGet` 与 `CollectAxioms.collect` 实现这两条路径；调用端依赖的是这里列出的缓存、递归闭包与排序契约。
 
 # 名字解析受当前环境约束
 %%%
@@ -764,7 +759,7 @@ realizeGlobalConstWithInfos
 ```anchor corem_name_resolution
 namespace ResolutionDemo
 axiom localAxiom : Nat
-#book_print axioms localAxiom
+#print axioms localAxiom
 end ResolutionDemo
 
 namespace OpenDemo
@@ -772,7 +767,7 @@ axiom openedAxiom : Nat
 end OpenDemo
 
 open OpenDemo
-#book_print axioms openedAxiom
+#print axioms openedAxiom
 ```
 
 # 把 Core 计算接成一条命令
@@ -818,7 +813,7 @@ Command.liftCoreM : CoreM α → CommandElabM α
 tag := "command-full-walkthrough"
 %%%
 
-下面是完整的教学实现。所有 anchor 均取自同一个 `Examples.Ch05CoreM` 模块，后文片段可复用已经声明的命令和辅助函数：
+下面把名字解析、`collectAxioms` 和消息输出接成完整命令：
 
 ```anchor corem_print_axioms
 syntax (name := bookPrintAxioms) "#book_print" "axioms" ident : command
@@ -838,6 +833,13 @@ def elabBookPrintAxioms : CommandElab
             |>.toList
           logInfo m!"'{constMsg}' depends on axioms: {axiomMsgs}"
   | _ => throwUnsupportedSyntax
+```
+
+定义完成后，用同一对声明检查输出：
+
+```anchor corem_print_axioms_use
+#book_print axioms Classical.choice
+#book_print axioms Nat.add_comm
 ```
 
 它与 `Lean/Elab/Print.lean` 中的内置实现功能等价。为便于教学，我们改了三处：
@@ -906,7 +908,7 @@ MessageData.ofConstName
 
 本书采用生产源码中的 `ofConstName`，保留可点击输出；渲染阶段使用 MetaM，单独记在层次账目中。
 
-`Meta.Context`、`MetavarContext` 与 `ppExpr` 留到 Ch06。本节只需记住：renderer 为了准确显示常量名，会暂时进入信息更丰富的 Meta 环境。
+renderer 为了准确显示常量名，会暂时进入带有 `Meta.Context` 与 `MetavarContext` 的 Meta 环境；这些对象将在 Ch06 展开。
 
 # 在前端（frontend）外运行 CoreM
 %%%
@@ -1018,7 +1020,7 @@ tag := "corem-api-main"
   - 纯构造
   - 普通名字输出
 * - `MessageData.ofConstName`
-  - `Name → Bool → MessageData`
+  - `Name → (fullNames : Bool := false) → MessageData`
   - 构造 lazy message；有 PPContext 的标准渲染分支读 PP/Meta context
   - 可 hover、可跳转的常量名
 :::
@@ -1212,6 +1214,30 @@ tag := "corem-exercise-rich-name"
 
 把 `#book_print axioms` 中的 `MessageData.ofConstName` 暂时换成 `MessageData.ofName`。比较纯文字、hover 和跳转，再分别注明构造阶段与渲染阶段所在的执行层。请在编辑器中验收；命令行只能显示纯文本。
 
+基础答案：两种 `MessageData` 都在 CommandElabM 中构造。`ofName` 立即生成普通名字文本，没有常量语义信息；`ofConstName` 生成 lazy 常量名消息，带 `PPContext` 的渲染分支会进入 MetaM，因而能提供 hover 与跳转。命令行只能比较纯文字，hover 与跳转须在编辑器中验收。
+
+```anchor corem_plain_print_solution
+syntax (name := plainPrintAxioms) "#plain_print" "axioms" ident : command
+
+@[command_elab plainPrintAxioms]
+def elabPlainPrintAxioms : CommandElab
+  | `(#plain_print axioms $id:ident) => withRef id do
+      let names ← liftCoreM <| realizeGlobalConstWithInfos id
+      for constName in names do
+        let axs ← collectAxioms constName
+        let constMsg := MessageData.ofName constName
+        if axs.isEmpty then
+          logInfo m!"'{constMsg}' does not depend on any axioms"
+        else
+          let axiomMsgs := axs.qsort Name.lt
+            |>.map MessageData.ofName
+            |>.toList
+          logInfo m!"'{constMsg}' depends on axioms: {axiomMsgs}"
+  | _ => throwUnsupportedSyntax
+
+#plain_print axioms Classical.choice
+```
+
 ## 练习 5.4：预测恢复结果
 %%%
 tag := "corem-exercise-restore"
@@ -1220,11 +1246,49 @@ tag := "corem-exercise-restore"
 在保存状态后依次：
 
 1. 写一条消息；
-2. 生成 fresh name；
-3. 恢复；
-4. 再读消息并生成名字。
+2. 生成 fresh name，并用 `addDecl` 以该名字临时加入一个 axiom；
+3. 确认环境中已有该声明，再恢复；
+4. 检查消息和临时声明，并再次生成 fresh name。
 
 先根据 `SavedState.restore` 源码写出预测，再运行验证。验收表至少包含 `messages`、`nextMacroScope`、`env` 三行；预期是消息与环境恢复，而 `nextMacroScope` 不恢复。不要用“回滚应该全撤销”代替逐字段判断。
+
+基础答案：
+
+```anchor corem_restore_solution
+private structure CoreStateObservation where
+  envRestored : Bool
+  messagesRestored : Bool
+  nextMacroScopeNotRestored : Bool
+  freshNamesDistinct : Bool
+
+private def observeCoreState : CoreM CoreStateObservation := do
+  let before ← get
+  let saved ← Core.saveState
+  logInfo "state-observation message"
+  let probeName ← mkFreshUserName `stateProbe
+  addDecl <| Declaration.axiomDecl {
+    name := probeName
+    levelParams := []
+    type := mkConst ``Nat
+    isUnsafe := false
+  }
+  let envMutationObserved := (← getEnv).contains probeName
+  saved.restore
+  let afterRestore ← get
+  let second ← mkFreshUserName `stateProbe
+  return {
+    envRestored := envMutationObserved && !afterRestore.env.contains probeName
+    messagesRestored := before.messages.toList.length == afterRestore.messages.toList.length
+    nextMacroScopeNotRestored := before.nextMacroScope < afterRestore.nextMacroScope
+    freshNamesDistinct := probeName != second
+  }
+
+elab "#observe_core_state" : command => do
+  let obs ← liftCoreM observeCoreState
+  logInfo m!"env restored={obs.envRestored}; messages restored={obs.messagesRestored}; nextMacroScope not restored={obs.nextMacroScopeNotRestored}; fresh names distinct={obs.freshNamesDistinct}"
+
+#observe_core_state
+```
 
 ## 练习 5.5：声明来源模块
 %%%
@@ -1233,11 +1297,33 @@ tag := "corem-exercise-module"
 
 扩展命令，输出每个公理所属的模块。可从 `Environment.getModuleIdxFor?` 入手，并分别测试导入模块中的声明和当前文件中的声明。所得结果只是已发现依赖的来源；求“最小 imports”还须处理句法扩展、宏、证明术注册等 term 常量依赖图以外的关系。
 
+基础答案：
+
+```anchor corem_module_solution
+axiom currentModuleAxiom : Nat
+noncomputable def currentUsesAxiom : Nat := currentModuleAxiom
+
+elab "#axiom_modules " id:ident : command => do
+  let names ← liftCoreM <| realizeGlobalConstWithInfos id
+  for name in names do
+    let axs ← collectAxioms name
+    for axiomName in axs do
+      let env ← getEnv
+      match env.getModuleIdxFor? axiomName with
+      | none => logInfo m!"{axiomName}: {env.header.mainModule}"
+      | some idx =>
+        let moduleName := env.header.moduleNames[idx.toNat]!
+        logInfo m!"{axiomName}: {moduleName}"
+
+#axiom_modules Classical.choice
+#axiom_modules currentUsesAxiom
+```
+
 # 下一层缺什么
 %%%
 tag := "corem-to-metam"
 %%%
 
-至此，我们能读取全局声明、解析名字、记录消息，并把这些操作接成一条 Lean 命令。上一章的 `smart_step` 还要求查看*当前目标*和*局部上下文*；这些信息不在 `#book_print` 的全局 Environment 中，目标元变量也尚未出现。
+至此，我们能读取全局声明、解析名字、记录消息，并把这些操作接成一条 Lean 命令。上一章的 `my_step` 还要求查看*当前目标*和*局部上下文*；这些信息不在 `#book_print` 的全局 Environment 中，目标元变量也尚未出现。
 
 下一章以改写为主案例。程序拿到一条等式证明后，要在当前目标中寻找匹配位置，处理定义等价，并构造新的证明项。完成这些工作，需要进入 `MetaM`。
