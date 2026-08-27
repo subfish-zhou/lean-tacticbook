@@ -20,7 +20,7 @@ tag := "ch03-macros"
 tag := "what-is-macro"
 %%%
 
-宏是批处理。具体来说，宏就是给一些项或证明步骤打了个包并起了个名字。
+宏接住一种已经声明的句法，把它展开成另一棵句法树。常见用途是给重复的项、命令或证明步骤提供短写法。
 
 > _The finding that math is about compression is not new ... word length measures size, and naming a substring for reuse—a macro—compresses it. —— Compression is all you need: Modeling Mathematics_
 > _数学的本质在于压缩，这不新鲜……以词长衡量大小，为重用而命名子串——宏——就实现了压缩。——《压缩即是一切》_
@@ -45,10 +45,10 @@ macro:10 l:term:10 " XOR " r:term:11 : term => `((!$l && $r) || ($l && !$r))
 
 下面逐词解释。
 * {kw}`macro`就是声明这个宏的关键字。
-* {anchorTerm macro_XOR}`l` 和 {anchorTerm macro_XOR}`r` 是宏的两个参数，它们属于 {anchorTerm macro_XOR}`term` 类型。{anchorTerm macro_XOR}`" XOR "`是这个宏的记号。此处我们定义的是中缀运算符，所以参数写在记号的两边。
+* {anchorTerm macro_XOR}`l` 和 {anchorTerm macro_XOR}`r` 是宏的两个参数，都按 {anchorTerm macro_XOR}`term` 句法类别解析。{anchorTerm macro_XOR}`" XOR "`是这个宏的记号。此处我们定义的是中缀运算符，所以参数写在记号的两边。
 * {anchorTerm macro_XOR}`" XOR "`两边的空格是为了将来这个运算符出现在Lean Infoview里的时候也能保留空格。
-* Lean 中万事万物都有类型。必须要声明 {anchorTerm macro_XOR}`l:term:10 " XOR " r:term:11`这一整块是{anchorTerm macro_XOR}`term` 类型的。
-* {anchorTerm macro_XOR}`=>`后面是宏的具体语义，也就是说它压缩的内容。`` `() ``是句法引号（syntax quotation），类型是 ``MacroM (TSyntax `term)``，这意味着 Lean 要将括号内的项解析成一棵 `term` 类别的 `Syntax` 句法树。{anchorTerm macro_XOR}`$l` 和 {anchorTerm macro_XOR}`$r` 称为反引（antiquotation），Lean 把它们解析成代表两个参数的句法树节点。
+* 末尾的 `: term` 声明 {anchorTerm macro_XOR}`l:term:10 " XOR " r:term:11` 这一整块新记号也属于 {anchorTerm macro_XOR}`term` 句法类别。
+* {anchorTerm macro_XOR}`=>` 后面是宏的展开式，也就是它压缩的句法。`` `() ``是句法引号（syntax quotation），类型是 ``MacroM (TSyntax `term)``，这意味着 Lean 要将括号内的项解析成一棵 `term` 类别的 `Syntax` 句法树。{anchorTerm macro_XOR}`$l` 和 {anchorTerm macro_XOR}`$r` 称为反引（antiquotation），负责把调用处捕获的两棵句法树插入展开式。
 
 其实这个最简单的宏是以下这段代码的语法糖：
 
@@ -59,7 +59,7 @@ macro_rules
   | `($l:term XOR₁ $r:term) => `((!$l && $r) || ($l && !$r))
 ```
 
-此处你可以看到，句法和宏规则其实是分开的两种功能，句法层定义这个宏要如何被调用，而宏规则声明这个宏实际上做了什么。而宏规则又被 {kw}`=>` 分成两部分，分别对应着两棵句法树，其中左边是*匹配模式*，右边是*展开式*。当解析器遇到形如匹配模式的句法时，就会把它替换成展开式。
+此处你可以看到，句法和宏规则其实是分开的两种功能，句法层定义这个宏要如何被调用，而宏规则声明这个宏实际上做了什么。而宏规则又被 {kw}`=>` 分成两部分，分别对应着两棵句法树，其中左边是*匹配模式*，右边是*展开式*。解析器先按照句法声明生成句法树；宏展开器遇到与左侧模式匹配的宏节点时，再把它替换成右侧展开式。
 
 实际上{kw}`macro_rules`又是下面这段的语法糖：
 
@@ -114,14 +114,14 @@ macro "mytrivial₁" : tactic =>
     | assumption)
 ```
 
-但是如果你想递归调用就会报错，因为解析器暂时还找不到`mytrivial_error`的定义。
+但是如果你想递归调用就会报错，因为解析器暂时还不认识 `mytrivial_error` 这条证明术句法。
 
 :::codeBox "error code"
 ```
 macro "mytrivial_error" : tactic =>
   `(tactic| first
     | ...
-    | apply And.intro <;> mytrivial_error) -- 报错：unknown macro `mytrivial_error`
+    | apply And.intro <;> mytrivial_error) -- 报错：unknown tactic
 ```
 :::
 
@@ -545,16 +545,16 @@ tag := "ch03-hygiene"
 file := "ch03-hygiene"
 %%%
 
-宏展开可以插入绑定符（binder）。如果展开只是文本替换，下面例子中的绑定符就会捕获调用者的 `x`：
+宏展开可以插入绑定符（binder）。如果展开只是文本替换，下面例子中新生成的绑定符就会捕获调用者的 `x`：
 
 ```anchor macro_hygienic_let
 macro "hygienicLet(" t:term ")" : term =>
-  `(let x := $t; x)
+  `(let x := 0; ($t, x))
 
-example (x : Nat) : hygienicLet(x + 1) = x + 1 := rfl
+example (x : Nat) : hygienicLet(x + 1) = (x + 1, 0) := rfl
 ```
 
-按文本替换，调用看起来会变成 `let x := x + 1; x`，新来的 `x` 可能吞掉 `x + 1` 里的旧 `x`。这个例子能编译，是因为引用是卫生的。
+按文本替换，调用看起来会变成 `let x := 0; (x + 1, x)`，括号里的两个 `x` 都会指向新绑定符。这个例子能得到 `(x + 1, 0)`，是因为引用是卫生的。
 
 `Lean/Elab/Quotation.lean` 中的 Lean 引用译补器，会给模板里写下的标识符分配宏作用域。模板引入的绑定符 `x` 与模板末尾的那个 `x` 会取得匹配的作用域信息，因此相互指向。通过 `$t` 插入的句法则保留调用处的名字信息，其中的 `x` 仍然指向外面；新生成的绑定符捕获不到它。打印出来的文本或许有三个字符完全相同的 `x`，名字解析看到的却不止这些字符。
 
@@ -685,7 +685,7 @@ set_option trace.Elab.step true in
 
 恢复模式，再生成一段能解析却不能译补的项，例如调用一个未知标识符。跟踪记录说明 `twiceTrace` 已经展开：宏已经完成句法到句法的工作，错误始于生成句法的译补。先把输出缩成 `` `(0) `` 这样的已知常量，再逐片恢复模板，直到坏名字、类别、优先级或缺失的反引用重新出现。
 
-最后，让证明术宏生成一个有效却会在当前目标上失败的证明术。解析器与宏都已成功，生成的证明术甚至可能已经开始改变证明状态，随后证明术分派器才把状态恢复。只要可以，就在同一个目标上直接运行生成的证明术。这样便把实验移出宏，让证明术自身的错误消息指出失败的证明步骤。
+最后，让证明术宏生成一个有效却会在当前目标上失败的证明术。解析器与宏都已成功，生成的证明术甚至可能已经开始改变证明状态。为了改试其他候选，证明术分派器会保存失败现场，再恢复这次分派开始前的状态；若最终没有候选成功，它会恢复选中的失败现场再抛出错误。只要可以，就在同一个目标上直接运行生成的证明术。这样便把实验移出宏，让证明术自身的错误消息指出失败的证明步骤。
 
 四个实验留下了一条好用的路径：
 

@@ -242,9 +242,9 @@ example (n : Nat) : n = n := by
 
 -- ANCHOR: macro_hygienic_let
 macro "hygienicLet(" t:term ")" : term =>
-  `(let x := $t; x)
+  `(let x := 0; ($t, x))
 
-example (x : Nat) : hygienicLet(x + 1) = x + 1 := rfl
+example (x : Nat) : hygienicLet(x + 1) = (x + 1, 0) := rfl
 -- ANCHOR_END: macro_hygienic_let
 
 -- ANCHOR: macro_identity_let

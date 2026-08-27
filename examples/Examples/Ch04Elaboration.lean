@@ -195,7 +195,7 @@ syntax "my_assumption" : tactic
 
 elab_rules : tactic
   | `(tactic| my_assumption) =>
-      liftMetaTactic fun goal => goal.withContext do
+      liftMetaTactic fun goal => do
         goal.checkNotAssigned `my_assumption
         let target ← goal.getType
         let some fvarId ← myFindLocalDeclWithType? target
