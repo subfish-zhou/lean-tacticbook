@@ -30,269 +30,128 @@ number := false
   poly_roots x^2 - 5*x + 6 with [2, 3] in x
 ```
 
-多项式已经在命题左边，根已经在右边，`x` 则两边都有。若调用处只写一个普通的 `poly_roots`，宏无法恢复这些信息，因为它拿到的输入只是这次调用的 `Syntax`；目标变了，交给宏的句法树并不会跟着变。我们之所以走到译补这一层，只是因为想少写一个参数。
+多项式、根和变量都已出现在目标里，但宏只拿到调用处的 `Syntax`；目标怎么变，都不会给这棵句法树多添一个参数。译补器则能读取当前目标。我们先让调用者只保留多项式，把根和变量从目标右边读出来。
 
-一个证明术译补器下面垫着四层计算，但若等到四层全部拆完才动手，第一个真正能读取目标的实用证明术就离得太远了。每个例子用到哪些操作，我们便先借来哪些并立刻用起来；内部机制留给第 5 至第 8 章逐层拆开。
+一个证明术译补器下面垫着四层计算。若等到四层全部拆完才动手，第一个能读取目标的实用证明术就离得太远了。这里先借用需要的操作；第 5 至第 8 章再逐层拆开它们。
 
-# 4.1 问问目标自己是什么
+# 4.1 只让调用者写多项式
 %%%
-tag := "ch04-show-target"
-file := "ch04-show-target"
+tag := "ch04-small-interface"
+file := "ch04-small-interface"
 number := false
 %%%
 
-先从宏做不到的最小观察开始。我想要一个调用形式永远不变、消息却跟随当前目标变化的证明术。伴随示例模块已经导入本书示例环境并打开 `Lean Meta Elab Tactic`；本章片段按出现顺序累积在同一个命名空间中。
+我们要把调用缩成：
 
-```anchor elaboration_show_target
-syntax "my_show_target" : tactic
-
-elab_rules : tactic
-  | `(tactic| my_show_target) => withMainContext do
-      logInfo m!"{← getMainTarget}"
-
-set_option linter.unusedTactic false in
-example (P Q : Prop) (hP : P) (hQ : Q) : P ∧ Q := by
-  my_show_target
-  constructor
-  · exact hP
-  · exact hQ
+```anchor elaboration_poly_roots_first_example
+example (x : ℚ) : x^2 - 5*x + 6 = 0 ↔ x = 2 ∨ x = 3 := by
+  my_poly_roots x^2 - 5*x + 6
 ```
 
-调用前，活动目标队列以当前证明洞 `?g` 开头，`?g` 的类型是 `P ∧ Q`。`getMainTarget` 只读取这个类型；它既不赋值 `?g`，也不替换队列。因此 `my_show_target` 返回后，活动队列仍以同一个 `?g` 开头。
+它比上一章的调用少了根列表和变量。多项式参数有意保留：无参版本当然可以再读双条件左边，但第一次写译补器就同时处理左右两条来源，反而遮住我们要看的动作。这里固定调用者给出多项式，只从目标右边读取变量和候选根。
 
-在调用处，解析器仍然只为 `my_show_target` 生成一棵句法树。`macro_rules` 会返回更多 `Syntax`；`elab_rules : tactic` 则注册一段在当前证明状态中运行的 `TacticM` 计算。紧凑写法 `elab "..." : tactic => ...` 会把句法及其译补器一起注册。这里单列 `syntax`，先把句法与处理函数的分界露出来。
+这个公开接口只接受双条件目标。右边可以是一条等式，也可以是若干等式组成的析取；所有等式必须具有同一个左端。上例因此给出共同左端 `x` 与根数组 `#[2, 3]`。
 
-顺着函数体走一遍。`withMainContext` 暂时把第一个活动目标携带的局部声明设为接下来 Meta 查询的当前现场；这里先把它当作读取和显示主目标的标准护栏，4.4 再让这些声明真正参与搜索。随后 `getMainTarget` 读取目标类型。`←` 先运行这项读取，`m!` 把得到的 `Expr` 作为结构化消息数据插入消息，`logInfo` 再连同当前源码上下文把它记下；消息系统的细节留到第 5 章。函数体没有赋值目标或替换队列，所以 `constructor` 会从刚才打印的目标原样继续。
+证明术译补器能取得当前目标的 `Expr`。接下来用一个递归函数拆开它的右边。
 
-把同一个调用移到 `constructor` 的任一分支下面，它会分别打印 `P` 或 `Q`。送入译补器的句法仍然是 `my_show_target`，所以不断变化的消息直接证明：译补器已经越过了先前挡住宏的那条边界。
-
-我们有意还没拆开 `Expr`。目前，`Expr` 就是 Lean 译补项或类型后得到的表示：名字已经解析，隐式结构可能已经补入，局部变量也已经连到局部上下文里的声明。能打印表达式，就足以说明它已经在手里。更难的问题是怎样利用它的形状。
-
-# 4.2 去掉 `in x`
+# 4.2 用一个递归函数读出变量和根
 %%%
-tag := "ch04-infer-variable"
-file := "ch04-infer-variable"
+tag := "ch04-read-roots"
+file := "ch04-read-roots"
 number := false
 %%%
 
-下一个接口保留多项式和根，却删掉变量：
-
-```anchor elaboration_poly_roots2_call
-  poly_roots₂ x^2 - 5*x + 6 with 2 3
-```
-
-目标已经写着 `x = 2 ∨ x = 3`。只要能把这个结论逐层剥成等式，并确认每条等式左边都是同一个表达式，缺失的参数就已经到手了。
-
-我们需要几个小型读取器。它们只认眼前这几种形状，不打算做通用的逻辑表达式库。
-
-```anchor elaboration_poly_roots_readers
-private def eqSides? (e : Expr) : Option (Expr × Expr) :=
-  let e := e.consumeMData
-  if e.isAppOfArity ``Eq 3 then
-    let args := e.getAppArgs
-    some (args[1]!, args[2]!)
-  else
-    none
-
-private partial def rootEqualities? (e : Expr) : Option (Array (Expr × Expr)) :=
+```anchor elaboration_roots_and_variable
+private partial def rootsAndVariable? (e : Expr) : Option (Expr × Array Expr) := do
   let e := e.consumeMData
   if e.isAppOfArity ``Or 2 then
     let args := e.getAppArgs
-    return (← rootEqualities? args[0]!) ++ (← rootEqualities? args[1]!)
+    let (x, roots₁) ← rootsAndVariable? args[0]!
+    let (x', roots₂) ← rootsAndVariable? args[1]!
+    guard (x == x')
+    return (x, roots₁ ++ roots₂)
   else
-    return #[← eqSides? e]
-
-private def rootsAndVariable? (e : Expr) : Option (Expr × Array Expr) := do
-  let equalities ← rootEqualities? e
-  let (x, firstRoot) ← equalities[0]?
-  let mut roots := #[firstRoot]
-  for (x', root) in equalities[1...*] do
-    if x' != x then failure
-    roots := roots.push root
-  return (x, roots)
-
-private def rootConclusion (target : Expr) : Expr :=
-  let target := target.consumeMData
-  if target.isAppOfArity ``Iff 2 then target.getAppArgs[1]! else target
+    guard (e.isAppOfArity ``Eq 3)
+    let args := e.getAppArgs
+    return (args[1]!, #[args[2]!])
 ```
 
-每次测试最外层形状之前，`consumeMData` 都先剥掉元数据包装。接着，`eqSides?` 接受带三个参数的 `Eq` 应用——类型与等式两边——只返回我们需要的左右两边。`rootEqualities?` 则递归打开每一个 `Or` 节点。这里的递归比只匹配一次 `A ∨ B` 更重要：`A ∨ B ∨ C` 和 `(A ∨ B) ∨ C` 都会变成同一个扁平数组；若结论只有一条等式，也会得到长度为一的数组。
+从最下面的分支开始读。一条等式是以 `Eq` 为头、带三个参数的应用：等式两边共同的类型、左边和右边。`isAppOfArity` 已经检查头部与参数数目，所以这里的 `args[1]!` 和 `args[2]!` 不会越界；`!` 仍是越界时报错的索引形式，并没有接收一份静态边界证明。读取器把左边当作变量表达式，把右边装进只有一个元素的根数组。
 
-最后一个读取器选取第一条等式的左边；后面若出现结构上不同的 `Expr`，就拒绝整个结论。这一版只认结构相同：两种写法即使在定义上相等，它也认不出来；选出的表达式也尚不必是自由变量。
+遇到 `Or`，函数分别递归读取左右两边。两次读取必须返回同一棵左端表达式树；`guard (x == x')` 失败时，当前 `Option` 计算立即得到 `none`。递归调用后的模式绑定也遵守同一规则：任一子树返回 `none`，后面的拼接便不再运行。成功时，两个根数组直接拼在一起。
 
-译补器委托执行的证明脚本也必须接受同样范围的析取形状，因此最后一次化简要包含 `or_assoc`：
-
-```anchor elaboration_poly_roots_target_core
-syntax "poly_roots_target_core " term " with " term " in " term : tactic
-
-macro_rules
-  | `(tactic| poly_roots_target_core $poly:term with $roots:term in $x:term) =>
-      `(tactic|
-        rw [show $poly = (($roots).map (fun r => $x - r)).prod by
-          simp only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil, mul_one] <;>
-          ring] <;>
-        simp only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil, mul_one,
-          mul_eq_zero, sub_eq_zero, or_assoc])
-```
-
-现在，译补器可以把两半接起来：
-
-```anchor elaboration_poly_roots2_definition
-syntax "poly_roots₂ " term " with " term:max+ : tactic
-
-elab_rules : tactic
-  | `(tactic| poly_roots₂ $poly:term with $suppliedRoots:term*) => withMainContext do
-      let target ← getMainTarget
-      let some (x, roots) := rootsAndVariable? (rootConclusion target)
-        | throwError "poly_roots₂: expected one or more equations with structurally identical left-hand sides"
-      if roots.size != suppliedRoots.size then
-        throwError "poly_roots₂: the number of supplied roots does not match the target"
-      let x ← Term.exprToSyntax x
-      let roots : TSyntaxArray `term := suppliedRoots
-      let rootList ← `(term| [$roots,*])
-      evalTactic (← `(tactic| poly_roots_target_core $poly with $rootList in $x))
-```
-
-沿数据流读这段函数体。`getMainTarget` 取得目标，并且已经把 Lean 求解的元变量代进去，免得一个已有赋值的占位符把最外层的 `Iff`、`Or` 或 `Eq` 遮住。`rootConclusion` 遇到 `Iff` 就选右边。几个读取器将其展平，并返回反复出现的左边。已经测试过的核心接收的是句法参数，所以 `Term.exprToSyntax` 又把译补后的表达式转成可重新交给该核心的句法；这一步不保留原始源码，也不承诺 `Expr → Syntax → Expr` 是恒等往返。最后，一段引用把调用者给出的重复根句法装进列表，`evalTactic` 再在当前证明状态中运行生成的 `poly_roots_target_core` 调用。
-
-`roots` 来自目标，只告诉我们识别出了多少条等式；`suppliedRoots` 来自调用处，仍是证明实际使用的列表。这一版只比较长度，不比较内容。把 `2 3` 换成 `3 2` 可以通过长度检查，但生成的因式分解顺序与命题结论不合，委托出去的证明便会失败。我们正想要这个失败。若用 `try` 包住调用，只会留下未解目标，让坏候选看起来像成功。
-
-把这项失败固定成可运行的边界反例：
-
-```anchor elaboration_poly_roots_wrong_order
-/-- error: unsolved goals -/
-#guard_msgs (substring := true) in
-example (x : ℚ) : x^2 - 5*x + 6 = 0 ↔ x = 2 ∨ x = 3 := by
-  poly_roots₂ x^2 - 5*x + 6 with 3 2
-```
-
-单根和不同结合方式的情形同样来自这套递归，而非两个补丁：
-
-```anchor elaboration_poly_roots2_shapes
-example (x : ℚ) : x - 2 = 0 ↔ x = 2 := by
-  poly_roots₂ x - 2 with 2
-
-example (x : ℚ) :
-    x^3 - 6*x^2 + 11*x - 6 = 0 ↔ (x = 1 ∨ x = 2) ∨ x = 3 := by
-  poly_roots₂ x^3 - 6*x^2 + 11*x - 6 with 1 2 3
-```
-
-还剩一个重复参数。
-
-# 4.3 去掉 `with`
-%%%
-tag := "ch04-infer-roots"
-file := "ch04-infer-roots"
-number := false
-%%%
-
-面对这样的命题：
+于是下面两种结合方式都会得到 `x` 与 `#[1, 2, 3]`：
 
 :::codeBox "pseudocode"
 ```
-x^3 - 6*x^2 + 11*x - 6 = 0 ↔ x = 1 ∨ x = 2 ∨ x = 3
+x = 1 ∨ x = 2 ∨ x = 3
+(x = 1 ∨ x = 2) ∨ x = 3
 ```
 :::
 
-右边已经给出了 `1`、`2` 和 `3`。译补器不必解三次方程，只需读出调用者已经写进目标的候选值；候选因式分解交给 `ring` 验证，表达式读取器和译补器都不实现二次或三次求根公式。
+每轮检查前，`consumeMData` 先剥掉最外层元数据包装，免得源码信息挡住 `Or` 或 `Eq`。定义写成 `partial`，因为终止检查器无法从 `getAppArgs` 的结果看出递归调用确实走进了原表达式的子树；运行时仍由有限的 `Expr` 树限制递归深度。`private` 则把这个教学辅助函数留在当前模块内。
 
-多项式来源可能出现在 `Iff` 左边，也可能是一条用于证明裸析取结论的局部等式。下面的读取器检查这两个地方：
+这只是结构读取。它用 `==` 比较表达式树，不识别所有定义相等的写法；它也不检查共同左端是否真是自由变量，只把每条等式的左边交给内部宏充当 `x`。因此，若所有分支都写成 `r = x` 且共同左端恰好相同，读取器仍会接收；把 `x = 2` 与 `3 = x` 混在同一个析取里，则会因左端不同而返回 `none`。读取器没有求根，也不检查调用者给出的多项式。
 
-```anchor elaboration_source_polynomial
-private def sourcePolynomial? (target : Expr) (x : Expr) (lctx : LocalContext) : Option Expr := do
-  let target := target.consumeMData
-  if target.isAppOfArity ``Iff 2 then
-    return (← eqSides? target.getAppArgs[0]!).1
-  for decl in lctx do
-    if !decl.isImplementationDetail then
-      if let some (poly, _) := eqSides? decl.type then
-        if x.isFVar && poly.containsFVar x.fvarId! then return poly
-  failure
-```
+# 4.3 译补器只负责接线
+%%%
+tag := "ch04-wire-elaborator"
+file := "ch04-wire-elaborator"
+number := false
+%%%
 
-遇到 `Iff`，它要求左边是一条等式，再取这条等式的左边。遇到裸结论，它会按声明进入局部上下文的顺序，从较旧的声明走向较新的声明，跳过实现细节，取沿这个方向遇到的第一条左边含有所推断自由变量的等式。这里两条来源路径的范围并不相同：`Iff` 路径可以继续携带复合的共同左端；局部上下文路径受 `x.isFVar` 限制，只支持共同左端本身就是自由变量。当前辅助函数不反转等式，不检查另一边是否为零，不比较多个候选，也不展开定义。
+根和变量一旦转成可重新译补的句法，上一章的证明办法就够用了。内部宏把多项式改写为因式乘积，再把乘积等于零化成根的析取：
 
-证明还需要另一条路线来处理裸结论：
-
-```anchor elaboration_poly_roots_core_tactic
-syntax "poly_roots_core " term " with " term " in " term : tactic
+```anchor elaboration_my_poly_roots_target
+syntax "my_poly_roots_target " term " with " term " in " term : tactic
 
 macro_rules
-  | `(tactic| poly_roots_core $poly:term with $roots:term in $x:term) =>
+  | `(tactic| my_poly_roots_target $poly:term with $roots:term in $x:term) =>
       `(tactic|
-        first
-        | poly_roots_target_core $poly with $roots in $x
-        | have hpoly : $poly = 0 := by assumption
-          rw [show $poly = (($roots).map (fun r => $x - r)).prod by
-            simp only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil, mul_one] <;>
-            ring] at hpoly
-          simpa only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil, mul_one,
-            mul_eq_zero, sub_eq_zero, or_assoc] using hpoly)
+        rw [show $poly = (($roots).map (fun r => $x - r)).prod by simp <;> ring] <;>
+        simp [mul_eq_zero, sub_eq_zero, or_assoc])
 ```
 
-第一条分支尝试直接证明 `Iff`。只要它失败，`first` 都会恢复状态并尝试第二条，并不先判断失败是否来自目标形状。第二条分支为裸析取结论准备：它用 `assumption` 重新搜索任意类型可与 `$poly = 0` 定义相等的局部证明，把找到的证明重写成乘积等式，再用结果证明结论。局部上下文读取器只挑出放进调用的多项式表达式；它没有把原声明的身份传给宏核心。若多个局部等式含有同一个多项式，读取器选出的多项式表达式与核心最终采用的证明可能来自不同声明。
+第一处 `simp` 展开具体列表的 `map` 与 `prod`，`ring` 证明因式恒等式；`rw` 把这条恒等式用于原目标，最后的 `simp` 再把零乘积化成等式析取并整理结合方式。读取器只提供候选数据，数学正确性仍由这些证明步骤检查。
 
-我们还需要根列表的句法。现在这些根是表达式，不再是调用者的原始句法，因此也不能继续使用先前的重复反引用。
+公开译补器在外面接一层：
 
-```anchor elaboration_mk_root_list_syntax
-private def mkRootListSyntax (roots : Array Expr) : TacticM (TSyntax `term) := do
-  let some firstRoot := roots[0]?
-    | throwError "poly_roots: expected at least one root"
-  let rootType ← inferType firstRoot
-  Term.exprToSyntax (← mkListLit rootType roots.toList)
-```
-
-第一个根给出元素类型，`mkListLit` 构造译补后的列表表达式，`exprToSyntax` 再把结果变成宏核心能够接收的项。上游虽已拒绝空结论，这里仍显式报错，保证这个辅助函数单独调用时也会拒绝空列表。
-
-公开接口终于缩成了一个词：
-
-```anchor elaboration_poly_roots_public
-syntax "poly_roots" : tactic
+```anchor elaboration_poly_roots_definition
+syntax "my_poly_roots " term : tactic
 
 elab_rules : tactic
-  | `(tactic| poly_roots) => withMainContext do
-      let target ← getMainTarget
-      let some (x, roots) := rootsAndVariable? (rootConclusion target)
-        | throwError "poly_roots: expected one or more equations with structurally identical left-hand sides"
-      let some poly := sourcePolynomial? target x (← getLCtx)
-        | throwError "poly_roots: expected an equation source in the target or local context"
-      let poly ← Term.exprToSyntax poly
+  | `(tactic| my_poly_roots $poly:term) => withMainContext do
+      let target := (← getMainTarget).consumeMData
+      unless target.isAppOfArity ``Iff 2 do
+        throwError "my_poly_roots: expected an iff target"
+      let some (x, roots) := rootsAndVariable? target.getAppArgs[1]!
+        | throwError "my_poly_roots: expected the right side to contain equalities with one shared left-hand side"
       let x ← Term.exprToSyntax x
-      let rootList ← mkRootListSyntax roots
-      evalTactic (← `(tactic| poly_roots_core $poly with $rootList in $x))
+      let roots ← roots.mapM fun root => Term.exprToSyntax root
+      let roots : TSyntaxArray `term := roots
+      evalTactic (← `(tactic| my_poly_roots_target $poly with [$roots,*] in $x))
 ```
 
-`getLCtx` 返回主目标处活动的局部声明。译补器从目标读取候选根，在目标或局部上下文中寻找多项式来源，然后重新拼出我们已有核心会证明的显式调用。
+`macro_rules` 的分支返回新句法；`elab_rules : tactic` 的分支则运行一项 `TacticM` 计算。`withMainContext` 让后面的 Meta 与项译补操作使用当前主目标的局部现场。函数体先取得目标、剥掉外层元数据，再明确检查它是双条件。检查保证 `getAppArgs[1]!` 存在；这个参数就是右边，交给上一节的递归读取器。
 
-现在两种形式都可以用了：
+读取结果是 `Expr`，内部宏却接收项句法。`Term.exprToSyntax` 为这个例子读出的局部变量与根表达式生成可重新译补的句法；它不会恢复用户原文，这里也不主张任意 `Expr` 都能无损往返。`roots.mapM` 逐个运行这项可能失败的转换，任一步失败就让整次数组转换失败。随后，类型标注把 `roots` 固定为 `term` 句法数组，使准引用中的 `$roots,*` 能逐项展开进列表。
 
-```anchor macro_poly_roots_cubic
+`evalTactic` 最后在当前证明状态中运行生成的 `my_poly_roots_target` 调用；内部宏造成的目标变化会直接留在这次证明中。
+
+再试单根和左结合析取：
+
+```anchor elaboration_poly_roots_variants
+example (x : ℚ) : x - 2 = 0 ↔ x = 2 := by
+  my_poly_roots x - 2
+
 example (x : ℚ) :
-    x^3 - 6*x^2 + 11*x - 6 = 0 ↔
-      x = 1 ∨ x = 2 ∨ x = 3 := by
-  poly_roots
+    x^3 - 6*x^2 + 11*x - 6 = 0 ↔ (x = 1 ∨ x = 2) ∨ x = 3 := by
+  my_poly_roots x^3 - 6*x^2 + 11*x - 6
 ```
 
-```anchor elaboration_poly_roots_local_example
-example (x : ℚ) (h : x^2 - 5*x + 6 = 0) : x = 2 ∨ x = 3 := by
-  poly_roots
-```
+递归读取器没有为这两种形状增加分支。非双条件目标与右边结构不合分别由公开译补器报错。若参数里的多项式没有出现在目标中，`rw` 找不到改写位置；若它确实位于目标左边、却不能分解成右边给出的根，因式恒等式证明无法关闭。结构错误和数学错误停在不同层。
 
-再用两个紧邻契约的调用钉住现有范围：目标可以直接写成已经因式分解的双条件；局部来源也可以只推出一个根。
-
-```anchor elaboration_poly_roots_contract_regression
-example (x : ℚ) : (x - 2) * (x - 3) = 0 ↔ x = 2 ∨ x = 3 := by
-  poly_roots
-
-example (x : ℚ) (h : x - 2 = 0) : x = 2 := by
-  poly_roots
-```
-
-换成四次多项式，译补器和接口都不必改变。根已经写在命题里；列表变长交给下层的成熟证明术处理。
-
-这个教学证明术支持由 `∏ (x - r)` 生成的首一因式分解。`2*x^2 - 10*x + 12` 这样的多项式，要么需要在生成的乘积里加入首项系数，要么先做规范化，当前核心才能验证它。候选错了，委托出去的证明仍应直接报错。
-
-重复参数已经消失。接着把同样的译补操作用到普通证明目标上。
+固定的调用句法现在能够读取变化的证明目标，再选择要运行的证明术。下一节把相同能力用于普通证明任务：从局部上下文中找到一个已经证明当前目标的假设。
 
 # 4.4 找到已经证明目标的假设
 %%%
@@ -562,7 +421,7 @@ number := false
 
 “接收一个 `MVarId`，返回取代它的一组 `MVarId`”正是 *`liftMetaTactic`* 接受的形状。`my_assumption` 关闭传入的主目标，交回空列表；apply 一类的 Meta 辅助函数若已按所需顺序返回目标，也可以直接接上。`liftMetaTactic` 先进入活动主目标的局部上下文，再取出主目标交给函数，最后用函数返回的目标列表替换队首。它不会替任意 Meta 计算补上生产级事务语义。
 
-已有成熟证明术能完成操作时，译补器只需检查状态，选择或构造调用，再交给 *`evalTactic`* 运行。`poly_roots` 和 `my_step` 都走这里。被委托的证明术成功时，创建或关闭目标等更新直接作用于当前证明状态。普通可回退候选失败时，证明术分派器先保存失败现场，再恢复这次分派开始前的状态并尝试下一候选；若最终没有候选成功，它会恢复选中的失败现场再抛出错误。标记 `no_fallback` 的错误和意外内部异常则可以直接外抛。
+已有成熟证明术能完成操作时，译补器只需检查状态，选择或构造调用，再交给 *`evalTactic`* 运行。`my_poly_roots` 和 `my_step` 都走这里。被委托的证明术成功时，创建或关闭目标等更新直接作用于当前证明状态。普通可回退候选失败时，证明术分派器先保存失败现场，再恢复这次分派开始前的状态并尝试下一候选；若最终没有候选成功，它会恢复选中的失败现场再抛出错误。标记 `no_fallback` 的错误和意外内部异常则可以直接外抛。
 
 三条路线没有普遍的优先次序。若用底层表达式构造器重写 `constructor`，只会暴露与 `my_step` 无关的机器；若给 `my_assumption` 中直接赋入自由变量的操作生成证明术引用，又会遮住我们想学的机制。先看操作接收什么、返回什么，再选 API。
 
@@ -630,7 +489,7 @@ number := false
 
 下面的练习分别延伸不同路线。教学证明术请保留 `my_` 前缀，同时编译成功例子和刻意失败的例子，并在每个定义旁写明它支持的目标形状。
 
-1. *改进 `poly_roots` 的诊断。* 修改 `sourcePolynomial?`：对每个候选等式的右边使用 `rhs.nat? == some 0`，只接受这种结构上的数值字面量零；这项检查不承诺识别所有定义等于零的表达式。若没有候选通过，公开译补器就在整个调用处报告来源错误。把 `hBad : x + 1 = 1` 放在 `hGood : x^2 - 5*x + 6 = 0` 之前，并以 `x = 2 ∨ x = 3` 为目标：由于循环从较旧的声明走向较新的声明，未检查右边的实现会先误选 `x + 1` 并在委托证明中失败，正确实现才会跳过它并接受 `hGood`。再加入只有非零右边的反例，确认执行不会走到 `ring`。这改变的是识别，不是数学，也不要求核心记住某个声明身份。
+1. *给“变量”补上身份检查。* 当前读取器接受任意共同左端，只是把它叫作 `x`。先要求该表达式满足 `isFVar`，确认 `2 = x` 这样的目标会被拒绝。再扩展等式分支：若两边恰有一边是自由变量，就把自由变量作为共同项、另一边作为根，使 `x = 2 ∨ 3 = x` 也能得到 `x` 与 `#[2, 3]`；两边都是自由变量或都不是时明确拒绝。这个扩展只规范等式方向，不做代数求根。
 
 2. *支持首项系数。* 为 `2*x^2 - 10*x + 12` 这样的非首一多项式设计接口。决定系数是从命题读取，还是由调用者提供，再生成形如 `a * ∏ (x - r)` 的因式分解。认证工作仍交给 `ring`。说明你的读取器接受哪些来源形状。
 
@@ -664,7 +523,7 @@ number := false
 
 这些例子已经把目标、局部假设、用户项和活动目标队列接到一起。借用四层操作留下的问题，下面四章各接走一类。
 
-本章打印目标和报错时，已经借用了环境、选项、源码引用、消息、异常与核心可变状态。它们从哪里来？为什么 `logInfo` 能记录结构化消息数据，`throwError` 又怎样取得有用的位置？这些都属于后续各层下方的全局编译现场，*第 5 章 CoreM* 从这里拆起。
+本章读取目标并报错时，已经借用了环境、选项、源码引用、消息、异常与核心可变状态。它们从哪里来？为什么第一章的 `logInfo` 能记录结构化消息数据，`throwError` 又怎样取得有用的位置？这些都属于后续各层下方的全局编译现场，*第 5 章 CoreM* 从这里拆起。
 
 `isDefEq` 成功后可能留下约束；*第 6 章 MetaM* 要解释一次合一成功后，为什么更大的候选若随后失败，仍可能需要外层快照。`MVarId.apply` 尚未打开的证明构造也在这一层处理。
 
@@ -683,4 +542,4 @@ TacticM   : ordered active goals and tactic recovery policy
 ```
 :::
 
-四层沿同一条计算栈叠起来，并非四套互不相干的编程语言。每往外一层，计算都会加入自己的当前上下文或状态，同时保留下层能力。我们先用组装好的整台机器，让 `poly_roots` 只说调用者真正想说的话。现在再逐层拆开，每一层的问题都已有来处。
+四层沿同一条计算栈叠起来，并非四套互不相干的编程语言。每往外一层，计算都会加入自己的当前上下文或状态，同时保留下层能力。我们先用组装好的整台机器，让 `my_poly_roots` 只说调用者真正想说的话。现在再逐层拆开，每一层的问题都已有来处。
