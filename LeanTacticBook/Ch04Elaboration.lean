@@ -26,11 +26,9 @@ number := false
 
 上一版 `poly_roots` 要求调用者重复三份信息：
 
-:::codeBox "code"
+```module (module := Examples.Ch03Macros) (anchor := elaboration_old_poly_roots_call)
+  poly_roots x^2 - 5*x + 6 with [2, 3] in x
 ```
-poly_roots x^2 - 5*x + 6 with [2, 3] in x
-```
-:::
 
 多项式已经在命题左边，根已经在右边，`x` 则两边都有。若调用处只写一个普通的 `poly_roots`，宏无法恢复这些信息，因为它拿到的输入只是这次调用的 `Syntax`；目标变了，交给宏的句法树并不会跟着变。我们之所以走到译补这一层，只是因为想少写一个参数。
 
@@ -79,11 +77,9 @@ number := false
 
 下一个接口保留多项式和根，却删掉变量：
 
-:::codeBox "code"
+```anchor elaboration_poly_roots2_call
+  poly_roots₂ x^2 - 5*x + 6 with 2 3
 ```
-poly_roots₂ x^2 - 5*x + 6 with 2 3
-```
-:::
 
 目标已经写着 `x = 2 ∨ x = 3`。只要能把这个结论逐层剥成等式，并确认每条等式左边都是同一个表达式，缺失的参数就已经到手了。
 
@@ -141,8 +137,7 @@ macro_rules
 
 现在，译补器可以把两半接起来：
 
-:::codeBox "code"
-```
+```anchor elaboration_poly_roots2_definition
 syntax "poly_roots₂ " term " with " term:max+ : tactic
 
 elab_rules : tactic
@@ -157,7 +152,6 @@ elab_rules : tactic
       let rootList ← `(term| [$roots,*])
       evalTactic (← `(tactic| poly_roots_target_core $poly with $rootList in $x))
 ```
-:::
 
 沿数据流读这段函数体。`getMainTarget` 取得目标，并且已经把 Lean 求解的元变量代进去，免得一个已有赋值的占位符把最外层的 `Iff`、`Or` 或 `Eq` 遮住。`rootConclusion` 遇到 `Iff` 就选右边。几个读取器将其展平，并返回反复出现的左边。已经测试过的核心接收的是句法参数，所以 `Term.exprToSyntax` 又把译补后的表达式转成可重新交给该核心的句法；这一步不保留原始源码，也不承诺 `Expr → Syntax → Expr` 是恒等往返。最后，一段引用把调用者给出的重复根句法装进列表，`evalTactic` 再在当前证明状态中运行生成的 `poly_roots_target_core` 调用。
 
@@ -194,7 +188,7 @@ number := false
 
 面对这样的命题：
 
-:::codeBox "code"
+:::codeBox "pseudocode"
 ```
 x^3 - 6*x^2 + 11*x - 6 = 0 ↔ x = 1 ∨ x = 2 ∨ x = 3
 ```
@@ -204,8 +198,7 @@ x^3 - 6*x^2 + 11*x - 6 = 0 ↔ x = 1 ∨ x = 2 ∨ x = 3
 
 多项式来源可能出现在 `Iff` 左边，也可能是一条用于证明裸析取结论的局部等式。下面的读取器检查这两个地方：
 
-:::codeBox "code"
-```
+```anchor elaboration_source_polynomial
 private def sourcePolynomial? (target : Expr) (x : Expr) (lctx : LocalContext) : Option Expr := do
   let target := target.consumeMData
   if target.isAppOfArity ``Iff 2 then
@@ -216,14 +209,12 @@ private def sourcePolynomial? (target : Expr) (x : Expr) (lctx : LocalContext) :
         if x.isFVar && poly.containsFVar x.fvarId! then return poly
   failure
 ```
-:::
 
 遇到 `Iff`，它要求左边是一条等式，再取这条等式的左边。遇到裸结论，它会按声明进入局部上下文的顺序，从较旧的声明走向较新的声明，跳过实现细节，取沿这个方向遇到的第一条左边含有所推断自由变量的等式。这里两条来源路径的范围并不相同：`Iff` 路径可以继续携带复合的共同左端；局部上下文路径受 `x.isFVar` 限制，只支持共同左端本身就是自由变量。当前辅助函数不反转等式，不检查另一边是否为零，不比较多个候选，也不展开定义。
 
 证明还需要另一条路线来处理裸结论：
 
-:::codeBox "code"
-```
+```anchor elaboration_poly_roots_core_tactic
 syntax "poly_roots_core " term " with " term " in " term : tactic
 
 macro_rules
@@ -238,28 +229,24 @@ macro_rules
           simpa only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil, mul_one,
             mul_eq_zero, sub_eq_zero, or_assoc] using hpoly)
 ```
-:::
 
 第一条分支尝试直接证明 `Iff`。只要它失败，`first` 都会恢复状态并尝试第二条，并不先判断失败是否来自目标形状。第二条分支为裸析取结论准备：它用 `assumption` 重新搜索任意类型可与 `$poly = 0` 定义相等的局部证明，把找到的证明重写成乘积等式，再用结果证明结论。局部上下文读取器只挑出放进调用的多项式表达式；它没有把原声明的身份传给宏核心。若多个局部等式含有同一个多项式，读取器选出的多项式表达式与核心最终采用的证明可能来自不同声明。
 
 我们还需要根列表的句法。现在这些根是表达式，不再是调用者的原始句法，因此也不能继续使用先前的重复反引用。
 
-:::codeBox "code"
-```
+```anchor elaboration_mk_root_list_syntax
 private def mkRootListSyntax (roots : Array Expr) : TacticM (TSyntax `term) := do
   let some firstRoot := roots[0]?
     | throwError "poly_roots: expected at least one root"
   let rootType ← inferType firstRoot
   Term.exprToSyntax (← mkListLit rootType roots.toList)
 ```
-:::
 
 第一个根给出元素类型，`mkListLit` 构造译补后的列表表达式，`exprToSyntax` 再把结果变成宏核心能够接收的项。上游虽已拒绝空结论，这里仍显式报错，保证这个辅助函数单独调用时也会拒绝空列表。
 
 公开接口终于缩成了一个词：
 
-:::codeBox "code"
-```
+```anchor elaboration_poly_roots_public
 syntax "poly_roots" : tactic
 
 elab_rules : tactic
@@ -274,23 +261,22 @@ elab_rules : tactic
       let rootList ← mkRootListSyntax roots
       evalTactic (← `(tactic| poly_roots_core $poly with $rootList in $x))
 ```
-:::
 
 `getLCtx` 返回主目标处活动的局部声明。译补器从目标读取候选根，在目标或局部上下文中寻找多项式来源，然后重新拼出我们已有核心会证明的显式调用。
 
 现在两种形式都可以用了：
 
-:::codeBox "code"
-```
+```anchor macro_poly_roots_cubic
 example (x : ℚ) :
     x^3 - 6*x^2 + 11*x - 6 = 0 ↔
       x = 1 ∨ x = 2 ∨ x = 3 := by
   poly_roots
+```
 
+```anchor elaboration_poly_roots_local_example
 example (x : ℚ) (h : x^2 - 5*x + 6 = 0) : x = 2 ∨ x = 3 := by
   poly_roots
 ```
-:::
 
 再用两个紧邻契约的调用钉住现有范围：目标可以直接写成已经因式分解的双条件；局部来源也可以只推出一个根。
 
@@ -319,8 +305,7 @@ number := false
 
 这个教学版重构叫作 `my_assumption`。前缀不能省：该定义露出了主干路线，但 Lean 的生产级 `assumption` 还覆盖了这一版略去的工程情形。
 
-:::codeBox "code"
-```
+```anchor elaboration_my_assumption_definition
 private def myFindLocalDeclWithType? (type : Expr) : MetaM (Option FVarId) := do
   (← getLCtx).findDeclRevM? fun localDecl => do
     if localDecl.isImplementationDetail then
@@ -342,7 +327,6 @@ elab_rules : tactic
         goal.assign (mkFVar fvarId)
         return []
 ```
-:::
 
 `liftMetaTactic` 先用 `withMainContext` 进入活动主目标的局部上下文，再把它的 `MVarId` 交给 MetaM 函数，接过函数返回的替代目标并负责接好队列；它定义在 `Lean/Elab/Tactic/Basic.lean` 的目标队列操作旁边。因此回调里可以直接搜索局部声明。这里搜索从较新的声明走向较旧的声明，忽略实现细节，并用 `isDefEq` 比较每个声明的类型与目标类型。
 
@@ -352,12 +336,10 @@ elab_rules : tactic
 
 这个小证明术可以工作：
 
-:::codeBox "code"
-```
+```anchor elaboration_my_assumption_example
 example (P : Prop) (h : P) : P := by
   my_assumption
 ```
-:::
 
 Lean 在 `Lean/Meta/Tactic/Assumption.lean` 中的 Meta 层实现几乎就是同一段代码。主干先把搜索抽成可复用函数：
 
@@ -466,7 +448,7 @@ example (P Q : Prop) (hP : P) (hQ : Q) : P ∧ Q := by
 
 值得把状态变化写成两行：
 
-:::codeBox "code"
+:::codeBox "pseudocode"
 ```
 metavariable context:  ?old := And.intro ?left ?right
 active goal queue:     [?old, ...tail]  ->  [?left, ?right, ...tail]
@@ -526,8 +508,7 @@ number := false
 - 若目标是函数或 `forall`，引入一个绑定项；
 - 否则停下，并在错误里带上目标。
 
-:::codeBox "code"
-```
+```anchor elaboration_my_step_definition
 syntax "my_step" : tactic
 
 elab_rules : tactic
@@ -546,14 +527,12 @@ elab_rules : tactic
           | .forallE .. => evalTactic (← `(tactic| intro))
           | _ => throwError "my_step does not know how to continue from target{indentExpr target}"
 ```
-:::
 
 假设分支放在最前，因为它无需拆解目标便可能关闭任何形状。若搜索返回 `false`，`whnf` 会把目标规约到刚好露出弱头形的程度。因此，一个函数体以 `And` 开头的定义也能走进构造器分支；只匹配表面表达式就会漏掉它。我们不规范化整个命题，因为这棵决策树只需要最外层构造子。
 
 其余分支委托给已有证明术。引用构造证明术句法，`evalTactic` 带着当前目标和错误行为运行它。复用 `trivial`、`constructor` 和 `intro`，便能保留它们对新目标与诊断的生产级处理，而不必在一个入门例子里再造三台 Meta 引擎。
 
-:::codeBox "code"
-```
+```anchor elaboration_my_step_examples
 example (P Q : Prop) (hP : P) (hQ : Q) : P ∧ Q := by
   my_step
   · my_step
@@ -563,7 +542,6 @@ example (P : Prop) : P → P := by
   my_step
   my_step
 ```
-:::
 
 第一个证明里，初次调用看到 `And`，委托 `constructor`，于是得到两个活动目标。余下两次调用分别找到匹配假设。第二个证明里，弱头形露出函数目标，`intro` 创建局部假设和新目标，最后一次调用再用假设关闭它。
 
@@ -696,7 +674,7 @@ number := false
 
 宏之后引入的计算栈，现在每一层都有了实际工作：
 
-:::codeBox "code"
+:::codeBox "pseudocode"
 ```
 CoreM     : global compilation context, messages, exceptions, core state
 MetaM     : expressions, local context, metavariables, proof construction

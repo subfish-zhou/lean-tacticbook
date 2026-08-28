@@ -280,8 +280,7 @@ file := "ch03-macro-missing-name"
 
 本章的伴随示例模块已经 `import Lean` 并 `open Lean`；以下片段按出现顺序放在同一个命名空间中。若把片段单独移进新文件，也要先补上这两项环境。
 
-:::codeBox "code"
-```
+```anchor macro_environment_query
 namespace MacroEnvironmentDemo
 
 def answer := 42
@@ -308,7 +307,6 @@ macro_rules
 
 end MacroEnvironmentDemo
 ```
-:::
 
 模式捕获的 `name` 类型是 `TSyntax`，句法类别为 `ident`；`name.getId` 从中取出 `Name`。`Macro.resolveGlobalName` 返回一份候选列表，每一项由声明名与字段记法投影列表组成。`head?` 把空表变成 `none`；`let some (declName, projections) := ... | ...` 在得到首项时拆出这两个分量，得到 `none` 时则走竖线后的报错分支。后面的 `unless condition do ...` 只在条件为假时运行其分支。
 
@@ -318,21 +316,17 @@ end MacroEnvironmentDemo
 
 先停在函数体的第一行：
 
-:::codeBox "code"
+```anchor macro_environment_namespace
+      let ns ← Macro.getCurrNamespace
 ```
-let ns ← Macro.getCurrNamespace
-```
-:::
 
 `Macro.getCurrNamespace` 的类型不是 `Name`，而是 `MacroM Name`。`Name` 已经是名字；`MacroM Name` 则是一项计算：Lean 在当前宏展开上下文中运行它时，可以读取上下文、更新宏状态，也可能失败，成功后才产出 `Name`。普通的 `let ns := ...` 会把计算本身绑定给 `ns`；左箭头则先运行计算，再把得到的 `Name` 绑定给 `ns`。
 
 下一行形状相同，不过这次得到的是列表：
 
-:::codeBox "code"
+```anchor macro_environment_candidates
+      let candidates ← Macro.resolveGlobalName name.getId
 ```
-let candidates ← Macro.resolveGlobalName name.getId
-```
-:::
 
 第二项动作依赖模式捕获的句法；后面的错误又同时依赖原始标识符与第一项动作返回的命名空间。`do` 让我们按执行顺序写出这些依赖。底层的 `bind` 接收一项计算，再接收一个函数；这个函数拿到前一项计算的成功结果后，构造后续计算（continuation）：
 
@@ -358,11 +352,9 @@ pure : α → M α
 
 最后那个标识符值得再看一眼：
 
-:::codeBox "code"
+```anchor macro_environment_resolved
+      let resolved := mkIdentFrom name declName
 ```
-let resolved := mkIdentFrom name declName
-```
-:::
 
 这一行确实用了普通的 `:=`。取得 `declName` 之后，定义在 `Init/Meta/Defs.lean` 中的 `mkIdentFrom` 会立即构造句法，并从用户写下的标识符复制源位置。这里没有 `MacroM` 动作要运行。因此，`:=` 与 `←` 的区别不在个人偏好，也不在异步执行。只要看右侧的类型：普通的 `α` 留在 `:=` 后面；`M α` 则必须先用 `←` 运行，后续代码才能使用里面的 `α`。
 
@@ -374,7 +366,7 @@ file := "ch03-phase-computation"
 
 同样的四种形状会贯穿 Lean 的元编程 API：
 
-:::codeBox "code"
+:::codeBox "pseudocode"
 ```
 ordinary result       α
 phase computation     M α
@@ -412,7 +404,7 @@ abbrev MacroM := ReaderT Macro.Context
 
 后面的层也按同样方式构造：
 
-:::codeBox "code"
+:::codeBox "pseudocode"
 ```
 CoreM     := ReaderT Core.Context (StateRefT Core.State (EIO Exception))
 MetaM     := ReaderT Meta.Context (StateRefT Meta.State CoreM)
@@ -459,7 +451,7 @@ file := "ch03-macro-candidates"
 
 还有一种更简单的错误，Lean 会在我们来得及猜测顺序之前就抓住它：
 
-:::codeBox "code"
+:::codeBox "error code"
 ```
 syntax:max "sameRule" : term
 
@@ -505,13 +497,15 @@ file := "ch03-recursive-expansion"
 
 所以，递归需要的东西与普通函数一样：必须前进。下面这个宏一步也没走：
 
-:::codeBox "code"
-```
+```anchor macro_loop_tac
 syntax "loopTac" : tactic
 macro_rules
   | `(tactic| loopTac) => `(tactic| loopTac)
+```
 
--- example : True := by loopTac
+:::codeBox "error code"
+```
+example : True := by loopTac
 -- error: maximum recursion depth has been reached
 ```
 :::
@@ -689,7 +683,7 @@ set_option trace.Elab.step true in
 
 四个实验留下了一条好用的路径：
 
-:::codeBox "code"
+:::codeBox "pseudocode"
 ```
 text rejected
   → inspect the parser declaration
@@ -718,7 +712,7 @@ file := "ch03-exercises"
 
 3. 调整 `poly_roots`，让它处理如下形式的假设：
 
-   :::codeBox "code"
+   :::codeBox "pseudocode"
    ```
    example (x : ℚ) (h : x^2 - 5*x + 6 = 0) : x = 2 ∨ x = 3 := by
      ...

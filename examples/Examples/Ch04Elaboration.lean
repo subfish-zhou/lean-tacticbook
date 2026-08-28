@@ -51,6 +51,7 @@ macro_rules
 -- ANCHOR_END: elaboration_poly_roots_target_core
 
 -- ANCHOR: macro_poly_roots_infer_variable
+-- ANCHOR: elaboration_poly_roots2_definition
 syntax "poly_roots₂ " term " with " term:max+ : tactic
 
 elab_rules : tactic
@@ -64,9 +65,12 @@ elab_rules : tactic
       let roots : TSyntaxArray `term := suppliedRoots
       let rootList ← `(term| [$roots,*])
       evalTactic (← `(tactic| poly_roots_target_core $poly with $rootList in $x))
+-- ANCHOR_END: elaboration_poly_roots2_definition
 
 example (x : ℚ) : x^2 - 5*x + 6 = 0 ↔ x = 2 ∨ x = 3 := by
+  -- ANCHOR: elaboration_poly_roots2_call
   poly_roots₂ x^2 - 5*x + 6 with 2 3
+  -- ANCHOR_END: elaboration_poly_roots2_call
 -- ANCHOR_END: macro_poly_roots_infer_variable
 
 -- ANCHOR: elaboration_poly_roots_wrong_order
@@ -86,6 +90,7 @@ example (x : ℚ) :
 -- ANCHOR_END: elaboration_poly_roots2_shapes
 
 -- ANCHOR: elaboration_poly_roots_core
+-- ANCHOR: elaboration_source_polynomial
 private def sourcePolynomial? (target : Expr) (x : Expr) (lctx : LocalContext) : Option Expr := do
   let target := target.consumeMData
   if target.isAppOfArity ``Iff 2 then
@@ -95,7 +100,9 @@ private def sourcePolynomial? (target : Expr) (x : Expr) (lctx : LocalContext) :
       if let some (poly, _) := eqSides? decl.type then
         if x.isFVar && poly.containsFVar x.fvarId! then return poly
   failure
+-- ANCHOR_END: elaboration_source_polynomial
 
+-- ANCHOR: elaboration_poly_roots_core_tactic
 syntax "poly_roots_core " term " with " term " in " term : tactic
 
 macro_rules
@@ -109,15 +116,19 @@ macro_rules
             ring] at hpoly
           simpa only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil, mul_one,
             mul_eq_zero, sub_eq_zero, or_assoc] using hpoly)
+-- ANCHOR_END: elaboration_poly_roots_core_tactic
 
+-- ANCHOR: elaboration_mk_root_list_syntax
 private def mkRootListSyntax (roots : Array Expr) : TacticM (TSyntax `term) := do
   let some firstRoot := roots[0]?
     | throwError "poly_roots: expected at least one root"
   let rootType ← inferType firstRoot
   Term.exprToSyntax (← mkListLit rootType roots.toList)
+-- ANCHOR_END: elaboration_mk_root_list_syntax
 -- ANCHOR_END: elaboration_poly_roots_core
 
 -- ANCHOR: macro_poly_roots_infer_all
+-- ANCHOR: elaboration_poly_roots_public
 syntax "poly_roots" : tactic
 
 elab_rules : tactic
@@ -131,9 +142,12 @@ elab_rules : tactic
       let x ← Term.exprToSyntax x
       let rootList ← mkRootListSyntax roots
       evalTactic (← `(tactic| poly_roots_core $poly with $rootList in $x))
+-- ANCHOR_END: elaboration_poly_roots_public
 
+-- ANCHOR: elaboration_poly_roots_local_example
 example (x : ℚ) (h : x^2 - 5*x + 6 = 0) : x = 2 ∨ x = 3 := by
   poly_roots
+-- ANCHOR_END: elaboration_poly_roots_local_example
 -- ANCHOR_END: macro_poly_roots_infer_all
 
 -- ANCHOR: macro_poly_roots_cubic
@@ -181,6 +195,7 @@ example (P Q : Prop) (hP : P) (hQ : Q) : P ∧ Q := by
 -- ANCHOR_END: elaboration_show_target
 
 -- ANCHOR: elaboration_my_assumption
+-- ANCHOR: elaboration_my_assumption_definition
 private def myFindLocalDeclWithType? (type : Expr) : MetaM (Option FVarId) := do
   (← getLCtx).findDeclRevM? fun localDecl => do
     if localDecl.isImplementationDetail then
@@ -189,7 +204,6 @@ private def myFindLocalDeclWithType? (type : Expr) : MetaM (Option FVarId) := do
       return some localDecl.fvarId
     else
       return none
-
 
 syntax "my_assumption" : tactic
 
@@ -202,9 +216,12 @@ elab_rules : tactic
           | throwError "my_assumption failed, target{indentExpr target}"
         goal.assign (mkFVar fvarId)
         return []
+-- ANCHOR_END: elaboration_my_assumption_definition
 
+-- ANCHOR: elaboration_my_assumption_example
 example (P : Prop) (h : P) : P := by
   my_assumption
+-- ANCHOR_END: elaboration_my_assumption_example
 -- ANCHOR_END: elaboration_my_assumption
 
 -- ANCHOR: elaboration_my_exact
@@ -259,6 +276,7 @@ example (P Q : Prop) (hP : P) (hQ : Q) : P ∧ Q := by
 -- ANCHOR_END: elaboration_my_apply_without_queue
 
 -- ANCHOR: elaboration_my_step
+-- ANCHOR: elaboration_my_step_definition
 syntax "my_step" : tactic
 
 elab_rules : tactic
@@ -276,7 +294,9 @@ elab_rules : tactic
           match target with
           | .forallE .. => evalTactic (← `(tactic| intro))
           | _ => throwError "my_step does not know how to continue from target{indentExpr target}"
+-- ANCHOR_END: elaboration_my_step_definition
 
+-- ANCHOR: elaboration_my_step_examples
 example (P Q : Prop) (hP : P) (hQ : Q) : P ∧ Q := by
   my_step
   · my_step
@@ -285,6 +305,7 @@ example (P Q : Prop) (hP : P) (hQ : Q) : P ∧ Q := by
 example (P : Prop) : P → P := by
   my_step
   my_step
+-- ANCHOR_END: elaboration_my_step_examples
 -- ANCHOR_END: elaboration_my_step
 
 end tacticbook_macros

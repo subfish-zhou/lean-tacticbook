@@ -89,7 +89,9 @@ macro_rules
             mul_eq_zero, sub_eq_zero])
 
 example (x : ℚ) : x^2 - 5*x + 6 = 0 ↔ x = 2 ∨ x = 3 := by
+  -- ANCHOR: elaboration_old_poly_roots_call
   poly_roots x^2 - 5*x + 6 with [2, 3] in x
+  -- ANCHOR_END: elaboration_old_poly_roots_call
 
 example (x : ℚ) :
     x^3 - 6*x^2 + 11*x - 6 = 0 ↔ x = 1 ∨ x = 2 ∨ x = 3 := by
@@ -136,15 +138,24 @@ syntax "#resolve_decl " ident : command
 
 macro_rules
   | `(#resolve_decl $name:ident) => do
+      -- ANCHOR: macro_environment_namespace
       let ns ← Macro.getCurrNamespace
+      -- ANCHOR_END: macro_environment_namespace
+      -- ANCHOR: macro_environment_candidates
       let candidates ← Macro.resolveGlobalName name.getId
+      -- ANCHOR_END: macro_environment_candidates
       let some (declName, projections) := candidates.head?
-        | Macro.throwErrorAt name s!"unknown declaration `{name.getId}` in namespace `{ns}`"
+        | Macro.throwErrorAt name
+            s!"unknown declaration `{name.getId}` in namespace `{ns}`"
       unless projections.isEmpty do
-        Macro.throwErrorAt name s!"`{name.getId}` was parsed using field notation"
+        Macro.throwErrorAt name
+          s!"`{name.getId}` was parsed using field notation"
       unless ← Macro.hasDecl declName do
-        Macro.throwErrorAt name s!"resolved name `{declName}` is not a declaration"
+        Macro.throwErrorAt name
+          s!"resolved name `{declName}` is not a declaration"
+      -- ANCHOR: macro_environment_resolved
       let resolved := mkIdentFrom name declName
+      -- ANCHOR_END: macro_environment_resolved
       `(command| #check $resolved)
 
 #resolve_decl answer
@@ -239,6 +250,12 @@ example (n : Nat) (h : n > 0) : n - 1 < n := by
 example (n : Nat) : n = n := by
   iterate 1 rfl
 -- ANCHOR_END: macro_builtin_recursion
+
+-- ANCHOR: macro_loop_tac
+syntax "loopTac" : tactic
+macro_rules
+  | `(tactic| loopTac) => `(tactic| loopTac)
+-- ANCHOR_END: macro_loop_tac
 
 -- ANCHOR: macro_hygienic_let
 macro "hygienicLet(" t:term ")" : term =>
