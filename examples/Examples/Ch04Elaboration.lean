@@ -5,6 +5,21 @@ open Lean Meta Elab Tactic
 
 namespace tacticbook_macros
 
+-- ANCHOR: elaboration_show_target
+syntax "my_show_target" : tactic
+
+elab_rules : tactic
+  | `(tactic| my_show_target) => withMainContext do
+      logInfo m!"{← getMainTarget}"
+
+set_option linter.unusedTactic false in
+example (P : Prop) : P → P := by
+  my_show_target
+  intro h
+  my_show_target
+  exact h
+-- ANCHOR_END: elaboration_show_target
+
 
 -- ANCHOR: elaboration_roots_and_variable
 private partial def rootsAndVariable? (e : Expr) : Option (Expr × Array Expr) := do

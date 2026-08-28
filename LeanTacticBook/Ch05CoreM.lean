@@ -23,7 +23,7 @@ tag := "ch05-overview"
 file := "ch05-overview"
 %%%
 
-Ch04 已经让 `my_poly_roots`、`my_assumption` 和 `my_apply` 跑了起来，但当时只给每个接口一份局部契约：`withMainContext` 为什么能装入局部现场，异常怎样中止计算，错误怎样取得位置，计算失败后状态怎样恢复，都还没有拆开。现在从最底层开始还债。
+Ch04 已经让 `my_show_target`、`my_poly_roots`、`my_assumption` 和 `my_apply` 跑了起来，但当时只给每个接口一份局部契约：`withMainContext` 为什么能装入局部现场，异常怎样中止计算，错误怎样取得位置，计算失败后状态怎样恢复，都还没有拆开。现在从最底层开始还债。
 
 先看一个不依赖证明目标的问题。一个名字究竟指向哪个声明，要看当前 namespace、`open` 声明和前文已经加载的环境；一条诊断该标在哪里，也要知道源码位置；命令执行后产生的消息还要留给编辑器和构建日志读取。这些信息都不在命令的几个字符里。承载这份全局编译现场的计算层就是 `CoreM`。
 
@@ -41,9 +41,6 @@ Ch04 已经让 `my_poly_roots`、`my_assumption` 和 `my_apply` 跑了起来，�
 > 在 Lean 当前的核心工作现场中运行一项计算；成功后得到普通值 `α`。
 
 这里的 `α` 可以是名称列表、一个声明、一个布尔值，也可以是 `Unit`。`CoreM α` 是一项会读取现场、更新状态或失败，并在成功后交出 `α` 的计算。`let xs ← action` 中的 `←` 运行 action，再把普通结果交给 `xs`。
-
-
-假设文件前面已经声明了一个定理，后面的一条新命令想查询它。命令不能只看自己的那几个字符：它还要知道当前 namespace、已经 `open` 的名字、前文注册的声明，以及错误应当指向源码的哪一处。查询结束后，它还要把结果写进消息窗口。
 
 # 第一个问题：命令如何查询一个声明
 %%%
@@ -88,7 +85,7 @@ def elabBookPrintAxioms : CommandElab
 ```
 :::
 
-这段轮廓把工作分到两个计算层：
+命令主体在 `CommandElabM` 与它的下层 `CoreM` 中执行；消息记录完成后，可点击内容才进入懒渲染。这个阶段的外层 thunk 在 `BaseIO` 中运行，标准 pretty-printer 回调再由 `PPContext` 启动 `MetaM`：
 
 :::codeBox "pseudocode"
 ```
@@ -96,7 +93,7 @@ def elabBookPrintAxioms : CommandElab
 按 namespace/open 解析名字 CoreM
 收集传递公理依赖           读取普通全局声明环境；本章稍后解释所在计算层
 记录消息                   CommandElabM
-把常量名显示成可点击文字   懒渲染阶段借用 MetaM
+把常量名显示成可点击文字   BaseIO 懒 thunk；标准回调内部运行 MetaM
 ```
 :::
 
@@ -172,11 +169,7 @@ Syntax → Option Expr → CoreM (List Name)
 ```
 :::
 
-这里省略的是 `(expectedType? := none)`；若调用者提供预期类型，Lean 会把它写进标识符的 info。`CoreM (List Name)` 的意思是：
-
-> 把这段计算放进 Lean 的 Core 工作现场运行；若它成功，取回一个普通的 `List Name`。
-
-计算所需的当前 namespace、`open` 声明、全局环境和源码位置，均由 `CoreM` 携带，无须调用者逐项传入。
+这里省略的是 `(expectedType? := none)`；若调用者提供预期类型，Lean 会把它写进标识符的 info。此时手里的 `CoreM (List Name)` 仍是一项 action，不是已经得到的名字列表；它所需的当前 namespace、`open` 声明、全局环境和源码位置均由 `CoreM` 携带，无须调用者逐项传入。
 
 因此，action 和 action 运行后的值不是同一种东西。`←` 正是两者的分界：
 

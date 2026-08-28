@@ -30,36 +30,57 @@ number := false
   poly_roots x^2 - 5*x + 6 with [2, 3] in x
 ```
 
-多项式、根和变量都已出现在目标里，但宏只拿到调用处的 `Syntax`；目标怎么变，都不会给这棵句法树多添一个参数。译补器则能读取当前目标。我们先让调用者只保留多项式，把根和变量从目标右边读出来。
+多项式、根和变量都已出现在目标里，但宏只拿到调用处的 `Syntax`；目标怎么变，都不会给这棵句法树多添一个参数。译补器则能读取当前目标。先用一个最小例确认这件事，再让调用者只保留多项式，把根和变量从目标右边读出来。
 
 一个证明术译补器下面垫着四层计算。若等到四层全部拆完才动手，第一个能读取目标的实用证明术就离得太远了。这里先借用需要的操作；第 5 至第 8 章再逐层拆开它们。
 
-# 4.1 只让调用者写多项式
+# 4.1 同一句调用，读到不同目标
 %%%
-tag := "ch04-small-interface"
-file := "ch04-small-interface"
+tag := "ch04-show-target"
+file := "ch04-show-target"
 number := false
 %%%
 
-我们要把调用缩成：
+先写最小的证明术译补器。它不关闭目标，不生成新目标，只把当前目标记进 Lean 的诊断消息：
+
+```anchor elaboration_show_target
+syntax "my_show_target" : tactic
+
+elab_rules : tactic
+  | `(tactic| my_show_target) => withMainContext do
+      logInfo m!"{← getMainTarget}"
+
+set_option linter.unusedTactic false in
+example (P : Prop) : P → P := by
+  my_show_target
+  intro h
+  my_show_target
+  exact h
+```
+
+两次调用的文本完全相同。第一次位于 `intro` 之前，消息里的目标是 `P → P`；第二次位于 `intro h` 之后，消息变成 `P`。解析器两次都只生成 `my_show_target` 那棵 `Syntax`，变化来自证明现场。
+
+`macro_rules` 的分支会把输入句法换成另一棵句法；这里的 `elab_rules : tactic` 分支则运行一项 `TacticM` 计算。`withMainContext` 把主目标携带的局部声明装入当前 Meta 现场，`getMainTarget` 取得目标 `Expr`，`m!` 将它插入结构化消息，`logInfo` 再通过诊断系统报告这条消息。函数体没有给证明洞赋值，也没有替换活动目标，所以两次观察之后仍要由 `intro` 和 `exact` 完成证明。
+
+这就是本章所需的译补最小粒子：*调用句法不变，运行结果可以依赖当前目标。* 下面沿这条边界再走一步：先把目标右侧的 `Expr` 拆成变量与根，4.3 节再用它运行证明步骤。
+
+# 4.2 从目标读出变量和根
+%%%
+tag := "ch04-read-roots"
+file := "ch04-read-roots"
+number := false
+%%%
+
+我们要把上一章的调用缩成：
 
 ```anchor elaboration_poly_roots_first_example
 example (x : ℚ) : x^2 - 5*x + 6 = 0 ↔ x = 2 ∨ x = 3 := by
   my_poly_roots x^2 - 5*x + 6
 ```
 
-它比上一章的调用少了根列表和变量。多项式参数有意保留：无参版本当然可以再读双条件左边，但第一次写译补器就同时处理左右两条来源，反而遮住我们要看的动作。这里固定调用者给出多项式，只从目标右边读取变量和候选根。
+它少了根列表和变量。多项式参数有意保留：无参版本当然可以再读双条件左边，但这会让刚刚得到的单一动作与另一条读取路径缠在一起。这里固定调用者给出多项式，只从目标右边读取变量和候选根。
 
-这个公开接口只接受双条件目标。右边可以是一条等式，也可以是若干等式组成的析取；所有等式必须具有同一个左端。上例因此给出共同左端 `x` 与根数组 `#[2, 3]`。
-
-证明术译补器能取得当前目标的 `Expr`。接下来用一个递归函数拆开它的右边。
-
-# 4.2 用一个递归函数读出变量和根
-%%%
-tag := "ch04-read-roots"
-file := "ch04-read-roots"
-number := false
-%%%
+这个公开接口只接受双条件目标。右边可以是一条等式，也可以是若干等式组成的析取；所有等式必须具有同一个左端。上例因此给出共同左端 `x` 与根数组 `#[2, 3]`。一个递归函数就能完成这项读取：
 
 ```anchor elaboration_roots_and_variable
 private partial def rootsAndVariable? (e : Expr) : Option (Expr × Array Expr) := do
@@ -132,7 +153,7 @@ elab_rules : tactic
       evalTactic (← `(tactic| my_poly_roots_target $poly with [$roots,*] in $x))
 ```
 
-`macro_rules` 的分支返回新句法；`elab_rules : tactic` 的分支则运行一项 `TacticM` 计算。`withMainContext` 让后面的 Meta 与项译补操作使用当前主目标的局部现场。函数体先取得目标、剥掉外层元数据，再明确检查它是双条件。检查保证 `getAppArgs[1]!` 存在；这个参数就是右边，交给上一节的递归读取器。
+沿用 4.1 节的 `withMainContext` 后，函数体先取得目标、剥掉外层元数据，再明确检查它是双条件。检查保证 `getAppArgs[1]!` 存在；这个参数就是右边，交给上一节的递归读取器。
 
 读取结果是 `Expr`，内部宏却接收项句法。`Term.exprToSyntax` 为这个例子读出的局部变量与根表达式生成可重新译补的句法；它不会恢复用户原文，这里也不主张任意 `Expr` 都能无损往返。`roots.mapM` 逐个运行这项可能失败的转换，任一步失败就让整次数组转换失败。随后，类型标注把 `roots` 固定为 `term` 句法数组，使准引用中的 `$roots,*` 能逐项展开进列表。
 
@@ -523,7 +544,7 @@ number := false
 
 这些例子已经把目标、局部假设、用户项和活动目标队列接到一起。借用四层操作留下的问题，下面四章各接走一类。
 
-本章读取目标并报错时，已经借用了环境、选项、源码引用、消息、异常与核心可变状态。它们从哪里来？为什么第一章的 `logInfo` 能记录结构化消息数据，`throwError` 又怎样取得有用的位置？这些都属于后续各层下方的全局编译现场，*第 5 章 CoreM* 从这里拆起。
+本章打印目标并报错时，已经借用了环境、选项、源码引用、消息、异常与核心可变状态。它们从哪里来？为什么 4.1 节的 `logInfo` 能记录结构化消息数据，`throwError` 又怎样取得有用的位置？这些都属于后续各层下方的全局编译现场，*第 5 章 CoreM* 从这里拆起。
 
 `isDefEq` 成功后可能留下约束；*第 6 章 MetaM* 要解释一次合一成功后，为什么更大的候选若随后失败，仍可能需要外层快照。`MVarId.apply` 尚未打开的证明构造也在这一层处理。
 
@@ -531,15 +552,4 @@ number := false
 
 漏掉一次 `replaceMainGoal`，`?left` 和 `?right` 明明存在，下一个圆点却无事可做。*第 8 章 TacticM* 就从这道接缝进入有序活动目标队列和证明术执行的保存与恢复规则。为什么给 `?old` 赋值不会把它移出队列？`replaceMainGoal`、`liftMetaTactic`、`evalTactic`、`first` 和普通证明术异常，如何保存并恢复队列与继承来的元变量上下文？`my_apply` 暴露的两种状态会在这里成为主角。
 
-宏之后引入的计算栈，现在每一层都有了实际工作：
-
-:::codeBox "pseudocode"
-```
-CoreM     : global compilation context, messages, exceptions, core state
-MetaM     : expressions, local context, metavariables, proof construction
-TermElabM : user terms, expected types, postponement, synthetic obligations
-TacticM   : ordered active goals and tactic recovery policy
-```
-:::
-
-四层沿同一条计算栈叠起来，并非四套互不相干的编程语言。每往外一层，计算都会加入自己的当前上下文或状态，同时保留下层能力。我们先用组装好的整台机器，让 `my_poly_roots` 只说调用者真正想说的话。现在再逐层拆开，每一层的问题都已有来处。
+这四笔债都来自已经运行过的代码。下一章先从它们共同依赖的全局编译现场开始。
