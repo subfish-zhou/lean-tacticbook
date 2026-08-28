@@ -260,9 +260,9 @@ syntax "my_rw2" " [" rwTerm,* "]" : tactic
 tag := "syntax-type-parser"
 %%%
 
-以上的介绍像是在陈列句法声明工具箱，接下来我们要操作句法本身。如果你只想学如何声明句法，那么你完全可以跳到下一节。更多的理论总是有用的！作为一种动机演示，也同样作为学习本节的奖励，最终成果将会是一个“判断给定字符串是否符合某个句法解析器”的函数。假如你懂一些Lean的函数式编程，会更好理解本节。
+以上的介绍像是在陈列句法声明工具箱，接下来我们要操作句法本身。如果你只想学如何声明句法，那么你完全可以跳到下一节。更多的理论总是有用的！作为一种动机演示，也同样作为学习本节的奖励，最终成果将会是一个“判断给定字符串是否符合某个句法解析器”的函数。上一章的函数、构造子和容器读法已经足够支撑下面的代码。
 
-很自然地，`Syntax`也是一个归纳类型：
+上一章已经练习过从构造子声明的结果类型往回读。用同样的方法看，`Syntax`也是一个归纳类型：
 
 ```anchor syntax_type_definition
 inductive Syntax where
@@ -277,7 +277,7 @@ inductive Syntax where
 
 - {anchorTerm syntax_type_definition}`SourceInfo`主要是给解析器提供源信息。一个重要的应用是它可以用来实现鼠标悬停时的信息演示。它比较复杂，我们先跳过。
 - {anchorTerm syntax_type_definition}`missing`就是一个在解析错误时的占位符，一般不必关心。
-- {anchorTerm syntax_type_definition}`node`就是句法树节点。{anchorTerm syntax_type_definition}`kind : SyntaxNodeKind`其实就是名字，实际上`abbrev SyntaxNodeKind := Lean.Name`。{anchorTerm syntax_type_definition}`args`就是子句法树节点，因为可能有很多子节点，所以是个数组。
+- {anchorTerm syntax_type_definition}`node`就是句法树节点。{anchorTerm syntax_type_definition}`kind : SyntaxNodeKind`其实就是名字，实际上`abbrev SyntaxNodeKind := Lean.Name`。{anchorTerm syntax_type_definition}`args : Array Syntax`保存这个节点的直接子节点；元素类型说明每一项仍是`Syntax`，Array则方便后续代码读取`size`或按索引取得某个子节点。
 - {anchorTerm syntax_type_definition}`atom`表示字符串句法原子。
 - {anchorTerm syntax_type_definition}`Substring.Raw`是“带起始位置的字符串切片”数据结构，经常在解析器里使用。`Raw`表示这个切片没被证明不越界。
 - {anchorTerm syntax_type_definition}`ident`专门表示标识符。注意这个构造子和前面`ident`句法类别虽有联系但并不相同。`rawVal`保存你输入的原始文本，`val`保存、规范化并进行卫生宏处理后的名字；`preresolved`则保存预解析出的候选命名空间、全局声明或节变量，供卫生宏处理名字绑定。
