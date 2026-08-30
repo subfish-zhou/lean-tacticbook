@@ -1,20 +1,8 @@
 import VersoManual
 
 import LeanTacticBook.Helpers
-import LeanTacticBook.Ch01Introduction
 import LeanTacticBook.Ch02Syntax
 import LeanTacticBook.Ch03Macros
-import LeanTacticBook.Ch04Elaboration
-import LeanTacticBook.Ch05CoreM
-import LeanTacticBook.Ch06MetaM
-import LeanTacticBook.Ch07TermElabM
-import LeanTacticBook.Ch08TacticM
-import LeanTacticBook.Ch09Exact
-import LeanTacticBook.Ch10Ring
-import LeanTacticBook.Ch11Linarith
-import LeanTacticBook.Ch12Grind
-import LeanTacticBook.Ch13BVDecide
-import LeanTacticBook.AppendixApiReference
 
 open Verso.Genre Manual
 open Verso Code External
@@ -71,30 +59,6 @@ lake env lean --version
 
 _感谢 [Lean-zh 中文社区](https://www.leanprover.cn/) 的朋友们的支持，感谢 [猫猫](https://github.com/Fulcrum-Nebula) 愿意把本书作为上海交通大学AI4Math暑校讲义使用，让我有动力完成此书。尽管本书大部分是我一个字一个字手打的，但是还是要感谢GPT5.6sol，尤其是基于此的我的Hermes实例Iroha、Kaguya和Yachiyo，她们帮我检索整理素材，以及处理Verso相关的很多工程问题，并写了好几个版本之后促使我放弃偷懒的幻想而坚持古法手作。_
 
-{include 0 LeanTacticBook.Ch01Introduction}
-
 {include 0 LeanTacticBook.Ch02Syntax}
 
 {include 0 LeanTacticBook.Ch03Macros}
-
-{include 0 LeanTacticBook.Ch04Elaboration}
-
-{include 0 LeanTacticBook.Ch05CoreM}
-
-{include 0 LeanTacticBook.Ch06MetaM}
-
-{include 0 LeanTacticBook.Ch07TermElabM}
-
-{include 0 LeanTacticBook.Ch08TacticM}
-
-{include 0 LeanTacticBook.Ch09Exact}
-
-{include 0 LeanTacticBook.Ch10Ring}
-
-{include 0 LeanTacticBook.Ch11Linarith}
-
-{include 0 LeanTacticBook.Ch12Grind}
-
-{include 0 LeanTacticBook.Ch13BVDecide}
-
-{include 0 LeanTacticBook.AppendixApiReference}

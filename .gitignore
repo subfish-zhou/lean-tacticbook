@@ -33,3 +33,6 @@ __pycache__/
 examples/.lake
 LeanTacticBook/old
 examples/Examples/old
+artifacts
+drafts
+LeanTacticBook/plans
