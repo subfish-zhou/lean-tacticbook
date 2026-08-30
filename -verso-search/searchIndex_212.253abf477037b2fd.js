@@ -1,0 +1,1 @@
+window.docContents[212].resolve({"/Ch03Macros/#ch03-macros":{"contents":"本章目标：用 macro 和 macro_rules 定义 term、tactic 与 command 宏，可选项和重复项，展开顺序与卫生性，区分宏包装、tactic elaborator 与 builtin tactic。\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n","context":"Lean 4 Tactic纲目","header":"2. 宏","id":"/Ch03Macros/#ch03-macros"}});

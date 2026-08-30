@@ -1,0 +1,1 @@
+window.docContents[210].resolve({"/Ch02Syntax/#syntax-rw":{"contents":"这真的很简单：\n\n\n\n","context":"Lean 4 Tactic纲目\u0009句法\u0009实战案例","header":"1.6.2. rewrite","id":"/Ch02Syntax/#syntax-rw"}});

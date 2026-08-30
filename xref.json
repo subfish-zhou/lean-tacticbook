@@ -1,0 +1,1058 @@
+{"Verso.Genre.Manual.section":
+ {"title": "Sections or chapters of the manual",
+  "description": null,
+  "contents":
+  {"what-is-macro":
+   [{"id": "what-is-macro",
+     "data":
+     {"title": "何为宏",
+      "shortTitle": null,
+      "sectionNum": "2.1.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "宏", "shortTitle": null, "number": "2"},
+       {"title": "何为宏", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch03Macros/"}],
+   "tactic-macro":
+   [{"id": "tactic-macro",
+     "data":
+     {"title": "证明术宏",
+      "shortTitle": null,
+      "sectionNum": "2.3.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "宏", "shortTitle": null, "number": "2"},
+       {"title": "证明术宏", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch03Macros/"}],
+   "syntax-type-parser":
+   [{"id": "syntax-type-parser",
+     "data":
+     {"title": "Syntax 类型和解析器",
+      "shortTitle": null,
+      "sectionNum": "1.4.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "句法", "shortTitle": null, "number": "1"},
+       {"title": "Syntax 类型和解析器", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch02Syntax/"}],
+   "syntax-specifiers":
+   [{"id": "syntax-specifiers",
+     "data":
+     {"title": "固定原子与句法类别",
+      "shortTitle": null,
+      "sectionNum": "1.5.2.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "句法", "shortTitle": null, "number": "1"},
+       {"title": "常用功能列表", "shortTitle": null, "number": "5"},
+       {"title": "固定原子与句法类别", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch02Syntax/"}],
+   "syntax-simp":
+   [{"id": "syntax-simp",
+     "data":
+     {"title": "simp",
+      "shortTitle": null,
+      "sectionNum": "1.6.3.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "句法", "shortTitle": null, "number": "1"},
+       {"title": "实战案例", "shortTitle": null, "number": "6"},
+       {"title": "simp", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch02Syntax/"}],
+   "syntax-shared-tactic":
+   [{"id": "syntax-shared-tactic",
+     "data":
+     {"title": "共用的配置与位置句法",
+      "shortTitle": null,
+      "sectionNum": "1.6.1.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "句法", "shortTitle": null, "number": "1"},
+       {"title": "实战案例", "shortTitle": null, "number": "6"},
+       {"title": "共用的配置与位置句法", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch02Syntax/"}],
+   "syntax-rw":
+   [{"id": "syntax-rw",
+     "data":
+     {"title": "rewrite",
+      "shortTitle": null,
+      "sectionNum": "1.6.2.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "句法", "shortTitle": null, "number": "1"},
+       {"title": "实战案例", "shortTitle": null, "number": "6"},
+       {"title": "rewrite", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch02Syntax/"}],
+   "syntax-repetition":
+   [{"id": "syntax-repetition",
+     "data":
+     {"title": "重复",
+      "shortTitle": null,
+      "sectionNum": "1.3.4.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "句法", "shortTitle": null, "number": "1"},
+       {"title": "更复杂的句法", "shortTitle": null, "number": "3"},
+       {"title": "重复", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch02Syntax/"}],
+   "syntax-pretty-printer-controllers":
+   [{"id": "syntax-pretty-printer-controllers",
+     "data":
+     {"title": "雅印器控制符",
+      "shortTitle": null,
+      "sectionNum": "1.5.5.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "句法", "shortTitle": null, "number": "1"},
+       {"title": "常用功能列表", "shortTitle": null, "number": "5"},
+       {"title": "雅印器控制符", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch02Syntax/"}],
+   "syntax-precedence":
+   [{"id": "syntax-precedence",
+     "data":
+     {"title": "优先级规则",
+      "shortTitle": null,
+      "sectionNum": "1.2.2.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "句法", "shortTitle": null, "number": "1"},
+       {"title": "运算符的简便声明", "shortTitle": null, "number": "2"},
+       {"title": "优先级规则", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch02Syntax/"}],
+   "syntax-parser-position-controllers":
+   [{"id": "syntax-parser-position-controllers",
+     "data":
+     {"title": "解析器位置控制符",
+      "shortTitle": null,
+      "sectionNum": "1.5.4.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "句法", "shortTitle": null, "number": "1"},
+       {"title": "常用功能列表", "shortTitle": null, "number": "5"},
+       {"title": "解析器位置控制符", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch02Syntax/"}],
+   "syntax-parser-combinators":
+   [{"id": "syntax-parser-combinators",
+     "data":
+     {"title": "解析器组合子",
+      "shortTitle": null,
+      "sectionNum": "1.5.3.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "句法", "shortTitle": null, "number": "1"},
+       {"title": "常用功能列表", "shortTitle": null, "number": "5"},
+       {"title": "解析器组合子", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch02Syntax/"}],
+   "syntax-optional":
+   [{"id": "syntax-optional",
+     "data":
+     {"title": "可有可无的部分",
+      "shortTitle": null,
+      "sectionNum": "1.3.2.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "句法", "shortTitle": null, "number": "1"},
+       {"title": "更复杂的句法", "shortTitle": null, "number": "3"},
+       {"title": "可有可无的部分", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch02Syntax/"}],
+   "syntax-notation":
+   [{"id": "syntax-notation",
+     "data":
+     {"title": "运算符的简便声明",
+      "shortTitle": null,
+      "sectionNum": "1.2.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "句法", "shortTitle": null, "number": "1"},
+       {"title": "运算符的简便声明", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch02Syntax/"}],
+   "syntax-mixfix":
+   [{"id": "syntax-mixfix",
+     "data":
+     {"title": "前缀、后缀与中缀运算符",
+      "shortTitle": null,
+      "sectionNum": "1.2.1.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "句法", "shortTitle": null, "number": "1"},
+       {"title": "运算符的简便声明", "shortTitle": null, "number": "2"},
+       {"title": "前缀、后缀与中缀运算符", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch02Syntax/"}],
+   "syntax-lexical-parsers":
+   [{"id": "syntax-lexical-parsers",
+     "data":
+     {"title": "预定义解析器",
+      "shortTitle": null,
+      "sectionNum": "1.5.1.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "句法", "shortTitle": null, "number": "1"},
+       {"title": "常用功能列表", "shortTitle": null, "number": "5"},
+       {"title": "预定义解析器", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch02Syntax/"}],
+   "syntax-induction":
+   [{"id": "syntax-induction",
+     "data":
+     {"title": "布局敏感的 induction",
+      "shortTitle": null,
+      "sectionNum": "1.6.4.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "句法", "shortTitle": null, "number": "1"},
+       {"title": "实战案例", "shortTitle": null, "number": "6"},
+       {"title": "布局敏感的 induction", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch02Syntax/"}],
+   "syntax-features":
+   [{"id": "syntax-features",
+     "data":
+     {"title": "常用功能列表",
+      "shortTitle": null,
+      "sectionNum": "1.5.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "句法", "shortTitle": null, "number": "1"},
+       {"title": "常用功能列表", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch02Syntax/"}],
+   "syntax-examples":
+   [{"id": "syntax-examples",
+     "data":
+     {"title": "实战案例",
+      "shortTitle": null,
+      "sectionNum": "1.6.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "句法", "shortTitle": null, "number": "1"},
+       {"title": "实战案例", "shortTitle": null, "number": "6"}]},
+     "address": "/Ch02Syntax/"}],
+   "syntax-declaration":
+   [{"id": "syntax-declaration",
+     "data":
+     {"title": "句法声明",
+      "shortTitle": null,
+      "sectionNum": "1.1.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "句法", "shortTitle": null, "number": "1"},
+       {"title": "句法声明", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch02Syntax/"}],
+   "syntax-complex":
+   [{"id": "syntax-complex",
+     "data":
+     {"title": "更复杂的句法",
+      "shortTitle": null,
+      "sectionNum": "1.3.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "句法", "shortTitle": null, "number": "1"},
+       {"title": "更复杂的句法", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch02Syntax/"}],
+   "syntax-alternative":
+   [{"id": "syntax-alternative",
+     "data":
+     {"title": "在几种写法中选择",
+      "shortTitle": null,
+      "sectionNum": "1.3.3.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "句法", "shortTitle": null, "number": "1"},
+       {"title": "更复杂的句法", "shortTitle": null, "number": "3"},
+       {"title": "在几种写法中选择", "shortTitle": null, "number": "3"}]},
+     "address": "/Ch02Syntax/"}],
+   "syntax-abbreviation":
+   [{"id": "syntax-abbreviation",
+     "data":
+     {"title": "句法缩写",
+      "shortTitle": null,
+      "sectionNum": "1.3.1.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "句法", "shortTitle": null, "number": "1"},
+       {"title": "更复杂的句法", "shortTitle": null, "number": "3"},
+       {"title": "句法缩写", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch02Syntax/"}],
+   "macro-poly-roots":
+   [{"id": "macro-poly-roots",
+     "data":
+     {"title": "示例：多项式方程求解宏",
+      "shortTitle": null,
+      "sectionNum": "2.4.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "宏", "shortTitle": null, "number": "2"},
+       {"title": "示例：多项式方程求解宏", "shortTitle": null, "number": "4"}]},
+     "address": "/Ch03Macros/"}],
+   "lean-tacticbook":
+   [{"id": "lean-tacticbook",
+     "data":
+     {"title": "Lean 4 Tactic纲目",
+      "shortTitle": null,
+      "sectionNum": "",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null}]},
+     "address": "/"}],
+   "first-macro":
+   [{"id": "first-macro",
+     "data":
+     {"title": "第一个宏",
+      "shortTitle": null,
+      "sectionNum": "2.2.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "宏", "shortTitle": null, "number": "2"},
+       {"title": "第一个宏", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch03Macros/"}],
+   "ch03-recursive-expansion":
+   [{"id": "ch03-recursive-expansion",
+     "data":
+     {"title": "展开可以露出另一个宏",
+      "shortTitle": null,
+      "sectionNum": "2.9.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "宏", "shortTitle": null, "number": "2"},
+       {"title": "展开可以露出另一个宏", "shortTitle": null, "number": "9"}]},
+     "address": "/Ch03Macros/"}],
+   "ch03-production-macros":
+   [{"id": "ch03-production-macros",
+     "data":
+     {"title": "阅读 Lean 自己使用的宏",
+      "shortTitle": null,
+      "sectionNum": "2.11.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "宏", "shortTitle": null, "number": "2"},
+       {"title": "阅读 Lean 自己使用的宏", "shortTitle": null, "number": "11"}]},
+     "address": "/Ch03Macros/"}],
+   "ch03-phase-computation":
+   [{"id": "ch03-phase-computation",
+     "data":
+     {"title": "M  所携带的计算",
+      "shortTitle": null,
+      "sectionNum": "2.6.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "宏", "shortTitle": null, "number": "2"},
+       {"title": "M  所携带的计算", "shortTitle": null, "number": "6"}]},
+     "address": "/Ch03Macros/"}],
+   "ch03-macros":
+   [{"id": "ch03-macros",
+     "data":
+     {"title": "宏",
+      "shortTitle": null,
+      "sectionNum": "2.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "宏", "shortTitle": null, "number": "2"}]},
+     "address": "/Ch03Macros/"}],
+   "ch03-macrom-stack":
+   [{"id": "ch03-macrom-stack",
+     "data":
+     {"title": "可选： MacroM  的能力从哪里来",
+      "shortTitle": null,
+      "sectionNum": "2.6.1.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "宏", "shortTitle": null, "number": "2"},
+       {"title": "M  所携带的计算", "shortTitle": null, "number": "6"},
+       {"title": "可选： MacroM  的能力从哪里来", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch03Macros/"}],
+   "ch03-macro-narrow-api":
+   [{"id": "ch03-macro-narrow-api",
+     "data":
+     {"title": "宏可以问的少数事情",
+      "shortTitle": null,
+      "sectionNum": "2.7.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "宏", "shortTitle": null, "number": "2"},
+       {"title": "宏可以问的少数事情", "shortTitle": null, "number": "7"}]},
+     "address": "/Ch03Macros/"}],
+   "ch03-macro-missing-name":
+   [{"id": "ch03-macro-missing-name",
+     "data":
+     {"title": "宏没有收到的名字",
+      "shortTitle": null,
+      "sectionNum": "2.5.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "宏", "shortTitle": null, "number": "2"},
+       {"title": "宏没有收到的名字", "shortTitle": null, "number": "5"}]},
+     "address": "/Ch03Macros/"}],
+   "ch03-macro-candidates":
+   [{"id": "ch03-macro-candidates",
+     "data":
+     {"title": "两条规则都想接住同一个输入时",
+      "shortTitle": null,
+      "sectionNum": "2.8.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "宏", "shortTitle": null, "number": "2"},
+       {"title": "两条规则都想接住同一个输入时", "shortTitle": null, "number": "8"}]},
+     "address": "/Ch03Macros/"}],
+   "ch03-hygiene":
+   [{"id": "ch03-hygiene",
+     "data":
+     {"title": "为什么两个  x  不会相撞",
+      "shortTitle": null,
+      "sectionNum": "2.10.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "宏", "shortTitle": null, "number": "2"},
+       {"title": "为什么两个  x  不会相撞", "shortTitle": null, "number": "10"}]},
+     "address": "/Ch03Macros/"}],
+   "ch03-exercises":
+   [{"id": "ch03-exercises",
+     "data":
+     {"title": "练习",
+      "shortTitle": null,
+      "sectionNum": "2.13.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "宏", "shortTitle": null, "number": "2"},
+       {"title": "练习", "shortTitle": null, "number": "13"}]},
+     "address": "/Ch03Macros/"}],
+   "ch03-debug-layers":
+   [{"id": "ch03-debug-layers",
+     "data":
+     {"title": "找到失败开始的那一层",
+      "shortTitle": null,
+      "sectionNum": "2.12.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "宏", "shortTitle": null, "number": "2"},
+       {"title": "找到失败开始的那一层", "shortTitle": null, "number": "12"}]},
+     "address": "/Ch03Macros/"}],
+   "ch02-syntax":
+   [{"id": "ch02-syntax",
+     "data":
+     {"title": "句法",
+      "shortTitle": null,
+      "sectionNum": "1.",
+      "searchPriority": 50,
+      "context":
+      [{"title": "Lean 4 Tactic纲目", "shortTitle": null, "number": null},
+       {"title": "句法", "shortTitle": null, "number": "1"}]},
+     "address": "/Ch02Syntax/"}]}},
+ "Verso.Genre.Manual.example":
+ {"title": "Verso.Genre.Manual.example",
+  "description": null,
+  "contents":
+  {"tacticbook_syntax.simpStar":
+   [{"id": "tacticbook_syntax___simpStar",
+     "data":
+     {"/Ch02Syntax/#tacticbook_syntax___simpStar":
+      {"display": "simpStar",
+       "context": ["Lean 4 Tactic纲目", "句法", "更复杂的句法", "句法缩写"]}},
+     "address": "/Ch02Syntax/"}],
+   "tacticbook_syntax.simpPre":
+   [{"id": "tacticbook_syntax___simpPre",
+     "data":
+     {"/Ch02Syntax/#tacticbook_syntax___simpPre":
+      {"display": "simpPre",
+       "context": ["Lean 4 Tactic纲目", "句法", "更复杂的句法", "句法缩写"]}},
+     "address": "/Ch02Syntax/"}],
+   "tacticbook_syntax.simpPost":
+   [{"id": "tacticbook_syntax___simpPost",
+     "data":
+     {"/Ch02Syntax/#tacticbook_syntax___simpPost":
+      {"display": "simpPost",
+       "context": ["Lean 4 Tactic纲目", "句法", "更复杂的句法", "句法缩写"]}},
+     "address": "/Ch02Syntax/"}],
+   "tacticbook_syntax.rwTerm":
+   [{"id": "tacticbook_syntax___rwTerm",
+     "data":
+     {"/Ch02Syntax/#tacticbook_syntax___rwTerm":
+      {"display": "rwTerm",
+       "context": ["Lean 4 Tactic纲目", "句法", "更复杂的句法", "重复"]}},
+     "address": "/Ch02Syntax/"}],
+   "tacticbook_syntax.myexactSyntax":
+   [{"id": "tacticbook_syntax___myexactSyntax",
+     "data":
+     {"/Ch02Syntax/#tacticbook_syntax___myexactSyntax":
+      {"display": "myexactSyntax",
+       "context": ["Lean 4 Tactic纲目", "句法", "Syntax 类型和解析器"]}},
+     "address": "/Ch02Syntax/"}],
+   "tacticbook_syntax.myexact":
+   [{"id": "tacticbook_syntax___myexact",
+     "data":
+     {"/Ch02Syntax/#tacticbook_syntax___myexact-next":
+      {"display": "myexact", "context": ["Lean 4 Tactic纲目", "句法", "句法声明"]},
+      "/Ch02Syntax/#tacticbook_syntax___myexact":
+      {"display": "myexact", "context": ["Lean 4 Tactic纲目", "句法", "句法声明"]}},
+     "address": "/Ch02Syntax/"},
+    {"id": "tacticbook_syntax___myexact-next",
+     "data":
+     {"/Ch02Syntax/#tacticbook_syntax___myexact-next":
+      {"display": "myexact", "context": ["Lean 4 Tactic纲目", "句法", "句法声明"]},
+      "/Ch02Syntax/#tacticbook_syntax___myexact":
+      {"display": "myexact", "context": ["Lean 4 Tactic纲目", "句法", "句法声明"]}},
+     "address": "/Ch02Syntax/"}],
+   "tacticbook_syntax.matchesSyntax":
+   [{"id": "tacticbook_syntax___matchesSyntax",
+     "data":
+     {"/Ch02Syntax/#tacticbook_syntax___matchesSyntax":
+      {"display": "matchesSyntax",
+       "context": ["Lean 4 Tactic纲目", "句法", "Syntax 类型和解析器"]}},
+     "address": "/Ch02Syntax/"}],
+   "tacticbook_syntax.larrow":
+   [{"id": "tacticbook_syntax___larrow",
+     "data":
+     {"/Ch02Syntax/#tacticbook_syntax___larrow":
+      {"display": "larrow",
+       "context": ["Lean 4 Tactic纲目", "句法", "更复杂的句法", "在几种写法中选择"]}},
+     "address": "/Ch02Syntax/"}],
+   "tacticbook_syntax.binderIdent":
+   [{"id": "tacticbook_syntax___binderIdent",
+     "data":
+     {"/Ch02Syntax/#tacticbook_syntax___binderIdent":
+      {"display": "binderIdent",
+       "context": ["Lean 4 Tactic纲目", "句法", "更复杂的句法", "在几种写法中选择"]}},
+     "address": "/Ch02Syntax/"}],
+   "tacticbook_syntax.SyntaxCopy.Syntax.node":
+   [{"id": "tacticbook_syntax___SyntaxCopy___Syntax___node",
+     "data":
+     {"/Ch02Syntax/#tacticbook_syntax___SyntaxCopy___Syntax___node-next":
+      {"display": "node",
+       "context": ["Lean 4 Tactic纲目", "句法", "Syntax 类型和解析器"]},
+      "/Ch02Syntax/#tacticbook_syntax___SyntaxCopy___Syntax___node":
+      {"display": "node",
+       "context": ["Lean 4 Tactic纲目", "句法", "Syntax 类型和解析器"]}},
+     "address": "/Ch02Syntax/"},
+    {"id": "tacticbook_syntax___SyntaxCopy___Syntax___node-next",
+     "data":
+     {"/Ch02Syntax/#tacticbook_syntax___SyntaxCopy___Syntax___node-next":
+      {"display": "node",
+       "context": ["Lean 4 Tactic纲目", "句法", "Syntax 类型和解析器"]},
+      "/Ch02Syntax/#tacticbook_syntax___SyntaxCopy___Syntax___node":
+      {"display": "node",
+       "context": ["Lean 4 Tactic纲目", "句法", "Syntax 类型和解析器"]}},
+     "address": "/Ch02Syntax/"}],
+   "tacticbook_syntax.SyntaxCopy.Syntax.missing":
+   [{"id": "tacticbook_syntax___SyntaxCopy___Syntax___missing-next",
+     "data":
+     {"/Ch02Syntax/#tacticbook_syntax___SyntaxCopy___Syntax___missing-next":
+      {"display": "missing",
+       "context": ["Lean 4 Tactic纲目", "句法", "Syntax 类型和解析器"]},
+      "/Ch02Syntax/#tacticbook_syntax___SyntaxCopy___Syntax___missing":
+      {"display": "missing",
+       "context": ["Lean 4 Tactic纲目", "句法", "Syntax 类型和解析器"]}},
+     "address": "/Ch02Syntax/"},
+    {"id": "tacticbook_syntax___SyntaxCopy___Syntax___missing",
+     "data":
+     {"/Ch02Syntax/#tacticbook_syntax___SyntaxCopy___Syntax___missing-next":
+      {"display": "missing",
+       "context": ["Lean 4 Tactic纲目", "句法", "Syntax 类型和解析器"]},
+      "/Ch02Syntax/#tacticbook_syntax___SyntaxCopy___Syntax___missing":
+      {"display": "missing",
+       "context": ["Lean 4 Tactic纲目", "句法", "Syntax 类型和解析器"]}},
+     "address": "/Ch02Syntax/"}],
+   "tacticbook_syntax.SyntaxCopy.Syntax.ident":
+   [{"id": "tacticbook_syntax___SyntaxCopy___Syntax___ident",
+     "data":
+     {"/Ch02Syntax/#tacticbook_syntax___SyntaxCopy___Syntax___ident-next":
+      {"display": "ident",
+       "context": ["Lean 4 Tactic纲目", "句法", "Syntax 类型和解析器"]},
+      "/Ch02Syntax/#tacticbook_syntax___SyntaxCopy___Syntax___ident":
+      {"display": "ident",
+       "context": ["Lean 4 Tactic纲目", "句法", "Syntax 类型和解析器"]}},
+     "address": "/Ch02Syntax/"},
+    {"id": "tacticbook_syntax___SyntaxCopy___Syntax___ident-next",
+     "data":
+     {"/Ch02Syntax/#tacticbook_syntax___SyntaxCopy___Syntax___ident-next":
+      {"display": "ident",
+       "context": ["Lean 4 Tactic纲目", "句法", "Syntax 类型和解析器"]},
+      "/Ch02Syntax/#tacticbook_syntax___SyntaxCopy___Syntax___ident":
+      {"display": "ident",
+       "context": ["Lean 4 Tactic纲目", "句法", "Syntax 类型和解析器"]}},
+     "address": "/Ch02Syntax/"}],
+   "tacticbook_syntax.SyntaxCopy.Syntax.atom":
+   [{"id": "tacticbook_syntax___SyntaxCopy___Syntax___atom",
+     "data":
+     {"/Ch02Syntax/#tacticbook_syntax___SyntaxCopy___Syntax___atom-next":
+      {"display": "atom",
+       "context": ["Lean 4 Tactic纲目", "句法", "Syntax 类型和解析器"]},
+      "/Ch02Syntax/#tacticbook_syntax___SyntaxCopy___Syntax___atom":
+      {"display": "atom",
+       "context": ["Lean 4 Tactic纲目", "句法", "Syntax 类型和解析器"]}},
+     "address": "/Ch02Syntax/"},
+    {"id": "tacticbook_syntax___SyntaxCopy___Syntax___atom-next",
+     "data":
+     {"/Ch02Syntax/#tacticbook_syntax___SyntaxCopy___Syntax___atom-next":
+      {"display": "atom",
+       "context": ["Lean 4 Tactic纲目", "句法", "Syntax 类型和解析器"]},
+      "/Ch02Syntax/#tacticbook_syntax___SyntaxCopy___Syntax___atom":
+      {"display": "atom",
+       "context": ["Lean 4 Tactic纲目", "句法", "Syntax 类型和解析器"]}},
+     "address": "/Ch02Syntax/"}],
+   "tacticbook_syntax.SyntaxCopy.Syntax":
+   [{"id": "tacticbook_syntax___SyntaxCopy___Syntax",
+     "data":
+     {"/Ch02Syntax/#tacticbook_syntax___SyntaxCopy___Syntax":
+      {"display": "Syntax",
+       "context": ["Lean 4 Tactic纲目", "句法", "Syntax 类型和解析器"]}},
+     "address": "/Ch02Syntax/"}],
+   "tacticbook_syntax.MyNorm.norm":
+   [{"id": "tacticbook_syntax___MyNorm___norm",
+     "data":
+     {"/Ch02Syntax/#tacticbook_syntax___MyNorm___norm":
+      {"display": "norm", "context": ["Lean 4 Tactic纲目", "句法", "运算符的简便声明"]}},
+     "address": "/Ch02Syntax/"}],
+   "tacticbook_syntax.MyNorm":
+   [{"id": "tacticbook_syntax___MyNorm",
+     "data":
+     {"/Ch02Syntax/#tacticbook_syntax___MyNorm":
+      {"display": "MyNorm", "context": ["Lean 4 Tactic纲目", "句法", "运算符的简便声明"]}},
+     "address": "/Ch02Syntax/"}],
+   "tacticbook_syntax.MyNat.ModEq":
+   [{"id": "tacticbook_syntax___MyNat___ModEq",
+     "data":
+     {"/Ch02Syntax/#tacticbook_syntax___MyNat___ModEq":
+      {"display": "MyNat.ModEq",
+       "context": ["Lean 4 Tactic纲目", "句法", "运算符的简便声明"]}},
+     "address": "/Ch02Syntax/"}],
+   "tacticbook_syntax.MyLift":
+   [{"id": "tacticbook_syntax___MyLift",
+     "data":
+     {"/Ch02Syntax/#tacticbook_syntax___MyLift":
+      {"display": "MyLift",
+       "context": ["Lean 4 Tactic纲目", "句法", "更复杂的句法", "可有可无的部分"]}},
+     "address": "/Ch02Syntax/"}],
+   "tacticbook_macros.xor₂":
+   [{"id": "tacticbook_macros___xor___-next",
+     "data":
+     {"/Ch03Macros/#tacticbook_macros___xor___-next":
+      {"display": "xor₂", "context": ["Lean 4 Tactic纲目", "宏", "第一个宏"]},
+      "/Ch03Macros/#tacticbook_macros___xor___":
+      {"display": "xor₂", "context": ["Lean 4 Tactic纲目", "宏", "第一个宏"]}},
+     "address": "/Ch03Macros/"},
+    {"id": "tacticbook_macros___xor___",
+     "data":
+     {"/Ch03Macros/#tacticbook_macros___xor___-next":
+      {"display": "xor₂", "context": ["Lean 4 Tactic纲目", "宏", "第一个宏"]},
+      "/Ch03Macros/#tacticbook_macros___xor___":
+      {"display": "xor₂", "context": ["Lean 4 Tactic纲目", "宏", "第一个宏"]}},
+     "address": "/Ch03Macros/"}],
+   "tacticbook_macros.xor2":
+   [{"id": "tacticbook_macros___xor2",
+     "data":
+     {"/Ch03Macros/#tacticbook_macros___xor2-next":
+      {"display": "xor2", "context": ["Lean 4 Tactic纲目", "宏", "第一个宏"]},
+      "/Ch03Macros/#tacticbook_macros___xor2":
+      {"display": "xor2", "context": ["Lean 4 Tactic纲目", "宏", "第一个宏"]}},
+     "address": "/Ch03Macros/"},
+    {"id": "tacticbook_macros___xor2-next",
+     "data":
+     {"/Ch03Macros/#tacticbook_macros___xor2-next":
+      {"display": "xor2", "context": ["Lean 4 Tactic纲目", "宏", "第一个宏"]},
+      "/Ch03Macros/#tacticbook_macros___xor2":
+      {"display": "xor2", "context": ["Lean 4 Tactic纲目", "宏", "第一个宏"]}},
+     "address": "/Ch03Macros/"}],
+   "tacticbook_macros.MacroEnvironmentDemo.answer":
+   [{"id": "tacticbook_macros___MacroEnvironmentDemo___answer",
+     "data":
+     {"/Ch03Macros/#tacticbook_macros___MacroEnvironmentDemo___answer":
+      {"display": "answer", "context": ["Lean 4 Tactic纲目", "宏", "宏没有收到的名字"]}},
+     "address": "/Ch03Macros/"}],
+   "Lean.Parser.Tactic.valConfigItem":
+   [{"id": "Lean___Parser___Tactic___valConfigItem",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___valConfigItem-next-next":
+      {"display": "valConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___valConfigItem-next":
+      {"display": "valConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___valConfigItem":
+      {"display": "valConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]}},
+     "address": "/Ch02Syntax/"},
+    {"id": "Lean___Parser___Tactic___valConfigItem-next-next",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___valConfigItem-next-next":
+      {"display": "valConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___valConfigItem-next":
+      {"display": "valConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___valConfigItem":
+      {"display": "valConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]}},
+     "address": "/Ch02Syntax/"},
+    {"id": "Lean___Parser___Tactic___valConfigItem-next",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___valConfigItem-next-next":
+      {"display": "valConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___valConfigItem-next":
+      {"display": "valConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___valConfigItem":
+      {"display": "valConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]}},
+     "address": "/Ch02Syntax/"}],
+   "Lean.Parser.Tactic.simpStar":
+   [{"id": "Lean___Parser___Tactic___simpStar",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___simpStar":
+      {"display": "simpStar",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "simp"]}},
+     "address": "/Ch02Syntax/"}],
+   "Lean.Parser.Tactic.simpPre":
+   [{"id": "Lean___Parser___Tactic___simpPre",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___simpPre":
+      {"display": "simpPre",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "simp"]}},
+     "address": "/Ch02Syntax/"}],
+   "Lean.Parser.Tactic.simpPost":
+   [{"id": "Lean___Parser___Tactic___simpPost",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___simpPost":
+      {"display": "simpPost",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "simp"]}},
+     "address": "/Ch02Syntax/"}],
+   "Lean.Parser.Tactic.simpLemma":
+   [{"id": "Lean___Parser___Tactic___simpLemma",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___simpLemma":
+      {"display": "simpLemma",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "simp"]}},
+     "address": "/Ch02Syntax/"}],
+   "Lean.Parser.Tactic.simpErase":
+   [{"id": "Lean___Parser___Tactic___simpErase",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___simpErase":
+      {"display": "simpErase",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "simp"]}},
+     "address": "/Ch02Syntax/"}],
+   "Lean.Parser.Tactic.simp":
+   [{"id": "Lean___Parser___Tactic___simp",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___simp":
+      {"display": "simp",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "simp"]}},
+     "address": "/Ch02Syntax/"}],
+   "Lean.Parser.Tactic.rwRuleSeq":
+   [{"id": "Lean___Parser___Tactic___rwRuleSeq",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___rwRuleSeq":
+      {"display": "rwRuleSeq",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "rewrite"]}},
+     "address": "/Ch02Syntax/"}],
+   "Lean.Parser.Tactic.rwRule":
+   [{"id": "Lean___Parser___Tactic___rwRule",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___rwRule":
+      {"display": "rwRule",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "rewrite"]}},
+     "address": "/Ch02Syntax/"}],
+   "Lean.Parser.Tactic.rewriteSeq":
+   [{"id": "Lean___Parser___Tactic___rewriteSeq",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___rewriteSeq":
+      {"display": "rewriteSeq",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "rewrite"]}},
+     "address": "/Ch02Syntax/"}],
+   "Lean.Parser.Tactic.posConfigItem":
+   [{"id": "Lean___Parser___Tactic___posConfigItem-next-next",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___posConfigItem-next-next":
+      {"display": "posConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___posConfigItem-next":
+      {"display": "posConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___posConfigItem":
+      {"display": "posConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]}},
+     "address": "/Ch02Syntax/"},
+    {"id": "Lean___Parser___Tactic___posConfigItem-next",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___posConfigItem-next-next":
+      {"display": "posConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___posConfigItem-next":
+      {"display": "posConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___posConfigItem":
+      {"display": "posConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]}},
+     "address": "/Ch02Syntax/"},
+    {"id": "Lean___Parser___Tactic___posConfigItem",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___posConfigItem-next-next":
+      {"display": "posConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___posConfigItem-next":
+      {"display": "posConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___posConfigItem":
+      {"display": "posConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]}},
+     "address": "/Ch02Syntax/"}],
+   "Lean.Parser.Tactic.optConfig":
+   [{"id": "Lean___Parser___Tactic___optConfig",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___optConfig-next-next":
+      {"display": "optConfig",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___optConfig-next":
+      {"display": "optConfig",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___optConfig":
+      {"display": "optConfig",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]}},
+     "address": "/Ch02Syntax/"},
+    {"id": "Lean___Parser___Tactic___optConfig-next-next",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___optConfig-next-next":
+      {"display": "optConfig",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___optConfig-next":
+      {"display": "optConfig",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___optConfig":
+      {"display": "optConfig",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]}},
+     "address": "/Ch02Syntax/"},
+    {"id": "Lean___Parser___Tactic___optConfig-next",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___optConfig-next-next":
+      {"display": "optConfig",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___optConfig-next":
+      {"display": "optConfig",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___optConfig":
+      {"display": "optConfig",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]}},
+     "address": "/Ch02Syntax/"}],
+   "Lean.Parser.Tactic.negConfigItem":
+   [{"id": "Lean___Parser___Tactic___negConfigItem-next-next",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___negConfigItem-next-next":
+      {"display": "negConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___negConfigItem-next":
+      {"display": "negConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___negConfigItem":
+      {"display": "negConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]}},
+     "address": "/Ch02Syntax/"},
+    {"id": "Lean___Parser___Tactic___negConfigItem-next",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___negConfigItem-next-next":
+      {"display": "negConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___negConfigItem-next":
+      {"display": "negConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___negConfigItem":
+      {"display": "negConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]}},
+     "address": "/Ch02Syntax/"},
+    {"id": "Lean___Parser___Tactic___negConfigItem",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___negConfigItem-next-next":
+      {"display": "negConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___negConfigItem-next":
+      {"display": "negConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___negConfigItem":
+      {"display": "negConfigItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]}},
+     "address": "/Ch02Syntax/"}],
+   "Lean.Parser.Tactic.locationWildcard":
+   [{"id": "Lean___Parser___Tactic___locationWildcard",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___locationWildcard":
+      {"display": "locationWildcard",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]}},
+     "address": "/Ch02Syntax/"}],
+   "Lean.Parser.Tactic.locationType":
+   [{"id": "Lean___Parser___Tactic___locationType",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___locationType":
+      {"display": "locationType",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]}},
+     "address": "/Ch02Syntax/"}],
+   "Lean.Parser.Tactic.locationHyp":
+   [{"id": "Lean___Parser___Tactic___locationHyp",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___locationHyp":
+      {"display": "locationHyp",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]}},
+     "address": "/Ch02Syntax/"}],
+   "Lean.Parser.Tactic.location":
+   [{"id": "Lean___Parser___Tactic___location-next",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___location-next":
+      {"display": "location",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___location":
+      {"display": "location",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]}},
+     "address": "/Ch02Syntax/"},
+    {"id": "Lean___Parser___Tactic___location",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___location-next":
+      {"display": "location",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___location":
+      {"display": "location",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]}},
+     "address": "/Ch02Syntax/"}],
+   "Lean.Parser.Tactic.intro":
+   [{"id": "Lean___Parser___Tactic___intro",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___intro":
+      {"display": "intro",
+       "context": ["Lean 4 Tactic纲目", "句法", "更复杂的句法", "重复"]}},
+     "address": "/Ch02Syntax/"}],
+   "Lean.Parser.Tactic.inductionAlts":
+   [{"id": "Lean___Parser___Tactic___inductionAlts",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___inductionAlts":
+      {"display": "inductionAlts",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "布局敏感的 induction"]}},
+     "address": "/Ch02Syntax/"}],
+   "Lean.Parser.Tactic.inductionAltLHS":
+   [{"id": "Lean___Parser___Tactic___inductionAltLHS",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___inductionAltLHS":
+      {"display": "inductionAltLHS",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "布局敏感的 induction"]}},
+     "address": "/Ch02Syntax/"}],
+   "Lean.Parser.Tactic.inductionAlt":
+   [{"id": "Lean___Parser___Tactic___inductionAlt",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___inductionAlt":
+      {"display": "inductionAlt",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "布局敏感的 induction"]}},
+     "address": "/Ch02Syntax/"}],
+   "Lean.Parser.Tactic.induction":
+   [{"id": "Lean___Parser___Tactic___induction",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___induction":
+      {"display": "induction",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "布局敏感的 induction"]}},
+     "address": "/Ch02Syntax/"}],
+   "Lean.Parser.Tactic.elimTarget":
+   [{"id": "Lean___Parser___Tactic___elimTarget",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___elimTarget":
+      {"display": "elimTarget",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "布局敏感的 induction"]}},
+     "address": "/Ch02Syntax/"}],
+   "Lean.Parser.Tactic.discharger":
+   [{"id": "Lean___Parser___Tactic___discharger",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___discharger":
+      {"display": "discharger",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "simp"]}},
+     "address": "/Ch02Syntax/"}],
+   "Lean.Parser.Tactic.configItem":
+   [{"id": "Lean___Parser___Tactic___configItem-next",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___configItem-next-next":
+      {"display": "configItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___configItem-next":
+      {"display": "configItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___configItem":
+      {"display": "configItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]}},
+     "address": "/Ch02Syntax/"},
+    {"id": "Lean___Parser___Tactic___configItem",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___configItem-next-next":
+      {"display": "configItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___configItem-next":
+      {"display": "configItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___configItem":
+      {"display": "configItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]}},
+     "address": "/Ch02Syntax/"},
+    {"id": "Lean___Parser___Tactic___configItem-next-next",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___configItem-next-next":
+      {"display": "configItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___configItem-next":
+      {"display": "configItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]},
+      "/Ch02Syntax/#Lean___Parser___Tactic___configItem":
+      {"display": "configItem",
+       "context": ["Lean 4 Tactic纲目", "句法", "实战案例", "共用的配置与位置句法"]}},
+     "address": "/Ch02Syntax/"}],
+   "Lean.Parser.Tactic.cases":
+   [{"id": "Lean___Parser___Tactic___cases",
+     "data":
+     {"/Ch02Syntax/#Lean___Parser___Tactic___cases":
+      {"display": "cases",
+       "context": ["Lean 4 Tactic纲目", "句法", "更复杂的句法", "重复"]}},
+     "address": "/Ch02Syntax/"}]}},
+ "Verso.Genre.Manual.doc.tech":
+ {"title": "Terminology",
+  "description": "Definitions of technical terms",
+  "contents": {}},
+ "Verso.Genre.Manual.doc.tactic.conv":
+ {"title": "Conversion Tactics",
+  "description": "Tactics for performing targeted rewriting of subterms",
+  "contents": {}},
+ "Verso.Genre.Manual.doc.tactic":
+ {"title": "Tactic Documentation",
+  "description": "Detailed descriptions of tactics",
+  "contents": {}},
+ "Verso.Genre.Manual.doc.suggestion":
+ {"title": "Lean constant suggestions",
+  "description": "Search suggestions for Lean constants",
+  "contents": {}},
+ "Verso.Genre.Manual.doc.option":
+ {"title": "Compiler options", "description": null, "contents": {}},
+ "Verso.Genre.Manual.doc":
+ {"title": "Lean constant reference",
+  "description": "Documentation for Lean constants",
+  "contents": {}}}

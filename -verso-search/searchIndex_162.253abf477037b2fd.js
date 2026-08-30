@@ -1,0 +1,1 @@
+window.docContents[162].resolve({"/Ch02Syntax/#syntax-simp":{"contents":"我觉得这好像也不需要我解释什么：\n\n\n\n","context":"Lean 4 Tactic纲目\u0009句法\u0009实战案例","header":"1.6.3. simp","id":"/Ch02Syntax/#syntax-simp"}});

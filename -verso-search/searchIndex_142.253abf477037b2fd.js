@@ -1,0 +1,1 @@
+window.docContents[142].resolve({"/Ch03Macros/#ch03-macro-narrow-api":{"contents":"既然 #resolve_decl 已经给了我们使用这些操作的理由，现在放一张紧凑的表正合适。\n\n\n\n这些操作只够宏查看输入树和展开位置；poly_roots 所缺的证明目标、局部上下文、推断类型和定义相等性仍在门外。\n\n","context":"Lean 4 Tactic纲目\u0009宏","header":"2.7. 宏可以问的少数事情","id":"/Ch03Macros/#ch03-macro-narrow-api"}});

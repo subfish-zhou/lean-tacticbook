@@ -1,0 +1,1 @@
+window.docContents[166].resolve({"/Ch02Syntax/#syntax-pretty-printer-controllers":{"contents":"都以pp*(Pretty Printer的首字母)开头。没有解析作用，只向雅印器传递布局意图。定义于Lean/Parser/Extra.lean。\n\n\n\n现在我们已经做好了充分的准备来看一些真实的句法案例了。\n\n","context":"Lean 4 Tactic纲目\u0009句法\u0009常用功能列表","header":"1.5.5. 雅印器控制符","id":"/Ch02Syntax/#syntax-pretty-printer-controllers"}});

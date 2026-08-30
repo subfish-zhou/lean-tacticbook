@@ -1,0 +1,1 @@
+window.docContents[225].resolve({"/Ch02Syntax/#syntax-complex":{"contents":"\n\n\n\n\n\n\n\n","context":"Lean 4 Tactic纲目\u0009句法","header":"1.3. 更复杂的句法","id":"/Ch02Syntax/#syntax-complex"}});

@@ -1,0 +1,1 @@
+window.docContents[252].resolve({"/Ch02Syntax/#syntax-parser-position-controllers":{"contents":"主要用于控制缩进和换行的约束。\n\n\n\n","context":"Lean 4 Tactic纲目\u0009句法\u0009常用功能列表","header":"1.5.4. 解析器位置控制符","id":"/Ch02Syntax/#syntax-parser-position-controllers"}});

@@ -1,0 +1,1 @@
+window.docContents[68].resolve({"/Ch02Syntax/#syntax-parser-combinators":{"contents":"从已有解析器p、q构造新的解析器，或改变它们的组合、重复、前瞻与失败行为。这些写法也有“语法糖”和“真实组合子”两层。p?、p*、p+、p <|> q以及四种逗号后缀在Init/Notation.lean中声明并分别展开为optional、many、many1、orelse、sepBy或sepBy1。\n\n\n\n","context":"Lean 4 Tactic纲目\u0009句法\u0009常用功能列表","header":"1.5.3. 解析器组合子","id":"/Ch02Syntax/#syntax-parser-combinators"}});

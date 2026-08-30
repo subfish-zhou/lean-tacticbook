@@ -1,0 +1,1 @@
+window.docContents[223].resolve({"/Ch02Syntax/#syntax-abbreviation":{"contents":"定义复杂的语法的时候我们会希望给一些常见的模式起一个名字。Lean称其为syntaxAbbrev，它用syntax ... := ...来声明，和普通的定义很像：\n\n\n\n以上都是simp证明术中的真实定义。这样一来我们就可以用这些名字来指称这些对象了。\n\n","context":"Lean 4 Tactic纲目\u0009句法\u0009更复杂的句法","header":"1.3.1. 句法缩写","id":"/Ch02Syntax/#syntax-abbreviation"}});

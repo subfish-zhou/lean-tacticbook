@@ -1,0 +1,1 @@
+window.docContents[126].resolve({"/Ch02Syntax/#syntax-mixfix":{"contents":"对于常见的一元、二元运算符，Lean提供了五个比notation更直接的声明命令：\n\n\n\n它们的共同形式是命令:优先级 \"运算符\" => 函数。Lean会自动补出参数，并把运算符应用翻译成右侧函数的应用。\n\n","context":"Lean 4 Tactic纲目\u0009句法\u0009运算符的简便声明","header":"1.2.1. 前缀、后缀与中缀运算符","id":"/Ch02Syntax/#syntax-mixfix"}});

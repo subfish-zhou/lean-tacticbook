@@ -1,0 +1,1 @@
+window.docContents[248].resolve({"/Ch02Syntax/#syntax-lexical-parsers":{"contents":"Lean预先注册的小型Parser。它们直接匹配一种基础句法并产生相应的句法节点。\n\n\n\n","context":"Lean 4 Tactic纲目\u0009句法\u0009常用功能列表","header":"1.5.1. 预定义解析器","id":"/Ch02Syntax/#syntax-lexical-parsers"}});
